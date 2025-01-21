@@ -1,9 +1,9 @@
 export function Login() {
   return (
-    <div className='w-[55%] mx-auto flex items-center justify-center h-screen justify-between'>
+    <div className='w-[60%] mx-auto flex items-center justify-center h-screen justify-between'>
       <section>
         <div>
-          <h1 className='text-4xl font-semibold mb-[25px]'>
+          <h1 className='text-5xl font-bold mb-[25px]'>
             GIT
             <img
               className='inline w-[45px]'
