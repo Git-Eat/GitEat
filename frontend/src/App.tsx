@@ -13,9 +13,10 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route element={<AuthLayout />}>
+            <Route path="/repos" element={<RepostytoryList />} />
             <Route path="/dashboard" element={<DashBoard />} />
             <Route path="/pulls" element={<PullRequests />} />
-            <Route path="/repos" element={<RepostytoryList />} />
+            <Route path="/wiki" element={<PullRequests />} />
           </Route>
         </Routes>
       </BrowserRouter>
