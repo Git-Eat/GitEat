@@ -4,6 +4,7 @@ import { Login } from "./pages/login";
 import { DashBoard } from "./pages/dashboard";
 import { PullRequests } from "./pages/pullRequestList";
 import { RepostytoryList } from "./pages/repositoryList";
+import { AuthLayout } from "./pages/authLayout";
 
 function App() {
   return (
@@ -11,9 +12,11 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Login />} />
-          <Route path="/dashboard" element={<DashBoard />} />
-          <Route path="/pulls" element={<PullRequests />} />
-          <Route path="/repos" element={<RepostytoryList />} />
+          <Route element={<AuthLayout />}>
+            <Route path="/dashboard" element={<DashBoard />} />
+            <Route path="/pulls" element={<PullRequests />} />
+            <Route path="/repos" element={<RepostytoryList />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </>
