@@ -14,7 +14,7 @@ RUN npm run build
 
 # 5. Nginx를 사용하여 정적 파일 서빙
 FROM nginx:alpine
-COPY --from=build /app/build /usr/share/nginx/html
+COPY --from=build /app/dist /usr/share/nginx/html
 
 # 6. 기본 Nginx 설정 유지
 EXPOSE 80
