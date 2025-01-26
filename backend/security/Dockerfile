@@ -14,4 +14,4 @@ EXPOSE 8080
 # ENTRYPOINT ["java", "-jar", "app.jar"] 
 
 ## Docker security 적용 하기 전 사용
-ENTRYPOINT ["java", "-jar", "app.jar", "--server.port=8081", "--spring.security.oauth2.client.registration.gitlab.client-id=", "--spring.security.oauth2.client.registration.gitlab.client-secret="]
+ENTRYPOINT ["java", "-jar", "app.jar", "--spring.main.web-application-type=none"]
