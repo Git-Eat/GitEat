@@ -2,7 +2,7 @@ export function Login() {
   // 백엔드에서 처리할 리디렉션 URI 추가해야댐
 
   const gitLabLogin = () => {
-    const REDIRECT_URI = "http://localhost:5173/loading";
+    const REDIRECT_URI = "http://127.0.0.1:5173/loading";
     const CLIENT_ID = import.meta.env.VITE_GITLAB_CLIENT_ID;
     //state 값은 랜덤값으로 변경 필요함
     const STATE = "1234";
