@@ -25,7 +25,7 @@ export function Login() {
           </article>
           <div className="w-[370px] flex flex-col gap-[18px]">
             <a
-              href="/login/github"
+              href="/loading"
               className="h-[71px] flex gap-[9px] bg-black text-white items-center justify-center font-[20px] font-semibold rounded-[30px]"
             >
               <img
@@ -36,7 +36,7 @@ export function Login() {
               GitHub로 시작하기
             </a>
             <a
-              href="/login/github"
+              href="/loading"
               className="h-[71px] flex gap-[9px] bg-[#364CCA] text-white items-center justify-center font-[20px] font-semibold rounded-[30px]"
             >
               <img src="/src/assets/images/gitlab_logo.svg" alt="github_logo" />

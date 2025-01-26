@@ -5,6 +5,7 @@ import { DashBoard } from "./pages/dashboard";
 import { PullRequests } from "./pages/pullRequestList";
 import { RepostytoryList } from "./pages/repositoryList";
 import { AuthLayout } from "./pages/authLayout";
+import { Loading } from "./pages/loading";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route path="/loading" element={<Loading />} />
           <Route element={<AuthLayout />}>
             <Route path="/repos" element={<RepostytoryList />} />
             <Route path="/dashboard" element={<DashBoard />} />
