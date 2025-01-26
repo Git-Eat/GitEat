@@ -6,6 +6,7 @@ import { PullRequests } from "./pages/pullRequestList";
 import { RepostytoryList } from "./pages/repositoryList";
 import { AuthLayout } from "./pages/authLayout";
 import { Loading } from "./pages/loading";
+import { Error } from "./pages/error";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/loading" element={<Loading />} />
+          <Route path="/error" element={<Error />} />
           <Route element={<AuthLayout />}>
             <Route path="/repos" element={<RepostytoryList />} />
             <Route path="/dashboard" element={<DashBoard />} />
