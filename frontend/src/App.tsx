@@ -15,7 +15,11 @@ function App() {
           <Route element={<AuthLayout />}>
             <Route path="/repos" element={<RepostytoryList />} />
             <Route path="/dashboard" element={<DashBoard />} />
-            <Route path="/pulls" element={<PullRequests />} />
+            <Route path="/pulls" element={<PullRequests />}>
+              <Route path="conversation" element={<>conversation</>} />
+              <Route path="commits" element={<>commits</>} />
+              <Route path="file-changes" element={<>fileChanges</>} />
+            </Route>
             <Route path="/wiki" element={<PullRequests />} />
           </Route>
         </Routes>
