@@ -1,3 +1,9 @@
+import { Header } from "../../components/pullRequest/header";
+
 export function PullRequests() {
-  return <>풀리퀘스트 목록 페이지</>;
+  return (
+    <>
+      <Header />
+    </>
+  );
 }
