@@ -3,6 +3,7 @@ import "./App.css";
 import { Login } from "./pages/login";
 import { DashBoard } from "./pages/dashboard";
 import { PullRequests } from "./pages/pullRequestList";
+import { Conversation } from "./components/pullRequest/conversation";
 import { RepostytoryList } from "./pages/repositoryList";
 import { AuthLayout } from "./pages/authLayout";
 
@@ -16,7 +17,7 @@ function App() {
             <Route path="/repos" element={<RepostytoryList />} />
             <Route path="/dashboard" element={<DashBoard />} />
             <Route path="/pulls" element={<PullRequests />}>
-              <Route path="conversation" element={<>conversation</>} />
+              <Route path="conversation" element={<Conversation />} />
               <Route path="commits" element={<>commits</>} />
               <Route path="file-changes" element={<>fileChanges</>} />
             </Route>
