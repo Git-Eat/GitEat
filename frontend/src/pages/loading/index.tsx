@@ -15,7 +15,8 @@ export function Loading() {
       // 서버로 인증 코드 전송
       login(code, {
         onSuccess: () => {
-          navigation("/repos");
+          console.log("로그인 성공");
+          // navigation("/repos");
         },
       });
     } else {
