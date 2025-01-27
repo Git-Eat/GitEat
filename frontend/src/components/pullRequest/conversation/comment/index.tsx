@@ -1,6 +1,8 @@
+import { Reply } from "../reply";
+
 export function Comment() {
   return (
-    <div className="bg-white my-5 p-5">
+    <div className="bg-white my-5 p-5 rounded-xl">
       <div className="flex items-center gap-2">
         <img
           src="/src/assets/images/user_profile_1.svg"
@@ -33,6 +35,7 @@ export function Comment() {
       </div>
       <hr className="my-4" />
       <p className="text-right">3개의 답글</p>
+      <Reply />
     </div>
   );
 }
