@@ -1,16 +1,20 @@
 package com.giteat.pr.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name="commit")
+@Getter
+@Setter
 public class CommitEntity {
 
     @Id
     @Column(name="commit_id")
-    private String id;
+    private String commitId;
 
     private String content;
     private LocalDateTime commitedAt;

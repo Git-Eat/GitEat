@@ -1,11 +1,15 @@
 package com.giteat.pr.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name="comment")
+@Getter
+@Setter
 public class CommentEntity {
 
     @Id
