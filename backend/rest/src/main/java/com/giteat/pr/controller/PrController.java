@@ -84,7 +84,7 @@ public class PrController {
 
 
     @DeleteMapping("/{repoId}/{prId}/comment/{commentId}")
-    @Operation(summary="댓글 수정", description = "PR에 작성한 댓글을 수정합니다")
+    @Operation(summary="댓글 삭제", description = "PR에 작성한 댓글을 삭제합니다")
     public ResponseEntity<Integer> deleteComment(@PathVariable int repoId, @PathVariable int prId, @PathVariable int commentId) {
         int result = prService.deleteComment(repoId, prId, commentId);
         if(result !=0) {return ResponseEntity.ok(result);}

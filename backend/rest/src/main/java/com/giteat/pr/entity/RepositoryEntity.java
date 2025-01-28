@@ -19,10 +19,17 @@ public class RepositoryEntity {
     @Column(name="repo_id")
     private int id;
 
+    @Column(name="user_id")
     private int userId;
     private String name;
     private String description;
+
+    @Column(name="github_url")
     private String githubUrl;
+
+    @Column(name="gitlab_url")
     private String gitlabUrl;
+
+    @Column(name="create_at")
     private LocalDateTime createAt;
 }

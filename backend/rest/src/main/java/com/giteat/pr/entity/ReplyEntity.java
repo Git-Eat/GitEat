@@ -25,7 +25,13 @@ public class ReplyEntity {
 //    private CommentEntity aiComment;
 
     private String content;
+
+    @Column(name="reply_type")
     private String replyType;
+
+    @Column(name="image_name")
     private String imageName;
+
+    @Column(name="created_at")
     private LocalDateTime createdAt;
 }

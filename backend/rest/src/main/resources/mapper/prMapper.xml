@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.giteat.pr.mapper.PrMapper">
+
+<!--    <resultMap id="commentResultMap" type="commentDto">-->
+<!--        <id property="commentId" column="comment_id"/>-->
+<!--        <result property="prId" column="pr_id"/>-->
+<!--        <result property="content" column="content"/>-->
+<!--        <result property="commentType" column="comment_type"/>-->
+<!--        <result property="depth" column="depth"/>-->
+<!--        <result property="imageName" column="image_name"/>-->
+<!--        <result property="createdAt" column="created_at"/>-->
+<!--    </resultMap>-->
+
+    <!-- 댓글 조회 -->
+    <select id="getCommentList" parameterType="map" resultType="commentDto">
+        SELECT
+        c.comment_id AS commentId,
+        p.pr_id AS prId,
+        c.content AS content,
+        c.comment_type AS commentType,
+        c.depth AS depth,
+        c.image_name AS imageName,
+        c.created_at AS createdAt
+        FROM comment c
+        JOIN pr p ON c.pr_id = p.pr_id
+        JOIN repository r ON p.repo_id = r.repo_id
+        WHERE r.repo_id = #{repoId} AND p.pr_id = #{prId}
+    </select>
+
+    <!-- 댓글 등록 -->
+    <insert id="insertComment" parameterType="commentDto">
+        INSERT INTO comment (pr_id, content, comment_type, depth, image_name, created_at)
+        VALUES (#{prId}, #{content}, #{commentType}, #{depth}, #{imageName}, NOW())
+    </insert>
+
+    <!-- 댓글 수정 -->
+    <update id="updateComment" parameterType="commentDto">
+        UPDATE comment
+        SET content = #{content},
+            comment_type = #{commentType},
+            depth = #{depth},
+            image_name = #{imageName}
+        WHERE comment_id = #{commentId}
+    </update>
+
+    <!-- 댓글 삭제 -->
+    <delete id="deleteComment" parameterType="map">
+        DELETE FROM comment
+        WHERE pr_id = #{prId} AND comment_id = #{commentId}
+    </delete>
+
+</mapper>

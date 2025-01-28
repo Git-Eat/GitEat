@@ -17,6 +17,8 @@ public class CommitEntity {
     private String commitId;
 
     private String content;
+
+    @Column(name="commited_at")
     private LocalDateTime commitedAt;
 
     @ManyToOne

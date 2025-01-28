@@ -6,7 +6,10 @@ import com.giteat.pr.entity.PrEntity;
 import com.giteat.pr.mapper.PrMapper;
 import com.giteat.pr.repository.PrRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service("PrServiceImpl")
 public class PrServiceImpl implements PrService{
@@ -42,7 +45,10 @@ public class PrServiceImpl implements PrService{
 
     @Override
     public List<CommentDto> getCommentList(int repoId, int prId) {
-        return prMapper.getCommentList(repoId, prId);
+        Map<String, Object> params = new HashMap<>();
+        params.put("repoId", repoId);
+        params.put("prId", prId);
+        return prMapper.getCommentList(params);
     }
 
     @Override
@@ -57,7 +63,11 @@ public class PrServiceImpl implements PrService{
 
     @Override
     public int deleteComment(int repoId, int prId, int commentId) {
-        return prMapper.deleteComment(repoId, prId, commentId);
+        Map<String, Object> params = new HashMap<>();
+        params.put("repoId", repoId);
+        params.put("prId", prId);
+        params.put("commentId", commentId);
+        return prMapper.deleteComment(params);
     }
 
     @Override

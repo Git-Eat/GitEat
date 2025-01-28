@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+
+    <typeAliases>
+        <typeAlias type="com.giteat.pr.dto.RepositoryDto" alias="repositoryDto"/>
+        <typeAlias type="com.giteat.pr.dto.PrDto" alias="prDto"/>
+        <typeAlias type="com.giteat.pr.dto.CommitDto" alias="commitDto"/>
+        <typeAlias type="com.giteat.pr.dto.CommentDto" alias="commentDto"/>
+        <typeAlias type="com.giteat.pr.dto.ReplyDto" alias="replyDto"/>
+        <typeAlias type="com.giteat.pr.dto.FileDto" alias="fileDto"/>
+    </typeAliases>
+
+    <mappers>
+        <mapper resource="mapper/UserMapper.xml"/>
+        <mapper resource="mapper/prMapper.xml"/>
+    </mappers>
+</configuration>

@@ -33,9 +33,9 @@ public class PrEntity {
     @Column(name = "is_opened")
     private int isOpened;
 
-    @OneToMany(mappedBy = "pr", cascade = CascadeType.ALL)
-    private List<CommitEntity> commits;
-
-    @OneToMany(mappedBy = "pr", cascade = CascadeType.ALL)
-    private List<CommentEntity> comments;
+//    @OneToMany(mappedBy = "pr", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<CommitEntity> commits;
+//
+//    @OneToMany(mappedBy = "pr", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<CommentEntity> comments;
 }

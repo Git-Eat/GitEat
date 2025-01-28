@@ -21,8 +21,12 @@ public class CommentEntity {
     private PrEntity pr;
 
     private String content;
+
+    @Column(name="comment_type")
     private String commentType;
     private int depth;
     private String image_name;
+
+    @Column(name="created_at")
     private LocalDateTime createdAt;
 }
