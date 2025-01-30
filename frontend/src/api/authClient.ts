@@ -1,12 +1,5 @@
 import axios from "axios";
 
-const client = axios.create({
-  baseURL: "http://localhost:3000",
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
-
 const authClient = axios.create({
   baseURL: "http://localhost:3000",
   headers: {
@@ -35,4 +28,4 @@ authClient.interceptors.response.use(
   }
 );
 
-export default { client, authClient };
+export default authClient;
