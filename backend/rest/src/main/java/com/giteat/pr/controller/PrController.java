@@ -3,6 +3,7 @@ package com.giteat.pr.controller;
 
 import com.giteat.pr.dto.CommentDto;
 import com.giteat.pr.dto.FileDto;
+import com.giteat.pr.dto.ReplyDto;
 import com.giteat.pr.entity.CommitEntity;
 import com.giteat.pr.entity.PrEntity;
 import com.giteat.pr.service.PrServiceImpl;
@@ -91,14 +92,42 @@ public class PrController {
         return ResponseEntity.noContent().build();
     }
 
-    // 대댓글 조회
 
-    // 대댓글 등록
+    @GetMapping("/{repoId}/{prId}/comment/{commentId}/reply")
+    @Operation(summary = "대댓글 조회", description = "대댓글을 조회합니다")
+    public ResponseEntity<List<ReplyDto>> showReply(@PathVariable int repoId, @PathVariable int prId, @PathVariable int commentId){
+        List<ReplyDto> replies = prService.showReply(repoId, prId, commentId);
+        if(replies != null) return ResponseEntity.ok(replies);
+        return ResponseEntity.noContent().build();
+    }
 
-    // 대댓글 수정
 
-    // 대댓글 삭제
+    @PostMapping("/{repoId}/{prId}/comment/{commentId}/reply")
+    @Operation(summary = "대댓글 등록", description = "대댓글을 등록합니다")
+    public ResponseEntity<Integer> insertReply(@RequestBody ReplyDto replyDto){
+        int result = prService.insertReply(replyDto);
+        if(result !=0) {return ResponseEntity.ok(result);}
+        return ResponseEntity.noContent().build();
+    }
 
+
+    @PutMapping("/{repoId}/{prId}/comment/{commentId}/reply/{replyId}")
+    @Operation(summary = "대댓글 수정", description = "대댓글을 수정합니다")
+    public ResponseEntity<Integer> updateReply(@RequestBody ReplyDto replyDto){
+        int result = prService.updateReply(replyDto);
+        if(result !=0) {return ResponseEntity.ok(result);}
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @DeleteMapping("/{repoId}/{prId}/comment/{commentId}/reply/{replyId}")
+    @Operation(summary = "대댓글 삭제", description = "대댓글을 삭제합니다")
+    public ResponseEntity<Integer> deleteReply(@PathVariable int replyId){
+        //replyId는 note_id
+        int result = prService.deleteReply(replyId);
+        if(result !=0) {return ResponseEntity.ok(result);}
+        return ResponseEntity.noContent().build();
+    }
 
     @GetMapping("/{repoId}/{prId}/file")
     @Operation(summary="파일 목록 조회", description = "PR내에 변경된 파일 목록을 조회합니다")
