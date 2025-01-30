@@ -1,8 +1,10 @@
 package com.giteat.pr.service;
 
+import com.giteat.api.GitLabApi;
 import com.giteat.pr.dto.*;
 import com.giteat.pr.entity.CommitEntity;
 import com.giteat.pr.entity.PrEntity;
+import com.giteat.pr.entity.ReplyEntity;
 import com.giteat.pr.mapper.PrMapper;
 import com.giteat.pr.repository.PrRepository;
 import org.springframework.stereotype.Service;
@@ -16,10 +18,12 @@ public class PrServiceImpl implements PrService{
 
     private final PrMapper prMapper;
     private final PrRepository prRepository;
+    private final GitLabApi gitLabApi;
 
-    public PrServiceImpl(PrMapper prMapper, PrRepository prRepository){
+    public PrServiceImpl(PrMapper prMapper, PrRepository prRepository , GitLabApi gitLabApi){
         this.prMapper = prMapper;
         this.prRepository = prRepository;
+        this.gitLabApi = gitLabApi;
     }
 
 
@@ -98,5 +102,15 @@ public class PrServiceImpl implements PrService{
     @Override
     public FileDto showChangedCode(int repoId, int prId, int fileId) {
         return prMapper.showChangedCode(repoId, prId, fileId);
+    }
+
+    @Override
+    public int saveRepositoryData(String accessToken , String repositoryId){
+        // 만들어 놓은 함수 호출
+        // 호출하고 형식 맞춰서 데이터베이스 저장
+        // 저장하고 나 값으로 형식 맞춰서 데이터 넣기
+        Map<String ,List<Map<String , Object>>> repositoryData = gitLabApi.getAllData(accessToken, repositoryId);
+        System.out.println("repositoryData : " + repositoryData);
+        return 1;
     }
 }

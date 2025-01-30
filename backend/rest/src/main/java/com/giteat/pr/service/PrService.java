@@ -28,4 +28,6 @@ public interface PrService {
     /* 파일 변경 관련 함수 */
     List<FileDto> showFileList(int repoId, int prId); // 변경 된 파일 목록 확인
     FileDto showChangedCode(int repoId, int prId, int fileId); // 변경 된 코드 확인
+
+    int saveRepositoryData(String accessToken , String repositoryId);
 }

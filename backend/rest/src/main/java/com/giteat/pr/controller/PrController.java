@@ -144,4 +144,11 @@ public class PrController {
         if(file != null) {return ResponseEntity.ok(file);}
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/repositoryData")
+    @Operation(summary="repository의 모든 데이터 읽기", description = "repository에서 모든 데이터를 가져옵니다.")
+    public ResponseEntity<?> saveRepositoryData(@RequestHeader("accessToken") String accessToken , @RequestBody String repositoryId){
+
+        return ResponseEntity.ok().build();
+    }
 }
