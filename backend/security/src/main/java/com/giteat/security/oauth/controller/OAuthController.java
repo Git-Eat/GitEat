@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/oauth")
+@RequestMapping("/api/oauth")
 public class OAuthController {
     private CustomOAuthService customOAuthService;
 
@@ -22,7 +22,7 @@ public class OAuthController {
      */
     @GetMapping("gitlab")
     public void gitlabLogin(HttpServletResponse response) throws IOException {
-        response.sendRedirect("/oauth2/authorization/gitlab");
+        response.sendRedirect("/api/oauth2/authorization/gitlab");
     }
 
     /**
@@ -35,10 +35,5 @@ public class OAuthController {
 //    }
 
 
-      //security config에서 설정
-//    @PostMapping("logout")
-//    public ResponseEntity<String> logout(){
-//        return ResponseEntity.ok("logout");
-//    }
 
 }

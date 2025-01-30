@@ -1,5 +1,6 @@
 package com.giteat.security.config;
 
+import com.giteat.security.oauth.handler.OAuthLoginSuccessHandler;
 import org.apache.tomcat.util.file.ConfigurationSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -18,6 +20,12 @@ import java.util.Arrays;
 //security 활성화
 @EnableWebSecurity
 public class SecurityConfig {
+
+    private final AuthenticationSuccessHandler OAuthLoginSuccessHandler;
+
+    public SecurityConfig(AuthenticationSuccessHandler oAuthLoginSuccessHandler) {
+        OAuthLoginSuccessHandler = oAuthLoginSuccessHandler;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource) throws Exception {
@@ -35,9 +43,10 @@ public class SecurityConfig {
         http
                 .oauth2Login(oauth2 -> oauth2
                         .authorizationEndpoint(authorization -> authorization
-                                .baseUri("/oauth/authorization"))
+                                .baseUri("/api/oauth/authorization"))
                         .redirectionEndpoint(redirection -> redirection
-                                .baseUri("/oauth/gitlab/callback"))
+                                .baseUri("/api/oauth/gitlab/callback"))
+                        .successHandler(OAuthLoginSuccessHandler)
                 );
 
         //로그아웃 설정
@@ -54,10 +63,10 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/").permitAll()
-                        .requestMatchers("/oauth/gitlab").permitAll()
-                        .requestMatchers("/oauth/gitlab/callback").permitAll()
-                        .requestMatchers("/oauth/logout").permitAll()
+                        .requestMatchers("/api").permitAll()
+                        .requestMatchers("/api/oauth/gitlab").permitAll()
+                        .requestMatchers("/api/oauth/gitlab/callback").permitAll()
+                        .requestMatchers("/api/oauth/logout").permitAll()
                         .anyRequest().authenticated());
 
         //세션 설정 : STATELESS
@@ -80,7 +89,7 @@ public class SecurityConfig {
         // 어떤 URL에 어떤 CORS 설정을 적용할지
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         // 모든 경로에 CORS configuration 적용
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration("/api/**", configuration);
         return source;
     }
 

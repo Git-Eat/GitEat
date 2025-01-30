@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @ToString
@@ -21,5 +23,5 @@ public class OAuthToken {
     private String email;
     private String name;
     private String avatarUrl;
-    private String createAt;
+    private LocalDateTime createdAt;
 }
