@@ -67,19 +67,24 @@ public class PrController {
 
     @PostMapping("/{repoId}/{prId}/comment")
     @Operation(summary="댓글 등록", description = "PR에 댓글을 등록합니다")
-    public ResponseEntity<Integer> insertComment(@RequestBody CommentDto commentDto) {
-        int result = prService.insertComment(commentDto);
-        if(result !=0) {return ResponseEntity.ok(result);}
+    public ResponseEntity<Integer> insertComment(@PathVariable int repoId,
+                                                 @PathVariable int prId,
+                                                 @RequestBody CommentDto commentDto) {
+        int result = prService.insertComment(repoId, prId, commentDto);
+        if(result==200) {return ResponseEntity.ok(result);}
         return ResponseEntity.noContent().build();
     }
 
 
     @PutMapping("/{repoId}/{prId}/comment/{commentId}")
     @Operation(summary="댓글 수정", description = "PR에 작성한 댓글을 수정합니다")
-    public ResponseEntity<Integer> updateComment(@PathVariable int commentId, @RequestBody CommentDto commentDto) {
+    public ResponseEntity<Integer> updateComment(@PathVariable int repoId,
+                                                 @PathVariable int prId,
+                                                 @PathVariable int commentId,
+                                                 @RequestBody CommentDto commentDto) {
         commentDto.setCommentId(commentId);
-        int result = prService.updateComment(commentDto);
-        if(result !=0) {return ResponseEntity.ok(result);}
+        int result = prService.updateComment(repoId, prId, commentDto);
+        if(result ==200) {return ResponseEntity.ok(result);}
         return ResponseEntity.noContent().build();
     }
 
@@ -102,20 +107,26 @@ public class PrController {
     }
 
 
-    @PostMapping("/{repoId}/{prId}/comment/{commentId}/reply")
+    @PostMapping("/{repoId}/{prId}/reply/{discussionId}")
     @Operation(summary = "대댓글 등록", description = "대댓글을 등록합니다")
-    public ResponseEntity<Integer> insertReply(@RequestBody ReplyDto replyDto){
-        int result = prService.insertReply(replyDto);
-        if(result !=0) {return ResponseEntity.ok(result);}
+    public ResponseEntity<Integer> insertReply(@PathVariable String repoId,
+                                               @PathVariable String prId,
+                                               @PathVariable String discussionId,
+                                               @RequestBody ReplyDto replyDto){
+        int result = prService.insertReply(repoId, prId, discussionId, replyDto);
+        if(result==200) {return ResponseEntity.ok(result);}
         return ResponseEntity.noContent().build();
     }
 
 
-    @PutMapping("/{repoId}/{prId}/comment/{commentId}/reply/{replyId}")
+    @PutMapping("/{repoId}/{prId}/reply/{replyId}")
     @Operation(summary = "대댓글 수정", description = "대댓글을 수정합니다~")
-    public ResponseEntity<Integer> updateReply(@RequestBody ReplyDto replyDto){
-        int result = prService.updateReply(replyDto);
-        if(result !=0) {return ResponseEntity.ok(result);}
+    public ResponseEntity<Integer> updateReply(@PathVariable String repoId,
+                                               @PathVariable String prId,
+                                               @PathVariable String replyId,
+                                               @RequestBody ReplyDto replyDto){
+        int result = prService.updateReply(repoId, prId, replyId, replyDto);
+        if(result==200) {return ResponseEntity.ok(result);}
         return ResponseEntity.noContent().build();
     }
 
