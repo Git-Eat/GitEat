@@ -1,4 +1,5 @@
 import { http, HttpResponse } from "msw";
+import commentsHandlers from "./handlers/comments";
 
 const MOCK_REGION = [
   {
@@ -19,6 +20,7 @@ const handler = [
   http.get("https://jsonplaceholder.typicode.com/posts", () => {
     return HttpResponse.json(MOCK_REGION);
   }),
+  ...commentsHandlers,
 ];
 
 export default handler;

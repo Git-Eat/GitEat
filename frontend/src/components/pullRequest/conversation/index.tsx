@@ -1,5 +1,5 @@
-import { MarkdownEditor } from "../../common/markkdownEditor";
 import { Comment } from "./comment";
+import { MarkdownEditor } from "../../common/markkdownEditor";
 import { ParticipantList } from "./participantList";
 
 export function Conversation() {
