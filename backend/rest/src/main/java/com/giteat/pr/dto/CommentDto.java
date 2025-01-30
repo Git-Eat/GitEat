@@ -15,6 +15,6 @@ public class CommentDto {
     private String content;
     private String commentType;
     private int depth;
-    private String image_name;
+    private String imageName;
     private LocalDateTime createdAt;
 }

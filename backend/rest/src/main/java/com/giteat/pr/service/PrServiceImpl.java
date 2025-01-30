@@ -1,87 +1,102 @@
 package com.giteat.pr.service;
 
 import com.giteat.pr.dto.*;
+import com.giteat.pr.entity.CommitEntity;
+import com.giteat.pr.entity.PrEntity;
 import com.giteat.pr.mapper.PrMapper;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import com.giteat.pr.repository.PrRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service("PrServiceImpl")
 public class PrServiceImpl implements PrService{
 
-    //private final PrMapper prMapper;
+    private final PrMapper prMapper;
+    private final PrRepository prRepository;
+
+    public PrServiceImpl(PrMapper prMapper, PrRepository prRepository){
+        this.prMapper = prMapper;
+        this.prRepository = prRepository;
+    }
 
 
     @Override
-    public List<PrDto> getPrList(int repoId) {
-        return List.of();
+    public List<PrEntity> findByRepoId(int repoId) {
+        return prRepository.findByRepoId(repoId);
     }
 
     @Override
-    public PrDto getPrById(int repoId, int prId) {
-        return null;
+    public PrEntity getPrById(int repoId, int prId) {
+        return prRepository.getPrById(repoId, prId);
     }
 
     @Override
-    public List<CommitDto> getCommitList(int repoId, int prId) {
-        return List.of();
+    public List<CommitEntity> getCommitList(int repoId, int prId) {
+        return prRepository.getCommitList(repoId, prId);
     }
 
     @Override
-    public CommitDto getCommitById(int repoId, int prId, int commitId) {
-        return null;
+    public CommitEntity getCommitById(int repoId, int prId, String commitId) {
+        return prRepository.getCommitById(repoId, prId, commitId);
     }
 
     @Override
     public List<CommentDto> getCommentList(int repoId, int prId) {
-        return List.of();
+        Map<String, Object> params = new HashMap<>();
+        params.put("repoId", repoId);
+        params.put("prId", prId);
+        return prMapper.getCommentList(params);
     }
 
     @Override
     public int insertComment(CommentDto commentDto) {
-        return 0;
+        return prMapper.insertComment(commentDto);
     }
 
     @Override
-    public CommentDto updateComment(CommentDto commentDto) {
-        return null;
+    public int updateComment(CommentDto commentDto) {
+        return prMapper.updateComment(commentDto);
     }
 
     @Override
     public int deleteComment(int repoId, int prId, int commentId) {
-        return 0;
+        Map<String, Object> params = new HashMap<>();
+        params.put("repoId", repoId);
+        params.put("prId", prId);
+        params.put("commentId", commentId);
+        return prMapper.deleteComment(params);
     }
 
     @Override
     public List<ReplyDto> showReply(int repoId, int prId, int commentId) {
-        return List.of();
+        return prMapper.showReply(repoId, prId, commentId);
     }
 
     @Override
     public int insertReply(ReplyDto replyDto) {
-        return 0;
+        return prMapper.insertReply(replyDto);
     }
 
     @Override
-    public ReplyDto updateReply(ReplyDto replyDto) {
-        return null;
+    public int updateReply(ReplyDto replyDto) {
+        return prMapper.updateReply(replyDto);
     }
 
     @Override
     public int deleteReply(int replyId) {
-        return 0;
+        return prMapper.deleteReply(replyId);
     }
 
     @Override
     public List<FileDto> showFileList(int repoId, int prId) {
-        return List.of();
+        return prMapper.showFileList(repoId, prId);
     }
 
     @Override
     public FileDto showChangedCode(int repoId, int prId, int fileId) {
-        return null;
+        return prMapper.showChangedCode(repoId, prId, fileId);
     }
 }

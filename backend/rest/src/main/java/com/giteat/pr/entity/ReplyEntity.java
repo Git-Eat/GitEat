@@ -1,11 +1,15 @@
 package com.giteat.pr.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name="reply")
+@Getter
+@Setter
 public class ReplyEntity {
 
     @Id
@@ -21,7 +25,13 @@ public class ReplyEntity {
 //    private CommentEntity aiComment;
 
     private String content;
+
+    @Column(name="reply_type")
     private String replyType;
+
+    @Column(name="image_name")
     private String imageName;
+
+    @Column(name="created_at")
     private LocalDateTime createdAt;
 }
