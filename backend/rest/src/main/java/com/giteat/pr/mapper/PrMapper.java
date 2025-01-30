@@ -20,6 +20,7 @@ public interface PrMapper {
     int updateReply(ReplyDto replyDto); // 대댓글 수정
     int deleteReply(int replyId); // 대댓글 삭제
 
-    List<FileDto> showFileList(int repoId, int prId); // 변경 된 파일 목록 확인
-    FileDto showChangedCode(int repoId, int prId, int fileId); // 변경 된 코드 확인
+    List<FileDto> showFileListByPr(Map<String, Object> params);
+    List<FileDto> showFileListByCommit(Map<String, Object> params);// 변경 된 파일 목록 확인
+    FileDto getFileInfo(int fileId); // 변경 된 코드 확인
 }

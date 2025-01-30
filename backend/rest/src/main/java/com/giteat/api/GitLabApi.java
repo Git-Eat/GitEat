@@ -6,6 +6,8 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 
 @Component
@@ -34,8 +36,11 @@ public class GitLabApi {
         repositoryData.put("issues", getIssues(projectId, accessToken));
         repositoryData.put("discussions", getDiscussions(projectId, accessToken));
         repositoryData.put("comments", getComments(projectId, accessToken));
+        //repositoryData.put("files", getFiles(projectId, prId, accessToken));
         return repositoryData;
     }
+
+
 
     /**
      * 댓글을 등록하는 함수
@@ -106,6 +111,30 @@ public class GitLabApi {
     public List<Map<String, Object>> getComments(String projectId , String accessToken) {
         String url = gitlabApiUrl + "/projects/" + projectId + "/notes";
         return callGetApi(url , accessToken);
+    }
+
+    // PR내 변경된 파일 목록 가져오기
+    public List<Map<String, Object>> getFiles(String projectId, String prId, String accessToken){
+        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + prId + "/changes";
+        return callGetApi(url, accessToken);
+    }
+
+    // 변경된 Raw 코드 가져오는 함수
+    public String getRawCode(String projectId, String filePath, String commitId, String jwtAccessToken)  {
+        try {
+            URI url = new URI(gitlabApiUrl + "/projects/" + projectId + "/repository/files/" + filePath + "/raw?ref=" + commitId);
+            System.out.println("호출 주소 : "+ url);
+
+            HttpHeaders headers = new HttpHeaders();
+            //String accessToken = gitLabTokenService.getAccessToken(jwtAccessToken);
+            headers.set("Private-Token", "UATEgVcVTSsLn7PWao6c"); // 필요하면 OAuth 토큰 사용
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+            return response.getBody();
+        } catch (Exception e) {
+            e.printStackTrace();  // 예외 메시지를 출력
+            return "요청 실패"; // GitLab API 요청 실패 시 빈 문자열 반환
+        }
     }
 
     /**

@@ -5,6 +5,7 @@ import com.giteat.pr.entity.CommitEntity;
 import com.giteat.pr.entity.PrEntity;
 
 import java.util.List;
+import java.util.Map;
 
 public interface PrService {
 
@@ -26,8 +27,9 @@ public interface PrService {
     int deleteReply(int replyId); // 대댓글 삭제
 
     /* 파일 변경 관련 함수 */
-    List<FileDto> showFileList(int repoId, int prId); // 변경 된 파일 목록 확인
-    FileDto showChangedCode(int repoId, int prId, int fileId); // 변경 된 코드 확인
+    List<FileDto> showFileListByPr(int repoId, int prId); // 변경 된 파일 목록 확인
+    List<FileDto> showFileListByCommit(int repoId, int prId, String commitId);
+    Map<String, String> showChangedCode(String repoId, String prId, int fileId); // 변경 된 코드 확인
 
     int saveRepositoryData(String accessToken , String repositoryId);
 }

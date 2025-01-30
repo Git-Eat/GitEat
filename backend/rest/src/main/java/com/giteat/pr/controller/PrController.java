@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/pr")
@@ -141,18 +142,28 @@ public class PrController {
     }
 
     @GetMapping("/{repoId}/{prId}/file")
-    @Operation(summary="파일 목록 조회", description = "PR내에 변경된 파일 목록을 조회합니다")
-    public ResponseEntity<List<FileDto>> showFileList(@PathVariable int repoId, @PathVariable int prId) {
-        List<FileDto> fileList = prService.showFileList(repoId, prId);
+    @Operation(summary="파일 목록 조회(PR)", description = "PR내에 변경된 모든 파일 목록을 조회합니다")
+    public ResponseEntity<List<FileDto>> showFileListByPr(@PathVariable int repoId, @PathVariable int prId) {
+        List<FileDto> fileList = prService.showFileListByPr(repoId, prId);
         if(fileList != null) {return ResponseEntity.ok(fileList);}
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{repoId}/{prId}/file/{fileId}")
-    @Operation(summary="변경 된 코드 확인", description = "변경 된 파일의 코드를 조회합니다")
-    public ResponseEntity<FileDto> showChangedCode(@PathVariable int repoId, @PathVariable int prId, @PathVariable int fileId) {
-        FileDto file = prService.showChangedCode(repoId, prId, fileId);
-        if(file != null) {return ResponseEntity.ok(file);}
+    @GetMapping("/{repoId}/{prId}/file/{commitId}")
+    @Operation(summary="파일 목록 조회(commit별)", description = "Commit내에 변경된 파일 목록을 조회합니다")
+    public ResponseEntity<List<FileDto>> showFileListByCommit(@PathVariable int repoId, @PathVariable int prId, @PathVariable String commitId) {
+        List<FileDto> fileList = prService.showFileListByCommit(repoId, prId, commitId);
+        if(fileList != null) {return ResponseEntity.ok(fileList);}
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{repoId}/{prId}/file/raw/{fileId}")
+    @Operation(summary="변경 된 코드 확인", description = "변경 된 파일의 전 후 코드를 조회합니다")
+    public ResponseEntity<Map<String, String>> showChangedCode(@PathVariable String repoId,
+                                                               @PathVariable String prId,
+                                                               @PathVariable int fileId) {
+        Map<String, String> changedCode = prService.showChangedCode(repoId, prId, fileId);
+        if(changedCode != null && !changedCode.isEmpty()) {return ResponseEntity.ok(changedCode);}
         return ResponseEntity.noContent().build();
     }
 

@@ -9,6 +9,8 @@ import com.giteat.pr.repository.PrRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,13 +102,48 @@ public class PrServiceImpl implements PrService{
     }
 
     @Override
-    public List<FileDto> showFileList(int repoId, int prId) {
-        return prMapper.showFileList(repoId, prId);
+    public List<FileDto> showFileListByPr(int repoId, int prId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("repoId", repoId);
+        params.put("prId", prId);
+        return prMapper.showFileListByPr(params);
     }
 
     @Override
-    public FileDto showChangedCode(int repoId, int prId, int fileId) {
-        return prMapper.showChangedCode(repoId, prId, fileId);
+    public List<FileDto> showFileListByCommit(int repoId, int prId, String commitId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("repoId", repoId);
+        params.put("prId", prId);
+        params.put("commitId", commitId);
+        return prMapper.showFileListByCommit(params);
+    }
+
+    @Override
+    public Map<String, String> showChangedCode(String repoId, String prId, int fileId) {
+
+        // 1. DB에서 fileId를 기준으로 commit_id, new_path, old_path 가져오기
+        FileDto file = prMapper.getFileInfo(fileId);
+        if(file == null) return null;
+
+        String commitId = file.getCommitId();
+        String newPath = file.getNewPath();
+        String oldPath = file.getOldPath();
+
+        // 2. 파일 경로 인코딩
+        String encodedOldPath = encodePath(oldPath);
+        String encodedNewPath = encodePath(newPath);
+
+        // 3. 깃랩 API 호출 (변경 전 후 코드 가져오기)
+        String oldFileContent = gitLabApi.getRawCode(repoId, encodedOldPath, commitId,"");
+        String newFileContent = gitLabApi.getRawCode(repoId, encodedNewPath, commitId,"");
+
+        // 4. 결과를 Map으로 반환
+        Map<String, String> result = new HashMap<>();
+        result.put("oldCode", oldFileContent);
+        result.put("newCode", newFileContent);
+        result.put("diff", "현재는 임시값");
+
+        return result;
     }
 
     @Override
@@ -117,5 +154,14 @@ public class PrServiceImpl implements PrService{
         Map<String ,List<Map<String , Object>>> repositoryData = gitLabApi.getAllData(accessToken, repositoryId);
         System.out.println("repositoryData : " + repositoryData);
         return 1;
+    }
+
+    // 파일 경로를 URL 인코딩하는 함수
+    private String encodePath(String path) {
+        try {
+            return URLEncoder.encode(path, StandardCharsets.UTF_8).replace("/", "%2F");
+        } catch (Exception e) {
+            throw new RuntimeException("파일 경로 인코딩 실패: " + path, e);
+        }
     }
 }

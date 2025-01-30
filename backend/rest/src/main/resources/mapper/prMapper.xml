@@ -52,4 +52,42 @@
         WHERE pr_id = #{prId} AND comment_id = #{commentId}
     </delete>
 
+    <!-- 파일 목록 조회 (PR)-->
+    <select id="showFileListByPr" parameterType="map" resultType="fileDto">
+        SELECT
+            f.file_id AS fileId,
+            f.commit_id AS commitId,
+            f.file_name AS fileName,
+            f.old_path AS oldPath,
+            f.new_path AS newPath
+        FROM file f
+        JOIN commit c ON f.commit_id = c.commit_id
+        WHERE c.pr_id = #{prId} AND c.repo_id = #{repoId}
+    </select>
+
+    <!-- 파일 목록 조회 (Commit)-->
+    <select id="showFileListByCommit" parameterType="map" resultType="fileDto">
+        SELECT
+            f.file_id AS fileId,
+            f.commit_id AS commitId,
+            f.file_name AS fileName,
+            f.old_path AS oldPath,
+            f.new_path AS newPath
+        FROM file f
+        WHERE f.commit_id = #{commitId}
+    </select>
+
+    <!-- 파일 정보 조회 -->
+    <select id="getFileInfo" parameterType="int" resultType="fileDto">
+        SELECT
+        f.file_id AS fileId,
+        f.commit_id AS commitId,
+        f.file_name AS fileName,
+        f.old_path AS oldPath,
+        f.new_path AS newPath
+        FROM file f
+        WHERE f.file_id = #{fileId}
+    </select>
+
+
 </mapper>
