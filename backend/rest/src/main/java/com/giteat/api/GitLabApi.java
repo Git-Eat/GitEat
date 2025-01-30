@@ -11,9 +11,11 @@ import java.util.*;
 @Component
 public class GitLabApi {
     private final RestTemplate restTemplate;
-    private final String gitlabApiUrl = "https://gitlab.com/api/v4";
-    public GitLabApi(RestTemplate restTemplate){
+    private final String gitlabApiUrl = "https://lab.ssafy.com/api/v4";
+    private final GitLabTokenService gitLabTokenService;
+    public GitLabApi(RestTemplate restTemplate , GitLabTokenService gitLabTokenService){
         this.restTemplate = restTemplate;
+        this.gitLabTokenService = gitLabTokenService;
     }
 
     /**
@@ -85,25 +87,25 @@ public class GitLabApi {
     //  프로젝트의 Commits 가져오기
     public List<Map<String, Object>> getCommits(String projectId , String accessToken) {
         String url = gitlabApiUrl + "/projects/" + projectId + "/repository/commits";
-        return callApi(url , accessToken);
+        return callGetApi(url , accessToken);
     }
 
     //  프로젝트의 Issues 가져오기
     public List<Map<String, Object>> getIssues(String projectId , String accessToken) {
         String url = gitlabApiUrl + "/projects/" + projectId + "/issues";
-        return callApi(url , accessToken);
+        return callGetApi(url , accessToken);
     }
 
     //  프로젝트의 Discussions(토론) 가져오기
     public List<Map<String, Object>> getDiscussions(String projectId , String accessToken) {
         String url = gitlabApiUrl + "/projects/" + projectId + "/discussions";
-        return callApi(url , accessToken);
+        return callGetApi(url , accessToken);
     }
 
     //  프로젝트의 Comments(노트) 가져오기
     public List<Map<String, Object>> getComments(String projectId , String accessToken) {
         String url = gitlabApiUrl + "/projects/" + projectId + "/notes";
-        return callApi(url , accessToken);
+        return callGetApi(url , accessToken);
     }
 
     /**
@@ -112,11 +114,10 @@ public class GitLabApi {
      * @param jwtAccessToken
      * @return
      */
-    private List<Map<String, Object>> callGetApi(String url , String accessToken) {
-    private List<Map<String, Object>> callApi(String url , String jwtAccessToken) {
+    private List<Map<String, Object>> callGetApi(String url , String jwtAccessToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Private-Token", "UATEgVcVTSsLn7PWao6c");
-        String accessToken = gitLabToeknSerivce.getAccessToken(jwtAccessToken);
+        String accessToken = gitLabTokenService.getAccessToken(jwtAccessToken);
         headers.set("Private-Token", accessToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
