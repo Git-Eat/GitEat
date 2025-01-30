@@ -116,7 +116,6 @@ public class GitLabApi {
      */
     private List<Map<String, Object>> callGetApi(String url , String jwtAccessToken) {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Private-Token", "UATEgVcVTSsLn7PWao6c");
         String accessToken = gitLabTokenService.getAccessToken(jwtAccessToken);
         headers.set("Private-Token", accessToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
@@ -134,7 +133,8 @@ public class GitLabApi {
      */
     private Map<String, Object> callPostApi(String url, String accessToken, Map<String, String> requestBody) {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Private-Token", "UATEgVcVTSsLn7PWao6c");
+        String gitLabToken = gitLabTokenService.getAccessToken(accessToken);
+        headers.set("Private-Token", gitLabToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<Map<String, String>> entity = new HttpEntity<>(requestBody, headers);
@@ -152,7 +152,8 @@ public class GitLabApi {
      */
     private Map<String, Object> callPutApi(String url, String accessToken, Map<String, String> requestBody) {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Private-Token", "UATEgVcVTSsLn7PWao6c");
+        String gitLabToken = gitLabTokenService.getAccessToken(accessToken);
+        headers.set("Private-Token", gitLabToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<Map<String, String>> entity = new HttpEntity<>(requestBody, headers);
