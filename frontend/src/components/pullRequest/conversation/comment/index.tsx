@@ -15,23 +15,6 @@ export function Comment() {
       <hr className="my-4" />
       <div className="px-3">
         <p>API PR 테스트용 PR입니다.</p>
-        <br />
-        <div>
-          <ul className="list-disc list-inside">
-            <li>
-              pr api test
-              <span className="pl-5">69eea8</span>
-            </li>
-            <li>
-              login 기능 구현
-              <span className="pl-5">8dda5o</span>
-            </li>
-            <li>
-              회원가입 기능 구현 및 Oauth 추가
-              <span className="pl-5">54jh58w</span>
-            </li>
-          </ul>
-        </div>
       </div>
       <hr className="my-4" />
       <p className="text-right">3개의 답글</p>
