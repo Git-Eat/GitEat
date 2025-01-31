@@ -42,35 +42,35 @@ export function Comments() {
   }
 
   return (
-    <div className="bg-white my-5 p-5 rounded-xl">
+    <section className="bg-white my-5 p-5 rounded-xl">
       <ul>
         {comments.map((comment) => (
           <li key={comment.comment_id} className="mb-8">
-            <div className="flex items-center gap-2">
+            <header>
               <img
                 src="/src/assets/images/user_profile_1.svg"
                 alt="user profile"
-                className="max-w-9"
+                className="inline-block w-9 h-9 mr-2"
               />
-              <h1 className="text-[16px] font-semibold">USER</h1>
-            </div>
-            <p className="px-11">{comment.create_at}</p>
-            <hr className="my-4" />
-            <div className="px-3">
-              <p>{comment.content}</p>
-            </div>
-            <p className="text-right">3개의 답글</p>
-            <hr className="my-4" />
-            <Reply />
-            <div className="flex justify-end mt-2">
+              <h1 className="inline text-[16px] font-semibold">USER-01</h1>
+              <time className="block px-11">{comment.create_at}</time>
+            </header>
+            <article>
+              <hr className="my-4" />
+              <p className="px-3">{comment.content}</p>
+              <p className="text-right">3개의 답글</p>
+              <hr className="my-4" />
+              <Reply />
+            </article>
+            <footer className="flex justify-end mt-2">
               <button onClick={() => toggleReplyEditor(comment.comment_id)}>
                 {isReplyEditorOpen[comment.comment_id] ? "취소" : "답글 추가"}
               </button>
-            </div>
+            </footer>
             {isReplyEditorOpen[comment.comment_id] && <MarkdownEditor />}
           </li>
         ))}
       </ul>
-    </div>
+    </section>
   );
 }

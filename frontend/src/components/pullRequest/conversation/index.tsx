@@ -4,14 +4,14 @@ import { ParticipantList } from "./participantList";
 
 export function Conversation() {
   return (
-    <div className="flex gap-5">
-      <div className="w-3/4">
+    <section className="flex gap-5">
+      <main className="w-3/4">
         <Comments />
         <MarkdownEditor />
-      </div>
-      <div className="w-1/4">
+      </main>
+      <aside className="w-1/4">
         <ParticipantList />
-      </div>
-    </div>
+      </aside>
+    </section>
   );
 }
