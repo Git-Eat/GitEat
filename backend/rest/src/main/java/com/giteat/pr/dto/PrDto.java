@@ -11,11 +11,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class PrDto {
     private int prId;
+    private int repoId;
     private int userId;
     private String title;
     private String description;
-    private LocalDateTime createdAt;
-    private String target_branch;
-    private String source_branch;
-    private int is_opened;
+    private LocalDateTime createAt;
+    private int isOpened;
+    private String targetBranch;
+    private String sourceBranch;
 }

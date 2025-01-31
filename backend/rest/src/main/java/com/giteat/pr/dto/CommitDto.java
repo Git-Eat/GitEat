@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class CommitDto {
     private String commitId;
+    private int repoId;
     private int prId;
     private String content;
     private LocalDateTime commitedAt;

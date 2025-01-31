@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class RepositoryDto {
     private int repoId; // repo 고유 ID
-    private String userId; // 사용자 ID
     private String name; // repo 이름
     private String description; // repo 설명
     private String githubUrl; // 깃허브 URL

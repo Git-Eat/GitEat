@@ -2,10 +2,7 @@ package com.giteat.pr.service;
 
 import com.giteat.api.GitLabApi;
 import com.giteat.pr.dto.*;
-import com.giteat.pr.entity.CommitEntity;
-import com.giteat.pr.entity.PrEntity;
 import com.giteat.pr.mapper.PrMapper;
-import com.giteat.pr.repository.PrRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,28 +17,37 @@ import java.util.Map;
 public class PrServiceImpl implements PrService{
 
     private final PrMapper prMapper;
-    private final PrRepository prRepository;
     private final GitLabApi gitLabApi;
 
 
     @Override
-    public List<PrEntity> findByRepoId(int repoId) {
-        return prRepository.findByRepoId(repoId);
+    public List<PrDto> getPrList (int repoId) {
+        return prMapper.getPrList(repoId);
     }
 
     @Override
-    public PrEntity getPrById(int repoId, int prId) {
-        return prRepository.getPrById(repoId, prId);
+    public PrDto getPrById(int repoId, int prId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("repoId", repoId);
+        params.put("prId", prId);
+        return prMapper.getPrById(params);
     }
 
     @Override
-    public List<CommitEntity> getCommitList(int repoId, int prId) {
-        return prRepository.getCommitList(repoId, prId);
+    public List<CommitDto> getCommitList(int repoId,int prId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("repoId", repoId);
+        params.put("prId", prId);
+        return prMapper.getCommitList(params);
     }
 
     @Override
-    public CommitEntity getCommitById(int repoId, int prId, String commitId) {
-        return prRepository.getCommitById(repoId, prId, commitId);
+    public CommitDto getCommitById(int repoId, int prId, String commitId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("repoId", repoId);
+        params.put("prId", prId);
+        params.put("commitId", commitId);
+        return prMapper.getCommitById(params);
     }
 
     @Override
@@ -139,7 +145,7 @@ public class PrServiceImpl implements PrService{
 
         // 4. 결과를 Map으로 반환
         Map<String, String> result = new HashMap<>();
-        result.put("diff", "현재는 임시값");
+        result.put("fileName", file.getFileName());
         result.put("oldCode", oldFileContent);
         result.put("newCode", newFileContent);
 

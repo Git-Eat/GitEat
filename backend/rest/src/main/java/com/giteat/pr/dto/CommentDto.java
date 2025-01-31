@@ -12,9 +12,11 @@ import java.time.LocalDateTime;
 public class CommentDto {
     private int commentId;
     private int prId;
+    private int repoId;
+    private int userId;
+    private String dis_id;
     private String content;
-    private String commentType;
-    private int depth;
+    private int commentType;
     private String imageName;
-    private LocalDateTime createdAt;
+    private LocalDateTime createAt;
 }
