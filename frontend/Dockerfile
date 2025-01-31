@@ -1,6 +1,13 @@
 # 1. Node.js 이미지 사용 (v20.10.0)
 FROM node:20.10-alpine AS build
 
+# 환경변수 설정
+ARG VITE_GITLAB_CLIENT_ID
+ENV VITE_GITLAB_CLIENT_ID=$VITE_GITLAB_CLIENT_ID
+
+ARG VITE_API_BASE
+ENV VITE_API_BASE=$VITE_API_BASE
+
 # 2. 작업 디렉토리 설정
 WORKDIR /app
 
