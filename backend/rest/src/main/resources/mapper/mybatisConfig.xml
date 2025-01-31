@@ -14,6 +14,7 @@
         <typeAlias type="com.giteat.pr.dto.CommitDto" alias="commitDto"/>
         <typeAlias type="com.giteat.pr.dto.CommentDto" alias="commentDto"/>
         <typeAlias type="com.giteat.pr.dto.ReplyDto" alias="replyDto"/>
+        <typeAlias type="com.giteat.pr.dto.ReplyShowDto" alias="replyShowDto"/>
         <typeAlias type="com.giteat.pr.dto.FileDto" alias="fileDto"/>
     </typeAliases>
 

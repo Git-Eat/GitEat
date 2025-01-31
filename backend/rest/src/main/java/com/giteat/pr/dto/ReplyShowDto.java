@@ -9,11 +9,8 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReplyDto {
+public class ReplyShowDto {
     private int reCommentId;
-    private int commentId;
-    private int repoId;
-    private int prId;
     private int userId;
     private String disId;
     private String content;
