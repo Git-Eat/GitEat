@@ -2,6 +2,7 @@ package com.giteat.security.util;
 
 
 import org.apache.coyote.Response;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -13,15 +14,17 @@ import org.springframework.web.client.RestTemplate;
  *
  */
 @Component
+
 public class ApiUtil {
 
     private final RestTemplate restTemplate;
     @Value("${api.base-url}")
     private String restURL;
 
-    public ApiUtil() {
-        this.restTemplate = new RestTemplate();
+    public ApiUtil(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
+
 
     /**
      * restAPI 호출 GET
