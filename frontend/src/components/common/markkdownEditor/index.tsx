@@ -1,3 +1,4 @@
+import React from "react";
 import MDEditor from "@uiw/react-md-editor";
 import { useState } from "react";
 
@@ -7,8 +8,8 @@ export function MarkdownEditor() {
   );
   const [value, setValue] = useState<string>("");
 
-  function handleCategory(event) {
-    setCategory(event.target.value);
+  function handleCategory(event: React.ChangeEvent<HTMLSelectElement>) {
+    setCategory(event.target.value as "comment" | "suggest" | "review");
   }
 
   function handleCancel() {
@@ -37,7 +38,11 @@ export function MarkdownEditor() {
         <option value="review">review</option>
       </select>
 
-      <MDEditor value={value} onChange={setValue} preview="live" />
+      <MDEditor
+        value={value}
+        onChange={(val) => setValue(val ?? "")}
+        preview="live"
+      />
 
       <div className="mt-3 text-right">
         <button
