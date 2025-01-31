@@ -1,3 +1,8 @@
+import logo from "../../assets/images/logo.svg";
+import githubLogo from "../../assets/images/github_logo.svg";
+import gitlabLogo from "../../assets/images/gitlab_logo.svg";
+import side from "../../assets/images/main_side.png";
+
 export function Login() {
   // 백엔드에서 처리할 리디렉션 URI 추가해야댐
 
@@ -17,11 +22,7 @@ export function Login() {
         <div>
           <h1 className="text-5xl font-bold mb-[25px]">
             GIT
-            <img
-              className="inline w-[45px]"
-              src="/src/assets/images/logo.svg"
-              alt="logo"
-            />
+            <img className="inline w-[45px]" src={logo} alt="logo" />
             EAT
           </h1>
           <article className="flex flex-col gap-[5px] text-[#5C5C5D] text-xl tracking-wide mb-[50px]">
@@ -40,24 +41,20 @@ export function Login() {
               href="/loading"
               className="h-[71px] flex gap-[9px] bg-black text-white items-center justify-center font-[20px] font-semibold rounded-[30px]"
             >
-              <img
-                className="w-[55px]"
-                src="/src/assets/images/github_logo.svg"
-                alt="github_logo"
-              />
+              <img className="w-[55px]" src={githubLogo} alt="github_logo" />
               GitHub로 시작하기
             </a>
             <button
               onClick={gitLabLogin}
               className="h-[71px] flex gap-[9px] bg-[#364CCA] text-white items-center justify-center font-[20px] font-semibold rounded-[30px]"
             >
-              <img src="/src/assets/images/gitlab_logo.svg" alt="github_logo" />
+              <img src={gitlabLogo} alt="gitlab_logo" />
               GitLab으로 시작하기
             </button>
           </div>
         </div>
       </section>
-      <img src="/src/assets/images/main_side.png" alt="side" />
+      <img src={side} alt="side" />
     </div>
   );
 }
