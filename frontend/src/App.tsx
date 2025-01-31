@@ -3,18 +3,25 @@ import "./App.css";
 import { Login } from "./pages/login";
 import { DashBoard } from "./pages/dashboard";
 import { PullRequests } from "./pages/pullRequestList";
+import { RepositoryList } from "./pages/repositoryList";
 import { Conversation } from "./components/pullRequest/conversation";
-import { RepostytoryList } from "./pages/repositoryList";
 import { AuthLayout } from "./pages/authLayout";
+import { Loading } from "./pages/loading";
+import { Error } from "./pages/error";
+import { QueryClientProvider, QueryClient } from "react-query";
 
 function App() {
+  const queryClient = new QueryClient();
+
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route path="/loading" element={<Loading />} />
+          <Route path="/error" element={<Error />} />
           <Route element={<AuthLayout />}>
-            <Route path="/repos" element={<RepostytoryList />} />
+            <Route path="/repos" element={<RepositoryList />} />
             <Route path="/dashboard" element={<DashBoard />} />
             <Route path="/pulls" element={<PullRequests />}>
               <Route path="conversation" element={<Conversation />} />
@@ -25,7 +32,7 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
-    </>
+    </QueryClientProvider>
   );
 }
 
