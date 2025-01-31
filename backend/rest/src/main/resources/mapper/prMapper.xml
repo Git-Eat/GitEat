@@ -4,15 +4,61 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.giteat.pr.mapper.PrMapper">
 
-<!--    <resultMap id="commentResultMap" type="commentDto">-->
-<!--        <id property="commentId" column="comment_id"/>-->
-<!--        <result property="prId" column="pr_id"/>-->
-<!--        <result property="content" column="content"/>-->
-<!--        <result property="commentType" column="comment_type"/>-->
-<!--        <result property="depth" column="depth"/>-->
-<!--        <result property="imageName" column="image_name"/>-->
-<!--        <result property="createdAt" column="created_at"/>-->
-<!--    </resultMap>-->
+    <!-- PR 목록 조회 -->
+    <select id="getPrList" parameterType="int" resultType="prDto">
+        SELECT
+            pr_id AS prId,
+            repo_id AS repoId,
+            title AS title,
+            description AS description,
+            user_id AS userId,
+            create_at AS createAt,
+            is_opened AS isOpened,
+            source_branch AS sourceBranch,
+            target_branch AS targetBranch
+        FROM pr
+        WHERE repo_id = #{repoId}
+    </select>
+
+    <!-- 특정 PR 상세 정보 조회 -->
+    <select id="getPrById" parameterType="map" resultType="prDto">
+        SELECT
+            pr_id AS prId,
+            repo_id AS repoId,
+            title AS title,
+            description AS description,
+            user_id AS userId,
+            create_at AS createAt,
+            is_opened AS isOpened,
+            source_branch AS sourceBranch,
+            target_branch AS targetBranch
+        FROM pr
+        WHERE repo_id = #{repoId} AND pr_id = #{prId}
+    </select>
+
+    <!-- PR내 Commit 목록 조회  -->
+    <select id="getCommitList" parameterType="map" resultType="commitDto">
+        SELECT
+            commit_id AS commitId,
+            repo_id AS repoId,
+            pr_id AS prId,
+            content AS content,
+            commited_at AS commitedAt
+        FROM commit
+        WHERE repo_id = #{repoId} AND pr_id = #{prId}
+    </select>
+
+    <!-- 특정 Commit 상세 정보 조회  -->
+    <select id="getCommitById" parameterType="map" resultType="commitDto">
+        SELECT
+            commit_id AS commitId,
+            repo_id AS repoId,
+            pr_id AS prId,
+            content AS content,
+            commited_at AS commitedAt
+        FROM commit
+        WHERE repo_id = #{repoId} AND pr_id = #{prId} AND commit_id = #{commitId}
+    </select>
 
     <!-- 댓글 조회 -->
     <select id="getCommentList" parameterType="map" resultType="commentDto">
@@ -51,5 +97,43 @@
         DELETE FROM comment
         WHERE pr_id = #{prId} AND comment_id = #{commentId}
     </delete>
+
+    <!-- 파일 목록 조회 (PR)-->
+    <select id="showFileListByPr" parameterType="map" resultType="fileDto">
+        SELECT
+            f.file_id AS fileId,
+            f.commit_id AS commitId,
+            f.file_name AS fileName,
+            f.old_path AS oldPath,
+            f.new_path AS newPath
+        FROM file f
+        JOIN commit c ON f.commit_id = c.commit_id
+        WHERE c.pr_id = #{prId} AND c.repo_id = #{repoId}
+    </select>
+
+    <!-- 파일 목록 조회 (Commit)-->
+    <select id="showFileListByCommit" parameterType="map" resultType="fileDto">
+        SELECT
+            f.file_id AS fileId,
+            f.commit_id AS commitId,
+            f.file_name AS fileName,
+            f.old_path AS oldPath,
+            f.new_path AS newPath
+        FROM file f
+        WHERE f.commit_id = #{commitId}
+    </select>
+
+    <!-- 파일 정보 조회 -->
+    <select id="getFileInfo" parameterType="int" resultType="fileDto">
+        SELECT
+        f.file_id AS fileId,
+        f.commit_id AS commitId,
+        f.file_name AS fileName,
+        f.old_path AS oldPath,
+        f.new_path AS newPath
+        FROM file f
+        WHERE f.file_id = #{fileId}
+    </select>
+
 
 </mapper>

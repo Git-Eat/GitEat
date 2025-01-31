@@ -1,11 +1,7 @@
 package com.giteat.pr.controller;
 
 
-import com.giteat.pr.dto.CommentDto;
-import com.giteat.pr.dto.FileDto;
-import com.giteat.pr.dto.ReplyDto;
-import com.giteat.pr.entity.CommitEntity;
-import com.giteat.pr.entity.PrEntity;
+import com.giteat.pr.dto.*;
 import com.giteat.pr.service.PrServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +9,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/pr")
+@RequestMapping("/api/rest/pr")
 public class PrController {
 
     @Autowired
@@ -24,24 +21,24 @@ public class PrController {
 
     @GetMapping("/{repoId}")
     @Operation(summary="PR 목록 확인", description = "PR의 목록을 확인합니다")
-    public ResponseEntity<List<PrEntity>> getPrList(@PathVariable int repoId){
-        List<PrEntity> prList = prService.findByRepoId(repoId);
+    public ResponseEntity<List<PrDto>> getPrList(@PathVariable int repoId){
+        List<PrDto> prList = prService.getPrList(repoId);
         if(prList != null) {return ResponseEntity.ok(prList);}
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{repoId}/{prId}")
     @Operation(summary="PR 정보 확인", description = "PR의 상세 정보를 확인합니다")
-    public ResponseEntity<PrEntity> getPrById(@PathVariable int repoId, @PathVariable int prId) {
-        PrEntity pr = prService.getPrById(repoId, prId);
+    public ResponseEntity<PrDto> getPrById(@PathVariable int repoId, @PathVariable int prId) {
+        PrDto pr = prService.getPrById(repoId, prId);
         if(pr != null) {return ResponseEntity.ok(pr);}
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{repoId}/{prId}/commit")
     @Operation(summary="Commit 목록 확인", description = "PR내의 Commit 목록을 확인합니다")
-    public ResponseEntity<List<CommitEntity>> getCommitList(@PathVariable int repoId, @PathVariable int prId) {
-        List<CommitEntity> commitList = prService.getCommitList(repoId, prId);
+    public ResponseEntity<List<CommitDto>> getCommitList(@PathVariable int repoId, @PathVariable int prId) {
+        List<CommitDto> commitList = prService.getCommitList(repoId,prId);
         if(commitList !=null) {return ResponseEntity.ok(commitList);}
         return ResponseEntity.noContent().build();
     }
@@ -49,8 +46,8 @@ public class PrController {
 
     @GetMapping("/{repoId}/{prId}/commit/{commitId}")
     @Operation(summary="PR 정보 확인", description = "PR의 상세 정보를 확인합니다")
-    public ResponseEntity<CommitEntity> getCommitById(@PathVariable int repoId, @PathVariable int prId, @PathVariable String commitId) {
-        CommitEntity commit = prService.getCommitById(repoId, prId, commitId);
+    public ResponseEntity<CommitDto> getCommitById(@PathVariable int repoId,@PathVariable int prId, @PathVariable String commitId) {
+        CommitDto commit = prService.getCommitById(repoId, prId, commitId);
         if(commit != null) {return ResponseEntity.ok(commit);}
         return ResponseEntity.noContent().build();
     }
@@ -120,7 +117,7 @@ public class PrController {
 
 
     @PutMapping("/{repoId}/{prId}/reply/{replyId}")
-    @Operation(summary = "대댓글 수정", description = "대댓글을 수정합니다~")
+    @Operation(summary = "대댓글 수정", description = "대댓글을 수정합니다")
     public ResponseEntity<Integer> updateReply(@PathVariable String repoId,
                                                @PathVariable String prId,
                                                @PathVariable String replyId,
@@ -141,18 +138,28 @@ public class PrController {
     }
 
     @GetMapping("/{repoId}/{prId}/file")
-    @Operation(summary="파일 목록 조회", description = "PR내에 변경된 파일 목록을 조회합니다")
-    public ResponseEntity<List<FileDto>> showFileList(@PathVariable int repoId, @PathVariable int prId) {
-        List<FileDto> fileList = prService.showFileList(repoId, prId);
+    @Operation(summary="파일 목록 조회(PR)", description = "PR내에 변경된 모든 파일 목록을 조회합니다")
+    public ResponseEntity<List<FileDto>> showFileListByPr(@PathVariable int repoId, @PathVariable int prId) {
+        List<FileDto> fileList = prService.showFileListByPr(repoId, prId);
         if(fileList != null) {return ResponseEntity.ok(fileList);}
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{repoId}/{prId}/file/{fileId}")
-    @Operation(summary="변경 된 코드 확인", description = "변경 된 파일의 코드를 조회합니다")
-    public ResponseEntity<FileDto> showChangedCode(@PathVariable int repoId, @PathVariable int prId, @PathVariable int fileId) {
-        FileDto file = prService.showChangedCode(repoId, prId, fileId);
-        if(file != null) {return ResponseEntity.ok(file);}
+    @GetMapping("/{repoId}/{prId}/file/{commitId}")
+    @Operation(summary="파일 목록 조회(commit별)", description = "Commit내에 변경된 파일 목록을 조회합니다")
+    public ResponseEntity<List<FileDto>> showFileListByCommit(@PathVariable int repoId, @PathVariable int prId, @PathVariable String commitId) {
+        List<FileDto> fileList = prService.showFileListByCommit(repoId, prId, commitId);
+        if(fileList != null) {return ResponseEntity.ok(fileList);}
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{repoId}/{prId}/file/raw/{fileId}")
+    @Operation(summary="변경 된 코드 확인", description = "변경 된 파일의 전 후 코드를 조회합니다")
+    public ResponseEntity<Map<String, String>> showChangedCode(@PathVariable String repoId,
+                                                               @PathVariable String prId,
+                                                               @PathVariable int fileId) {
+        Map<String, String> changedCode = prService.showChangedCode(repoId, prId, fileId);
+        if(changedCode != null && !changedCode.isEmpty()) {return ResponseEntity.ok(changedCode);}
         return ResponseEntity.noContent().build();
     }
 

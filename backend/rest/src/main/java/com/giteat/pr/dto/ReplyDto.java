@@ -12,9 +12,12 @@ import java.time.LocalDateTime;
 public class ReplyDto {
     private int reCommentId;
     private int commentId;
-    private int aiCommentId;
+    private int repoId;
+    private int prId;
+    private int userId;
+    private String dis_id;
     private String content;
-    private String replyType;
+    private int replyType;
     private String imageName;
-    private LocalDateTime createdAt;
+    private LocalDateTime createAt;
 }

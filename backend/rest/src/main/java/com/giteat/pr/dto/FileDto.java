@@ -8,9 +8,12 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FileDto {
-    private int fileId;
+    private String fileId;
     private String commitId;
+    private int repoId;
+    private int prId;
     private String fileName;
     private String oldPath;
     private String newPath;
+    private int fileStatus;
 }
