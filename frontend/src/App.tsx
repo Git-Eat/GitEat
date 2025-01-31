@@ -4,7 +4,7 @@ import { Login } from "./pages/login";
 import { DashBoard } from "./pages/dashboard";
 import { PullRequests } from "./pages/pullRequestList";
 import { RepositoryList } from "./pages/repositoryList";
-import { Conversation } from "./pages/conversation";
+import { Conversation } from "./components/pullRequest/conversation";
 import { AuthLayout } from "./pages/authLayout";
 import { Loading } from "./pages/loading";
 import { Error } from "./pages/error";
