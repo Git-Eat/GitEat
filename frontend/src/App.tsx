@@ -9,6 +9,7 @@ import { AuthLayout } from "./pages/authLayout";
 import { Loading } from "./pages/loading";
 import { Error } from "./pages/error";
 import { QueryClientProvider, QueryClient } from "react-query";
+import { FileChanges } from "./components/pullRequest/fileChanges";
 
 function App() {
   const queryClient = new QueryClient();
@@ -26,7 +27,7 @@ function App() {
             <Route path="/pulls" element={<PullRequests />}>
               <Route path="conversation" element={<Conversation />} />
               <Route path="commits" element={<>commits</>} />
-              <Route path="file-changes" element={<>fileChanges</>} />
+              <Route path="file-changes" element={<FileChanges />} />
             </Route>
             <Route path="/wiki" element={<PullRequests />} />
           </Route>
