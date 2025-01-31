@@ -7,4 +7,6 @@ import java.util.List;
 public interface NotificationMapper {
     List<NotificationDto> selectNotiList();
 
+    void updateNotiStatus(NotificationDto notiStatusDto);
+
 }

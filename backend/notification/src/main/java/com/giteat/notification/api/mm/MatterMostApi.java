@@ -14,9 +14,8 @@ import java.util.Map;
 @AllArgsConstructor
 public class MatterMostApi {
     private final RestTemplate restTemplate;
-    private final String url = "https://meeting.ssafy.com/hooks/heishg3retgh7p61urhdfycuxc";
 
-    public void sendNotification(String message) {
+    public boolean sendNotification(String message , String url) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
 
@@ -27,10 +26,9 @@ public class MatterMostApi {
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
 
         if (response.getStatusCode().is2xxSuccessful()) {
-            System.out.println("✅ Mattermost 알림 전송 성공");
-        } else {
-            System.out.println("❌ Mattermost 알림 전송 실패: " + response.getBody());
+           return true;
         }
+        return false;
     }
 
 }

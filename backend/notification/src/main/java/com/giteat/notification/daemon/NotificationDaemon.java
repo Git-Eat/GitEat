@@ -17,17 +17,22 @@ public class NotificationDaemon {
     private final NotificationService notiService;
     private final MatterMostApi mmApi;
 
-    @Scheduled(fixedRate = 6000)
+    @Scheduled(fixedRate = 180000) // 1초 : 1000  , 세팅값은 3분
     public void notiDaemon(){
-        //List<NotificationDto> notiList = notiService.selectNotiList();
-
-        mmApi.sendNotification("카카오 보고있나? 조창훈이 간다!! 자 두과자!!");
-
-//        for(NotificationDto noti : notiList){
-//
-//        }
-
-
+        List<NotificationDto> notiList = notiService.selectNotiList();
+        List<NotificationDto> notiStatusList = new ArrayList<>();
+        for (NotificationDto noti : notiList) {
+            String message = noti.getNotiMessage();
+            String url = noti.getNotiUrl();
+            boolean notiCheck = mmApi.sendNotification(message , url);
+            if(notiCheck){
+                noti.setMsgStatus(1);
+                notiStatusList.add(noti);
+            }
+        }
+        for(NotificationDto notiStatus : notiStatusList){
+            notiService.updateNotiStatus(notiStatus);
+        }
 
     }
 }

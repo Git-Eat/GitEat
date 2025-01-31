@@ -17,4 +17,8 @@ public class NotificationService {
         return notiMapper.selectNotiList();
     }
 
+    public void updateNotiStatus(NotificationDto notiStatusDto){
+        notiMapper.updateNotiStatus(notiStatusDto);
+    };
+
 }
