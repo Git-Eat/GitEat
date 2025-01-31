@@ -121,7 +121,7 @@ public class PrController {
 
 
     @PutMapping("/{repoId}/{prId}/reply/{replyId}")
-    @Operation(summary = "대댓글 수정", description = "대댓글을 수정합니다~")
+    @Operation(summary = "대댓글 수정", description = "대댓글을 수정합니다")
     public ResponseEntity<Integer> updateReply(@PathVariable String repoId,
                                                @PathVariable String prId,
                                                @PathVariable String replyId,

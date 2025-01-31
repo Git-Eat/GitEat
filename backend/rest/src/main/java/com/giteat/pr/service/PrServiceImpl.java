@@ -139,9 +139,9 @@ public class PrServiceImpl implements PrService{
 
         // 4. 결과를 Map으로 반환
         Map<String, String> result = new HashMap<>();
+        result.put("diff", "현재는 임시값");
         result.put("oldCode", oldFileContent);
         result.put("newCode", newFileContent);
-        result.put("diff", "현재는 임시값");
 
         return result;
     }

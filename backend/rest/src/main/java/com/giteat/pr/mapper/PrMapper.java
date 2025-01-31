@@ -11,13 +11,9 @@ import java.util.Map;
 @Mapper
 public interface PrMapper {
     List<CommentDto> getCommentList(Map<String, Object> params); // 댓글 조회
-    int insertComment(CommentDto commentDto); // 댓글 등록
-    int updateComment(CommentDto commentDto); // 댓글 수정
     int deleteComment(Map<String, Object> params); // 댓글 삭제
 
     List<ReplyDto> showReply(int repoId, int prId, int commentId); // 대댓글 조회
-    int insertReply(ReplyDto replyDto); // 대댓글 등록
-    int updateReply(ReplyDto replyDto); // 대댓글 수정
     int deleteReply(int replyId); // 대댓글 삭제
 
     List<FileDto> showFileListByPr(Map<String, Object> params);
