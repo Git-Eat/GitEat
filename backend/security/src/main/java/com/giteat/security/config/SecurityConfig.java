@@ -1,7 +1,6 @@
 package com.giteat.security.config;
 
-import com.giteat.security.oauth.handler.OAuthLoginSuccessHandler;
-import org.apache.tomcat.util.file.ConfigurationSource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -19,6 +18,7 @@ import java.util.Arrays;
 @Configuration
 //security 활성화
 @EnableWebSecurity
+@Slf4j
 public class SecurityConfig {
 
     private final AuthenticationSuccessHandler OAuthLoginSuccessHandler;
@@ -35,18 +35,24 @@ public class SecurityConfig {
         * */
         http
                 .csrf((csrf) -> csrf.disable())
-                .cors(cors -> cors.configurationSource(corsConfigurationSource))
-                .formLogin((auth) -> auth.disable())
-                .httpBasic((auth) -> auth.disable());
+                .cors(Customizer.withDefaults())
+                .formLogin((form) -> form.disable())
+                .httpBasic((basic) -> basic.disable());
 
         // OAuth2 설정
         http
                 .oauth2Login(oauth2 -> oauth2
-                        .authorizationEndpoint(authorization -> authorization
-                                .baseUri("/api/oauth/authorization"))
-                        .redirectionEndpoint(redirection -> redirection
-                                .baseUri("/api/oauth/gitlab/callback"))
+//                        .authorizationEndpoint(authorization -> authorization
+//                                .baseUri("/oauth2/authorization/gitlab"))
+//                        .redirectionEndpoint(redirection -> redirection
+//                                .baseUri("/login/oauth2/code/gitlab"))
                         .successHandler(OAuthLoginSuccessHandler)
+                        .failureHandler((request, response, e) -> {
+                            // 인증 실패 시 처리
+                            log.error("인증 실패: ", e);
+                            response.sendRedirect("/login/oauth2/error");
+
+                        })
                 );
 
         //로그아웃 설정
@@ -63,16 +69,23 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/api").permitAll()
-                        .requestMatchers("/api/oauth/gitlab").permitAll()
-                        .requestMatchers("/api/oauth/gitlab/callback").permitAll()
-                        .requestMatchers("/api/oauth/logout").permitAll()
-                        .anyRequest().authenticated());
+                        .requestMatchers(
+                                "/oauth2/authorization/**",  // 인증 시작 endpoint
+                                "/login/oauth2/code/**", // 리다이렉트 endpoint
+                                "/oauth/logout",               // 로그아웃 endpoint
+                                "/oauth/gitlab",
+                                "/login/gitlab"
+                                ).permitAll()
+                        .requestMatchers("/api/**").permitAll()  // API 엔드포인트
+                        .anyRequest().authenticated()
+                );
 
+        // 디버깅용 로그 추가
+        log.debug("Security configuration loaded successfully");
         //세션 설정 : STATELESS
         http
                 .sessionManagement((session) -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
 
         return http.build();
     }
@@ -89,7 +102,7 @@ public class SecurityConfig {
         // 어떤 URL에 어떤 CORS 설정을 적용할지
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         // 모든 경로에 CORS configuration 적용
-        source.registerCorsConfiguration("/api/**", configuration);
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 

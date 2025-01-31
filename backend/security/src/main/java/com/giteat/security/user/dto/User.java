@@ -1,4 +1,4 @@
-package com.giteat.security.oauth.dto;
+package com.giteat.security.user.dto;
 
 import lombok.*;
 

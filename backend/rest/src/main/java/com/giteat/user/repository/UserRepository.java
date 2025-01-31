@@ -1,6 +1,5 @@
-package com.giteat.security.oauth.repository;
+package com.giteat.user.repository;
 
-import com.giteat.security.oauth.dto.User;
 import com.giteat.security.oauth.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

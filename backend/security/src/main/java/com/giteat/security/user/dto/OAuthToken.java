@@ -1,4 +1,4 @@
-package com.giteat.security.oauth.dto;
+package com.giteat.security.user.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,4 +24,5 @@ public class OAuthToken {
     private String name;
     private String avatarUrl;
     private LocalDateTime createdAt;
+
 }

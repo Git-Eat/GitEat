@@ -44,6 +44,8 @@ dependencies {
 	testImplementation 'org.springframework:spring-webflux'
 	testImplementation 'org.springframework.graphql:spring-graphql-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+
 }
 
 dependencyManagement {

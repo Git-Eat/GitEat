@@ -1,4 +1,4 @@
-package com.giteat.security.oauth.entity;
+package com.giteat.user.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
