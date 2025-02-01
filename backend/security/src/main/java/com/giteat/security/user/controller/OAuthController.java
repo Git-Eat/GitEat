@@ -45,7 +45,7 @@ public class OAuthController {
     * 2. 서버가 해당 access token으로 GitLab API 호출
     * 3. GitLab으로부터 인증된 사용자의 정보를 받아서 반환
     * */
-    @GetMapping("gitlab/user")
+    @GetMapping("/gitlab/user")
     public ResponseEntity<Map<String, Object>> getUserInfo(@RequestHeader("Authorization") String accessToken) {
         return ResponseEntity.ok(oauthApi.getUserInfo(accessToken));
     }
@@ -78,11 +78,11 @@ public class OAuthController {
         return ResponseEntity.ok(oauthApi.refreshAccessToken(refreshToken));
     }
 
-    @PostMapping("/gitlab/logout")
-    public ResponseEntity<Void> gitlabLogout(@RequestHeader("Authorization") String accessToken) {
-        oauthService.gitlabLogout(accessToken);
-        return ResponseEntity.ok().build();
-    }
+//    @PostMapping("/gitlab/logout")
+//    public ResponseEntity<Void> gitlabLogout(@RequestHeader("Authorization") String accessToken) {
+//        oauthService.gitlabLogout(accessToken);
+//        return ResponseEntity.ok().build();
+//    }
 
 
     /**

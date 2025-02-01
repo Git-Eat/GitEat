@@ -71,7 +71,10 @@ public class CustomOAuthService implements OAuth2UserService<OAuth2UserRequest, 
         return oauthToken;
     }
 
-    public void gitlabLogout(String accessToken) {
 
-    }
+
+
+//    public void gitlabLogout(String accessToken) {
+//
+//    }
 }

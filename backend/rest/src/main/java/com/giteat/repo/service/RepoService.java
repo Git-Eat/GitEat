@@ -1,0 +1,12 @@
+package com.giteat.repo.service;
+
+import com.giteat.repo.entity.RepositoryEntity;
+
+import java.util.List;
+
+public interface RepoService {
+    List<RepositoryEntity> getRepoList();
+    RepositoryEntity findByRepoId(int repoId);
+    RepositoryEntity insertRepo(int repoId);
+    int deleteRepo(int repoId);
+}
