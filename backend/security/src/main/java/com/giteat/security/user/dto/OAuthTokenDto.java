@@ -11,9 +11,9 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @NoArgsConstructor
-public class OAuthToken {
+public class OAuthTokenDto {
     private Integer oauthId;
-    private Integer userId;
+    private String userName;
     private String providerType;
     private String accessToken;
     private String tokenType;
