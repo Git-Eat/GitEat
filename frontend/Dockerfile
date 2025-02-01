@@ -11,13 +11,13 @@ ENV VITE_API_BASE=$VITE_API_BASE
 # 2. 작업 디렉토리 설정
 WORKDIR /app
 
-# 3. 패키지 파일 복사 및 종속성 설치
-COPY package*.json ./
-RUN npm install --legacy-peer-deps
+# 3. 패키지 파일 복사 및 종속성 설치 (Yarn 사용)
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile
 
 # 4. 소스 코드 복사 및 빌드
 COPY . .
-RUN npm run build
+RUN yarn build
 
 # 5. Nginx를 사용하여 정적 파일 서빙
 FROM nginx:alpine
