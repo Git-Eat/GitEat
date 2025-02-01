@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
-import { Reply } from "../reply";
 import axios from "axios";
+import { useState } from "react";
+import { useQuery } from "react-query";
+import { Reply } from "../reply";
 import { MarkdownEditor } from "../../../common/markdownEditor";
+import spinner from "../../../../assets/images/spinner.svg";
 
 interface Comment {
   comment_id: number;
@@ -9,26 +11,20 @@ interface Comment {
   create_at: string;
 }
 
+async function fetchComments() {
+  const response = await axios.get("/api/pr_id/comments");
+  return response.data;
+}
+
 export function Comments() {
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const {
+    data: comments,
+    isLoading,
+    isError,
+  } = useQuery<Comment[]>(["comments"], fetchComments);
   const [isReplyEditorOpen, setIsReplyEditorOpen] = useState<
     Record<number, boolean>
   >({});
-
-  useEffect(() => {
-    axios
-      .get("/api/pr_id/comments")
-      .then((response) => {
-        setComments(response.data);
-      })
-      .catch((error) => {
-        console.log("Error fetching post:", error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
 
   function toggleReplyEditor(commentId: number) {
     setIsReplyEditorOpen((prev) => ({
@@ -37,14 +33,18 @@ export function Comments() {
     }));
   }
 
-  if (loading) {
-    return <p>Loading...</p>;
+  if (isLoading) {
+    return <img src={spinner} alt="Loading..." />;
+  }
+
+  if (isError) {
+    return <p>댓글을 불러오는 중 오류가 발생했습니다.</p>;
   }
 
   return (
     <section className="bg-white my-5 p-5 rounded-xl">
       <ul>
-        {comments.map((comment) => (
+        {comments?.map((comment) => (
           <li key={comment.comment_id} className="mb-8">
             <header>
               <img
