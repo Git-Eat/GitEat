@@ -13,7 +13,7 @@ WORKDIR /app
 
 # 3. 패키지 파일 복사 및 종속성 설치 (Yarn 사용)
 COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
+RUN yarn install --check-files
 
 # 4. 소스 코드 복사 및 빌드
 COPY . .
