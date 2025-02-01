@@ -2,7 +2,15 @@ import React from "react";
 import MDEditor from "@uiw/react-md-editor";
 import { useState } from "react";
 
-export function MarkdownEditor() {
+interface MarkdownEditorProps {
+  onAddSingleComment: (value: string) => void;
+  onStartReview: (value: string) => void;
+}
+
+export function MarkdownEditor({
+  onAddSingleComment,
+  onStartReview,
+}: MarkdownEditorProps) {
   const [category, setCategory] = useState<"comment" | "suggest" | "review">(
     "comment"
   );
@@ -18,11 +26,13 @@ export function MarkdownEditor() {
 
   function handleAddSingleComment() {
     if (!value.trim()) return alert("내용을 입력해주세요.");
+    onAddSingleComment(value);
     setValue("");
   }
 
   function handleStartReview() {
     if (!value.trim()) return alert("내용을 입력해주세요.");
+    onStartReview(value);
     setValue("");
   }
 

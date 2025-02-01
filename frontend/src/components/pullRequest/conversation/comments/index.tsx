@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Reply } from "../reply";
 import axios from "axios";
-import { MarkdownEditor } from "../../../common/markkdownEditor";
+import { MarkdownEditor } from "../../../common/markdownEditor";
 
 interface Comment {
   comment_id: number;
