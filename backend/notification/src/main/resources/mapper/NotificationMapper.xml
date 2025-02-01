@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.giteat.notification.daemon.mapper.NotificationMapper">
+    <!-- ResultMap을 이용한 명시적 매핑 -->
+    <resultMap id="notificationResultMap" type="com.giteat.notification.daemon.dto.NotificationDto">
+        <result property="notiId" column="noti_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="repoId" column="repo_id"/>
+        <result property="notiMessage" column="noti_message"/>
+        <result property="sendType" column="send_type"/>
+        <result property="notiType" column="noti_type"/>
+        <result property="sendTime" column="send_time"/>
+        <result property="notiUrl" column="noti_url"/>
+        <result property="msgStatus" column="msg_status"/>
+    </resultMap>
+
+
+    <!-- 알림 리스트 조회 -->
+    <select id="selectNotiList" resultMap="notificationResultMap">
+        select
+            n.noti_id,
+            n.user_id ,
+            n.repo_id ,
+            n.noti_message ,
+            n.send_type ,
+            n.noti_type ,
+            n.send_time ,
+            nt.noti_url,
+            n.msg_status
+        from notification as n
+        join noti_token as nt
+        on n.repo_id = nt.repo_id
+        and n.user_id = nt.user_id
+        where n.msg_status =0;
+    </select>
+
+    <update id="updateNotiStatus" parameterType="java.util.Map">
+        UPDATE notification
+        SET msg_status = #{msgStatus} ,
+            send_time = now()
+        WHERE noti_id = #{notiId}
+    </update>
+
+
+
+
+
+
+
+</mapper>
