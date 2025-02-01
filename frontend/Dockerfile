@@ -1,5 +1,5 @@
 # 1. Node.js 이미지 사용 (v20.10.0)
-FROM node:20.10-alpine AS build
+FROM node:20.13-alpine AS build
 
 # 환경변수 설정
 ARG VITE_GITLAB_CLIENT_ID
@@ -13,7 +13,7 @@ WORKDIR /app
 
 # 3. 패키지 파일 복사 및 종속성 설치 (Yarn 사용)
 COPY package.json yarn.lock ./
-RUN yarn install --check-files
+RUN yarn install --frozen-lockfile
 
 # 4. 소스 코드 복사 및 빌드
 COPY . .
