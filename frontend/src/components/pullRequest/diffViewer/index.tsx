@@ -1,7 +1,8 @@
 import ReactDiffViewer, { DiffMethod } from "react-diff-viewer";
 import Prism from "prismjs";
 import "prismjs/components/prism-javascript"; // JavaScript 언어 정의
-import "prismjs/themes/prism-okaidia.css"; // Prism 테마 CSS 불러오기
+// import "prismjs/themes/prism-okaidia.css"; // Prism 테마 - 다크모드
+import "prismjs/themes/prism-solarizedlight.css"; // prism 테마 - 라이트모드
 interface DiffViewerProps {
   oldCode: string;
   newCode: string;
@@ -24,6 +25,7 @@ export function DiffViewer({ oldCode, newCode }: DiffViewerProps) {
         compareMethod={DiffMethod.WORDS}
         splitView={true}
         renderContent={highlightSyntax}
+        // useDarkTheme
       />
     </div>
   );
