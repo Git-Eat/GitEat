@@ -37,7 +37,7 @@ export function MarkdownEditor() {
         <option value="review">review</option>
       </select>
 
-      <MDEditor value={value} onChange={setValue} preview="live" />
+      <MDEditor value={value} onChange={setValue} preview="edit" />
 
       <div className="mt-3 text-right">
         <button
