@@ -72,6 +72,16 @@ public class PrController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/{repoId}/{prId}/file/comment")
+    @Operation(summary="코드에 댓글 등록", description = "파일 코드에 라인별로 댓글을 등록합니다")
+    public ResponseEntity<Integer> insertFileComment(@PathVariable String repoId,
+                                                     @PathVariable String prId,
+                                                     @RequestBody CustomCommentDto customCommentDto){
+        int result = prService.insertFileComment(repoId, prId, customCommentDto);
+        if(result==200) {return ResponseEntity.ok(result);}
+        return ResponseEntity.noContent().build();
+    }
+
 
     @PutMapping("/{repoId}/{prId}/comment/{commentId}")
     @Operation(summary="댓글 수정", description = "PR에 작성한 댓글을 수정합니다")
@@ -88,7 +98,9 @@ public class PrController {
 
     @DeleteMapping("/{repoId}/{prId}/comment/{commentId}")
     @Operation(summary="댓글 삭제", description = "PR에 작성한 댓글을 삭제합니다")
-    public ResponseEntity<Integer> deleteComment(@PathVariable int repoId, @PathVariable int prId, @PathVariable int commentId) {
+    public ResponseEntity<Integer> deleteComment(@PathVariable String repoId,
+                                                 @PathVariable String prId,
+                                                 @PathVariable String commentId) {
         int result = prService.deleteComment(repoId, prId, commentId);
         if(result !=0) {return ResponseEntity.ok(result);}
         return ResponseEntity.noContent().build();
@@ -128,11 +140,12 @@ public class PrController {
     }
 
 
-    @DeleteMapping("/{repoId}/{prId}/comment/{commentId}/reply/{replyId}")
+    @DeleteMapping("/{repoId}/{prId}/reply/{reCommentId}")
     @Operation(summary = "대댓글 삭제", description = "대댓글을 삭제합니다")
-    public ResponseEntity<Integer> deleteReply(@PathVariable int replyId){
-        //replyId는 note_id
-        int result = prService.deleteReply(replyId);
+    public ResponseEntity<Integer> deleteReply(@PathVariable String repoId,
+                                               @PathVariable String prId,
+                                               @PathVariable String reCommentId){
+        int result = prService.deleteComment(repoId, prId, reCommentId);
         if(result !=0) {return ResponseEntity.ok(result);}
         return ResponseEntity.noContent().build();
     }

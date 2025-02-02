@@ -15,13 +15,16 @@ public interface PrService {
     List<CommentDto> getCommentList(int repoId, int prId); // 댓글 조회
     int insertComment (int repoId, int prId, CommentDto commentDto); // 댓글 등록
     int updateComment(int repoId, int prId, CommentDto commentDto); // 댓글 수정
-    int deleteComment(int repoId, int prId, int commentId); // 댓글 삭제
+    int deleteComment(String repoId, String prId, String commentId); // 댓글 및 대댓글 삭제
+
+    /* 파일에 댓글 달기*/
+    int insertFileComment(String repoId, String prId, CustomCommentDto customCommentDto);
 
     /* 대댓글 관련 함수 */
     List<ReplyDto> showReply(int repoId, int prId, int commentId); // 대댓글 조회
     int insertReply(String repoId, String prId, String discussionId, ReplyDto replyDto); // 대댓글 등록
     int updateReply(String repoId, String prId, String reCommentId, ReplyDto replyDto); // 대댓글 수정
-    int deleteReply(int replyId); // 대댓글 삭제
+    int deleteReply(String repoId, String prId, String reCommentId);
 
     /* 파일 변경 관련 함수 */
     List<FileDto> showFileListByPr(int repoId, int prId); // 변경 된 파일 목록 확인

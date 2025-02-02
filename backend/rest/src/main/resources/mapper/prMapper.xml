@@ -83,7 +83,7 @@
         FROM commit
         WHERE repo_id = #{repoId} AND pr_id = #{prId} AND commit_id = #{commitId}
     </select>
-    
+
 
     <!-- 댓글 및 대댓글 조회-->
     <select id="getCommentList" resultMap="commentReplyResultMap">
@@ -110,7 +110,13 @@
     <!-- 댓글 삭제 -->
     <delete id="deleteComment" parameterType="map">
         DELETE FROM comment
-        WHERE pr_id = #{prId} AND comment_id = #{commentId}
+        WHERE repo_id = #{repoId} AND pr_id = #{prId} AND comment_id = #{commentId}
+    </delete>
+
+    <!-- 대댓글 삭제 -->
+    <delete id="deleteReply" parameterType="map">
+        DELETE FROM comment
+        WHERE repo_id = #{repoId} AND pr_id = #{prId} AND re_comment_id = #{reCommentId}
     </delete>
 
     <!-- 파일 목록 조회 (PR)-->

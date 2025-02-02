@@ -1,6 +1,7 @@
 package com.giteat.api;
 
 import com.giteat.common.util.GitLabTokenService;
+import com.giteat.pr.dto.FileCommentDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -40,6 +41,17 @@ public class GitLabApi {
         return repositoryData;
     }
 
+    /**
+     * 파일에 댓글을 등록하는 함수
+     * Endpoint : /projects/:id/merge_requests/:merge_iid/discussions
+     */
+    public Map<String, Object> insertFileComment(String projectId, String prId, FileCommentDto fileCommentDto, String accessToken){
+        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + prId + "/discussions";
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("position", String.valueOf(fileCommentDto.getPosition()));
+        requestBody.put("body", fileCommentDto.getBody());
+        return callPostApi(url, accessToken, requestBody);
+    }
 
 
     /**
@@ -63,6 +75,16 @@ public class GitLabApi {
     }
 
     /**
+     * 댓글을 삭제하는 함수
+     * Endpoint : /projects/:id/merge_requests/:merge_request_iid/notes/:note_id
+     */
+    public boolean deleteComment(String projectId, String prId, String noteId, String accessToken){
+        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + prId + "/notes/" + noteId;
+        return callDeleteApi(url, accessToken);
+    }
+
+
+    /**
      * 대댓글을 등록하는 함수
      * Endponint : /projects/{project_id}/merge_requests/{mergerequest_id}/discussions/{discussions_id}/notes
      */
@@ -81,6 +103,7 @@ public class GitLabApi {
         Map<String, String> requestBody = Map.of("body", content); // GitLab API에서 요구하는 JSON Body 생성
         return callPutApi(url, accessToken, requestBody);
     }
+
 
 
     // 프로젝트의 Merge Requests 가져오기 예시입니다.
@@ -189,6 +212,24 @@ public class GitLabApi {
 
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.PUT, entity, Map.class);
         return response.getBody();
+    }
+
+    /**
+     * restTemplate으로 DELETE 요청하는 함수
+     * @param url GitLab API URL
+     * @param accessToken GitLab Private Token
+     * @return 성공 여부 (true: 성공, false: 실패)
+     */
+    private boolean callDeleteApi(String url, String accessToken) {
+        HttpHeaders headers = new HttpHeaders();
+        String gitLabToken = gitLabTokenService.getAccessToken(accessToken);
+        headers.set("Private-Token", gitLabToken);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<Void> response = restTemplate.exchange(url, HttpMethod.DELETE, entity, Void.class);
+
+        return response.getStatusCode().is2xxSuccessful();
     }
 
 }
