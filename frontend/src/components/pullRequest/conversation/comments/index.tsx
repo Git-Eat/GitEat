@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useQuery } from "react-query";
 import { Reply } from "../reply";
 import { MarkdownEditor } from "../../../common/markdownEditor";
-import spinner from "../../../../assets/images/spinner.svg";
 
 interface Comment {
   comment_id: number;
@@ -17,11 +16,7 @@ async function fetchComments() {
 }
 
 export function Comments() {
-  const {
-    data: comments,
-    isLoading,
-    isError,
-  } = useQuery<Comment[]>(["comments"], fetchComments);
+  const { data: comments } = useQuery<Comment[]>("comments", fetchComments);
   const [isReplyEditorOpen, setIsReplyEditorOpen] = useState<
     Record<number, boolean>
   >({});
@@ -31,14 +26,6 @@ export function Comments() {
       ...prev,
       [commentId]: !prev[commentId],
     }));
-  }
-
-  if (isLoading) {
-    return <img src={spinner} alt="Loading..." />;
-  }
-
-  if (isError) {
-    return <p>댓글을 불러오는 중 오류가 발생했습니다.</p>;
   }
 
   return (
@@ -64,7 +51,9 @@ export function Comments() {
             </article>
             <footer className="flex justify-end mt-2">
               <button onClick={() => toggleReplyEditor(comment.comment_id)}>
-                {isReplyEditorOpen[comment.comment_id] ? "취소" : "답글 추가"}
+                {isReplyEditorOpen[comment.comment_id]
+                  ? "답글 접기"
+                  : "답글 추가"}
               </button>
             </footer>
             {isReplyEditorOpen[comment.comment_id] && <MarkdownEditor />}
