@@ -1,31 +1,61 @@
-import ReactDiffViewer, { DiffMethod } from "react-diff-viewer";
-import Prism from "prismjs";
-import "prismjs/components/prism-javascript"; // JavaScript 언어 정의
-// import "prismjs/themes/prism-okaidia.css"; // Prism 테마 - 다크모드
-import "prismjs/themes/prism-solarizedlight.css"; // prism 테마 - 라이트모드
+import { DiffView, DiffModeEnum } from "@git-diff-view/react";
+import { generateDiffFile } from "@git-diff-view/file";
+import "@git-diff-view/react/styles/diff-view.css";
+import { useMemo } from "react";
 interface DiffViewerProps {
   oldCode: string;
   newCode: string;
 }
 
 export function DiffViewer({ oldCode, newCode }: DiffViewerProps) {
-  const highlightSyntax = (str: string) => (
-    <pre
-      style={{ display: "inline" }}
-      dangerouslySetInnerHTML={{
-        __html: Prism.highlight(str, Prism.languages.javascript, "javascript"),
-      }}
-    />
-  );
+  const getDiffFile = () => {
+    const instance = generateDiffFile(
+      "oldFileName",
+      oldCode,
+      "newFileName",
+      newCode,
+      "java",
+      "java"
+    );
+    instance.initRaw();
+    return instance;
+  };
+
+  const diffFile = useMemo(() => getDiffFile(), [oldCode, newCode]);
+
   return (
     <div className="w-full">
-      <ReactDiffViewer
-        oldValue={oldCode}
-        newValue={newCode}
-        compareMethod={DiffMethod.WORDS}
-        splitView={true}
-        renderContent={highlightSyntax}
-        // useDarkTheme
+      <DiffView
+        diffFile={diffFile}
+        diffViewAddWidget
+        renderWidgetLine={({ onClose }) => {
+          return (
+            <div
+              style={{
+                display: "flex",
+                border: "1px solid",
+                padding: "10px",
+                justifyContent: "space-between",
+              }}
+            >
+              123
+              <button
+                style={{
+                  border: "1px solid",
+                  borderRadius: "2px",
+                  padding: "4px 8px",
+                }}
+                onClick={onClose}
+              >
+                close
+              </button>
+            </div>
+          );
+        }}
+        diffViewTheme={"light"}
+        diffViewHighlight={true}
+        diffViewMode={DiffModeEnum.SplitGitLab}
+        diffViewWrap={true}
       />
     </div>
   );
