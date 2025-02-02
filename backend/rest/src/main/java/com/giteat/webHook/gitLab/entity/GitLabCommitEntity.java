@@ -10,7 +10,6 @@ import lombok.Setter;
 @Setter
 public class GitLabCommitEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "commit_id")
     private int commitId;
 

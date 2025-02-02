@@ -119,6 +119,19 @@ public class GitLabApi {
         return callGetApi(url, accessToken);
     }
 
+    // webHook에서 commit 데이터 읽어오는 함수
+    public List<Map<String , Object>> getCommits(String projectId , String prId , String id){
+        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests" + prId +"/commits";
+        return callGetApiUseId(url , id);
+    }
+
+    // webHook에서 changeFIle 읽어오는 함수
+    public List<Map<String , Object>> getChangeFiles(String projectId , String commitId , String id){
+        String url = gitlabApiUrl + "/projects/" + projectId + "/commits/" + commitId + "/diff";
+        return callGetApiUseId(url , id);
+    }
+
+
     // 변경된 Raw 코드 가져오는 함수
     public String getRawCode(String projectId, String filePath, String commitId, String jwtAccessToken)  {
         try {
@@ -146,6 +159,22 @@ public class GitLabApi {
     private List<Map<String, Object>> callGetApi(String url , String jwtAccessToken) {
         HttpHeaders headers = new HttpHeaders();
         String accessToken = gitLabTokenService.getAccessToken(jwtAccessToken);
+        headers.set("Private-Token", accessToken);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, entity, List.class);
+        return response.getBody();
+    }
+
+    /**
+     * ID값으로 accessToken을 검사해서 요청을 보내는 함수
+     * @param url
+     * @param id
+     * @return
+     */
+    private List<Map<String ,Object>> callGetApiUseId(String url , String id){
+        HttpHeaders headers = new HttpHeaders();
+        String accessToken = gitLabTokenService.getAccessTokenById(id);
         headers.set("Private-Token", accessToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 

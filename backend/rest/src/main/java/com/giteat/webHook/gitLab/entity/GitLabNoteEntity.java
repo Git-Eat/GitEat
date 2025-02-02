@@ -15,7 +15,6 @@ import lombok.Setter;
 public class GitLabNoteEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // 자동 증가 ID (필요 시)
     @Column(name = "comment_id")
     private int commentId;
 

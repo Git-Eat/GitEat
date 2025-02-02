@@ -1,6 +1,9 @@
 package com.giteat.webHook.gitLab.service;
 
 import com.giteat.api.GitLabApi;
+import com.giteat.common.gitLab.mapper.GitLabTokenMapper;
+import com.giteat.webHook.gitLab.entity.GitLabFileChangeEntity;
+import com.giteat.webHook.gitLab.repository.GitLabFileChangeRepository;
 import org.springframework.transaction.annotation.Transactional;
 import com.giteat.webHook.gitLab.entity.GitLabCommitEntity;
 import com.giteat.webHook.gitLab.entity.GitLabMergeRequestEntity;
@@ -14,89 +17,116 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+
 @Service
 @AllArgsConstructor
-public class GitLabWebHookServiceImpl implements GitLabWebHookService{
+public class GitLabWebHookServiceImpl implements GitLabWebHookService {
 
     private final GitLabNoteRepository gitLabNoteRepository;
     private final GitLabMergeRequestRepository gitLabMergeRequestRepository;
+    private final GitLabCommitRepository gitLabCommitRepository;
     private final GitLabApi gitLabApi;
+    private final GitLabTokenMapper gitLabTokenMapper;
+    private final GitLabFileChangeRepository gitLabFileChangeRepository;
+
     /**
      * pr 에 대한 event 처리하는 함수
+     *
      * @param body
      */
     @Override
+    @Transactional
     public void mergeRequestEvent(Map<String, Object> body) {
+
+        // ----------------- pr 정보 저장 ------------
         GitLabMergeRequestEntity mergeRequestEntity = new GitLabMergeRequestEntity();
-        //데이터 정제하는 코드 추가 필요함
+        Map<String, Object> projectMap = (Map<String, Object>) body.get("project");
+        Map<String, Object> userMap = (Map<String, Object>) body.get("user");
+        Map<String, Object> mergeRequestMap = (Map<String, Object>) body.get("object");
+        Map<String, Object> diffMap = (Map<String, Object>) body.get("diff_refs");
 
-        Map<String , Object> projectMap = (Map<String , Object>) body.get("project");
-        Map<String , Object> userMap = (Map<String , Object>)body.get("user");
-        Map<String , Object> mergeRequestMap = (Map<String , Object>) body.get("object");
-
-        int projectId = (int)projectMap.get("id");
-        int prId = (int)mergeRequestMap.get("id");
-
-        mergeRequestEntity.setPrId((int)mergeRequestMap.get("id"));
-        mergeRequestEntity.setRepoId((int)projectMap.get("id"));
-        mergeRequestEntity.setTitle((String)mergeRequestMap.get("title"));
-        mergeRequestEntity.setDescription((String)mergeRequestMap.get("description"));
+        mergeRequestEntity.setPrId((int) mergeRequestMap.get("id"));
+        mergeRequestEntity.setRepoId((int) projectMap.get("id"));
+        mergeRequestEntity.setTitle((String) mergeRequestMap.get("title"));
+        mergeRequestEntity.setDescription((String) mergeRequestMap.get("description"));
         mergeRequestEntity.setCreateAt((String) mergeRequestMap.get("created_at"));
         mergeRequestEntity.setTargetBranch((String) mergeRequestMap.get("target_branch"));
         mergeRequestEntity.setSouceBranch((String) mergeRequestMap.get("source_branch"));
         mergeRequestEntity.setIsOpened("opened".equals(mergeRequestMap.get("state")) ? 1 : 0);
 
+        // sha값들 암호화 해서 insert 해야함
+        mergeRequestEntity.setBaseSha((String) diffMap.get("base_sha"));
+        mergeRequestEntity.setHeadSha((String) diffMap.get("head_sha"));
+        mergeRequestEntity.setStartSha((String) diffMap.get("start_sha"));
+
         gitLabMergeRequestRepository.save(mergeRequestEntity);
 
-        //사용자 정보를 기반으로 accessToken을 가져온다.
 
-        // gitLabApi.getFiles(projectId , prId);를 호출한다 저장한다.
+        // ---------- commit Date 저장 -----------
+        String projectId = (String) projectMap.get("id");
+        String prId = (String) mergeRequestMap.get("id");
+        String userId = (String) userMap.get("id");
 
-        //userId 값을 가져와서 id를 가져와서 accessToken을 꺼낸다.
+        String accessToken = gitLabTokenMapper.getAccessTokenById(userId);
+        //accessToken이 유효한지 검사하는 로직 필요
 
-        // accessToken이 유효한지 검사한다.
+        List<Map<String, Object>> gitCommitList = gitLabApi.getCommits(projectId, prId, userId);
+        for (Map<String, Object> commit : gitCommitList) {
+            GitLabCommitEntity commitEntity = new GitLabCommitEntity();
+            commitEntity.setPrId((int) mergeRequestMap.get("id"));
+            commitEntity.setRepositoryId((int) projectMap.get("id"));
+            commitEntity.setCommitId((int) commit.get("id"));
+            commitEntity.setContent((String) commit.get("message"));
+            commitEntity.setCommitedAt((String) commit.get("createAt"));
+            gitLabCommitRepository.save(commitEntity);
 
-        // accessToken이 유효할 경우 로직을 실행하고 유효하지 않을 경우 refresh 토큰으로 access를 발급받는다.
+            //----------- diff 저장 ------------
+            String commitId = (String) commit.get("id");
+            List<Map<String, Object>> fileChangeList = gitLabApi.getChangeFiles(projectId, commitId, accessToken);
+
+            for (Map<String, Object> fileChange : fileChangeList) {
+                GitLabFileChangeEntity fileChangeEntity = new GitLabFileChangeEntity();
+                //diff 관련해서 발급받은 지혜로 변경해서 저장해야함 newPath로 변경함
+                //fileChangeEntity.setFileId();
+                fileChangeEntity.setRepoId((int) projectMap.get("id"));
+                fileChangeEntity.setPrId((int) mergeRequestMap.get("id"));
+                fileChangeEntity.setCommitId(commitId);
+
+                String fileName = (String) fileChange.get("new_path");
+                int slashIndex = ((String) fileChange.get("new_path")).lastIndexOf("/");
+                fileChangeEntity.setFileName(fileName.substring(slashIndex + 1));
+
+                fileChangeEntity.setOldPath((String) fileChange.get("old_path"));
+                fileChangeEntity.setNewPath((String) fileChange.get("new_path"));
+
+                int fileStatus = 0;  // 기본값 설정
+
+                if ((boolean) fileChange.get("renamed_file")) {
+                    fileStatus = 1;  // 파일이 변경되었음
+                } else if ((boolean) fileChange.get("deleted_file")) {
+                    fileStatus = 2;  // 파일이 삭제됨
+                } else if (fileChange.get("generated_file") != null && (boolean) fileChange.get("generated_file")) {
+                    fileStatus = 3;  // 파일이 생성됨
+                }
+                fileChangeEntity.setFileStatus(fileStatus);
+
+                gitLabFileChangeRepository.save(fileChangeEntity);
+            }
+        }
 
 
     }
 
     /**
      * 댓글에 대한 event 처리 함수
+     *
      * @param body
      */
     @Override
     @Transactional
     public void noteEvent(Map<String, Object> body) {
-        // 1. Repository ID 추출
-        int repoId = (int) ((Map<String, Object>) body.get("repository")).get("id");
 
-        Integer prId = null;
-        if (body.containsKey("merge_request")) {
-            Map<String, Object> mergeRequestMap = (Map<String, Object>) body.get("merge_request");
-            prId = (int) mergeRequestMap.get("id");
-        }
 
-        if (body.containsKey("object_attributes")) {
-            Map<String, Object> objectAttributes = (Map<String, Object>) body.get("object_attributes");
-
-            GitLabNoteEntity noteEntity = new GitLabNoteEntity();
-
-            // 필요한 값 매핑
-            noteEntity.setPrId(prId != null ? prId : 0);  // PR ID가 없을 경우 기본값 0
-            noteEntity.setRepoId(repoId);
-            noteEntity.setContent((String) objectAttributes.get("note")); // 댓글 내용
-            noteEntity.setCommentType((Integer) objectAttributes.get("type"));  // 댓글의 타입 (예시로 Integer 처리)
-            noteEntity.setUserId((Integer) objectAttributes.get("author_id"));  // 작성자 ID
-            noteEntity.setDisId((String) objectAttributes.get("dis_id"));  // 댓글의 디스 ID (예시로 처리)
-            noteEntity.setImageName((String) objectAttributes.get("image_name"));  // 이미지 이름 (필요시 이미지 처리)
-            noteEntity.setCreateAt((String) objectAttributes.get("created_at"));  // 댓글 작성 시간
-            noteEntity.setCommentTyple((String) objectAttributes.get("type"));  // 주어진 'comment_typle'에 대응 (타입)
-            noteEntity.setDepth(0);  // 댓글의 깊이는 기본값 0으로 설정 (필요시 수정 가능)
-
-            // 4. 데이터 저장
-            gitLabNoteRepository.save(noteEntity);
-        }
     }
 }
 
