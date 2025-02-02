@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 function LinkIcon({ to, src, alt }: { to: string; src: string; alt: string }) {
   const location = useLocation();
   const isSelected = useMemo(
-    () => location.pathname === to,
+    () => location.pathname.startsWith(to),
     [location.pathname, to]
   );
   console.log(location.pathname);
