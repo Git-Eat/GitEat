@@ -83,7 +83,7 @@ public class GitLabApi {
     }
 
 
-    // 프로젝트의 Merge Requests 가져오기 예시입니다.
+    // 프로젝트의 Merge Requests 가져오기 예
     public List<Map<String, Object>> getMergeRequests(String projectId , String accessToken) {
         String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests";
         return callGetApi(url ,accessToken);

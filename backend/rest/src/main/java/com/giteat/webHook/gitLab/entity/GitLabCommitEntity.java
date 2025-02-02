@@ -17,6 +17,9 @@ public class GitLabCommitEntity {
     @Column(name = "pr_id")
     private int prId;
 
+    @Column(name = "repository_id")
+    private int repositoryId;
+
     private String content;
 
     @Column(name = "commited_at")

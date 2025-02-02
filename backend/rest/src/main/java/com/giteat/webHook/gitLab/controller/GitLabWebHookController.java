@@ -30,9 +30,7 @@ public class GitLabWebHookController {
     public ResponseEntity<?> webHookEvent(@RequestBody Map<String , Object> body){
         String eventType = (String) body.get("object_kind");
 
-        if(eventType.equals("push")){
-            webHookService.commitEvent(body);
-        }else if(eventType.equals("merge_request")){
+        if(eventType.equals("merge_request")){
             webHookService.mergeRequestEvent(body);
         }else if(eventType.equals("note")){
             webHookService.noteEvent(body);
