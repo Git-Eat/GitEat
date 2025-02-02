@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useQuery } from "react-query";
 import { Reply } from "../reply";
 import { MarkdownEditor } from "../../../common/markdownEditor";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface Comment {
   comment_id: number;
@@ -44,7 +46,11 @@ export function Comments() {
             </header>
             <article>
               <hr className="my-4" />
-              <p className="px-3">{comment.content}</p>
+              <div className="px-3 prose prose-lg max-w-none">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {comment.content}
+                </ReactMarkdown>
+              </div>
               <p className="text-right">3개의 답글</p>
               <hr className="my-4" />
               <Reply />
