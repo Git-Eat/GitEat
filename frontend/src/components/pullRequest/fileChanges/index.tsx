@@ -32,8 +32,8 @@ const files = [
 
 export function FileChanges() {
   return (
-    <div className="flex gap-[15px] justify-between">
-      <div className="w-1/5 max-w-56 bg-white p-[15px]">
+    <div className="flex gap-[35px] justify-between mt-[30px]">
+      <div className="w-1/5 max-w-56 bg-white p-[15px] min-h-[calc(100vh-300px)] max-h-[calc(100vh-300px)] rounded-xl">
         <Box>
           <SimpleTreeView>
             <TreeItem itemId="grid" label="Data Grid">
@@ -60,10 +60,7 @@ export function FileChanges() {
           </SimpleTreeView>
         </Box>
       </div>
-      <div className="w-4/5">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">File Changes</h1>
-        </div>
+      <div className="w-fit">
         <div className="mt-4">
           <div className="border border-gray-200 p-4 my-4 rounded-md">
             {files.map((file) => (
