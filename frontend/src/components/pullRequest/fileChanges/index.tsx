@@ -64,7 +64,7 @@ export function FileChanges() {
         <div className="mt-4">
           <div className="border border-gray-200 p-4 my-4 rounded-md">
             {files.map((file) => (
-              <Accordion key={file.filePath}>
+              <Accordion key={file.filePath} defaultExpanded>
                 <div className="flex justify-between items-center">
                   <AccordionSummary
                     expandIcon={<ArrowDropDownIcon />}
