@@ -1,13 +1,15 @@
-package com.giteat.security.user.api;
+package com.giteat.common;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.giteat.security.user.dto.OAuthTokenDto;
-import com.giteat.security.user.service.CustomOAuthService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
+import com.giteat.user.model.repository.OAuthRepository;
+import com.giteat.user.model.dto.OAuthTokenDto;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -18,9 +20,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class OAuthApi {
+public class GitLabApi {
 
+    private final OAuthRepository oAuthDao;
     private final RestTemplate restTemplate;
+
+    public GitLabApi(OAuthRepository oAuthDao, RestTemplate restTemplate) {
+        this.oAuthDao = oAuthDao;
+        this.restTemplate = restTemplate;
+    }
 
     private static final String CLIENT_ID = "8a9363db17d9a7aae6c03c37f43eec0f942e30bb88541ff8bb6aaf46b17aa6b2";
     private static final String CLIENT_SECRET = "gloas-c535103e2d14667af66a61a71267dcf1e49e878c84e560a91aee907bc4a10363";
@@ -28,59 +36,56 @@ public class OAuthApi {
     private static final String TOKEN_URI = "https://lab.ssafy.com/oauth/token";
     private static final String USER_INFO_URI = "https://lab.ssafy.com/api/v4/user";
 
-    public OAuthApi(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
+    public Map<String, String> refreshAccessToken(OAuthTokenDto tokenRequest) {
 
-    /*
-    * 프론트엔드에서 받은 Authorization Code를 사용하여
-    * GitLab에 Access Token을 요청
-    */
-    public Map<String, String> getAccessToken(String code) {
-        // HTTP 요청 헤더 설정
-
+        // parameters = 'client_id=APP_ID&client_secret=APP_SECRET&refresh_token=REFRESH_TOKEN&grant_type=refresh_token&redirect_uri=REDIRECT_URI'
         try {
-            HttpHeaders headers = new HttpHeaders();
-            // OAuth 토큰 요청 시 (form-urlencoded 사용)
-            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-            // Oauth access 토큰 요청할 때 서버가 oauth 에게 전달해주는 파라미터
+            System.out.println("refreshAccessToken: " + tokenRequest);
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
             params.add("client_id", CLIENT_ID);
             params.add("client_secret", CLIENT_SECRET);
-            params.add("code", code);
-            params.add("grant_type", "authorization_code");
+            params.add("refresh_token", tokenRequest.getRefreshToken());
+            params.add("grant_type", "refresh_token");
             params.add("redirect_uri", REDIRECT_URI);
 
-            System.out.println(params);
-            // 요청 객체 생성
+            // 헤더 설정
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Type", "application/x-www-form-urlencoded");
+
+            // 토큰 갱신
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+            ResponseEntity<String> response = restTemplate.exchange(
+                    TOKEN_URI,
+                    HttpMethod.POST,
+                    request,
+                    String.class);
+            System.out.println("api 응답 내용: " + response.getBody());
 
-            ResponseEntity<String> response = restTemplate.postForEntity(TOKEN_URI, request, String.class);
-
-            // JSON 파싱
+            // JSON 파싱 및 토큰 갱신에 대한 응답
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonNode = mapper.readTree(response.getBody());
 
+            // 새로운 토큰 반환
             Map<String, String> map = new HashMap<>();
             map.put("access_token", jsonNode.get("access_token").asText());
             map.put("token_type", jsonNode.get("token_type").asText());
-            map.put("refresh_token", jsonNode.get("refresh_token").asText());
             map.put("expires_in", jsonNode.get("expires_in").asText());
-            map.put("scope", jsonNode.get("scope").asText());
+            map.put("refresh_token", jsonNode.get("refresh_token").asText());
             map.put("created_at", jsonNode.get("created_at").asText());
 
+            System.out.println("토큰갱신성공: " + map);
             return map;
-        } catch (Exception e) {
-            return new HashMap<>();
+
+        } catch (HttpClientErrorException e) {
+            System.out.println("RefreshAccessToken 재발급 실패: " + tokenRequest);
+            return null;
+
+        } catch (JsonMappingException e) {
+            throw new RuntimeException(e);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
-
-    /*
-    * gitlab api에서 사용자 정보를 가져오는 메서드
-    * @param accessToken gitlab에서 받은 인증 토큰
-    * @return 사용자정보가 담긴 map
-    * */
 
     public Map<String, String> getUserInfo(String accessToken) {
         try {
@@ -125,15 +130,9 @@ public class OAuthApi {
             System.out.println("getUserInfo map: " + map);
             return map;
 
-        } catch(Exception e) {
+        } catch (Exception e) {
             System.out.println("api호출 실패: " + e.getMessage());
             return new HashMap<>();
         }
-
-
-
     }
-
-
 }
-

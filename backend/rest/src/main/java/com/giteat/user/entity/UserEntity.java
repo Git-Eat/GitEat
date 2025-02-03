@@ -15,7 +15,7 @@ import lombok.Setter;
 public class UserEntity {
 
     @Id
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "user_id", nullable = false) // false
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto_increment
     private Integer userId;
 
@@ -32,7 +32,7 @@ public class UserEntity {
     private String mmWebhook;
 
     // OAuthToken 과 1:1 매핑관계
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private OAuthTokenEntity oauthToken;
+    @OneToOne(mappedBy = "userEntity", cascade = CascadeType.ALL)
+    private OAuthEntity oAuthEntity;
 
 }

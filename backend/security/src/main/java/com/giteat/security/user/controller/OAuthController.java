@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 public class OAuthController {
     private final CustomOAuthService oauthService;
     private final OAuthApi oauthApi;
-
     private final ApiUtil apiUtil;
 
     public OAuthController(CustomOAuthService oauthService, OAuthApi oauthApi, ApiUtil apiUtil) {
@@ -37,10 +36,18 @@ public class OAuthController {
     public ResponseEntity<?> gitlabLogin(@RequestBody Object body){
         String code = (String) body;
 
-        OAuthTokenDto oAuthTokenDto =  oauthService.gitlabLogin(code);
-        return ResponseEntity.ok(oAuthTokenDto);
+        OAuthTokenDto oAuthTokenDto = oauthService.gitlabLogin(code);
+//        return ResponseEntity.ok(oAuthTokenDto);
+        return apiUtil.postApi("/oauth/gitlab", oAuthTokenDto);
     }
 
+    @PostMapping("/gitlab/refresh")
+    public ResponseEntity<?> gitlabRefresh(@RequestBody OAuthTokenDto tokenRequest){
+        System.out.println("1. Security 서버 컨트롤러 진입");
+        System.out.println("2. 요청 데이터: " + tokenRequest);
+        System.out.println("3. REST 서버로 요청 보내기 전");
 
+       return apiUtil.postApi("/oauth/refresh", tokenRequest);
+    }
 
 }

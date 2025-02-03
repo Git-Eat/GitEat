@@ -20,12 +20,6 @@ public class UserController {
      * @return
      */
 
-    @PostMapping("/test")
-    public ResponseEntity<String> test(@RequestBody Object user){
-        return ResponseEntity.ok().build();
-    }
-
-
     @GetMapping("/data")
     public ResponseEntity<?> get(@RequestParam String param) {
         // "url"은 실제 API URL로 교체

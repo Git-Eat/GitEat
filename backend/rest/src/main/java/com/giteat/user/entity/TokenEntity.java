@@ -38,5 +38,5 @@ public class TokenEntity {
 
     @OneToOne
     @JoinColumn(name = "oauth_id", nullable = false)
-    private OAuthTokenEntity oauthToken;
+    private OAuthEntity oauthEntity;
 }

@@ -45,15 +45,19 @@ public class CustomOAuthService implements OAuth2UserService<OAuth2UserRequest, 
 
             Map<String, String> userInfo = oauthApi.getUserInfo(dto.getAccessToken());
 
+            dto.setId(Integer.valueOf(userInfo.get("id")));
             dto.setUserName(userInfo.get("username"));
             dto.setEmail(userInfo.get("email"));
             dto.setName(userInfo.get("name"));
             dto.setAvatarUrl(userInfo.get("avatar_url"));
 
+            System.out.println("service : "+ dto);
             return dto;
         } catch (Exception e) {
             return null;
         }
     }
+
 }
+
 

@@ -8,11 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-
 /*
  * rest 요청을할 때 사용하는 사용하는 util 코드
  *
  */
+
 @Component
 
 public class ApiUtil {
@@ -28,6 +28,7 @@ public class ApiUtil {
 
     /**
      * restAPI 호출 GET
+     *
      * @param url
      * @param param
      * @return
@@ -39,6 +40,7 @@ public class ApiUtil {
 
     /**
      * restAPI 호출 POST
+     *
      * @param url
      * @param requestBody
      * @return
@@ -48,7 +50,9 @@ public class ApiUtil {
         return restTemplate.postForEntity(fullURL, requestBody, Object.class);
     }
 
-    /**
+
+
+/**
      * restAPI 호출 PUT
      * @param url
      * @param requestBody

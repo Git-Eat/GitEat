@@ -14,14 +14,20 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor // 기본 생성자
 @AllArgsConstructor // 모든 필드를 파라미터로 받는 생성자 자동 생성
-public class OAuthTokenEntity {
+public class OAuthEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "oauth_id")
     private Integer oauthId;
 
-    @Column(name = "provider_type", nullable = false)
+    @Column(name = "id")
+    private Integer id;
+
+    @Column(name = "user_name")
+    private String userName;
+
+    @Column(name = "provider_type", nullable = true) // false
     private String providerType;
 
     @Column(name = "access_token", nullable = false)
@@ -54,11 +60,11 @@ public class OAuthTokenEntity {
     private String avatarUrl;
 
     @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user;
+    @JoinColumn(name = "user_id", nullable = false) // false
+    private UserEntity userEntity;
 
-    @OneToOne(mappedBy = "oauthToken", cascade = CascadeType.ALL)
-    private TokenEntity token;
+//    @OneToOne(mappedBy = "oauthToken", cascade = CascadeType.ALL)
+//    private TokenEntity token;
 
 
 
