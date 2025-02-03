@@ -23,6 +23,7 @@ export function FileMarkDownEditor({
   function handleCategory(event: React.ChangeEvent<HTMLSelectElement>) {
     setCategory(event.target.value as "comment" | "suggest" | "review");
   }
+  // 추후 에러 핸들링 toast로 구현
   const handleSubmitComment = () => {
     if (!comment?.trim()) return alert("내용을 입력해주세요");
     submitComment(comment);

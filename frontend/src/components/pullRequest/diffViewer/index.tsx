@@ -24,22 +24,24 @@ export function DiffViewer({ oldCode, newCode }: DiffViewerProps) {
   };
   const getLines = (side: number, diffFile: DiffFile, lineNumber: number) => {
     if (side === 1) {
-      const oldline =
-        diffFile.getBundle().splitLeftLines[lineNumber - 1].lineNumber;
+      console.log(diffFile.getBundle().splitLeftLines);
+      const idx = diffFile
+        .getBundle()
+        .splitLeftLines.findIndex((item) => item.lineNumber === lineNumber);
+      const oldline = diffFile.getBundle().splitLeftLines[idx].lineNumber;
       const newline =
-        diffFile.getBundle().splitLeftLines[lineNumber - 1].diff?.oldLineNumber;
-      const linetype =
-        diffFile.getBundle().splitLeftLines[lineNumber - 1].diff?.type;
+        diffFile.getBundle().splitLeftLines[idx].diff?.oldLineNumber;
+      const linetype = diffFile.getBundle().splitLeftLines[idx].diff?.type;
       console.log(oldline, newline, linetype);
       return { oldline, newline, linetype };
     } else {
-      const newline =
-        diffFile.getBundle().splitRightLines[lineNumber - 1].lineNumber;
+      const idx = diffFile
+        .getBundle()
+        .splitRightLines.findIndex((item) => item.lineNumber === lineNumber);
+      const newline = diffFile.getBundle().splitRightLines[idx].lineNumber;
       const oldline =
-        diffFile.getBundle().splitRightLines[lineNumber - 1].diff
-          ?.oldLineNumber;
-      const linetype =
-        diffFile.getBundle().splitRightLines[lineNumber - 1].diff?.type;
+        diffFile.getBundle().splitRightLines[idx].diff?.oldLineNumber;
+      const linetype = diffFile.getBundle().splitRightLines[idx].diff?.type;
       console.log(oldline, newline, linetype);
       return { oldline, newline, linetype };
     }
