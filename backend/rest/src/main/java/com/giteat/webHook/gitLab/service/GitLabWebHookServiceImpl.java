@@ -2,15 +2,9 @@ package com.giteat.webHook.gitLab.service;
 
 import com.giteat.api.GitLabApi;
 import com.giteat.common.gitLab.mapper.GitLabTokenMapper;
-import com.giteat.webHook.gitLab.entity.GitLabFileChangeEntity;
-import com.giteat.webHook.gitLab.repository.GitLabFileChangeRepository;
+import com.giteat.webHook.gitLab.entity.*;
+import com.giteat.webHook.gitLab.repository.*;
 import org.springframework.transaction.annotation.Transactional;
-import com.giteat.webHook.gitLab.entity.GitLabCommitEntity;
-import com.giteat.webHook.gitLab.entity.GitLabMergeRequestEntity;
-import com.giteat.webHook.gitLab.entity.GitLabNoteEntity;
-import com.giteat.webHook.gitLab.repository.GitLabCommitRepository;
-import com.giteat.webHook.gitLab.repository.GitLabMergeRequestRepository;
-import com.giteat.webHook.gitLab.repository.GitLabNoteRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +22,8 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
     private final GitLabApi gitLabApi;
     private final GitLabTokenMapper gitLabTokenMapper;
     private final GitLabFileChangeRepository gitLabFileChangeRepository;
+    private final GitLabCommentRepository gitLabCommentRepository;
+    private final GitLabReplyRepository gitLabReplyRepository;
 
     /**
      * pr 에 대한 event 처리하는 함수
@@ -126,6 +122,55 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
     @Transactional
     public void noteEvent(Map<String, Object> body) {
 
+        Map<String , Object> projectMap = (Map<String, Object>) body.get("project");
+        Map<String, Object> userMap = (Map<String, Object>) body.get("user");
+        Map<String, Object> mergeRequestMap = (Map<String, Object>) body.get("object");
+        Map<String , Object> objectMap = (Map<String , Object>) body.get("object_attributes");
+
+        Integer parentId = (Integer) objectMap.get("parent_id");
+
+        if(parentId == null) { //부모글이 없으면 일반 댓글
+            GitLabCommentEntity commentEntity = new GitLabCommentEntity();
+            commentEntity.setCommentId((int)objectMap.get("id"));
+            commentEntity.setPrId((int)mergeRequestMap.get("id"));
+            commentEntity.setRepoId((int)projectMap.get("id"));
+            commentEntity.setContent((String)objectMap.get("note"));
+            commentEntity.setCommentType(0);
+            commentEntity.setUserId((int)userMap.get("id"));
+            commentEntity.setDisId((String)objectMap.get("discussion_id"));
+            commentEntity.setCreateAt((String)objectMap.get("created_at"));
+
+            String imageName = null;
+            if(objectMap.containsKey("attachement")){
+                Map<String, Object> attachment = (Map<String, Object>) objectMap.get("attachment");
+                imageName = (String) attachment.get("image_name");
+                //String imageUrl = (String) attachement.get("url");
+            }
+            commentEntity.setImageName(imageName);
+            gitLabCommentRepository.save(commentEntity);
+
+        }else{  //대댓글
+            GitLabReplyEntity replyEntity = new GitLabReplyEntity();
+            replyEntity.setCommentId((int)objectMap.get("id"));
+            replyEntity.setRepoId((int)projectMap.get("id"));
+            replyEntity.setPrId((int)mergeRequestMap.get("id"));
+            replyEntity.setCommentId((int)objectMap.get("parent_id"));
+            replyEntity.setUserId((int)userMap.get("id"));
+            replyEntity.setDisId((String)objectMap.get("discussion_id"));
+            replyEntity.setContent((String)objectMap.get("note"));
+            replyEntity.setReplyType(0);
+            replyEntity.setCreateAt((Date)objectMap.get("created_at"));
+
+
+            String imageName = null;
+            if(objectMap.containsKey("attachement")){
+                Map<String, Object> attachment = (Map<String, Object>) objectMap.get("attachment");
+                imageName = (String) attachment.get("image_name");
+                //String imageUrl = (String) attachement.get("url");
+            }
+            replyEntity.setImageName(imageName);
+            gitLabReplyRepository.save(replyEntity);
+        }
 
     }
 }
