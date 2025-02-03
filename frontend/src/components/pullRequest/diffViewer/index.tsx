@@ -2,7 +2,7 @@ import { DiffView, DiffModeEnum } from "@git-diff-view/react";
 import { generateDiffFile } from "@git-diff-view/file";
 import "@git-diff-view/react/styles/diff-view.css";
 import { useMemo } from "react";
-import { MarkdownEditor } from "../../common/markkdownEditor";
+import { MarkdownEditor } from "../../common/markdownEditor";
 interface DiffViewerProps {
   oldCode: string;
   newCode: string;
@@ -32,7 +32,12 @@ export function DiffViewer({ oldCode, newCode }: DiffViewerProps) {
         diffViewAddWidget
         renderWidgetLine={({ side, lineNumber }) => {
           console.log(side, lineNumber);
-          return <MarkdownEditor />;
+          return (
+            <MarkdownEditor
+              onAddSingleComment={() => {}}
+              onStartReview={() => {}}
+            />
+          );
         }}
         diffViewTheme={"light"}
         diffViewHighlight={true}

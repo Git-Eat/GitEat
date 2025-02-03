@@ -14,7 +14,10 @@ export function Conversation() {
             <Comments />
           </Suspense>
         </ErrorBoundery>
-        <MarkdownEditor />
+        <MarkdownEditor
+          onAddSingleComment={() => {}}
+          onStartReview={() => {}}
+        />
       </main>
       <aside className="w-1/4">
         <ParticipantList />

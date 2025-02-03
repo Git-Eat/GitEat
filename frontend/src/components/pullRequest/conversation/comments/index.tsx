@@ -5,6 +5,12 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useGetComments } from "../../../../api/queries/useGetComments";
 
+interface Commnet {
+  commentId: number;
+  createAt: string;
+  content: string;
+}
+
 export function Comments() {
   const { data } = useGetComments();
   const [isReplyEditorOpen, setIsReplyEditorOpen] = useState<
@@ -21,8 +27,8 @@ export function Comments() {
   return (
     <section className="bg-white my-5 p-5 rounded-xl">
       <ul>
-        {data?.map((comment) => (
-          <li key={comment.comment_id} className="mb-8">
+        {data?.map((comment: Commnet) => (
+          <li key={comment.commentId} className="mb-8">
             <header>
               <img
                 src="/src/assets/images/user_profile_1.svg"
@@ -30,7 +36,7 @@ export function Comments() {
                 className="inline-block w-9 h-9 mr-2"
               />
               <h1 className="inline text-[16px] font-semibold">USER-01</h1>
-              <time className="block px-11">{comment.create_at}</time>
+              <time className="block px-11">{comment.createAt}</time>
             </header>
             <article>
               <hr className="my-4" />
@@ -44,13 +50,18 @@ export function Comments() {
               <Reply />
             </article>
             <footer className="flex justify-end mt-2">
-              <button onClick={() => toggleReplyEditor(comment.comment_id)}>
-                {isReplyEditorOpen[comment.comment_id]
+              <button onClick={() => toggleReplyEditor(comment.commentId)}>
+                {isReplyEditorOpen[comment.commentId]
                   ? "답글 접기"
                   : "답글 추가"}
               </button>
             </footer>
-            {isReplyEditorOpen[comment.comment_id] && <MarkdownEditor />}
+            {isReplyEditorOpen[comment.commentId] && (
+              <MarkdownEditor
+                onAddSingleComment={() => {}}
+                onStartReview={() => {}}
+              />
+            )}
           </li>
         ))}
       </ul>
