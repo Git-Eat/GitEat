@@ -4,11 +4,13 @@ import { MarkdownEditor } from "../../../common/markdownEditor";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useGetComments } from "../../../../api/queries/useGetComments";
+import { formatDistanceToNowStrict, parseISO } from "date-fns";
+import { ko } from "date-fns/locale";
 
 interface Comment {
   prId: number;
-  comment_Id: number;
   commentId: number;
+  userId: string;
   createAt: string;
   content: string;
 }
@@ -19,6 +21,14 @@ export function Comments() {
     Record<number, boolean>
   >({});
 
+  function displayDate(commentDate: string) {
+    const date = parseISO(commentDate);
+    return formatDistanceToNowStrict(date, {
+      addSuffix: true,
+      locale: ko,
+    });
+  }
+
   function toggleReplyEditor(commentId: number) {
     setIsReplyEditorOpen((prev) => ({
       ...prev,
@@ -27,18 +37,25 @@ export function Comments() {
   }
 
   return (
-    <section className="bg-white my-5 px-5 pt-5 pb-1 rounded-xl">
+    <section>
       <ul>
         {data?.map((comment: Comment) => (
-          <li key={comment.commentId} className="mb-8">
+          <li
+            key={comment.commentId}
+            className="mb-8 bg-white my-5 p-5 rounded-xl"
+          >
             <header>
               <img
                 src="/src/assets/images/user_profile_1.svg"
                 alt="user profile"
                 className="inline-block w-9 h-9 mr-2"
               />
-              <h1 className="inline text-[16px] font-semibold">USER-01</h1>
-              <time className="block px-11">{comment.createAt}</time>
+              <h1 className="inline text-[16px] font-semibold">
+                {comment.userId}
+              </h1>
+              <time className="block px-11">
+                {displayDate(comment.createAt)}
+              </time>
             </header>
             <article>
               <hr className="my-4" />
@@ -47,8 +64,8 @@ export function Comments() {
                   {comment.content}
                 </ReactMarkdown>
               </div>
-              <p className="mt-3 text-right">3개의 답글</p>
               <hr className="my-4" />
+              <p className="mt-3 text-right">3개의 답글</p>
               <Reply />
             </article>
             <footer className="flex justify-end mt-2">
