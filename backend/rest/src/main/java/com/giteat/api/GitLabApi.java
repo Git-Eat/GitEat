@@ -1,12 +1,15 @@
 package com.giteat.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.giteat.common.util.GitLabTokenService;
 import com.giteat.pr.dto.FileCommentDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import com.fasterxml.jackson.core.type.TypeReference;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -16,9 +19,11 @@ public class GitLabApi {
     private final RestTemplate restTemplate;
     private final String gitlabApiUrl = "https://lab.ssafy.com/api/v4";
     private final GitLabTokenService gitLabTokenService;
-    public GitLabApi(RestTemplate restTemplate , GitLabTokenService gitLabTokenService){
+    private final ObjectMapper objectMapper;
+    public GitLabApi(RestTemplate restTemplate , GitLabTokenService gitLabTokenService , ObjectMapper objectMapper) {
         this.restTemplate = restTemplate;
         this.gitLabTokenService = gitLabTokenService;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -26,19 +31,6 @@ public class GitLabApi {
      */
     public void getRecentData(){
 
-    }
-    /**
-     * 전체를 가져오는 함수
-     */
-    public Map<String , List<Map<String , Object>>> getAllData(String accessToken , String projectId){
-        Map<String , List<Map<String , Object>>> repositoryData = new HashMap<>();
-        repositoryData.put("mergeRequest" , getMergeRequests(projectId, accessToken));
-        repositoryData.put("commits", getCommits(projectId, accessToken));
-        repositoryData.put("issues", getIssues(projectId, accessToken));
-        repositoryData.put("discussions", getDiscussions(projectId, accessToken));
-        repositoryData.put("comments", getComments(projectId, accessToken));
-        //repositoryData.put("files", getFiles(projectId, prId, accessToken));
-        return repositoryData;
     }
 
     /**
@@ -112,9 +104,21 @@ public class GitLabApi {
     }
 
     //  프로젝트의 Commits 가져오기
-    public List<Map<String, Object>> getCommits(String projectId , String accessToken) {
-        String url = gitlabApiUrl + "/projects/" + projectId + "/repository/commits";
-        return callGetApi(url , accessToken);
+    public List<Map<String, Object>> getCommits(String projectId, String accessToken) {
+        //String url = gitlabApiUrl + "/projects/" + projectId + "/repository/commits";
+        String url = "http://192.168.31.237/api/v4" + "/projects/" + projectId + "/repository/commits";
+        List<Map<String, Object>> commitList = null;
+        try {
+            commitList = objectMapper.readValue(
+                    testCallGetApi(url, accessToken),
+                    new TypeReference<List<Map<String, Object>>>() {
+                    }
+            );
+        } catch (IOException e) {
+            System.err.println("Failed to parse JSON response: " + e.getMessage());
+            e.printStackTrace();  // 디버깅을 위해 예외 출력
+        }
+        return commitList;
     }
 
     //  프로젝트의 Issues 가져오기
@@ -147,12 +151,21 @@ public class GitLabApi {
         return callGetApiUseId(url , id);
     }
 
+
+
     // webHook에서 changeFIle 읽어오는 함수
     public List<Map<String , Object>> getChangeFiles(String projectId , String commitId , String id){
         String url = gitlabApiUrl + "/projects/" + projectId + "/commits/" + commitId + "/diff";
         return callGetApiUseId(url , id);
     }
 
+    public String getDiffRefs(String projectId , String iid , String id){
+        String accessToken = "glpat-_2SHA1YNyshjLLNSrLAd";
+//        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + iid + "/diff";
+        String url = "http://192.168.31.237/api/v4" + "/projects/" + projectId + "/merge_requests/" + iid;
+        //http://192.168.31.237/api/v4/projects/1/merge_requests/1
+        return testCallGetApi(url , accessToken);
+    }
 
     // 변경된 Raw 코드 가져오는 함수
     public String getRawCode(String projectId, String filePath, String commitId, String jwtAccessToken)  {
@@ -172,6 +185,7 @@ public class GitLabApi {
         }
     }
 
+
     /**
      * restTemplate를 사용해서 데이터를 요청하는 코드
      * @param url
@@ -187,6 +201,26 @@ public class GitLabApi {
         ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, entity, List.class);
         return response.getBody();
     }
+
+
+
+    /**
+     * restTemplate를 사용해서 데이터를 요청하는 코드
+     * @param url
+     * @param jwtAccessToken
+     * @return
+     */
+    private String testCallGetApi(String url , String jwtAccessToken) {
+        System.out.println(url);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("PRIVATE-TOKEN", jwtAccessToken);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+        return response.getBody();
+
+    }
+
 
     /**
      * ID값으로 accessToken을 검사해서 요청을 보내는 함수

@@ -185,7 +185,7 @@ public class PrController {
     @PostMapping("/repositoryData")
     @Operation(summary="repository의 모든 데이터 읽기", description = "repository에서 모든 데이터를 가져옵니다.")
     public ResponseEntity<?> saveRepositoryData(@RequestHeader("accessToken") String accessToken , @RequestBody String repositoryId){
-        
+        prService.saveRepositoryData(accessToken, repositoryId);
         return ResponseEntity.ok().build();
     }
 }

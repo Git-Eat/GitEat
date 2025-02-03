@@ -11,12 +11,12 @@ import lombok.Setter;
 public class GitLabCommitEntity {
     @Id
     @Column(name = "commit_id")
-    private int commitId;
+    private String commitId;
 
     @Column(name = "pr_id")
     private int prId;
 
-    @Column(name = "repository_id")
+    @Column(name = "repo_id")
     private int repositoryId;
 
     private String content;

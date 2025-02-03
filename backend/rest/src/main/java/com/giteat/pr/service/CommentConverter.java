@@ -2,7 +2,9 @@ package com.giteat.pr.service;
 
 import com.giteat.pr.dto.CustomCommentDto;
 import com.giteat.pr.dto.FileCommentDto;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CommentConverter {
 
     /**
