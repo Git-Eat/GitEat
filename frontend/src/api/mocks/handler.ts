@@ -16,10 +16,6 @@ const MOCK_REGION = [
   },
 ];
 
-const LOGIN_MOCK = {
-  accessToken: "123456",
-  refreshToken: "654321",
-};
 const handler = [
   http.get("https://jsonplaceholder.typicode.com/posts", () => {
     return HttpResponse.json(MOCK_REGION);
