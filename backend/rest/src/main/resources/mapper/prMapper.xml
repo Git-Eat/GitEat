@@ -122,38 +122,55 @@
     <!-- 파일 목록 조회 (PR)-->
     <select id="showFileListByPr" parameterType="map" resultType="fileDto">
         SELECT
-            f.file_id AS fileId,
-            f.commit_id AS commitId,
-            f.file_name AS fileName,
-            f.old_path AS oldPath,
-            f.new_path AS newPath
-        FROM file f
-        JOIN commit c ON f.commit_id = c.commit_id
-        WHERE c.pr_id = #{prId} AND c.repo_id = #{repoId}
+            cf.file_id AS fileId,
+            cf.commit_id AS commitId,
+            cf.repo_id AS repoId,
+            cf.pr_id AS prId,
+            cf.file_name AS fileName,
+            cf.old_path AS oldPath,
+            cf.new_path AS newPath,
+            cf.file_status AS fileStatus,
+            p.target_branch AS targetBranch,
+            p.source_branch AS sourceBranch
+        FROM change_file cf
+        JOIN pr p ON cf.pr_id = p.pr_id AND cf.repo_id = p.repo_id
+        WHERE cf.pr_id = #{prId}
+        AND cf.repo_id = #{repoId}
     </select>
 
     <!-- 파일 목록 조회 (Commit)-->
     <select id="showFileListByCommit" parameterType="map" resultType="fileDto">
         SELECT
-            f.file_id AS fileId,
-            f.commit_id AS commitId,
-            f.file_name AS fileName,
-            f.old_path AS oldPath,
-            f.new_path AS newPath
-        FROM file f
-        WHERE f.commit_id = #{commitId}
+            cf.file_id AS fileId,
+            cf.commit_id AS commitId,
+            cf.repo_id AS repoId,
+            cf.pr_id AS prId,
+            cf.file_name AS fileName,
+            cf.old_path AS oldPath,
+            cf.new_path AS newPath,
+            cf.file_status AS fileStatus,
+            p.target_branch AS targetBranch,
+            p.source_branch AS sourceBranch
+        FROM change_file cf
+        JOIN pr p ON cf.pr_id = p.pr_id AND cf.repo_id = p.repo_id
+        WHERE cf.commit_id = #{commitId} AND  cf.pr_id = #{prId} AND cf.repo_id = #{repoId}
     </select>
 
     <!-- 파일 정보 조회 -->
     <select id="getFileInfo" parameterType="int" resultType="fileDto">
         SELECT
-        f.file_id AS fileId,
-        f.commit_id AS commitId,
-        f.file_name AS fileName,
-        f.old_path AS oldPath,
-        f.new_path AS newPath
-        FROM file f
-        WHERE f.file_id = #{fileId}
+            cf.file_id AS fileId,
+            cf.commit_id AS commitId,
+            cf.repo_id AS repoId,
+            cf.pr_id AS prId,
+            cf.file_name AS fileName,
+            cf.old_path AS oldPath,
+            cf.new_path AS newPath,
+            cf.file_status AS fileStatus,
+            p.target_branch AS targetBranch,
+            p.source_branch AS sourceBranch
+        FROM change_file cf
+        WHERE cf.file_id = #{fileId}
     </select>
 
 

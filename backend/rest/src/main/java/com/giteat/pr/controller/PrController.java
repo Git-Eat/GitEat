@@ -166,12 +166,15 @@ public class PrController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{repoId}/{prId}/file/raw/{fileId}")
+    @GetMapping("/{repoId}/{prId}/file/raw")
     @Operation(summary="변경 된 코드 확인", description = "변경 된 파일의 전 후 코드를 조회합니다")
     public ResponseEntity<Map<String, String>> showChangedCode(@PathVariable String repoId,
                                                                @PathVariable String prId,
-                                                               @PathVariable int fileId) {
-        Map<String, String> changedCode = prService.showChangedCode(repoId, prId, fileId);
+                                                               @RequestBody FileDto fileDto,
+                                                               @RequestParam String refType, // 1: PR 기준, 2: Commit 기준,
+                                                               @RequestParam String ref) {
+        //ref : commitId
+        Map<String, String> changedCode = prService.showChangedCode(repoId, prId, fileDto, refType, ref);
         if(changedCode != null && !changedCode.isEmpty()) {return ResponseEntity.ok(changedCode);}
         return ResponseEntity.noContent().build();
     }

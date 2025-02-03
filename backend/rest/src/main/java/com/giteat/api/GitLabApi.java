@@ -2,6 +2,7 @@ package com.giteat.api;
 
 import com.giteat.common.util.GitLabTokenService;
 import com.giteat.pr.dto.FileCommentDto;
+import com.giteat.pr.dto.FileDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -143,11 +144,9 @@ public class GitLabApi {
     }
 
     // 변경된 Raw 코드 가져오는 함수
-    public String getRawCode(String projectId, String filePath, String commitId, String jwtAccessToken)  {
+    public String getRawCode(String projectId, String filePath, String ref)  {
         try {
-            URI url = new URI(gitlabApiUrl + "/projects/" + projectId + "/repository/files/" + filePath + "/raw?ref=" + commitId);
-            System.out.println("호출 주소 : "+ url);
-
+            URI url = new URI(gitlabApiUrl + "/projects/" + projectId + "/repository/files/" + filePath + "/raw?ref=" + ref);
             HttpHeaders headers = new HttpHeaders();
             //String accessToken = gitLabTokenService.getAccessToken(jwtAccessToken);
             headers.set("Private-Token", "UATEgVcVTSsLn7PWao6c"); // 필요하면 OAuth 토큰 사용

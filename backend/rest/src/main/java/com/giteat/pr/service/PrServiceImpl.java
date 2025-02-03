@@ -156,30 +156,39 @@ public class PrServiceImpl implements PrService{
     }
 
     @Override
-    public Map<String, String> showChangedCode(String repoId, String prId, int fileId) {
+    public Map<String, String> showChangedCode(String repoId, String prId, FileDto fileDto, String refType, String ref) {
 
         // 1. DB에서 fileId를 기준으로 commit_id, new_path, old_path 가져오기
-        FileDto file = prMapper.getFileInfo(fileId);
-        if(file == null) return null;
+        String commitId = fileDto.getCommitId();
+        String newPath = fileDto.getNewPath();
+        String oldPath = fileDto.getOldPath();
+        int status = fileDto.getFileStatus();
 
-        String commitId = file.getCommitId();
-        String newPath = file.getNewPath();
-        String oldPath = file.getOldPath();
-
-        // 2. 파일 경로 인코딩
-        String encodedOldPath = encodePath(oldPath);
         String encodedNewPath = encodePath(newPath);
+        String encodedOldPath = encodePath(oldPath);
 
-        // 3. 깃랩 API 호출 (변경 전 후 코드 가져오기)
-        String oldFileContent = gitLabApi.getRawCode(repoId, encodedOldPath, commitId,"");
-        String newFileContent = gitLabApi.getRawCode(repoId, encodedNewPath, commitId,"");
+        String newRawFile = null;
+        String oldRawFile = null;
 
-        // 4. 결과를 Map으로 반환
+        // 2. refType 기준으로 PR(1), Commit(2)별 파일 조회 구분
+        if(refType.equals("1")){
+            newRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, fileDto.getSourceBranch());
+
+            if(status ==2){  // 수정된 파일의 경우
+                oldRawFile = gitLabApi.getRawCode(repoId, encodedOldPath, fileDto.getTargetBranch());
+            }
+        } else if(refType.equals("2")){
+            newRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, commitId);
+            oldRawFile = gitLabApi.getRawCode(repoId, encodedOldPath, fileDto.getTargetBranch());
+        }
+
+        // 삭제된 파일 깃랩에서 보여주는지 확인해야함
+
+        // 결과를 MAP으로 반환
         Map<String, String> result = new HashMap<>();
-        result.put("fileName", file.getFileName());
-        result.put("oldCode", oldFileContent);
-        result.put("newCode", newFileContent);
-
+        result.put("fileName", fileDto.getFileName());
+        result.put("oldCode", oldRawFile);
+        result.put("newCode", newRawFile);
         return result;
     }
 
