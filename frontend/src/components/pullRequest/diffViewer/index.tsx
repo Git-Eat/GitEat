@@ -19,6 +19,7 @@ export function DiffViewer({ oldCode, newCode }: DiffViewerProps) {
       "java"
     );
     instance.initRaw();
+    console.log(instance);
     return instance;
   };
 
