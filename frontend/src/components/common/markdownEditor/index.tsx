@@ -1,14 +1,23 @@
+import React from "react";
 import MDEditor from "@uiw/react-md-editor";
 import { useState } from "react";
 
-export function MarkdownEditor() {
+interface MarkdownEditorProps {
+  onAddSingleComment: (value: string) => void;
+  onStartReview: (value: string) => void;
+}
+
+export function MarkdownEditor({
+  onAddSingleComment,
+  onStartReview,
+}: MarkdownEditorProps) {
   const [category, setCategory] = useState<"comment" | "suggest" | "review">(
     "comment"
   );
   const [value, setValue] = useState<string>("");
 
-  function handleCategory(event) {
-    setCategory(event.target.value);
+  function handleCategory(event: React.ChangeEvent<HTMLSelectElement>) {
+    setCategory(event.target.value as "comment" | "suggest" | "review");
   }
 
   function handleCancel() {
@@ -17,11 +26,13 @@ export function MarkdownEditor() {
 
   function handleAddSingleComment() {
     if (!value.trim()) return alert("내용을 입력해주세요.");
+    onAddSingleComment(value);
     setValue("");
   }
 
   function handleStartReview() {
     if (!value.trim()) return alert("내용을 입력해주세요.");
+    onStartReview(value);
     setValue("");
   }
 
@@ -37,7 +48,11 @@ export function MarkdownEditor() {
         <option value="review">review</option>
       </select>
 
-      <MDEditor value={value} onChange={setValue} preview="edit" />
+      <MDEditor
+        value={value}
+        onChange={(val) => setValue(val ?? "")}
+        preview="live"
+      />
 
       <div className="mt-3 text-right">
         <button

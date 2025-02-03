@@ -1,17 +1,24 @@
-import { Comment } from "./comment";
-import { MarkdownEditor } from "../../common/markkdownEditor";
+import { Suspense } from "react";
+import { Comments } from "./comments";
+import { MarkdownEditor } from "../../common/markdownEditor";
 import { ParticipantList } from "./participantList";
+import { ErrorBoundery } from "../../common/errorBoundery";
+import spinner from "../../../assets/images/spinner.svg";
 
 export function Conversation() {
   return (
-    <div className="flex gap-5">
-      <div className="w-3/4">
-        <Comment />
+    <section className="flex gap-5">
+      <main className="w-3/4">
+        <ErrorBoundery>
+          <Suspense fallback={<img src={spinner} alt="Loading..." />}>
+            <Comments />
+          </Suspense>
+        </ErrorBoundery>
         <MarkdownEditor />
-      </div>
-      <div className="w-1/4">
+      </main>
+      <aside className="w-1/4">
         <ParticipantList />
-      </div>
-    </div>
+      </aside>
+    </section>
   );
 }
