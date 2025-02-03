@@ -39,7 +39,7 @@ export function DiffViewer({ oldCode, newCode }: DiffViewerProps) {
       console.log(oldline, newline, linetype);
       return { oldline, newline, linetype };
     } else {
-      // newCode 선택한 경우
+      // Code 선택한 경우
       const idx = diffFile
         .getBundle()
         .splitRightLines.findIndex((item) => item.lineNumber === lineNumber);
@@ -58,7 +58,11 @@ export function DiffViewer({ oldCode, newCode }: DiffViewerProps) {
     <div className="w-full border">
       <DiffView
         diffFile={diff}
-        diffViewAddWidget
+        extendData={{
+          oldFile: { 2: { data: "제대로 좀 해라" } },
+          newFile: { 5: { data: "똑바로 좀 해라" } },
+        }}
+        renderExtendLine={({ data }) => <>{data}</>}
         renderWidgetLine={({ diffFile, side, lineNumber, onClose }) => {
           console.log("side:", side, lineNumber);
           // 0 그대로 , 1 추가, 2 제거

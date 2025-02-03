@@ -3,15 +3,13 @@ import MDEditor from "@uiw/react-md-editor";
 import { useState } from "react";
 
 interface MarkdownEditorProps {
-  addReview: (value: string) => void;
-  submitComment: (value: string) => void;
-  onClose: () => void;
+  onAddSingleComment: (value: string) => void;
+  onStartReview: (value: string) => void;
 }
 
 export function MarkdownEditor({
-  submitComment,
-  addReview,
-  onClose,
+  onAddSingleComment,
+  onStartReview,
 }: MarkdownEditorProps) {
   const [category, setCategory] = useState<"comment" | "suggest" | "review">(
     "comment"
@@ -22,15 +20,19 @@ export function MarkdownEditor({
     setCategory(event.target.value as "comment" | "suggest" | "review");
   }
 
-  function handleSubmitComment() {
+  function handleCancel() {
+    setValue("");
+  }
+
+  function handleAddSingleComment() {
     if (!value.trim()) return alert("내용을 입력해주세요.");
-    submitComment(value);
+    onAddSingleComment(value);
     setValue("");
   }
 
   function handleStartReview() {
     if (!value.trim()) return alert("내용을 입력해주세요.");
-    addReview(value);
+    onStartReview(value);
     setValue("");
   }
 
@@ -54,22 +56,22 @@ export function MarkdownEditor({
 
       <div className="mt-3 text-right">
         <button
-          onClick={onClose}
+          onClick={handleCancel}
           className="px-2 border mr-2 border-gray-300 p-1 rounded-md"
         >
-          취소
+          Cancel
         </button>
         <button
-          onClick={handleSubmitComment}
+          onClick={handleAddSingleComment}
           className="px-2 border mr-2 border-gray-300 p-1 rounded-md"
         >
-          댓글달기
+          Add single comment
         </button>
         <button
           onClick={handleStartReview}
           className="px-2 text-white border border-sky-400 bg-sky-400 p-1 rounded-md"
         >
-          리뷰추가
+          Start review
         </button>
       </div>
     </div>
