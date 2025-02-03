@@ -5,7 +5,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useGetComments } from "../../../../api/queries/useGetComments";
 
-interface Commnet {
+interface Comment {
   commentId: number;
   createAt: string;
   content: string;
@@ -27,7 +27,7 @@ export function Comments() {
   return (
     <section className="bg-white my-5 p-5 rounded-xl">
       <ul>
-        {data?.map((comment: Commnet) => (
+        {data?.map((comment: Comment) => (
           <li key={comment.commentId} className="mb-8">
             <header>
               <img

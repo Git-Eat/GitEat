@@ -1,9 +1,9 @@
 import { Suspense } from "react";
 import { Comments } from "./comments";
 import { MarkdownEditor } from "../../common/markdownEditor";
-import { ParticipantList } from "./participantList";
 import { ErrorBoundery } from "../../common/errorBoundery";
 import spinner from "../../../assets/images/spinner.svg";
+import { Participants } from "./Participants";
 
 export function Conversation() {
   return (
@@ -20,7 +20,7 @@ export function Conversation() {
         />
       </main>
       <aside className="w-1/4">
-        <ParticipantList />
+        <Participants />
       </aside>
     </section>
   );

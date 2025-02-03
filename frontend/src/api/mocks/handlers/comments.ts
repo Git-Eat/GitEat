@@ -29,7 +29,7 @@ const comments = [
 
 const commentsHandlers = [
   // 주소 임의 설정(추후 수정 필요)
-  http.get("/api/pr_id/comments", () => {
+  http.get("http://localhost:3000/undefined/pr/repoId/prId/comment", () => {
     return HttpResponse.json(comments, { status: 200 });
   }),
 
