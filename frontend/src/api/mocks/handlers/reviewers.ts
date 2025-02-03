@@ -8,18 +8,18 @@ import review from "../../../assets/images/review.svg";
 
 const reviewers = [
   {
-    user_profile: user_profile_2,
-    user_id: "Lilyoung",
+    userProfile: user_profile_2,
+    userId: "Lilyoung",
     emoji: suggest,
   },
   {
-    user_profile: user_profile_3,
-    user_id: "singwisdom",
+    userProfile: user_profile_3,
+    userId: "singwisdom",
     emoji: comment,
   },
   {
-    user_profile: user_profile_4,
-    user_id: "ih_o8",
+    userProfile: user_profile_4,
+    userId: "ih_o8",
     emoji: review,
   },
 ];

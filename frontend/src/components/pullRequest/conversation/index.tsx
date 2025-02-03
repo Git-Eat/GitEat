@@ -3,7 +3,7 @@ import { Comments } from "./comments";
 import { MarkdownEditor } from "../../common/markdownEditor";
 import { ErrorBoundery } from "../../common/errorBoundery";
 import spinner from "../../../assets/images/spinner.svg";
-import { Participants } from "./Participants";
+import { Participants } from "./participants";
 
 export function Conversation() {
   return (

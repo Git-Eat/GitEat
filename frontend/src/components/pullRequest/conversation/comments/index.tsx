@@ -6,6 +6,8 @@ import remarkGfm from "remark-gfm";
 import { useGetComments } from "../../../../api/queries/useGetComments";
 
 interface Comment {
+  prId: number;
+  comment_Id: number;
   commentId: number;
   createAt: string;
   content: string;
@@ -25,7 +27,7 @@ export function Comments() {
   }
 
   return (
-    <section className="bg-white my-5 p-5 rounded-xl">
+    <section className="bg-white my-5 px-5 pt-5 pb-1 rounded-xl">
       <ul>
         {data?.map((comment: Comment) => (
           <li key={comment.commentId} className="mb-8">
@@ -45,7 +47,7 @@ export function Comments() {
                   {comment.content}
                 </ReactMarkdown>
               </div>
-              <p className="text-right">3개의 답글</p>
+              <p className="mt-3 text-right">3개의 답글</p>
               <hr className="my-4" />
               <Reply />
             </article>
