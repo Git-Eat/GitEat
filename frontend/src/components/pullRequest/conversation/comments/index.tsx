@@ -1,24 +1,12 @@
-import axios from "axios";
 import { useState } from "react";
-import { useQuery } from "react-query";
 import { Reply } from "../reply";
 import { MarkdownEditor } from "../../../common/markdownEditor";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-
-interface Comment {
-  comment_id: number;
-  content: string;
-  create_at: string;
-}
-
-async function fetchComments() {
-  const response = await axios.get("/api/pr_id/comments");
-  return response.data;
-}
+import { useGetComments } from "../../../../api/queries/useGetComments";
 
 export function Comments() {
-  const { data: comments } = useQuery<Comment[]>("comments", fetchComments);
+  const { data } = useGetComments();
   const [isReplyEditorOpen, setIsReplyEditorOpen] = useState<
     Record<number, boolean>
   >({});
@@ -33,7 +21,7 @@ export function Comments() {
   return (
     <section className="bg-white my-5 p-5 rounded-xl">
       <ul>
-        {comments?.map((comment) => (
+        {data?.map((comment) => (
           <li key={comment.comment_id} className="mb-8">
             <header>
               <img
