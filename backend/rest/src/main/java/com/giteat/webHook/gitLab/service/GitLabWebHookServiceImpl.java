@@ -3,10 +3,12 @@ package com.giteat.webHook.gitLab.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.giteat.api.GitLabApi;
 import com.giteat.common.gitLab.mapper.GitLabTokenMapper;
-import com.giteat.common.util.SHA1Util;
-import com.giteat.webHook.gitLab.entity.*;
+import com.giteat.webHook.gitLab.entity.GitLabFileChangeEntity;
 import com.giteat.webHook.gitLab.repository.*;
 import org.springframework.transaction.annotation.Transactional;
+import com.giteat.webHook.gitLab.entity.GitLabCommitEntity;
+import com.giteat.webHook.gitLab.entity.GitLabMergeRequestEntity;
+import com.giteat.webHook.gitLab.entity.GitLabNoteEntity;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -43,7 +45,8 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         GitLabMergeRequestEntity mergeRequestEntity = new GitLabMergeRequestEntity();
         Map<String, Object> projectMap = (Map<String, Object>) body.get("project");
         Map<String, Object> userMap = (Map<String, Object>) body.get("user");
-        Map<String, Object> mergeRequestMap = (Map<String, Object>) body.get("object_attributes");
+        Map<String, Object> mergeRequestMap = (Map<String, Object>) body.get("object");
+        Map<String, Object> diffMap = (Map<String, Object>) body.get("diff_refs");
 
         mergeRequestEntity.setPrId((int) mergeRequestMap.get("id"));
         mergeRequestEntity.setRepoId((int) projectMap.get("id"));
