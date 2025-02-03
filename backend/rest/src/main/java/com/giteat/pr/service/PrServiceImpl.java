@@ -17,6 +17,7 @@ import java.util.Map;
 public class PrServiceImpl implements PrService{
 
     private final PrMapper prMapper;
+    private final CommentConverter commentConverter;
     private final GitLabApi gitLabApi;
 
 
@@ -75,12 +76,31 @@ public class PrServiceImpl implements PrService{
     }
 
     @Override
-    public int deleteComment(int repoId, int prId, int commentId) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("repoId", repoId);
-        params.put("prId", prId);
-        params.put("commentId", commentId);
-        return prMapper.deleteComment(params);
+    public int deleteComment(String repoId, String prId, String commentId) {
+
+        // GitLab API에 댓글 삭제 요청
+        boolean response = gitLabApi.deleteComment(repoId, prId, commentId,"");
+
+        // 우리 DB에서도 삭제
+        if(response){
+            Map<String, Object> params = new HashMap<>();
+            params.put("repoId", repoId);
+            params.put("prId", prId);
+            params.put("commentId", commentId);
+            return prMapper.deleteComment(params);
+        }
+        return 404;
+    }
+
+    @Override
+    public int insertFileComment(String repoId, String prId, CustomCommentDto customCommentDto) {
+        // RequestBody 데이터 변환
+        FileCommentDto gitLabRequest = commentConverter.converToGitLabFormat(customCommentDto);
+
+        // 깃랩 API에 댓글 등록 요청
+        Map<String,Object> response = gitLabApi.insertFileComment(repoId, prId, gitLabRequest, "");
+        if(response != null) return 200;
+        return 404;
     }
 
     @Override
@@ -103,8 +123,19 @@ public class PrServiceImpl implements PrService{
     }
 
     @Override
-    public int deleteReply(int replyId) {
-        return prMapper.deleteReply(replyId);
+    public int deleteReply(String repoId, String prId, String reCommentId) {
+        // GitLab API에 댓글 삭제 요청
+        boolean response = gitLabApi.deleteComment(repoId, prId, reCommentId,"");
+
+        // 우리 DB에서도 삭제
+        if(response){
+            Map<String, Object> params = new HashMap<>();
+            params.put("repoId", repoId);
+            params.put("prId", prId);
+            params.put("reCommentId", reCommentId);
+            return prMapper.deleteReply(params);
+        }
+        return 404;
     }
 
     @Override

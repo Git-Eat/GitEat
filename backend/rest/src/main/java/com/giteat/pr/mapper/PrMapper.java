@@ -18,7 +18,7 @@ public interface PrMapper {
     int deleteComment(Map<String, Object> params); // 댓글 삭제
 
     List<ReplyDto> showReply(int repoId, int prId, int commentId); // 대댓글 조회
-    int deleteReply(int replyId); // 대댓글 삭제
+    int deleteReply(Map<String, Object> params);
 
     List<FileDto> showFileListByPr(Map<String, Object> params);
     List<FileDto> showFileListByCommit(Map<String, Object> params);// 변경 된 파일 목록 확인
