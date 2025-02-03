@@ -1,4 +1,5 @@
 import { http, HttpResponse } from "msw";
+import commentsHandlers from "./handlers/comments";
 
 const MOCK_REGION = [
   {
@@ -23,10 +24,7 @@ const handler = [
   http.get("https://jsonplaceholder.typicode.com/posts", () => {
     return HttpResponse.json(MOCK_REGION);
   }),
-  http.post("http://backendApi:8080/user/login", () => {
-    console.log("login mock");
-    return HttpResponse.json(LOGIN_MOCK);
-  }),
+  ...commentsHandlers,
 ];
 
 export default handler;
