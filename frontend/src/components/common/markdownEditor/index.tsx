@@ -3,14 +3,11 @@ import MDEditor from "@uiw/react-md-editor";
 import { useState } from "react";
 
 interface MarkdownEditorProps {
-  onAddSingleComment: (value: string) => void;
-  onStartReview: (value: string) => void;
+  addReview: (value: string) => void;
+  addComment: (value: string) => void;
 }
 
-export function MarkdownEditor({
-  onAddSingleComment,
-  onStartReview,
-}: MarkdownEditorProps) {
+export function MarkdownEditor({ addComment, addReview }: MarkdownEditorProps) {
   const [category, setCategory] = useState<"comment" | "suggest" | "review">(
     "comment"
   );
@@ -26,13 +23,13 @@ export function MarkdownEditor({
 
   function handleAddSingleComment() {
     if (!value.trim()) return alert("내용을 입력해주세요.");
-    onAddSingleComment(value);
+    addComment(value);
     setValue("");
   }
 
   function handleStartReview() {
     if (!value.trim()) return alert("내용을 입력해주세요.");
-    onStartReview(value);
+    addReview(value);
     setValue("");
   }
 
@@ -59,19 +56,19 @@ export function MarkdownEditor({
           onClick={handleCancel}
           className="px-2 border mr-2 border-gray-300 p-1 rounded-md"
         >
-          Cancel
+          초기화
         </button>
         <button
           onClick={handleAddSingleComment}
           className="px-2 border mr-2 border-gray-300 p-1 rounded-md"
         >
-          Add single comment
+          댓글달기
         </button>
         <button
           onClick={handleStartReview}
           className="px-2 text-white border border-sky-400 bg-sky-400 p-1 rounded-md"
         >
-          Start review
+          리뷰추가
         </button>
       </div>
     </div>
