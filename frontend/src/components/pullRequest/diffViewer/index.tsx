@@ -19,10 +19,14 @@ export function DiffViewer({ oldCode, newCode }: DiffViewerProps) {
       "java"
     );
     instance.initRaw();
-    // console.log(instance);
     return instance;
   };
-  const getLines = (side: number, diffFile: DiffFile, lineNumber: number) => {
+  const getLinesAndType = (
+    side: number,
+    diffFile: DiffFile,
+    lineNumber: number
+  ) => {
+    // oldCode 선택한 경우
     if (side === 1) {
       console.log(diffFile.getBundle().splitLeftLines);
       const idx = diffFile
@@ -35,6 +39,7 @@ export function DiffViewer({ oldCode, newCode }: DiffViewerProps) {
       console.log(oldline, newline, linetype);
       return { oldline, newline, linetype };
     } else {
+      // newCode 선택한 경우
       const idx = diffFile
         .getBundle()
         .splitRightLines.findIndex((item) => item.lineNumber === lineNumber);
@@ -57,7 +62,7 @@ export function DiffViewer({ oldCode, newCode }: DiffViewerProps) {
         renderWidgetLine={({ diffFile, side, lineNumber, onClose }) => {
           console.log("side:", side, lineNumber);
           // 0 그대로 , 1 추가, 2 제거
-          const { oldline, newline, linetype } = getLines(
+          const { oldline, newline, linetype } = getLinesAndType(
             side,
             diffFile,
             lineNumber
