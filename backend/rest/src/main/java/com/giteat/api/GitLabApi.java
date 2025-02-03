@@ -159,12 +159,12 @@ public class GitLabApi {
         return callGetApiUseId(url , id);
     }
 
-    public String getDiffRefs(String projectId , String iid , String id){
+    public Map<String , Object> getDiffRefs(String projectId , String iid , String id){
         String accessToken = "glpat-_2SHA1YNyshjLLNSrLAd";
 //        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + iid + "/diff";
         String url = "http://192.168.31.237/api/v4" + "/projects/" + projectId + "/merge_requests/" + iid;
         //http://192.168.31.237/api/v4/projects/1/merge_requests/1
-        return testCallGetApi(url , accessToken);
+        return chaneTypeMap(testCallGetApi(url , accessToken));
     }
 
     // 변경된 Raw 코드 가져오는 함수
@@ -292,6 +292,41 @@ public class GitLabApi {
         ResponseEntity<Void> response = restTemplate.exchange(url, HttpMethod.DELETE, entity, Void.class);
 
         return response.getStatusCode().is2xxSuccessful();
+    }
+
+
+    /**
+     * API 요청 이 후 response 한 결과 string 을 List 타입으로 변경
+     * @param response
+     * @return
+     */
+    private List<Map<String , Object>> changeTypeList(String response){
+        List<Map<String, Object>> resultList = null;
+        try {
+            resultList = objectMapper.readValue(
+                    response,
+                    new TypeReference<List<Map<String, Object>>>() {
+                    }
+            );
+        } catch (IOException e) {
+            e.printStackTrace();  // 디버깅을 위해 예외 출력
+        }
+        return resultList;
+
+    }
+
+    private Map<String , Object> chaneTypeMap(String response){
+        Map<String , Object> resultMap = null;
+        try{
+            resultMap = objectMapper.readValue(
+                    response,
+                    new TypeReference<Map<String, Object>>() {
+                    }
+            );
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        return resultMap;
     }
 
 }
