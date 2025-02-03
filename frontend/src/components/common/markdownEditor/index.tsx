@@ -4,10 +4,15 @@ import { useState } from "react";
 
 interface MarkdownEditorProps {
   addReview: (value: string) => void;
-  addComment: (value: string) => void;
+  submitComment: (value: string) => void;
+  onClose: () => void;
 }
 
-export function MarkdownEditor({ addComment, addReview }: MarkdownEditorProps) {
+export function MarkdownEditor({
+  submitComment,
+  addReview,
+  onClose,
+}: MarkdownEditorProps) {
   const [category, setCategory] = useState<"comment" | "suggest" | "review">(
     "comment"
   );
@@ -17,13 +22,9 @@ export function MarkdownEditor({ addComment, addReview }: MarkdownEditorProps) {
     setCategory(event.target.value as "comment" | "suggest" | "review");
   }
 
-  function handleCancel() {
-    setValue("");
-  }
-
-  function handleAddSingleComment() {
+  function handleSubmitComment() {
     if (!value.trim()) return alert("내용을 입력해주세요.");
-    addComment(value);
+    submitComment(value);
     setValue("");
   }
 
@@ -53,13 +54,13 @@ export function MarkdownEditor({ addComment, addReview }: MarkdownEditorProps) {
 
       <div className="mt-3 text-right">
         <button
-          onClick={handleCancel}
+          onClick={onClose}
           className="px-2 border mr-2 border-gray-300 p-1 rounded-md"
         >
-          초기화
+          취소
         </button>
         <button
-          onClick={handleAddSingleComment}
+          onClick={handleSubmitComment}
           className="px-2 border mr-2 border-gray-300 p-1 rounded-md"
         >
           댓글달기

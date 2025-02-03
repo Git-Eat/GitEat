@@ -1,8 +1,8 @@
-import { DiffView, DiffModeEnum } from "@git-diff-view/react";
+import { DiffView, DiffModeEnum, DiffFile } from "@git-diff-view/react";
 import { generateDiffFile } from "@git-diff-view/file";
 import "@git-diff-view/react/styles/diff-view.css";
 import { useMemo } from "react";
-import { MarkdownEditor } from "../../common/markdownEditor";
+import { FileMarkDownEditor } from "../fileMarkDownEditor";
 interface DiffViewerProps {
   oldCode: string;
   newCode: string;
@@ -19,23 +19,55 @@ export function DiffViewer({ oldCode, newCode }: DiffViewerProps) {
       "java"
     );
     instance.initRaw();
-    console.log(instance);
+    // console.log(instance);
     return instance;
   };
+  const getLines = (side: number, diffFile: DiffFile, lineNumber: number) => {
+    if (side === 1) {
+      const oldline =
+        diffFile.getBundle().splitLeftLines[lineNumber - 1].lineNumber;
+      const newline =
+        diffFile.getBundle().splitLeftLines[lineNumber - 1].diff?.oldLineNumber;
+      const linetype =
+        diffFile.getBundle().splitLeftLines[lineNumber - 1].diff?.type;
+      console.log(oldline, newline, linetype);
+      return { oldline, newline, linetype };
+    } else {
+      const newline =
+        diffFile.getBundle().splitRightLines[lineNumber - 1].lineNumber;
+      const oldline =
+        diffFile.getBundle().splitRightLines[lineNumber - 1].diff
+          ?.oldLineNumber;
+      const linetype =
+        diffFile.getBundle().splitRightLines[lineNumber - 1].diff?.type;
+      console.log(oldline, newline, linetype);
+      return { oldline, newline, linetype };
+    }
+  };
 
-  const diffFile = useMemo(() => getDiffFile(), [oldCode, newCode]);
+  const diff = useMemo(() => getDiffFile(), [oldCode, newCode]);
 
   return (
-    <div className="w-full">
+    <div className="w-full border">
       <DiffView
-        diffFile={diffFile}
+        diffFile={diff}
         diffViewAddWidget
-        renderWidgetLine={({ side, lineNumber }) => {
-          console.log(side, lineNumber);
+        renderWidgetLine={({ diffFile, side, lineNumber, onClose }) => {
+          console.log("side:", side, lineNumber);
+          // 0 그대로 , 1 추가, 2 제거
+          const { oldline, newline, linetype } = getLines(
+            side,
+            diffFile,
+            lineNumber
+          );
+          console.log(oldline, newline, linetype);
           return (
-            <MarkdownEditor
-              onAddSingleComment={() => {}}
-              onStartReview={() => {}}
+            <FileMarkDownEditor
+              startLine={linetype === 2 ? oldline : newline}
+              endLine={linetype === 2 ? oldline : newline}
+              submitComment={() => {}}
+              addReview={() => {}}
+              onClose={onClose}
             />
           );
         }}
