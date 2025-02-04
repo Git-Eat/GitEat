@@ -13,7 +13,7 @@ public class SwaggerConfig {
         return GroupedOpenApi
                 .builder()
                 .group("mergeRequest") // 우측상단 그룹화
-                .pathsToMatch("/api/pr/**") // end point
+                .pathsToMatch("/pr/**") // end point
                 .addOpenApiCustomizer(
                         openApi ->
                                 openApi

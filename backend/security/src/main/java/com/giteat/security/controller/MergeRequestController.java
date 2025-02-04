@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/pr")
+@RequestMapping("/pr")
 @AllArgsConstructor
 public class MergeRequestController {
 
