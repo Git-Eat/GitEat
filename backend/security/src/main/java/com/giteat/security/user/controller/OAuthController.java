@@ -50,4 +50,27 @@ public class OAuthController {
        return apiUtil.postApi("/oauth/refresh", tokenRequest);
     }
 
+    /**
+     * GitLab OAuth 일반 로그아웃 처리
+     * Access Token을 무효화하고 현재 세션을 종료
+     *
+     * @param oAuthTokenDto OAuth 토큰 정보를 담고 있는 DTO
+     * @return 로그아웃 처리 결과
+     */
+//    @PostMapping("/gitlab/logout")
+//    public ResponseEntity<?> gitlabLogout(@RequestBody OAuthTokenDto oAuthTokenDto){
+//        return apiUtil.postApi("/oauth/logout", oAuthTokenDto);
+//    }
+
+    /**
+     * GitLab 계정 연동 해제
+     * GitLab 계정과 애플리케이션의 연동을 완전히 해제
+     *
+     * @param oAuthTokenDto OAuth 토큰 정보를 담고 있는 DTO
+     * @return 연동 해제 처리 결과
+     */
+//    @PostMapping("/gitlab/unlink")
+//    public ResponseEntity<?> gitlabUnlink(@RequestBody OAuthTokenDto oAuthTokenDto){
+//        return apiUtil.postApi("/oauth/unlink", oAuthTokenDto);
+//    }
 }

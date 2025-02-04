@@ -8,4 +8,8 @@ public interface OAuthService {
     void saveToken(OAuthTokenDto oAuthTokenDto);
 
     OAuthTokenDto refreshToken(OAuthTokenDto tokenRequest);
+
+//    void logout(OAuthTokenDto oAuthTokenDto);
+//
+//    void unlink(OAuthService oAuthService);
 }

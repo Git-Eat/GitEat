@@ -27,19 +27,19 @@ public class OAuthApi {
 
     private final RestTemplate restTemplate;
 
-    @Value("${spring.security.oauth2.client.registration.gitlab.client-id}")
+    @Value("${oauth.gitlab.client-id}")
     private String clientId;
 
-    @Value("${spring.security.oauth2.client.registration.gitlab.client-secret}")
+    @Value("${oauth.gitlab.client-secret}")
     private String clientSecret;
 
-    @Value("${spring.security.oauth2.client.registration.gitlab.redirect-uri}")
+    @Value("${oauth.gitlab.redirect-uri}")
     private String redirectUri;
 
-    @Value("${spring.security.oauth2.client.provider.gitlab.token-uri}")
+    @Value("${oauth.gitlab.token-uri}")
     private String tokenUri;
 
-    @Value("${spring.security.oauth2.client.provider.gitlab.user-info-uri}")
+    @Value("${oauth.gitlab.user-info-uri}")
     private String userInfoUri;
 
     public OAuthApi(RestTemplate restTemplate) {

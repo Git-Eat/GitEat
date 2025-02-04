@@ -27,11 +27,11 @@ import java.util.Map;
 @Component
 public class GitLabApi {
 
-    private final OAuthRepository oAuthDao;
+    private final OAuthRepository oAuthRepository;
     private final RestTemplate restTemplate;
 
-    public GitLabApi(OAuthRepository oAuthDao, RestTemplate restTemplate) {
-        this.oAuthDao = oAuthDao;
+    public GitLabApi(OAuthRepository oAuthDao, OAuthRepository oAuthRepository, RestTemplate restTemplate) {
+        this.oAuthRepository = oAuthRepository;
         this.restTemplate = restTemplate;
     }
 
@@ -105,4 +105,19 @@ public class GitLabApi {
             throw new RuntimeException(e);
         }
     }
-}
+
+//    public void logoutUser(String accessToken) {
+//    }
+//
+//    public void unlinkUser(String refreshToken) {
+//        try {
+//
+//        }
+//        catch (Exception e) {
+//            e.printStackTrace();
+//            throw new RuntimeException("Failed to unlink GitLab account", e);
+//        }
+
+
+    }
+
