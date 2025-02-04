@@ -23,7 +23,7 @@ public class UserController {
     @GetMapping("/data")
     public ResponseEntity<?> get(@RequestParam String param) {
         // "url"은 실제 API URL로 교체
-        return api.getApi("url", param);
+        return api.getApi("url");
     }
 
     /**

@@ -4,10 +4,12 @@ import { Login } from "./pages/login";
 import { DashBoard } from "./pages/dashboard";
 import { PullRequests } from "./pages/pullRequestList";
 import { RepositoryList } from "./pages/repositoryList";
+import { Conversation } from "./components/pullRequest/conversation";
 import { AuthLayout } from "./pages/authLayout";
 import { Loading } from "./pages/loading";
 import { Error } from "./pages/error";
 import { QueryClientProvider, QueryClient } from "react-query";
+import { FileChanges } from "./components/pullRequest/fileChanges";
 
 function App() {
   const queryClient = new QueryClient();
@@ -22,7 +24,11 @@ function App() {
           <Route element={<AuthLayout />}>
             <Route path="/repos" element={<RepositoryList />} />
             <Route path="/dashboard" element={<DashBoard />} />
-            <Route path="/pulls" element={<PullRequests />} />
+            <Route path="/pulls" element={<PullRequests />}>
+              <Route path="conversation" element={<Conversation />} />
+              <Route path="commits" element={<>commits</>} />
+              <Route path="file-changes" element={<FileChanges />} />
+            </Route>
             <Route path="/wiki" element={<PullRequests />} />
           </Route>
         </Routes>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.giteat.util.getLab.mapper.GitLabTokenMapper">
+
+    <select id="getAccessToken" parameterType="String" resultType="String">
+        SELECT o.access_token
+        FROM oauth_token as o
+        JOIN tokens as t
+        USING(oauth_id)
+        where t.access_token = #{jwtAccessToken};
+    </select>
+
+    <select id="getAccessTokenById" parameterType="string" resultType="string">
+        SELECT access_token
+        FROM oauth_token
+        WHERE oauth_id = {id}
+    </select>
+
+</mapper>
