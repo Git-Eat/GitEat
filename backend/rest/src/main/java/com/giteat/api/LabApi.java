@@ -3,8 +3,6 @@ package com.giteat.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.giteat.common.util.GitLabTokenService;
 import com.giteat.pr.dto.FileCommentDto;
-import com.giteat.pr.dto.FileDto;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -12,16 +10,15 @@ import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.*;
 
 @Component
-public class GitLabApi {
+public class LabApi {
     private final RestTemplate restTemplate;
     private final String gitlabApiUrl = "https://lab.ssafy.com/api/v4";
     private final GitLabTokenService gitLabTokenService;
     private final ObjectMapper objectMapper;
-    public GitLabApi(RestTemplate restTemplate , GitLabTokenService gitLabTokenService , ObjectMapper objectMapper) {
+    public LabApi(RestTemplate restTemplate , GitLabTokenService gitLabTokenService , ObjectMapper objectMapper) {
         this.restTemplate = restTemplate;
         this.gitLabTokenService = gitLabTokenService;
         this.objectMapper = objectMapper;

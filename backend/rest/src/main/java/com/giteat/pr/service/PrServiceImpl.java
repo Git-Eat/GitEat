@@ -1,6 +1,6 @@
 package com.giteat.pr.service;
 
-import com.giteat.api.GitLabApi;
+import com.giteat.api.LabApi;
 import com.giteat.pr.dto.*;
 import com.giteat.pr.mapper.PrMapper;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class PrServiceImpl implements PrService{
 
     private final PrMapper prMapper;
     private final CommentConverter commentConverter;
-    private final GitLabApi gitLabApi;
+    private final LabApi gitLabApi;
 
 
     @Override

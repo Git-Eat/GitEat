@@ -1,18 +1,9 @@
 package com.giteat.webHook.gitLab.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.giteat.api.GitLabApi;
-import com.giteat.common.gitLab.mapper.GitLabTokenMapper;
-import com.giteat.common.util.SHA1Util;
-import com.giteat.webHook.gitLab.entity.*;
-import com.giteat.webHook.gitLab.repository.*;
-import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import com.fasterxml.jackson.core.type.TypeReference;
 
 
-import java.io.IOException;
 import java.util.*;
 //
 //
