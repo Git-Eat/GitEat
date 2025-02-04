@@ -8,23 +8,23 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-@EnableWebSecurity
+//@EnableWebSecurity
 public class SecurityConfig {
-    @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
-
-
-        http.csrf(csrf -> csrf.disable())
-                .formLogin(auth -> auth.disable())
-                .httpBasic(auth -> auth.disable())
-                .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/**").permitAll()                                    // 임시로 전부 허용
-//                    .requestMatchers("/", "/login", "/reissue").permitAll()
-//                   .requestMatchers("/test").hasRole("USER")        // test용
-//                    .anyRequest().authenticated()
-                );
-
-
-        return http.build();
-    }
+//    @Bean
+//    SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+//
+//
+//        http.csrf(csrf -> csrf.disable())
+//                .formLogin(auth -> auth.disable())
+//                .httpBasic(auth -> auth.disable())
+//                .authorizeHttpRequests(auth -> auth
+//                                .requestMatchers("/**").permitAll()                                    // 임시로 전부 허용
+////                    .requestMatchers("/", "/login", "/reissue").permitAll()
+////                   .requestMatchers("/test").hasRole("USER")        // test용
+////                    .anyRequest().authenticated()
+//                );
+//
+//
+//        return http.build();
+//    }
 }
