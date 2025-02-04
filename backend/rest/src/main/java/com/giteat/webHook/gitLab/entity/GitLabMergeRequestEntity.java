@@ -10,7 +10,6 @@ import lombok.Setter;
 @Setter
 public class GitLabMergeRequestEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "pr_id")
     private int prId;
 
@@ -32,4 +31,13 @@ public class GitLabMergeRequestEntity {
 
     @Column(name = "is_opened")
     private int isOpened;
+
+    @Column(name = "base_sha")
+    private String baseSha;
+
+    @Column(name = "head_sha")
+    private String headSha;
+
+    @Column(name = "start_sha")
+    private String startSha;
 }
