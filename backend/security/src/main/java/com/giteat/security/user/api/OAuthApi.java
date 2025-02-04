@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.giteat.security.user.dto.OAuthTokenDto;
 import com.giteat.security.user.service.CustomOAuthService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -17,28 +18,43 @@ import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * GitLab OAuth 인증을 위한 API 호출을 담당하는 컴포넌트
+ * AccessToken 발급 및 사용자 정보 조회 기능 제공
+ */
 @Component
 public class OAuthApi {
 
     private final RestTemplate restTemplate;
 
-    private static final String CLIENT_ID = "8a9363db17d9a7aae6c03c37f43eec0f942e30bb88541ff8bb6aaf46b17aa6b2";
-    private static final String CLIENT_SECRET = "gloas-c535103e2d14667af66a61a71267dcf1e49e878c84e560a91aee907bc4a10363";
-    private static final String REDIRECT_URI = "http://127.0.0.1:5173/loading";
-    private static final String TOKEN_URI = "https://lab.ssafy.com/oauth/token";
-    private static final String USER_INFO_URI = "https://lab.ssafy.com/api/v4/user";
+    @Value("${spring.security.oauth2.client.registration.gitlab.client-id}")
+    private String clientId;
+
+    @Value("${spring.security.oauth2.client.registration.gitlab.client-secret}")
+    private String clientSecret;
+
+    @Value("${spring.security.oauth2.client.registration.gitlab.redirect-uri}")
+    private String redirectUri;
+
+    @Value("${spring.security.oauth2.client.provider.gitlab.token-uri}")
+    private String tokenUri;
+
+    @Value("${spring.security.oauth2.client.provider.gitlab.user-info-uri}")
+    private String userInfoUri;
 
     public OAuthApi(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
-    /*
-    * 프론트엔드에서 받은 Authorization Code를 사용하여
-    * GitLab에 Access Token을 요청
-    */
+    /**
+     * Authorization Code를 사용하여 GitLab OAuth Access Token을 요청
+     *
+     * @param code 프론트엔드로부터 받은 인증 코드
+     * @return OAuth 토큰 정보를 담은 Map (access_token, token_type, refresh_token, expires_in, scope, created_at)
+     *         실패 시 빈 Map 반환
+     */
     public Map<String, String> getAccessToken(String code) {
         // HTTP 요청 헤더 설정
-
         try {
             HttpHeaders headers = new HttpHeaders();
             // OAuth 토큰 요청 시 (form-urlencoded 사용)
@@ -46,17 +62,16 @@ public class OAuthApi {
 
             // Oauth access 토큰 요청할 때 서버가 oauth 에게 전달해주는 파라미터
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-            params.add("client_id", CLIENT_ID);
-            params.add("client_secret", CLIENT_SECRET);
+            params.add("client_id", clientId);
+            params.add("client_secret", clientSecret);
             params.add("code", code);
             params.add("grant_type", "authorization_code");
-            params.add("redirect_uri", REDIRECT_URI);
+            params.add("redirect_uri", redirectUri);
 
-            System.out.println(params);
             // 요청 객체 생성
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
 
-            ResponseEntity<String> response = restTemplate.postForEntity(TOKEN_URI, request, String.class);
+            ResponseEntity<String> response = restTemplate.postForEntity(tokenUri, request, String.class);
 
             // JSON 파싱
             ObjectMapper mapper = new ObjectMapper();
@@ -76,11 +91,13 @@ public class OAuthApi {
         }
     }
 
-    /*
-    * gitlab api에서 사용자 정보를 가져오는 메서드
-    * @param accessToken gitlab에서 받은 인증 토큰
-    * @return 사용자정보가 담긴 map
-    * */
+    /**
+     * GitLab API를 통해 사용자 정보를 조회
+     *
+     * @param accessToken GitLab에서 발급받은 OAuth 액세스 토큰
+     * @return 사용자 정보를 담은 Map (id, username, email, name, avatar_url)
+     *         실패 시 빈 Map 반환
+     */
 
     public Map<String, String> getUserInfo(String accessToken) {
         try {
@@ -98,7 +115,7 @@ public class OAuthApi {
             // - request: 위에서 만든 요청 객체
 
             ResponseEntity<String> response = restTemplate.exchange(
-                    USER_INFO_URI,
+                    userInfoUri,
                     HttpMethod.GET,
                     request,
                     String.class
@@ -122,11 +139,9 @@ public class OAuthApi {
             map.put("name", jsonNode.get("name").asText());
             map.put("avatar_url", jsonNode.get("avatar_url").asText());
 
-            System.out.println("getUserInfo map: " + map);
             return map;
 
         } catch(Exception e) {
-            System.out.println("api호출 실패: " + e.getMessage());
             return new HashMap<>();
         }
 

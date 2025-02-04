@@ -11,15 +11,14 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Map;
 
-/*
-* OAuth2 인증 처리하는 서비스 클래스
-* */
-
+/**
+ * OAuth2 인증 처리를 담당하는 서비스 클래스
+ * GitLab OAuth 로그인 및 사용자 정보 매핑 기능 제공
+ */
 @Service
 public class CustomOAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final OAuthApi oauthApi;
-
     public CustomOAuthService(OAuthApi oauthApi) {
         this.oauthApi = oauthApi;
     }
@@ -29,12 +28,20 @@ public class CustomOAuthService implements OAuth2UserService<OAuth2UserRequest, 
         return null;
     }
 
+    /**
+     * GitLab OAuth 로그인 처리
+     * Authorization Code를 사용하여 액세스 토큰을 발급받고,
+     * 발급받은 토큰으로 사용자 정보를 조회하여 DTO로 변환
+     *
+     * @param code GitLab에서 받은 Authorization Code
+     * @return OAuth 토큰 및 사용자 정보가 매핑된 DTO
+     *         실패 시 null 반환
+     */
     public OAuthTokenDto gitlabLogin(String code){
         // CSRF 공격 방지를 위한 상태 토큰 생성
-//        String state = UUID.randomUUID().toString();
+        // String state = UUID.randomUUID().toString();
         try {
             Map<String, String> token =  oauthApi.getAccessToken(code);
-
             OAuthTokenDto dto = new OAuthTokenDto();
             dto.setAccessToken(token.get("access_token"));
             dto.setTokenType(token.get("token_type"));
@@ -44,14 +51,11 @@ public class CustomOAuthService implements OAuth2UserService<OAuth2UserRequest, 
             dto.setCreatedAt(LocalDateTime.now());
 
             Map<String, String> userInfo = oauthApi.getUserInfo(dto.getAccessToken());
-
             dto.setId(Integer.valueOf(userInfo.get("id")));
             dto.setUserName(userInfo.get("username"));
             dto.setEmail(userInfo.get("email"));
             dto.setName(userInfo.get("name"));
             dto.setAvatarUrl(userInfo.get("avatar_url"));
-
-            System.out.println("service : "+ dto);
             return dto;
         } catch (Exception e) {
             return null;

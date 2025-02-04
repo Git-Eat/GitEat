@@ -15,38 +15,38 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class OAuthController {
     private final CustomOAuthService oauthService;
-    private final OAuthApi oauthApi;
     private final ApiUtil apiUtil;
 
     public OAuthController(CustomOAuthService oauthService, OAuthApi oauthApi, ApiUtil apiUtil) {
         this.oauthService = oauthService;
-        this.oauthApi = oauthApi;
         this.apiUtil = apiUtil;
     }
 
-    /*
-    * gitlab oauth 로그인 url을 생성하는 엔드포인트
-    *
-    *  1. 클라이언트가 로그인 버튼 클릭
+    /**
+     * GitLab OAuth 로그인 처리 엔드포인트
+     * 프로세스:
+     * 1. 클라이언트가 로그인 버튼 클릭
      * 2. 서버가 GitLab OAuth 인증 URL 생성
      * 3. 생성된 URL을 클라이언트에게 반환
      * 4. 클라이언트는 해당 URL로 리다이렉트되어 GitLab 로그인 페이지로 이동
-    * */
+     *
+     * @param body Authorization Code를 포함한 요청 본문
+     * @return OAuth 토큰 정보
+     */
     @PostMapping("/gitlab/login")
     public ResponseEntity<?> gitlabLogin(@RequestBody Object body){
         String code = (String) body;
-
         OAuthTokenDto oAuthTokenDto = oauthService.gitlabLogin(code);
-//        return ResponseEntity.ok(oAuthTokenDto);
         return apiUtil.postApi("/oauth/gitlab", oAuthTokenDto);
     }
-
+    /**
+     * GitLab OAuth 토큰 갱신 엔드포인트
+     *
+     * @param tokenRequest 갱신할 토큰 정보를 담은 DTO
+     * @return 갱신된 토큰 정보
+     */
     @PostMapping("/gitlab/refresh")
     public ResponseEntity<?> gitlabRefresh(@RequestBody OAuthTokenDto tokenRequest){
-        System.out.println("1. Security 서버 컨트롤러 진입");
-        System.out.println("2. 요청 데이터: " + tokenRequest);
-        System.out.println("3. REST 서버로 요청 보내기 전");
-
        return apiUtil.postApi("/oauth/refresh", tokenRequest);
     }
 

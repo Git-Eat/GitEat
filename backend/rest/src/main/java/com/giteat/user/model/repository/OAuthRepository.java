@@ -13,6 +13,7 @@ import java.util.Optional;
 public interface OAuthRepository extends JpaRepository<OAuthEntity, Long> {
 
     Optional<OAuthEntity> findByEmail(String email);
+    Optional<OAuthEntity> findByRefreshToken(String refreshToken);
 
     //갱신 토큰 DB 저장
     @Modifying
