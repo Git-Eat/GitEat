@@ -8,12 +8,19 @@ import { ko } from "date-fns/locale";
 import { Comment } from "../../../../api/types/Comment";
 import { Replies } from "../replies";
 import defaultprofile from "../../../../assets/images/user_profile.svg";
+import { useDeleteComment } from "../../../../api/queries/useDeleteComment";
 
-export function Comments() {
-  const { data } = useGetComments();
+interface CommentsProps {
+  repoId: number;
+  prId: number;
+}
+
+export function Comments({ repoId, prId }: CommentsProps) {
+  const { data } = useGetComments(repoId, prId);
   const [isReplyEditorOpen, setIsReplyEditorOpen] = useState<
     Record<number, boolean>
   >({});
+  const { mutate: deleteComment } = useDeleteComment(repoId, prId);
 
   function displayDate(commentDate: string) {
     const date = parseISO(commentDate);
@@ -58,6 +65,9 @@ export function Comments() {
                   {comment.content}
                 </ReactMarkdown>
               </div>
+              <button onClick={() => deleteComment(comment.commentId)}>
+                댓글 삭제
+              </button>
               <hr className="my-4" />
               <p className="mt-3 text-right">
                 {comment.replyList.length}개의 답글

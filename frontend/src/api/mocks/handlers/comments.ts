@@ -78,12 +78,42 @@ const comments = [
 
 const commentsHandlers = [
   // 주소 임의 설정(추후 수정 필요)
-  http.get("http://backendApi:8080/pr/repoId/prId/comment", () => {
-    return HttpResponse.json(comments, { status: 200 });
+  http.get("http://backendApi:8080/pr/:repoId/:prId/comment", (req) => {
+    const repoId = Number(req.params.repoId);
+    const prId = Number(req.params.prId);
+    const filteredComments = comments.filter(
+      (comment) => comment.repoId === repoId && comment.prId === prId
+    );
+    return HttpResponse.json(filteredComments, { status: 200 });
   }),
 
+  http.delete(
+    "http://backendApi:8080/pr/:repoId/:prId/comment/:commentId",
+    (req) => {
+      const repoId = Number(req.params.repoId);
+      const prId = Number(req.params.prId);
+      const commentId = Number(req.params.commentId);
+      const commentIndex = comments.findIndex(
+        (comment) =>
+          comment.repoId === repoId &&
+          comment.prId === prId &&
+          comment.commentId === commentId
+      );
+      if (commentIndex !== -1) {
+        comments.splice(commentIndex, 1);
+        return HttpResponse.json(
+          { message: "댓글을 삭제했습니다." },
+          { status: 200 }
+        );
+      } else {
+        return HttpResponse.json(
+          { message: "댓글을 찾을 수 없습니다." },
+          { status: 404 }
+        );
+      }
+    }
+  ),
   // http.post("api/pr_id/comments/:comment_id", () => {}),
-  // http.delete("api/pr_id/comments/:comment_id", () => {}),
   // http.update("api/pr_id/comments/:comment_id", () => {}),
 ];
 
