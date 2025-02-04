@@ -28,7 +28,6 @@ function LinkIcon({ to, src, alt }: { to: string; src: string; alt: string }) {
     () => location.pathname.startsWith(to),
     [location.pathname, to]
   );
-  console.log(location.pathname);
   return (
     <Link
       to={to}

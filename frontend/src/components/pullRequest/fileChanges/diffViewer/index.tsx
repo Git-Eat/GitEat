@@ -55,7 +55,6 @@ export function DiffViewer({ oldCode, newCode, comments }: DiffViewerProps) {
   ) => {
     // oldCode 선택한 경우
     if (side === 1) {
-      console.log(diffFile.getBundle().splitLeftLines);
       const idx = diffFile
         .getBundle()
         .splitLeftLines.findIndex((item) => item.lineNumber === lineNumber);
@@ -97,7 +96,6 @@ export function DiffViewer({ oldCode, newCode, comments }: DiffViewerProps) {
         };
       }
     });
-    console.log(extendData);
     return extendData;
   };
 
@@ -120,7 +118,6 @@ export function DiffViewer({ oldCode, newCode, comments }: DiffViewerProps) {
             diffFile,
             lineNumber
           );
-          console.log(oldline, newline, linetype);
           return (
             <FileMarkDownEditor
               startLine={linetype === 2 ? oldline : newline}
