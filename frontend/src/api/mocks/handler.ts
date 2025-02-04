@@ -1,5 +1,6 @@
 import { http, HttpResponse } from "msw";
 import commentsHandlers from "./handlers/comments";
+import reviewersHandlers from "./handlers/reviewers";
 
 const MOCK_REGION = [
   {
@@ -21,6 +22,7 @@ const handler = [
     return HttpResponse.json(MOCK_REGION);
   }),
   ...commentsHandlers,
+  ...reviewersHandlers,
 ];
 
 export default handler;
