@@ -10,12 +10,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @OpenAPIDefinition(
         info = @Info(
-                title = "GITEAT API",
-                version = "1.0",
+                title = "git eat API",
                 description = "GITEAT 프로젝트 API 문서"
         ),
         servers = {
-                @Server(url = "https://i12b108.p.ssafy.io", description = "Production Server") // HTTPS 적용
+                @Server(url = "https://i12b108.p.ssafy.io/api", description = "Production Server") // HTTPS 적용
         }
 )
 public class SwaggerConfig {
