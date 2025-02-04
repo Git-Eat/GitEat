@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
                 description = "GITEAT 프로젝트 API 문서"
         ),
         servers = {
-                @Server(url = "https://i12b108.p.ssafy.io", description = "Production Server") // HTTPS 적용
+                @Server(url = "https://i12b108.p.ssafy.io/api", description = "Production Server") // HTTPS 적용
         }
 )
 public class SwaggerConfig {
