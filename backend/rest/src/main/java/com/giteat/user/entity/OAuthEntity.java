@@ -1,0 +1,71 @@
+package com.giteat.user.entity;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "oauth_token")
+@Getter
+@Setter
+@NoArgsConstructor // 기본 생성자
+@AllArgsConstructor // 모든 필드를 파라미터로 받는 생성자 자동 생성
+public class OAuthEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "oauth_id")
+    private Integer oauthId;
+
+    @Column(name = "id")
+    private Integer id;
+
+    @Column(name = "user_name")
+    private String userName;
+
+    @Column(name = "provider_type", nullable = true) // false
+    private String providerType;
+
+    @Column(name = "access_token", nullable = false)
+    private String accessToken;
+
+    @Column(name = "token_type", nullable = false)
+    private String tokenType;
+
+    // GitLab만 제공하는 필드
+    @Column(name = "expires_in", nullable = true)
+    private Integer expiresIn;
+
+    @Column(name = "refresh_token", nullable = true)
+    private String refreshToken;
+
+    @Column(name = "created_at", nullable = true)
+    private LocalDateTime createdAt;
+
+    // GitHub만 제공하는 필드
+    @Column(nullable = true)
+    private String scope;
+
+    @Column(nullable = false)
+    private String email;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(name = "avatar_url", nullable = true)
+    private String avatarUrl;
+
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false) // false
+    private UserEntity userEntity;
+
+//    @OneToOne(mappedBy = "oauthToken", cascade = CascadeType.ALL)
+//    private TokenEntity token;
+
+
+
+}

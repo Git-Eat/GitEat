@@ -1,6 +1,6 @@
 package com.giteat.pr.service;
 
-import com.giteat.api.GitLabApi;
+import com.giteat.api.LabApi;
 import com.giteat.pr.dto.*;
 import com.giteat.pr.mapper.PrMapper;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class PrServiceImpl implements PrService{
 
     private final PrMapper prMapper;
     private final CommentConverter commentConverter;
-    private final GitLabApi gitLabApi;
+    private final LabApi gitLabApi;
 
 
     @Override
@@ -197,8 +197,8 @@ public class PrServiceImpl implements PrService{
         // 만들어 놓은 함수 호출
         // 호출하고 형식 맞춰서 데이터베이스 저장
         // 저장하고 나 값으로 형식 맞춰서 데이터 넣기
-        Map<String ,List<Map<String , Object>>> repositoryData = gitLabApi.getAllData(accessToken, repositoryId);
-        System.out.println("repositoryData : " + repositoryData);
+//        Map<String ,List<Map<String , Object>>> repositoryData = gitLabApi.getAllData(accessToken, repositoryId);
+//        System.out.println("repositoryData : " + repositoryData);
         return 1;
     }
 
