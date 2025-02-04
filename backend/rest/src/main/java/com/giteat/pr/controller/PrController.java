@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/rest/pr")
+@RequestMapping("/rest/pr")
 public class PrController {
 
     @Autowired
