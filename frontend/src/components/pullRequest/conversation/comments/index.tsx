@@ -1,19 +1,13 @@
 import { useState } from "react";
-import { Reply } from "../reply";
 import { MarkdownEditor } from "../../../common/markdownEditor";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useGetComments } from "../../../../api/queries/useGetComments";
 import { formatDistanceToNowStrict, parseISO } from "date-fns";
 import { ko } from "date-fns/locale";
-
-interface Comment {
-  prId: number;
-  commentId: number;
-  userId: string;
-  createAt: string;
-  content: string;
-}
+import { Comment } from "../../../../api/types/Comment";
+import { Replies } from "../replies";
+import defaultprofile from "../../../../assets/images/user_profile.svg";
 
 export function Comments() {
   const { data } = useGetComments();
@@ -46,12 +40,12 @@ export function Comments() {
           >
             <header>
               <img
-                src="/src/assets/images/user_profile_1.svg"
+                src={comment.avatarUrl || defaultprofile}
                 alt="user profile"
                 className="inline-block w-9 h-9 mr-2"
               />
               <h1 className="inline text-[16px] font-semibold">
-                {comment.userId}
+                {comment.userName}
               </h1>
               <time className="block px-11">
                 {displayDate(comment.createAt)}
@@ -65,8 +59,20 @@ export function Comments() {
                 </ReactMarkdown>
               </div>
               <hr className="my-4" />
-              <p className="mt-3 text-right">3개의 답글</p>
-              <Reply />
+              <p className="mt-3 text-right">
+                {comment.replyList.length}개의 답글
+              </p>
+              {comment.replyList.length > 0 && (
+                <section>
+                  {comment.replyList?.map((reply) => (
+                    <Replies
+                      key={reply.reCommentId}
+                      {...reply}
+                      replyCreateAt={displayDate(reply.createAt)}
+                    />
+                  ))}
+                </section>
+              )}
             </article>
             <footer className="flex justify-end mt-2">
               <button onClick={() => toggleReplyEditor(comment.commentId)}>

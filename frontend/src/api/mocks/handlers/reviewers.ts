@@ -1,26 +1,29 @@
 import { http, HttpResponse } from "msw";
-import user_profile_2 from "../../../assets/images/user_profile_2.svg";
-import user_profile_3 from "../../../assets/images/user_profile_3.svg";
-import user_profile_4 from "../../../assets/images/user_profile_4.svg";
-import suggest from "../../../assets/images/suggest.svg";
-import comment from "../../../assets/images/comment.svg";
-import review from "../../../assets/images/review.svg";
 
 const reviewers = [
   {
-    userProfile: user_profile_2,
-    userId: "Lilyoung",
-    emoji: suggest,
+    userId: 1,
+    userName: "USER-01",
+    avatarUrl: null,
+    commentType: 2,
   },
   {
-    userProfile: user_profile_3,
-    userId: "singwisdom",
-    emoji: comment,
+    userId: 2,
+    userName: "USER-02",
+    avatarUrl: null,
+    commentType: 1,
   },
   {
-    userProfile: user_profile_4,
-    userId: "ih_o8",
-    emoji: review,
+    userId: 3,
+    userName: "USER-03",
+    avatarUrl: null,
+    commentType: 2,
+  },
+  {
+    userId: 4,
+    userName: "USER-04",
+    avatarUrl: null,
+    commentType: 3,
   },
 ];
 
