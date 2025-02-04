@@ -1,3 +1,5 @@
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { Reply } from "../../../../api/types/Reply";
 import suggest from "../../../../assets/images/suggest.svg";
 import comment from "../../../../assets/images/comment.svg";
@@ -39,7 +41,9 @@ export function Replies({
 
         <time>{replyCreateAt}</time>
       </header>
-      <p className="px-10 py-3">{content}</p>
+      <section className="px-10 py-3">
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+      </section>
     </section>
   );
 }
