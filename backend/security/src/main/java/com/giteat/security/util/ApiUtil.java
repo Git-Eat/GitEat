@@ -30,7 +30,7 @@ public class ApiUtil {
      */
     public ResponseEntity<?> getApi(String url) {
         String fullURL = restURL + url;
-        return restTemplate.getForEntity(fullURL, Object.class);
+        return restTemplate.getForEntity(fullURL, String.class);
     }
 
 
