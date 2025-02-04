@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.giteat.user.mapper.UserMapper">
+
+    <!-- 레포지토리 토큰 조회 -->
+    <select id="findUserById" parameterType="string" resultType="com.giteat.user.dto.UserDto">
+        SELECT
+            user_id,
+            email,
+            name,
+            avatar_path,
+            avatar_name,
+            mm_web_hook
+        FROM users
+        WHERE user_id = #{userId}
+    </select>
+
+
+</mapper>

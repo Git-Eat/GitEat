@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.giteat.pr.mapper.PrMapper">
+
+    <!-- 결과를 처리할 resultMap 정의 -->
+    <resultMap id="commentReplyResultMap" type="commentDto">
+        <id property="commentId" column="comment_id"/>
+        <result property="prId" column="pr_id"/>
+        <result property="repoId" column="repo_id"/>
+        <result property="content" column="comment_content"/>
+        <result property="commentType" column="comment_type"/>
+        <result property="imageName" column="comment_imge_name"/>
+        <result property="createAt" column="comment_create_at"/>
+        <result property="userId" column="comment_user_id"/>
+        <result property="disId" column="comment_dis_id"/>
+
+        <!-- 댓글에 대한 Reply 리스트 -->
+        <collection property="replyList" ofType="replyShowDto">
+            <id property="reCommentId" column="re_comment_id"/>
+            <result property="userId" column="reply_user_id"/>
+            <result property="disId" column="reply_dis_id"/>
+            <result property="content" column="reply_content"/>
+            <result property="replyType" column="reply_type"/>
+            <result property="imageName" column="reply_image_name"/>
+            <result property="createAt" column="reply_create_at"/>
+        </collection>
+    </resultMap>
+
+    <!-- PR 목록 조회 -->
+    <select id="getPrList" parameterType="int" resultType="prDto">
+        SELECT
+            pr_id AS prId,
+            repo_id AS repoId,
+            title AS title,
+            description AS description,
+            user_id AS userId,
+            create_at AS createAt,
+            is_opened AS isOpened,
+            source_branch AS sourceBranch,
+            target_branch AS targetBranch
+        FROM pr
+        WHERE repo_id = #{repoId}
+    </select>
+
+    <!-- 특정 PR 상세 정보 조회 -->
+    <select id="getPrById" parameterType="map" resultType="prDto">
+        SELECT
+            pr_id AS prId,
+            repo_id AS repoId,
+            title AS title,
+            description AS description,
+            user_id AS userId,
+            create_at AS createAt,
+            is_opened AS isOpened,
+            source_branch AS sourceBranch,
+            target_branch AS targetBranch
+        FROM pr
+        WHERE repo_id = #{repoId} AND pr_id = #{prId}
+    </select>
+
+    <!-- PR내 Commit 목록 조회  -->
+    <select id="getCommitList" parameterType="map" resultType="commitDto">
+        SELECT
+            commit_id AS commitId,
+            repo_id AS repoId,
+            pr_id AS prId,
+            content AS content,
+            commited_at AS commitedAt
+        FROM commit
+        WHERE repo_id = #{repoId} AND pr_id = #{prId}
+    </select>
+
+    <!-- 특정 Commit 상세 정보 조회  -->
+    <select id="getCommitById" parameterType="map" resultType="commitDto">
+        SELECT
+            commit_id AS commitId,
+            repo_id AS repoId,
+            pr_id AS prId,
+            content AS content,
+            commited_at AS commitedAt
+        FROM commit
+        WHERE repo_id = #{repoId} AND pr_id = #{prId} AND commit_id = #{commitId}
+    </select>
+
+
+    <!-- 댓글 및 대댓글 조회-->
+    <select id="getCommentList" resultMap="commentReplyResultMap">
+        select * from comment_reply_view
+    </select>
+
+
+    <!-- 댓글 등록 -->
+    <insert id="insertComment" parameterType="commentDto">
+        INSERT INTO comment (pr_id, content, comment_type, depth, image_name, created_at)
+        VALUES (#{prId}, #{content}, #{commentType}, #{depth}, #{imageName}, NOW())
+    </insert>
+
+    <!-- 댓글 수정 -->
+    <update id="updateComment" parameterType="commentDto">
+        UPDATE comment
+        SET content = #{content},
+            comment_type = #{commentType},
+            depth = #{depth},
+            image_name = #{imageName}
+        WHERE comment_id = #{commentId}
+    </update>
+
+    <!-- 댓글 삭제 -->
+    <delete id="deleteComment" parameterType="map">
+        DELETE FROM comment
+        WHERE repo_id = #{repoId} AND pr_id = #{prId} AND comment_id = #{commentId}
+    </delete>
+
+    <!-- 대댓글 삭제 -->
+    <delete id="deleteReply" parameterType="map">
+        DELETE FROM comment
+        WHERE repo_id = #{repoId} AND pr_id = #{prId} AND re_comment_id = #{reCommentId}
+    </delete>
+
+    <!-- 파일 목록 조회 (PR)-->
+    <select id="showFileListByPr" parameterType="map" resultType="fileDto">
+        SELECT
+            cf.file_id AS fileId,
+            cf.commit_id AS commitId,
+            cf.repo_id AS repoId,
+            cf.pr_id AS prId,
+            cf.file_name AS fileName,
+            cf.old_path AS oldPath,
+            cf.new_path AS newPath,
+            cf.file_status AS fileStatus,
+            p.target_branch AS targetBranch,
+            p.source_branch AS sourceBranch
+        FROM change_file cf
+        JOIN pr p ON cf.pr_id = p.pr_id AND cf.repo_id = p.repo_id
+        WHERE cf.pr_id = #{prId}
+        AND cf.repo_id = #{repoId}
+    </select>
+
+    <!-- 파일 목록 조회 (Commit)-->
+    <select id="showFileListByCommit" parameterType="map" resultType="fileDto">
+        SELECT
+            cf.file_id AS fileId,
+            cf.commit_id AS commitId,
+            cf.repo_id AS repoId,
+            cf.pr_id AS prId,
+            cf.file_name AS fileName,
+            cf.old_path AS oldPath,
+            cf.new_path AS newPath,
+            cf.file_status AS fileStatus,
+            p.target_branch AS targetBranch,
+            p.source_branch AS sourceBranch
+        FROM change_file cf
+        JOIN pr p ON cf.pr_id = p.pr_id AND cf.repo_id = p.repo_id
+        WHERE cf.commit_id = #{commitId} AND  cf.pr_id = #{prId} AND cf.repo_id = #{repoId}
+    </select>
+
+    <!-- 파일 정보 조회 -->
+    <select id="getFileInfo" parameterType="int" resultType="fileDto">
+        SELECT
+            cf.file_id AS fileId,
+            cf.commit_id AS commitId,
+            cf.repo_id AS repoId,
+            cf.pr_id AS prId,
+            cf.file_name AS fileName,
+            cf.old_path AS oldPath,
+            cf.new_path AS newPath,
+            cf.file_status AS fileStatus,
+            p.target_branch AS targetBranch,
+            p.source_branch AS sourceBranch
+        FROM change_file cf
+        WHERE cf.file_id = #{fileId}
+    </select>
+
+
+</mapper>

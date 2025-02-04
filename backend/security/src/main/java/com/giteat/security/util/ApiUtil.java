@@ -26,13 +26,13 @@ public class ApiUtil {
     /**
      * restAPI 호출 GET
      * @param url
-     * @param param
      * @return
      */
-    public ResponseEntity<?> getApi(String url, String param) {
-        String fullURL = restURL + url + "?param=" + param;
+    public ResponseEntity<?> getApi(String url) {
+        String fullURL = restURL + url;
         return restTemplate.getForEntity(fullURL, Object.class);
     }
+
 
     /**
      * restAPI 호출 POST

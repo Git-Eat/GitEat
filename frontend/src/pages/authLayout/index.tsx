@@ -3,11 +3,13 @@ import { Header } from "../../components/common/header";
 
 export function AuthLayout() {
   return (
-    <div className="flex">
+    <div>
       <Header />
-      <main>
-        <Outlet />
-      </main>
+      <div className="flex justify-end">
+        <main className="w-[calc(100vw-130px)]">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 }
