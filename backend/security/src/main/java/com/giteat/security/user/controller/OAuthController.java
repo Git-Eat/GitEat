@@ -57,20 +57,20 @@ public class OAuthController {
      * @param oAuthTokenDto OAuth 토큰 정보를 담고 있는 DTO
      * @return 로그아웃 처리 결과
      */
-    @PostMapping("/gitlab/logout")
-    public ResponseEntity<?> gitlabLogout(@RequestBody OAuthTokenDto oAuthTokenDto){
-        return apiUtil.postApi("/oauth/logout", oAuthTokenDto);
-    }
-
-    /**
-     * GitLab 계정 연동 해제
-     * GitLab 계정과 애플리케이션의 연동을 완전히 해제
-     *
-     * @param oAuthTokenDto OAuth 토큰 정보를 담고 있는 DTO
-     * @return 연동 해제 처리 결과
-     */
-    @PostMapping("/gitlab/unlink")
-    public ResponseEntity<?> gitlabUnlink(@RequestBody OAuthTokenDto oAuthTokenDto){
-        return apiUtil.postApi("/oauth/unlink", oAuthTokenDto);
-    }
+//    @PostMapping("/gitlab/logout")
+//    public ResponseEntity<?> gitlabLogout(@RequestBody OAuthTokenDto oAuthTokenDto){
+//        return apiUtil.postApi("/oauth/logout", oAuthTokenDto);
+//    }
+//
+//    /**
+//     * GitLab 계정 연동 해제
+//     * GitLab 계정과 애플리케이션의 연동을 완전히 해제
+//     *
+//     * @param oAuthTokenDto OAuth 토큰 정보를 담고 있는 DTO
+//     * @return 연동 해제 처리 결과
+//     */
+//    @PostMapping("/gitlab/unlink")
+//    public ResponseEntity<?> gitlabUnlink(@RequestBody OAuthTokenDto oAuthTokenDto){
+//        return apiUtil.postApi("/oauth/unlink", oAuthTokenDto);
+//    }
 }
