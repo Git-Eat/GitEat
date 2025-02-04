@@ -3,12 +3,14 @@ package com.giteat.security.controller;
 import com.giteat.security.util.ApiUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/pr")
 @AllArgsConstructor
@@ -19,6 +21,7 @@ public class MergeRequestController {
     @GetMapping("/{repoId}")
     @Operation(summary = "PR 목록 확인", description = "외부 API를 호출하여 PR 목록을 가져옵니다.")
     public ResponseEntity<?> getPrList(@PathVariable int repoId) {
+        log.info("INFO: 테스트 로그 출력");
         return apiUtil.getApi("/rest/pr/" + repoId);
     }
 
