@@ -1,21 +1,27 @@
 import { useState } from "react";
-import { Reply } from "../reply";
 import { MarkdownEditor } from "../../../common/markdownEditor";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useGetComments } from "../../../../api/queries/useGetComments";
-
-interface Commnet {
-  commentId: number;
-  createAt: string;
-  content: string;
-}
+import { formatDistanceToNowStrict, parseISO } from "date-fns";
+import { ko } from "date-fns/locale";
+import { Comment } from "../../../../api/types/Comment";
+import { Replies } from "../replies";
+import defaultprofile from "../../../../assets/images/user_profile.svg";
 
 export function Comments() {
   const { data } = useGetComments();
   const [isReplyEditorOpen, setIsReplyEditorOpen] = useState<
     Record<number, boolean>
   >({});
+
+  function displayDate(commentDate: string) {
+    const date = parseISO(commentDate);
+    return formatDistanceToNowStrict(date, {
+      addSuffix: true,
+      locale: ko,
+    });
+  }
 
   function toggleReplyEditor(commentId: number) {
     setIsReplyEditorOpen((prev) => ({
@@ -25,18 +31,25 @@ export function Comments() {
   }
 
   return (
-    <section className="bg-white my-5 p-5 rounded-xl">
+    <section>
       <ul>
-        {data?.map((comment: Commnet) => (
-          <li key={comment.commentId} className="mb-8">
+        {data?.map((comment: Comment) => (
+          <li
+            key={comment.commentId}
+            className="mb-8 bg-white my-5 p-5 rounded-xl"
+          >
             <header>
               <img
-                src="/src/assets/images/user_profile_1.svg"
+                src={comment.avatarUrl || defaultprofile}
                 alt="user profile"
                 className="inline-block w-9 h-9 mr-2"
               />
-              <h1 className="inline text-[16px] font-semibold">USER-01</h1>
-              <time className="block px-11">{comment.createAt}</time>
+              <h1 className="inline text-[16px] font-semibold">
+                {comment.userName}
+              </h1>
+              <time className="block px-11">
+                {displayDate(comment.createAt)}
+              </time>
             </header>
             <article>
               <hr className="my-4" />
@@ -45,9 +58,21 @@ export function Comments() {
                   {comment.content}
                 </ReactMarkdown>
               </div>
-              <p className="text-right">3개의 답글</p>
               <hr className="my-4" />
-              <Reply />
+              <p className="mt-3 text-right">
+                {comment.replyList.length}개의 답글
+              </p>
+              {comment.replyList.length > 0 && (
+                <section>
+                  {comment.replyList?.map((reply) => (
+                    <Replies
+                      key={reply.reCommentId}
+                      {...reply}
+                      replyCreateAt={displayDate(reply.createAt)}
+                    />
+                  ))}
+                </section>
+              )}
             </article>
             <footer className="flex justify-end mt-2">
               <button onClick={() => toggleReplyEditor(comment.commentId)}>
