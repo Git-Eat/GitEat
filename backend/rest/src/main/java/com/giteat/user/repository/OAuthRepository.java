@@ -1,4 +1,4 @@
-package com.giteat.user.model.repository;
+package com.giteat.user.repository;
 
 import com.giteat.user.entity.OAuthEntity;
 import org.apache.ibatis.annotations.Param;

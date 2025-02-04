@@ -1,4 +1,4 @@
-package com.giteat.user.model.dto;
+package com.giteat.user.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

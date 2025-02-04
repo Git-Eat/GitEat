@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.giteat.user.model.repository.OAuthRepository;
-import com.giteat.user.model.dto.OAuthTokenDto;
+import com.giteat.user.repository.OAuthRepository;
+import com.giteat.user.dto.OAuthTokenDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -106,17 +106,19 @@ public class GitLabApi {
         }
     }
 
-//    public void logoutUser(String accessToken) {
-//    }
-//
-//    public void unlinkUser(String refreshToken) {
-//        try {
-//
-//        }
-//        catch (Exception e) {
-//            e.printStackTrace();
-//            throw new RuntimeException("Failed to unlink GitLab account", e);
-//        }
+    public void logoutUser(String accessToken) {
+
+
+    }
+
+    public void unlinkUser(String refreshToken) {
+        try {
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to unlink GitLab account", e);
+        }
 
 
     }

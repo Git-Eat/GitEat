@@ -1,7 +1,7 @@
 package com.giteat.user.controller;
 
-import com.giteat.user.model.dto.OAuthTokenDto;
-import com.giteat.user.model.service.OAuthService;
+import com.giteat.user.dto.OAuthTokenDto;
+import com.giteat.user.service.OAuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,17 +44,17 @@ public class UserController {
         return ResponseEntity.ok(newToken);
     }
 
-//    @PostMapping("/logout")
-//    public ResponseEntity<?> logout(@RequestBody OAuthTokenDto oAuthTokenDto) {
-//        oAuthService.logout(oAuthTokenDto);
-//        return ResponseEntity.ok(oAuthTokenDto);
-//    }
-//
-//    @PostMapping("/unlink")
-//    public ResponseEntity<?> unlink(@RequestBody OAuthTokenDto oAuthTokenDto) {
-//        oAuthService.unlink(oAuthService);
-//        return ResponseEntity.ok(oAuthTokenDto);
-//    }
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestBody OAuthTokenDto oAuthTokenDto) {
+        oAuthService.logout(oAuthTokenDto);
+        return ResponseEntity.ok(oAuthTokenDto);
+    }
+
+    @PostMapping("/unlink")
+    public ResponseEntity<?> unlink(@RequestBody OAuthTokenDto oAuthTokenDto) {
+        oAuthService.unlink(oAuthTokenDto);
+        return ResponseEntity.ok(oAuthTokenDto);
+    }
 }
 
 
