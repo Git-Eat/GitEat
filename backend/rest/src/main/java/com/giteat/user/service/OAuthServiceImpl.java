@@ -168,45 +168,45 @@ public class OAuthServiceImpl implements OAuthService {
         }
     }
 
-    @Override
-    public void logout(OAuthTokenDto oAuthTokenDto) {
-        try {
-            Optional<OAuthEntity> existOAuth = oAuthRepository.findByEmail(oAuthTokenDto.getEmail());
-            if(existOAuth.isPresent()) {
-                OAuthEntity entity = existOAuth.get();
-
-                // GitLab 세션 종료 (Access Token만 무효화)
-                api.logoutUser(entity.getAccessToken());
-
-                // DB에서 토큰 정보 삭제
-                oAuthRepository.delete(entity);
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            throw new RuntimeException("Failed to logout user",e);
-        }
-
-    }
-
-
-    @Override
-    public void unlink(OAuthTokenDto oAuthTokenDto) {
-        try {
-            Optional<OAuthEntity> existOAuth = oAuthRepository.findByEmail(oAuthTokenDto.getEmail());
-            if(existOAuth.isPresent()) {
-                OAuthEntity entity = existOAuth.get();
-
-                // Refresh Token으로 GitLab 계정 연동 해제
-                api.unlinkUser(entity.getRefreshToken());
-
-                // DB에서 토큰 및 연동 정보 삭제
-                oAuthRepository.delete(entity);
-
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            throw new RuntimeException("Failed to unlink user",e);
-        }
-    }
+//    @Override
+//    public void logout(OAuthTokenDto oAuthTokenDto) {
+//        try {
+//            Optional<OAuthEntity> existOAuth = oAuthRepository.findByEmail(oAuthTokenDto.getEmail());
+//            if(existOAuth.isPresent()) {
+//                OAuthEntity entity = existOAuth.get();
+//
+//                // GitLab 세션 종료 (Access Token만 무효화)
+//                api.logoutUser(entity.getAccessToken());
+//
+//                // DB에서 토큰 정보 삭제
+//                oAuthRepository.delete(entity);
+//            }
+//        } catch (Exception e) {
+//            System.out.println(e.getMessage());
+//            throw new RuntimeException("Failed to logout user",e);
+//        }
+//
+//    }
+//
+//
+//    @Override
+//    public void unlink(OAuthTokenDto oAuthTokenDto) {
+//        try {
+//            Optional<OAuthEntity> existOAuth = oAuthRepository.findByEmail(oAuthTokenDto.getEmail());
+//            if(existOAuth.isPresent()) {
+//                OAuthEntity entity = existOAuth.get();
+//
+//                // Refresh Token으로 GitLab 계정 연동 해제
+//                api.unlinkUser(entity.getRefreshToken());
+//
+//                // DB에서 토큰 및 연동 정보 삭제
+//                oAuthRepository.delete(entity);
+//
+//            }
+//        } catch (Exception e) {
+//            System.out.println(e.getMessage());
+//            throw new RuntimeException("Failed to unlink user",e);
+//        }
+//    }
 }
 

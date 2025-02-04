@@ -44,17 +44,17 @@ public class UserController {
         return ResponseEntity.ok(newToken);
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestBody OAuthTokenDto oAuthTokenDto) {
-        oAuthService.logout(oAuthTokenDto);
-        return ResponseEntity.ok(oAuthTokenDto);
-    }
-
-    @PostMapping("/unlink")
-    public ResponseEntity<?> unlink(@RequestBody OAuthTokenDto oAuthTokenDto) {
-        oAuthService.unlink(oAuthTokenDto);
-        return ResponseEntity.ok(oAuthTokenDto);
-    }
+//    @PostMapping("/logout")
+//    public ResponseEntity<?> logout(@RequestBody OAuthTokenDto oAuthTokenDto) {
+//        oAuthService.logout(oAuthTokenDto);
+//        return ResponseEntity.ok(oAuthTokenDto);
+//    }
+//
+//    @PostMapping("/unlink")
+//    public ResponseEntity<?> unlink(@RequestBody OAuthTokenDto oAuthTokenDto) {
+//        oAuthService.unlink(oAuthTokenDto);
+//        return ResponseEntity.ok(oAuthTokenDto);
+//    }
 }
 
 

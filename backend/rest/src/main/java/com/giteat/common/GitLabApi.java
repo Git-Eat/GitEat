@@ -106,20 +106,20 @@ public class GitLabApi {
         }
     }
 
-    public void logoutUser(String accessToken) {
+//    public void logoutUser(String accessToken) {
+//
+//
+//    }
 
-
-    }
-
-    public void unlinkUser(String refreshToken) {
-        try {
-
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Failed to unlink GitLab account", e);
-        }
-
-
+//    public void unlinkUser(String refreshToken) {
+//        try {
+//
+//        }
+//        catch (Exception e) {
+//            e.printStackTrace();
+//            throw new RuntimeException("Failed to unlink GitLab account", e);
+//        }
+//
+//
     }
 
