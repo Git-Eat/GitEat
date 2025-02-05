@@ -10,6 +10,5 @@ public interface OAuthService {
     OAuthTokenDto refreshToken(OAuthTokenDto tokenRequest);
 
 //    void logout(OAuthTokenDto oAuthTokenDto);
-//
-//    void unlink(OAuthTokenDto oAuthTokenDto);
+
 }
