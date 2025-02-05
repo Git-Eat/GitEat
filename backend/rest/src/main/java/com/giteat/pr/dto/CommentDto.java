@@ -15,10 +15,11 @@ public class CommentDto {
     private int prId;
     private int repoId;
     private int userId;
+    private String userName;
+    private String avatarUrl;
     private String disId;
     private String content;
     private int commentType;
-    private String imageName;
     private LocalDateTime createAt;
 
     private FileCommentDto.Position position; // 코드 위치 정보

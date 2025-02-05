@@ -1,6 +1,8 @@
 package com.giteat.pr.service;
 
 import com.giteat.pr.dto.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 import java.util.Map;
 
@@ -13,9 +15,12 @@ public interface PrService {
 
     /* 댓글 관련 함수 */
     List<CommentDto> getCommentList(int repoId, int prId); // 댓글 조회
-    int insertComment (int repoId, int prId, CommentDto commentDto); // 댓글 등록
+    int insertComment (String repoId, String prId, CommentDto commentDto); // 댓글 등록
     int updateComment(int repoId, int prId, CommentDto commentDto); // 댓글 수정
     int deleteComment(String repoId, String prId, String commentId); // 댓글 및 대댓글 삭제
+
+    /* 깃랩에 파일 업로드 */
+    Map<String, String> uploadsFile(String repoId, MultipartFile file);
 
     /* 파일에 댓글 달기*/
     int insertFileComment(String repoId, String prId, CustomCommentDto customCommentDto);
@@ -29,7 +34,7 @@ public interface PrService {
     /* 파일 변경 관련 함수 */
     List<FileDto> showFileListByPr(int repoId, int prId); // 변경 된 파일 목록 확인
     List<FileDto> showFileListByCommit(int repoId, int prId, String commitId);
-    Map<String, String> showChangedCode(String repoId, String prId, FileDto fileDto, String refType, String ref); // 변경 된 코드 확인
+    Map<String, Object> showChangedCode(String repoId, String prId, FileDto fileDto, String refType); // 변경 된 코드 확인
 
     int saveRepositoryData(String accessToken , String repositoryId);
 }

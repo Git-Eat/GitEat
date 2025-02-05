@@ -22,7 +22,10 @@ public class MergeRequestController {
     @Operation(summary = "PR 목록 확인", description = "외부 API를 호출하여 PR 목록을 가져옵니다.")
     public ResponseEntity<?> getPrList(@PathVariable int repoId) {
         log.info("INFO: 테스트 로그 출력");
-        return apiUtil.getApi("/pr/" + repoId);
+        ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId);
+        System.out.println("response STATUS : " + response.getStatusCode());
+        System.out.println("response DATA : " + response.getBody());
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{repoId}/{prId}")

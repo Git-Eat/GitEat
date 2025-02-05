@@ -1,12 +1,17 @@
 package com.giteat.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.giteat.common.util.GitLabTokenService;
 import com.giteat.pr.dto.FileCommentDto;
+import com.giteat.pr.dto.FileDto;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import com.fasterxml.jackson.core.type.TypeReference;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URI;
@@ -94,6 +99,33 @@ public class LabApi {
         return callPutApi(url, accessToken, requestBody);
     }
 
+    /**
+     * 파일 업로드 함수
+     * Endpoint : /projects/{project_id}/uploads
+     */
+    public Map<String, String> uploadFile(String projectId, MultipartFile file) throws IOException {
+        String url = gitlabApiUrl + "/projects/" +  projectId + "/uploads";
+        HttpHeaders headers = new HttpHeaders();
+        //String accessToken = gitLabTokenService.getAccessToken(jwtAccessToken);
+        headers.set("Private-Token", "UATEgVcVTSsLn7PWao6c"); // 필요하면 OAuth 토큰 사용
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("file", new ByteArrayResource(file.getBytes()) {
+            @Override
+            public String getFilename() {
+                return file.getOriginalFilename();
+            }
+        });
+
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+        ResponseEntity<JsonNode> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, JsonNode.class);
+
+        Map<String, String> fileData = new HashMap<>();
+        fileData.put("full_path", response.getBody().get("full_path").asText());
+        fileData.put("markdown", response.getBody().get("markdown").asText());
+        return fileData;
+    }
 
     // 프로젝트의 Merge Requests 가져오기 예시입니다.
     public List<Map<String, Object>> getMergeRequests(String projectId , String accessToken) {

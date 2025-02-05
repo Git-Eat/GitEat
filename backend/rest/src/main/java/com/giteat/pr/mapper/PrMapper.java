@@ -16,6 +16,7 @@ public interface PrMapper {
 
     List<CommentDto> getCommentList(Map<String, Object> params); // 댓글 조회
     int deleteComment(Map<String, Object> params); // 댓글 삭제
+    List<CommentDto> getCommentListByCode(Map<String, Object> params);
 
     List<ReplyDto> showReply(int repoId, int prId, int commentId); // 대댓글 조회
     int deleteReply(Map<String, Object> params);
