@@ -1,16 +1,16 @@
 package com.giteat.security.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.giteat.security.util.ApiUtil;
+import com.giteat.security.util.TypeUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.http.MediaType;
 
 
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -20,6 +20,7 @@ import java.util.Map;
 public class MergeRequestController {
 
     private final ApiUtil apiUtil;
+    private final TypeUtil typeUtil;
 
     @GetMapping("/{repoId}")
     @Operation(summary = "PR 목록 확인", description = "외부 API를 호출하여 PR 목록을 가져옵니다.")
@@ -28,9 +29,10 @@ public class MergeRequestController {
         ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId);
         System.out.println("response STATUS : " + response.getStatusCode());
         System.out.println("response DATA : " + response.getBody());
+        Object json = typeUtil.convertJsonToObject(response.getBody());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(response.getBody());
+                .body(json);
     }
 
     @GetMapping("/{repoId}/{prId}")
