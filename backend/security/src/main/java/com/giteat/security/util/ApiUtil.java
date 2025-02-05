@@ -23,7 +23,9 @@ public class ApiUtil {
     }
 
     /**
-     * REST API GET 요청
+     * restAPI 호출 GET
+     * @param url
+     * @return
      */
     public ResponseEntity<?> getApi(String url) {
         String fullURL = restURL + url;
@@ -31,8 +33,12 @@ public class ApiUtil {
         return restTemplate.getForEntity(fullURL, String.class);
     }
 
+
     /**
-     * REST API POST 요청 (JSON 요청)
+     * restAPI 호출 POST
+     * @param url
+     * @param requestBody
+     * @return
      */
     public ResponseEntity<?> postApi(String url, Object requestBody) {
         String fullURL = restURL + url;
@@ -46,7 +52,10 @@ public class ApiUtil {
     }
 
     /**
-     * REST API PUT 요청 (JSON 요청)
+     * restAPI 호출 PUT
+     * @param url
+     * @param requestBody
+     * @return
      */
     public ResponseEntity<?> putApi(String url, Object requestBody) {
         String fullURL = restURL + url;
@@ -61,7 +70,9 @@ public class ApiUtil {
     }
 
     /**
-     * REST API DELETE 요청 (JSON 요청)
+     * restAPI 호출 DELETE
+     * @param url
+     * @return
      */
     public ResponseEntity<?> deleteApi(String url, Object requestBody) {
         String fullURL = restURL + url;
