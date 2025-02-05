@@ -1,11 +1,17 @@
 package com.giteat.security.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.giteat.security.util.ApiUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
+
 
 import java.util.List;
 import java.util.Map;
@@ -25,7 +31,17 @@ public class MergeRequestController {
         ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId);
         System.out.println("response STATUS : " + response.getStatusCode());
         System.out.println("response DATA : " + response.getBody());
-        return ResponseEntity.noContent().build();
+        // JSON 문자열을 Jackson 라이브러리를 사용해 객체로 변환
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            Object json = objectMapper.readValue(response.getBody(), Object.class);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(json);
+        } catch (JsonProcessingException e) {
+            log.error("JSON 변환 실패", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("JSON 변환 실패");
+        }
     }
 
     @GetMapping("/{repoId}/{prId}")
