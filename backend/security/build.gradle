@@ -28,7 +28,7 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-aws-parameter-store-config
 	implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws-parameter-store-config', version: '2.2.6.RELEASE'
 
-	implementation 'org.springframework.boot:spring-boot-starter-web'
+	//implementation 'org.springframework.boot:spring-boot-starter-web'
     // webClient 사용을 위한 의존성 추가
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     //swagger
