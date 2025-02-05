@@ -1,23 +1,26 @@
 package com.giteat.security.util;
 
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.giteat.security.user.dto.OAuthTokenDto;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Map;
 
-/*
- * rest 요청을할 때 사용하는 사용하는 util 코드
- *
+/**
+ * REST 요청을 수행하는 Utility 클래스
  */
 @Component
 @Slf4j
 public class ApiUtil {
 
     private final RestTemplate restTemplate;
+
     @Value("${api.base-url}")
     private String restURL;
 
@@ -26,9 +29,7 @@ public class ApiUtil {
     }
 
     /**
-     * restAPI 호출 GET
-     * @param url
-     * @return
+     * REST API GET 요청
      */
     public ResponseEntity<?> getApi(String url) {
         String fullURL = restURL + url;
@@ -36,38 +37,47 @@ public class ApiUtil {
         return restTemplate.getForEntity(fullURL, String.class);
     }
 
-
     /**
-     * restAPI 호출 POST
-     * @param url
-     * @param requestBody
-     * @return
+     * REST API POST 요청 (JSON 요청)
      */
     public ResponseEntity<?> postApi(String url, Object requestBody) {
         String fullURL = restURL + url;
-        return restTemplate.postForEntity(fullURL, requestBody, Object.class);
+        log.info("POST 요청 URL: " + fullURL);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
+        return restTemplate.postForEntity(fullURL, requestEntity, Object.class);
     }
 
     /**
-     * restAPI 호출 PUT
-     * @param url
-     * @param requestBody
-     * @return
+     * REST API PUT 요청 (JSON 요청)
      */
     public ResponseEntity<?> putApi(String url, Object requestBody) {
         String fullURL = restURL + url;
-        restTemplate.put(fullURL, requestBody);
+        log.info("PUT 요청 URL: " + fullURL);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
+        restTemplate.exchange(fullURL, HttpMethod.PUT, requestEntity, Void.class);
         return ResponseEntity.ok().build();
     }
 
     /**
-     * restAPI 호출 DELETE
-     * @param url
-     * @return
+     * REST API DELETE 요청 (JSON 요청)
      */
-    public ResponseEntity<?> deleteApi(String url , String id) {
-        String fullURL = restURL + url + "?id=" + id;
-        restTemplate.delete(fullURL);
+    public ResponseEntity<?> deleteApi(String url, Object requestBody) {
+        String fullURL = restURL + url;
+        log.info("DELETE 요청 URL: " + fullURL);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
+        restTemplate.exchange(fullURL, HttpMethod.DELETE, requestEntity, Void.class);
         return ResponseEntity.ok().build();
     }
 }
