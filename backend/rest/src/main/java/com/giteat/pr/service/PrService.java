@@ -36,5 +36,7 @@ public interface PrService {
     List<FileDto> showFileListByCommit(int repoId, int prId, String commitId);
     Map<String, Object> showChangedCode(String repoId, String prId, FileDto fileDto, String refType); // 변경 된 코드 확인
 
+    /* 리뷰 참여자 조회 */
+    List<ReviewerDto> getReviewer(String repoId, String prId);
     int saveRepositoryData(String accessToken , String repositoryId);
 }

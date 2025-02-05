@@ -221,6 +221,14 @@ public class PrServiceImpl implements PrService{
         return result;
     }
 
+    @Override
+    public List<ReviewerDto> getReviewer(String repoId, String prId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("repoId", repoId);
+        params.put("prId", prId);
+        return  prMapper.getReviewer(params);
+    }
+
 
     @Override
     public int saveRepositoryData(String accessToken , String repositoryId){
