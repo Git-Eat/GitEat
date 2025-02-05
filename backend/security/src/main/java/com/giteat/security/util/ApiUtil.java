@@ -1,6 +1,8 @@
 package com.giteat.security.util;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,14 +17,17 @@ import org.springframework.web.client.RestTemplate;
  */
 @Component
 @Slf4j
+
 public class ApiUtil {
 
     private final RestTemplate restTemplate;
     @Value("${api.base-url}")
     private String restURL;
-
+    private final ObjectMapper objectMapper;
     public ApiUtil() {
+
         this.restTemplate = new RestTemplate();
+        this.objectMapper = new ObjectMapper();
     }
 
     /**

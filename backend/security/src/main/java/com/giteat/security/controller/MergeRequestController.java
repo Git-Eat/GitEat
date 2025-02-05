@@ -1,19 +1,16 @@
 package com.giteat.security.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.giteat.security.util.ApiUtil;
+import com.giteat.security.util.TypeUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.http.MediaType;
 
 
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -23,37 +20,20 @@ import java.util.Map;
 public class MergeRequestController {
 
     private final ApiUtil apiUtil;
-    private final ObjectMapper objectMapper;
+    private final TypeUtil typeUtil;
 
     @GetMapping("/{repoId}")
     @Operation(summary = "PR 목록 확인", description = "외부 API를 호출하여 PR 목록을 가져옵니다.")
     public ResponseEntity<?> getPrList(@PathVariable int repoId) {
         log.info("INFO: 테스트 로그 출력");
-//        ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId);
-//        System.out.println("response STATUS : " + response.getStatusCode());
-//        System.out.println("response DATA : " + response.getBody());
-//        // JSON 문자열을 Jackson 라이브러리를 사용해 객체로 변환
-//        try {
-//            Object json = objectMapper.readValue(response.getBody(), Object.class);
-//            return ResponseEntity.ok()
-//                    .contentType(MediaType.APPLICATION_JSON)
-//                    .body(json);
-//        } catch (JsonProcessingException e) {
-//            log.error("JSON 변환 실패", e);
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("JSON 변환 실패");
-//        }
-
-        // 🔥 JSON 변환 없이 Object 그대로 받음
-        ResponseEntity<Object> response = (ResponseEntity<Object>) apiUtil.getApi("/pr/" + repoId);
-
+        ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId);
         System.out.println("response STATUS : " + response.getStatusCode());
         System.out.println("response DATA : " + response.getBody());
-
+        Object json = typeUtil.convertJsonToObject(response.getBody());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(response.getBody());
+                .body(json);
     }
-
 
     @GetMapping("/{repoId}/{prId}")
     @Operation(summary = "PR 상세 정보 확인", description = "외부 API를 호출하여 특정 PR 정보를 가져옵니다.")
