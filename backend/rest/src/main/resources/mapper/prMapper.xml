@@ -9,24 +9,46 @@
         <id property="commentId" column="comment_id"/>
         <result property="prId" column="pr_id"/>
         <result property="repoId" column="repo_id"/>
+        <result property="userId" column="comment_user_id"/>
+        <result property="userName" column="comment_user_name"/>
+        <result property="avatarUrl" column="comment_avatar_url"/>
+        <result property="disId" column="comment_dis_id"/>
         <result property="content" column="comment_content"/>
         <result property="commentType" column="comment_type"/>
-        <result property="imageName" column="comment_imge_name"/>
         <result property="createAt" column="comment_create_at"/>
-        <result property="userId" column="comment_user_id"/>
-        <result property="disId" column="comment_dis_id"/>
 
-        <!-- 댓글에 대한 Reply 리스트 -->
+        <!-- FileCommentDto.Position 매핑 -->
+        <association property="position" javaType="com.giteat.pr.dto.FileCommentDto$Position">
+            <result property="baseSha" column="base_sha"/>
+            <result property="startSha" column="start_sha"/>
+            <result property="headSha" column="head_sha"/>
+            <result property="oldPath" column="old_path"/>
+            <result property="newPath" column="new_path"/>
+            <result property="positionType" column="position_type"/>
+            <result property="newLine" column="new_line"/>
+            <result property="oldLine" column="old_line"/>
+            <result property="newStartLine" column="new_start_line"/>
+            <result property="newEndLine" column="new_end_line"/>
+            <result property="oldStartLine" column="old_start_line"/>
+            <result property="oldEndLine" column="old_end_line"/>
+
+            <!-- LineRange 매핑 -->
+            <result property="lineRange" column="line_range" typeHandler="com.giteat.common.util.JsonTypeHandler"/>
+        </association>
+
+        <!-- 대댓글 리스트 (ReplyShowDto 매핑) -->
         <collection property="replyList" ofType="replyShowDto">
             <id property="reCommentId" column="re_comment_id"/>
             <result property="userId" column="reply_user_id"/>
+            <result property="userName" column="reply_user_name"/>
+            <result property="avatarUrl" column="reply_avatar_url"/>
             <result property="disId" column="reply_dis_id"/>
             <result property="content" column="reply_content"/>
-            <result property="replyType" column="reply_type"/>
-            <result property="imageName" column="reply_image_name"/>
+            <result property="commentType" column="reply_type"/>
             <result property="createAt" column="reply_create_at"/>
         </collection>
     </resultMap>
+
 
     <!-- PR 목록 조회 -->
     <select id="getPrList" parameterType="int" resultType="prDto">
@@ -60,7 +82,7 @@
         WHERE repo_id = #{repoId} AND pr_id = #{prId}
     </select>
 
-    <!-- PR내 Commit 목록 조회  -->
+    <!-- PR내 Commit 목록 조회 -->
     <select id="getCommitList" parameterType="map" resultType="commitDto">
         SELECT
             commit_id AS commitId,
@@ -87,14 +109,21 @@
 
     <!-- 댓글 및 대댓글 조회-->
     <select id="getCommentList" resultMap="commentReplyResultMap">
-        select * from comment_reply_view
+        SELECT * FROM comment_view
+        WHERE repo_id = #{repoId} AND pr_id = #{prId}
+    </select>
+
+    <!-- 댓글 및 대댓글 조회 (파일에서) -->
+    <select id="getCommentListByCode" resultMap="commentReplyResultMap">
+        SELECT * FROM comment_view
+        WHERE repo_id = #{repoId} AND pr_id = #{prId} AND file_id = #{fileId}
     </select>
 
 
     <!-- 댓글 등록 -->
     <insert id="insertComment" parameterType="commentDto">
-        INSERT INTO comment (pr_id, content, comment_type, depth, image_name, created_at)
-        VALUES (#{prId}, #{content}, #{commentType}, #{depth}, #{imageName}, NOW())
+        INSERT INTO comment (pr_id, content, comment_type, depth, created_at)
+        VALUES (#{prId}, #{content}, #{commentType}, #{depth}, NOW())
     </insert>
 
     <!-- 댓글 수정 -->
@@ -102,8 +131,7 @@
         UPDATE comment
         SET content = #{content},
             comment_type = #{commentType},
-            depth = #{depth},
-            image_name = #{imageName}
+            depth = #{depth}
         WHERE comment_id = #{commentId}
     </update>
 
