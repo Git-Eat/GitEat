@@ -25,7 +25,7 @@ public class MergeRequestController {
         ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId);
         System.out.println("response STATUS : " + response.getStatusCode());
         System.out.println("response DATA : " + response.getBody());
-        return response;
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{repoId}/{prId}")
