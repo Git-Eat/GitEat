@@ -1,16 +1,10 @@
 package com.giteat.security.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.giteat.security.user.dto.OAuthTokenDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.Map;
 
 /**
  * REST 요청을 수행하는 Utility 클래스
