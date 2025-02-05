@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.giteat.user.repository.OAuthRepository;
 import com.giteat.user.dto.OAuthTokenDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -22,13 +21,11 @@ import java.util.Map;
  * OAuth 인증 관련 API 호출 및 토큰 갱신 기능을 제공
  */
 @Component
-public class GitLabApi {
+public class OauthGitLabApi {
 
-    private final OAuthRepository oAuthRepository;
     private final RestTemplate restTemplate;
 
-    public GitLabApi(OAuthRepository oAuthDao, OAuthRepository oAuthRepository, RestTemplate restTemplate) {
-        this.oAuthRepository = oAuthRepository;
+    public OauthGitLabApi(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 

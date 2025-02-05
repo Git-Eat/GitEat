@@ -1,6 +1,6 @@
 package com.giteat.user.service;
 
-import com.giteat.common.GitLabApi;
+import com.giteat.common.OauthGitLabApi;
 import com.giteat.user.entity.UserEntity;
 import com.giteat.user.repository.UserRepository;
 import com.giteat.user.dto.OAuthTokenDto;
@@ -21,9 +21,9 @@ public class OAuthServiceImpl implements OAuthService {
 
     private final OAuthRepository oAuthRepository;
     private final UserRepository userRepository;
-    private final GitLabApi api;
+    private final OauthGitLabApi api;
 
-    public OAuthServiceImpl(OAuthRepository oAuthDao, OAuthRepository oAuthRepository, UserRepository userDao, UserRepository userRepository, GitLabApi api) {
+    public OAuthServiceImpl(OAuthRepository oAuthDao, OAuthRepository oAuthRepository, UserRepository userDao, UserRepository userRepository, OauthGitLabApi api) {
         this.oAuthRepository = oAuthRepository;
         this.userRepository = userRepository;
         this.api = api;
