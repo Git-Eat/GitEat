@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/rest/pr")
+@RequestMapping("/pr")
 public class PrController {
 
     @Autowired
@@ -23,7 +23,12 @@ public class PrController {
     @Operation(summary="PR 목록 확인", description = "PR의 목록을 확인합니다")
     public ResponseEntity<List<PrDto>> getPrList(@PathVariable int repoId){
         List<PrDto> prList = prService.getPrList(repoId);
-        if(prList != null) {return ResponseEntity.ok(prList);}
+        for(PrDto prDto : prList){
+            System.out.println(prDto);
+        }
+        if(prList != null) {
+            System.out.println("prList : NULL" );
+            return ResponseEntity.ok(prList);}
         return ResponseEntity.noContent().build();
     }
 

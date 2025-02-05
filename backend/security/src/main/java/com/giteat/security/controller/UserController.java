@@ -3,8 +3,9 @@ package com.giteat.security.controller;
 import com.giteat.security.util.ApiUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-@RestController("/user")
+@CrossOrigin(origins = "*")
+@RestController
+@RequestMapping("/user")
 public class UserController {
 
     private final ApiUtil api;
@@ -18,6 +19,7 @@ public class UserController {
      * @param param
      * @return
      */
+
     @GetMapping("/data")
     public ResponseEntity<?> get(@RequestParam String param) {
         // "url"은 실제 API URL로 교체
