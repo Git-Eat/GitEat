@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/rest/pr")
+@RequestMapping("/pr")
 public class PrController {
 
     @Autowired
@@ -25,6 +25,7 @@ public class PrController {
     @Operation(summary="PR 목록 확인", description = "PR의 목록을 확인합니다")
     public ResponseEntity<List<PrDto>> getPrList(@PathVariable int repoId){
         List<PrDto> prList = prService.getPrList(repoId);
+        System.out.println("data 전송 성공");
         if(prList != null) {return ResponseEntity.ok(prList);}
         return ResponseEntity.noContent().build();
     }
@@ -190,10 +191,16 @@ public class PrController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * 등록한 레포지토리 정보 읽어 오기
+     * @param accessToken
+     * @param repositoryId
+     * @return
+     */
     @PostMapping("/repositoryData")
     @Operation(summary="repository의 모든 데이터 읽기", description = "repository에서 모든 데이터를 가져옵니다.")
     public ResponseEntity<?> saveRepositoryData(@RequestHeader("accessToken") String accessToken , @RequestBody String repositoryId){
-
+        prService.saveRepositoryData(accessToken, repositoryId);
         return ResponseEntity.ok().build();
     }
 }

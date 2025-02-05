@@ -1,6 +1,7 @@
 package com.giteat.security.util;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
  *
  */
 @Component
+@Slf4j
 public class ApiUtil {
 
     private final RestTemplate restTemplate;
@@ -26,13 +28,14 @@ public class ApiUtil {
     /**
      * restAPI 호출 GET
      * @param url
-     * @param param
      * @return
      */
-    public ResponseEntity<?> getApi(String url, String param) {
-        String fullURL = restURL + url + "?param=" + param;
-        return restTemplate.getForEntity(fullURL, Object.class);
+    public ResponseEntity<?> getApi(String url) {
+        String fullURL = restURL + url;
+        log.info("FULL URL : " + fullURL);
+        return restTemplate.getForEntity(fullURL, String.class);
     }
+
 
     /**
      * restAPI 호출 POST

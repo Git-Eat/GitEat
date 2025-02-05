@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/gitLab")
+@RequestMapping("/gitlab")
 public class GitLabWebHookController {
     private GitLabWebHookService webHookService;
 
@@ -29,10 +29,9 @@ public class GitLabWebHookController {
     @PostMapping("/event")
     public ResponseEntity<?> webHookEvent(@RequestBody Map<String , Object> body){
         String eventType = (String) body.get("object_kind");
-
-        if(eventType.equals("push")){
-            webHookService.commitEvent(body);
-        }else if(eventType.equals("merge_request")){
+        System.out.println("body : " + body);
+        System.out.println("eventType : " + eventType);
+        if(eventType.equals("merge_request")){
             webHookService.mergeRequestEvent(body);
         }else if(eventType.equals("note")){
             webHookService.noteEvent(body);

@@ -12,4 +12,10 @@
         where t.access_token = #{jwtAccessToken};
     </select>
 
+    <select id="getAccessTokenById" parameterType="string" resultType="string">
+        SELECT access_token
+        FROM oauth_token
+        WHERE oauth_id = {id}
+    </select>
+
 </mapper>

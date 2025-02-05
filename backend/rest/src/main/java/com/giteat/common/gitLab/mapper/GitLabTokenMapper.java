@@ -6,4 +6,6 @@ import org.apache.ibatis.annotations.Mapper;
 public interface GitLabTokenMapper {
 
     String getAccessToken(String jwtAccessToken);
+
+    String getAccessTokenById(String userId);
 }

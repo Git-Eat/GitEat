@@ -19,6 +19,8 @@ bin/
 
 ### IntelliJ IDEA ###
 .idea
+.idea/misc.xml
+.idea/modules.xml
 *.iws
 *.iml
 *.ipr
@@ -35,3 +37,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# application.properties
+src/main/resources/application-secret.properties
+**/application-*.properties
