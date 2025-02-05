@@ -2,11 +2,9 @@ package com.giteat.user.controller;
 
 import com.giteat.user.dto.OAuthTokenDto;
 import com.giteat.user.service.OAuthService;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/oauth")
@@ -27,6 +25,7 @@ public class UserController {
      */
     @PostMapping("/gitlab")
     public ResponseEntity<?> saveToken(@RequestBody OAuthTokenDto oAuthTokenDto) {
+        System.out.println(oAuthTokenDto);
         oAuthService.saveToken(oAuthTokenDto);
         return ResponseEntity.ok(oAuthTokenDto);
     }
@@ -45,16 +44,11 @@ public class UserController {
     }
 
 //    @PostMapping("/logout")
-//    public ResponseEntity<?> logout(@RequestBody OAuthTokenDto oAuthTokenDto) {
-//        oAuthService.logout(oAuthTokenDto);
-//        return ResponseEntity.ok(oAuthTokenDto);
-//    }
-//
-//    @PostMapping("/unlink")
-//    public ResponseEntity<?> unlink(@RequestBody OAuthTokenDto oAuthTokenDto) {
-//        oAuthService.unlink(oAuthTokenDto);
-//        return ResponseEntity.ok(oAuthTokenDto);
+//    public ResponseEntity<?> logout(@RequestHeader("Authorization") String accessToken) {
+//        return ResponseEntity.ok().build();
 //    }
 }
+
+
 
 
