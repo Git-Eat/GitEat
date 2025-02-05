@@ -4,8 +4,11 @@ import com.giteat.security.util.ApiUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.MediaType;
+
 
 import java.util.List;
 import java.util.Map;
@@ -25,7 +28,9 @@ public class MergeRequestController {
         ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId);
         System.out.println("response STATUS : " + response.getStatusCode());
         System.out.println("response DATA : " + response.getBody());
-        return ResponseEntity.ok(response.getBody());
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(response.getBody());
     }
 
     @GetMapping("/{repoId}/{prId}")
