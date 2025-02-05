@@ -129,26 +129,24 @@ public class LabApi {
     }
 
     // 프로젝트의 Merge Requests 가져오기 예시입니다.
-    public List<Map<String, Object>> getMergeRequests(String projectId , String accessToken) {
+    public Map<String, Object> getMergeRequests(String projectId , String accessToken) {
         String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests";
-        return callGetApi(url ,accessToken);
+        return this.chaneTypeMap(testCallGetApi(url ,accessToken));
     }
+
+    // 프로젝트 repository 정보 가져오는 함수
+    public Map<String, Object> getRepositoryInfo(String projectId , String accessToken) {
+        String url = gitlabApiUrl + "/projects/" + projectId;
+        return callGetApiMap(url , accessToken);
+    }
+
 
     //  프로젝트의 Commits 가져오기
     public List<Map<String, Object>> getCommits(String projectId, String accessToken) {
         //String url = gitlabApiUrl + "/projects/" + projectId + "/repository/commits";
         String url = "http://192.168.31.237/api/v4" + "/projects/" + projectId + "/repository/commits";
         List<Map<String, Object>> commitList = null;
-        try {
-            commitList = objectMapper.readValue(
-                    testCallGetApi(url, accessToken),
-                    new TypeReference<List<Map<String, Object>>>() {
-                    }
-            );
-        } catch (IOException e) {
-            System.err.println("Failed to parse JSON response: " + e.getMessage());
-            e.printStackTrace();  // 디버깅을 위해 예외 출력
-        }
+
         return commitList;
     }
 
@@ -232,6 +230,34 @@ public class LabApi {
     }
 
 
+    /**
+     * Map Type으로 get
+     * @param url
+     * @param accessToken
+     * @return
+     */
+    private Map<String, Object> callGetApiMap(String url , String accessToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("PRIVATE-TOKEN", accessToken);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
+        return response.getBody();
+    }
+
+
+    /**
+     * List 방식으로 get
+     * @param url
+     * @param accessToken
+     * @return
+     */
+    private List<Map<String, Object>> callGetApiList(String url , String accessToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("PRIVATE-TOKEN", accessToken);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, entity, List.class);
+        return response.getBody();
+    }
 
     /**
      * restTemplate를 사용해서 데이터를 요청하는 코드
