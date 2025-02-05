@@ -1,15 +1,16 @@
-import { Reply } from "./Reply";
+import { ReComment } from "./ReComment";
 
 export type Comment = {
   commentId: number;
   prId: number;
   repoId: number;
+  userId: number;
   userName: string;
   avatarUrl: string;
   disId: string;
   content: string;
-  commentType: number;
-  imageName: string;
+  commentType: 0 | 1 | 2;
   createAt: string;
-  replyList: Reply[];
+  position: object;
+  reCommentList: ReComment[];
 };

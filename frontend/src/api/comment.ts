@@ -24,3 +24,19 @@ export async function deleteComment(
     throw new Error("댓글 삭제 실패했습니다." + error);
   }
 }
+
+export async function deleteReComment(
+  repoId: number,
+  prId: number,
+  commentId: number,
+  reCommentId: number
+) {
+  try {
+    const response = await authClient.delete(
+      `pr/${repoId}/${prId}/comment/${commentId}/recomment/${reCommentId}`
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error("답글 삭제 실패했습니다." + error);
+  }
+}

@@ -12,7 +12,7 @@ export function Conversation() {
         <ErrorBoundery>
           <Suspense fallback={<img src={spinner} alt="Loading..." />}>
             {/* repoId & prId 변경 예정 */}
-            <Comments repoId={1} prId={1} />
+            <Comments repoId={888788} prId={32} />
           </Suspense>
         </ErrorBoundery>
         <MarkdownEditor

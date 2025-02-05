@@ -6,9 +6,12 @@ import { useGetComments } from "../../../../api/queries/useGetComments";
 import { formatDistanceToNowStrict, parseISO } from "date-fns";
 import { ko } from "date-fns/locale";
 import { Comment } from "../../../../api/types/Comment";
-import { Replies } from "../replies";
 import defaultprofile from "../../../../assets/images/user_profile.svg";
 import { useDeleteComment } from "../../../../api/queries/useDeleteComment";
+import { ReComments } from "../reComments";
+import suggest from "../../../../assets/images/suggest.svg";
+import comment from "../../../../assets/images/comment.svg";
+import review from "../../../../assets/images/review.svg";
 
 interface CommentsProps {
   repoId: number;
@@ -17,10 +20,15 @@ interface CommentsProps {
 
 export function Comments({ repoId, prId }: CommentsProps) {
   const { data } = useGetComments(repoId, prId);
-  const [isReplyEditorOpen, setIsReplyEditorOpen] = useState<
+  const [isReCommentEditorOpen, setIsReCommentEditorOpen] = useState<
     Record<number, boolean>
   >({});
   const { mutate: deleteComment } = useDeleteComment(repoId, prId);
+  const commentTypeImages = {
+    0: { src: suggest, alt: "suggest" },
+    1: { src: comment, alt: "comment" },
+    2: { src: review, alt: "review" },
+  };
 
   function displayDate(commentDate: string) {
     const date = parseISO(commentDate);
@@ -30,8 +38,8 @@ export function Comments({ repoId, prId }: CommentsProps) {
     });
   }
 
-  function toggleReplyEditor(commentId: number) {
-    setIsReplyEditorOpen((prev) => ({
+  function toggleReCommentEditor(commentId: number) {
+    setIsReCommentEditorOpen((prev) => ({
       ...prev,
       [commentId]: !prev[commentId],
     }));
@@ -46,14 +54,25 @@ export function Comments({ repoId, prId }: CommentsProps) {
             className="mb-8 bg-white my-5 p-5 rounded-xl"
           >
             <header>
-              <img
-                src={comment.avatarUrl || defaultprofile}
-                alt="user profile"
-                className="inline-block w-9 h-9 mr-2"
-              />
-              <h1 className="inline text-[16px] font-semibold">
-                {comment.userName}
-              </h1>
+              <section className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <img
+                    src={comment.avatarUrl || defaultprofile}
+                    alt="user profile"
+                    className="w-9 h-9"
+                  />
+                  <h1 className="text-[16px] font-semibold">
+                    {comment.userName}
+                  </h1>
+                  <img
+                    src={commentTypeImages[comment.commentType].src}
+                    alt={commentTypeImages[comment.commentType].alt}
+                  />
+                </div>
+                <button onClick={() => deleteComment(comment.commentId)}>
+                  댓글 삭제
+                </button>
+              </section>
               <time className="block px-11">
                 {displayDate(comment.createAt)}
               </time>
@@ -65,33 +84,33 @@ export function Comments({ repoId, prId }: CommentsProps) {
                   {comment.content}
                 </ReactMarkdown>
               </div>
-              <button onClick={() => deleteComment(comment.commentId)}>
-                댓글 삭제
-              </button>
               <hr className="my-4" />
               <p className="mt-3 text-right">
-                {comment.replyList.length}개의 답글
+                {comment.reCommentList.length}개의 답글
               </p>
-              {comment.replyList.length > 0 && (
+              {comment.reCommentList.length > 0 && (
                 <section>
-                  {comment.replyList?.map((reply) => (
-                    <Replies
-                      key={reply.reCommentId}
-                      {...reply}
-                      replyCreateAt={displayDate(reply.createAt)}
+                  {comment.reCommentList?.map((reComment) => (
+                    <ReComments
+                      key={reComment.reCommentId}
+                      repoId={repoId}
+                      prId={prId}
+                      commentId={comment.commentId}
+                      {...reComment}
+                      reCommentCreateAt={displayDate(reComment.createAt)}
                     />
                   ))}
                 </section>
               )}
             </article>
             <footer className="flex justify-end mt-2">
-              <button onClick={() => toggleReplyEditor(comment.commentId)}>
-                {isReplyEditorOpen[comment.commentId]
+              <button onClick={() => toggleReCommentEditor(comment.commentId)}>
+                {isReCommentEditorOpen[comment.commentId]
                   ? "답글 접기"
                   : "답글 추가"}
               </button>
             </footer>
-            {isReplyEditorOpen[comment.commentId] && (
+            {isReCommentEditorOpen[comment.commentId] && (
               <MarkdownEditor
                 onAddSingleComment={() => {}}
                 onStartReview={() => {}}

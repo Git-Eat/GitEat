@@ -1,19 +1,18 @@
 import { useGetReviewer } from "../../../../api/queries/useGetReviewers";
 import defaultprofile from "../../../../assets/images/user_profile.svg";
-import suggest from "../../../../assets/images/suggest.svg";
-import comment from "../../../../assets/images/comment.svg";
-import review from "../../../../assets/images/review.svg";
+// import suggest from "../../../../assets/images/suggest.svg";
+// import comment from "../../../../assets/images/comment.svg";
+// import review from "../../../../assets/images/review.svg";
 
 import { Reviewer } from "../../../../api/types/Reviewer";
 
 export function Reviewers() {
   const { data } = useGetReviewer();
-  const commentTypeImages = {
-    1: { src: suggest, alt: "suggest" },
-    2: { src: comment, alt: "comment" },
-    3: { src: review, alt: "review" },
-  };
-  // const selectedImage = commentTypeImages[replyType];
+  // const commentTypeImages = {
+  //   0: { src: suggest, alt: "suggest" },
+  //   1: { src: comment, alt: "comment" },
+  //   2: { src: review, alt: "review" },
+  // };
   return (
     <section className="bg-white my-5 p-5 rounded-xl">
       <h1 className="text-[18px] font-semibold pb-5">리뷰 참여한 사람</h1>
@@ -28,11 +27,11 @@ export function Reviewers() {
             <p className="inline mr-2 text-[12px] font-semibold">
               {reviewer.userName}
             </p>
-            <img
+            {/* <img
               src={commentTypeImages[reviewer.commentType].src}
               alt={commentTypeImages[reviewer.commentType].alt}
               className="inline-block max-w-12"
-            />
+            /> */}
           </li>
         ))}
       </ul>
