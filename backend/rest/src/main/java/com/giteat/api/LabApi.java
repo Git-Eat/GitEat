@@ -13,12 +13,12 @@ import java.net.URI;
 import java.util.*;
 
 @Component
-public class GitLabApi {
+public class LabApi {
     private final RestTemplate restTemplate;
     private final String gitlabApiUrl = "https://lab.ssafy.com/api/v4";
     private final GitLabTokenService gitLabTokenService;
     private final ObjectMapper objectMapper;
-    public GitLabApi(RestTemplate restTemplate , GitLabTokenService gitLabTokenService , ObjectMapper objectMapper) {
+    public LabApi(RestTemplate restTemplate , GitLabTokenService gitLabTokenService , ObjectMapper objectMapper) {
         this.restTemplate = restTemplate;
         this.gitLabTokenService = gitLabTokenService;
         this.objectMapper = objectMapper;

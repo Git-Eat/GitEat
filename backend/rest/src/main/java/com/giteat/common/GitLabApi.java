@@ -21,11 +21,11 @@ import java.util.Map;
  * OAuth 인증 관련 API 호출 및 토큰 갱신 기능을 제공
  */
 @Component
-public class OauthGitLabApi {
+public class GitLabApi {
 
     private final RestTemplate restTemplate;
 
-    public OauthGitLabApi(RestTemplate restTemplate) {
+    public GitLabApi(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
