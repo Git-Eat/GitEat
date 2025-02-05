@@ -195,6 +195,15 @@ public class PrController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/{repoId}/{prId}/reviewer")
+    @Operation(summary="리뷰 참여자 조회", description = "PR에 참여한 리뷰어들을 조회합니다")
+    public ResponseEntity<List<ReviewerDto>> getReviewer(@PathVariable String repoId,
+                                                          @PathVariable String prId){
+        List<ReviewerDto> reviewer = prService.getReviewer(repoId, prId);
+        if(reviewer != null) return ResponseEntity.ok(reviewer);
+        return ResponseEntity.noContent().build();
+    }
+
     /**
      * 등록한 레포지토리 정보 읽어 오기
      * @param accessToken
