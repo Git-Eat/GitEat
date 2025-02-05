@@ -201,5 +201,16 @@
         WHERE cf.file_id = #{fileId}
     </select>
 
+    <!-- 리뷰 참여자 정보 조회 -->
+    <select id="getReviewer" parameterType="map" resultType="reviewerDto">
+        SELECT
+            cv.comment_user_id AS userId,
+            cv.comment_user_name AS userName,
+            cv.comment_avatar_url AS avatarUrl,
+            cv.comment_type AS commentType
+        FROM comment_view cv
+        WHERE cv.repo_id = #{repoId} AND cv.pr_id = #{prId}
+    </select>
+
 
 </mapper>

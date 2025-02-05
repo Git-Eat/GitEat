@@ -17,6 +17,7 @@
         <typeAlias type="com.giteat.pr.dto.ReplyShowDto" alias="replyShowDto"/>
         <typeAlias type="com.giteat.pr.dto.FileDto" alias="fileDto"/>
         <typeAlias type="com.giteat.pr.dto.FileCommentDto" alias="fileCommentDto"/>
+        <typeAlias type="com.giteat.pr.dto.ReviewerDto" alias="reviewerDto"/>
     </typeAliases>
 
     <!-- TypeHandler 등록 -->
