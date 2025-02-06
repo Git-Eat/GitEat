@@ -89,11 +89,11 @@ export function Comments({ repoId, prId }: CommentsProps) {
               </div>
               <hr className="my-4" />
               <p className="mt-3 text-right">
-                {(comment.reCommentList ?? []).length}개의 답글
+                {(comment.replyList ?? []).length}개의 답글
               </p>
-              {(comment.reCommentList ?? []).length > 0 && (
+              {(comment.replyList ?? []).length > 0 && (
                 <section>
-                  {(comment.reCommentList ?? []).map((reComment) => (
+                  {(comment.replyList ?? []).map((reComment) => (
                     <ReComments
                       key={reComment.reCommentId}
                       repoId={repoId}
