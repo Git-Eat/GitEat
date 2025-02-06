@@ -1,0 +1,55 @@
+package com.giteat.statistics.controller;
+
+import com.giteat.statistics.dto.ParticipantsDto;
+import com.giteat.statistics.service.StatisticsRepoServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/statistics/repo")
+public class StatisticsRepoController {
+
+    @Autowired
+    @Qualifier("StatisticsRepoServiceImpl")
+    private StatisticsRepoServiceImpl statisticsRepoService;
+
+    @GetMapping("/{repoId}/commit")
+    @Operation(summary="Commit 수 조회", description = "Repo에 등록된 총 Commit 개수를 조회합니다.")
+    public ResponseEntity<Map<String, Integer>> getTotalCommit(@PathVariable String repoId){
+        int totalCommit = statisticsRepoService.getTotalCommit(repoId);
+        Map<String, Integer> response = new HashMap<>();
+        response.put("total_commit",totalCommit);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{repoId}/participants")
+    @Operation(summary = "참여자 조회", description = "해당 Repo에서의 참여자 목록을 조회합니다.")
+    public ResponseEntity<List<ParticipantsDto>> getParticipants(@PathVariable String repoId){
+        List<ParticipantsDto> participants = statisticsRepoService.getParticipants(repoId);
+        return ResponseEntity.ok(participants);
+    }
+
+
+    @GetMapping("/{repoId}/pr")
+    @Operation(summary="PR 통계 (PR 개수 조회)", description = "Repo에 등록된 PR개수의 통계정보를 조회합니다.")
+    public ResponseEntity<String> getTotalPR(@PathVariable String repoId){
+        return ResponseEntity.ok("gg");
+    }
+
+    @GetMapping("{repoId}/pr/comment")
+    @Operation(summary="PR 통계 (PR 댓글 수 조회)", description = "Repo에 등록된 댓글수 통계정보를 조회합니다.")
+    public ResponseEntity<String> getTotalComment(@PathVariable String repoId){
+        return ResponseEntity.ok("gg");
+    }
+}

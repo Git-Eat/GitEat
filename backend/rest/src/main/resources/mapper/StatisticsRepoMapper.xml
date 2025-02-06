@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.giteat.statistics.mapper.StatisticsRepoMapper">
+
+    <!-- 총 Commit 수 조회 -->
+    <select id="getTotalCommit" parameterType="String" resultType="int">
+        select COUNT(commit_id) AS TotalCommit from commit where repo_id = #{repoId};
+    </select>
+
+    <select id="getParticipants" parameterType="String" resultType="participantsDto">
+        SELECT DISTINCT u.user_id AS userId, u.name AS userName, u.email AS userEmail, u.avatar_url AS avatarUrl
+        FROM (
+            SELECT user_id FROM pr WHERE repo_id = #{repoId}
+
+            UNION
+
+            SELECT pr.user_id
+            FROM commit
+            JOIN pr ON commit.pr_id = pr.pr_id AND commit.repo_id = pr.repo_id
+            WHERE commit.repo_id = #{repoId}
+
+            UNION
+
+            SELECT user_id FROM comment WHERE repo_id = #{repoId} AND user_id IS NOT NULL
+
+            UNION
+
+            SELECT user_id FROM reply WHERE repo_id = #{repoId} AND user_id IS NOT NULL
+        ) AS participants
+        JOIN users u ON participants.user_id = u.user_id;
+    </select>
+
+
+</mapper>
