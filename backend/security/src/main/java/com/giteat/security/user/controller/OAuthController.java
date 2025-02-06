@@ -47,7 +47,8 @@ public class OAuthController {
         ResponseEntity<?> testResponse = apiUtil.postApi("/oauth/gitlab", oAuthTokenDto);
         System.out.println("@@@@@@@@@@찐막@@@@@ : " + testResponse.getBody());
 //        return apiUtil.postApi("/oauth/gitlab", oAuthTokenDto);
-        return testResponse;
+        //return testResponse;
+        return ResponseEntity.ok(testResponse.getBody());
     }
     /**
      * GitLab OAuth 토큰 갱신 엔드포인트
