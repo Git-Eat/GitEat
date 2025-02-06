@@ -1,10 +1,11 @@
 import add from "../../assets/images/add.svg";
 import { RepositoryCard } from "../../components/repositoryList/RepositoryCard";
-import { DummyRepos } from "./dummy";
 import { useBooleanState } from "../../hooks/useBooleanState";
 import RepositoryAddModal from "../../components/repositoryList/repositoryAddModal";
+import { useGetRepositories } from "../../api/queries/useGetRepositories";
 export function RepositoryList() {
   const [isModalOpen, openModal, closeModal] = useBooleanState(false);
+  const { data = [] } = useGetRepositories();
   return (
     <>
       <header className="w-full p-4">
@@ -21,11 +22,12 @@ export function RepositoryList() {
             <span className="hover:cursor-pointer">프로젝트 추가하기 </span>
             <img src={add} alt="add" />
           </button>
-          {DummyRepos.map((repo, idx) => (
+          {data.map((repo, idx) => (
             <RepositoryCard
               key={idx}
-              title={repo.title}
-              access={repo.access}
+              user={"USER"}
+              title={repo.name}
+              access={"private"}
               description={repo.description}
             />
           ))}

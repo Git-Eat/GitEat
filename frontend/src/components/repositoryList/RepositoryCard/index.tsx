@@ -14,6 +14,7 @@ interface RepositoryCardProps {
   title: string;
   description: string;
   access: string;
+  user: string;
 }
 
 function Private() {
@@ -36,6 +37,7 @@ export function RepositoryCard({
   title,
   description,
   access,
+  user,
 }: RepositoryCardProps) {
   const [isToggle, onToggle, offToggle] = useBooleanState(false);
   const anchorRef = React.useRef<HTMLButtonElement>(null);
@@ -49,7 +51,9 @@ export function RepositoryCard({
       <div className=" bg-white rounded-xl p-7 flex justify-between hover:bg-gray-200 cursor-pointer">
         <div>
           <div className="flex gap-[10px] items-center mb-[10px]">
-            <span className="text-xl font-semibold">{title}</span>
+            <span className="text-xl font-semibold">
+              {user} / {title}
+            </span>
             {access === "public" ? <Public /> : <Private />}
           </div>
           <span>{description}</span>
