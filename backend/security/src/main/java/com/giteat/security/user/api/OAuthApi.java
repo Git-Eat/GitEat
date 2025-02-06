@@ -84,7 +84,17 @@ public class OAuthApi {
             System.out.println("요청 헤더: " + headers);
             System.out.println("요청 바디: " + params);
 
-            ResponseEntity<String> response = restTemplate.postForEntity(tokenUri, request, String.class);
+            //request test
+            Map<String, String> param = new HashMap<>();
+            param.put("client_id", clientId);
+            param.put("client_secret", clientSecret);
+            param.put("code", code);
+            param.put("grant_type", "authorization_code");
+            param.put("redirect_uri", redirectUri);
+
+
+            ResponseEntity<String> response = restTemplate.postForEntity(tokenUri, param, String.class);
+            System.out.println("api response" +response);
 
             System.out.println("토큰 응답 결과:");
             System.out.println("응답 상태코드: " + response.getStatusCode());
