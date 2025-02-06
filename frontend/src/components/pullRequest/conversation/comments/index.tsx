@@ -30,7 +30,10 @@ export function Comments({ repoId, prId }: CommentsProps) {
     2: { src: review, alt: "review" },
   };
 
-  function displayDate(commentDate: string) {
+  function displayDate(commentDate: string | null) {
+    if (!commentDate) {
+      return "날짜 정보가 없습니다.";
+    }
     const date = parseISO(commentDate);
     return formatDistanceToNowStrict(date, {
       addSuffix: true,
@@ -86,11 +89,11 @@ export function Comments({ repoId, prId }: CommentsProps) {
               </div>
               <hr className="my-4" />
               <p className="mt-3 text-right">
-                {comment.reCommentList.length}개의 답글
+                {(comment.reCommentList ?? []).length}개의 답글
               </p>
-              {comment.reCommentList.length > 0 && (
+              {(comment.reCommentList ?? []).length > 0 && (
                 <section>
-                  {comment.reCommentList?.map((reComment) => (
+                  {(comment.reCommentList ?? []).map((reComment) => (
                     <ReComments
                       key={reComment.reCommentId}
                       repoId={repoId}

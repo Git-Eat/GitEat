@@ -1,4 +1,4 @@
-import { ReComment } from "./ReComment";
+import { Reply } from "./Reply";
 
 export type Comment = {
   commentId: number;
@@ -6,11 +6,11 @@ export type Comment = {
   repoId: number;
   userId: number;
   userName: string;
-  avatarUrl: string;
+  avatarUrl: string | null;
   disId: string;
   content: string;
   commentType: 0 | 1 | 2;
-  createAt: string;
-  position: object;
-  reCommentList: ReComment[];
+  createAt: string | null;
+  position: object | null;
+  reCommentList: Reply[];
 };
