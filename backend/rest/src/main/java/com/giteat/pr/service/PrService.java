@@ -38,5 +38,4 @@ public interface PrService {
 
     /* 리뷰 참여자 조회 */
     List<ReviewerDto> getReviewer(String repoId, String prId);
-    int saveRepositoryData(String accessToken , String repositoryId);
 }
