@@ -16,7 +16,7 @@ export function Loading() {
       login(code, {
         onSuccess: () => {
           console.log("로그인 성공");
-          // navigation("/repos");
+          navigation("/repos");
         },
       });
     } else {
