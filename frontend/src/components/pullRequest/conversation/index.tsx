@@ -11,7 +11,8 @@ export function Conversation() {
       <main className="w-3/4">
         <ErrorBoundery>
           <Suspense fallback={<img src={spinner} alt="Loading..." />}>
-            <Comments />
+            {/* repoId & prId 변경 예정 */}
+            <Comments repoId={888788} prId={32} />
           </Suspense>
         </ErrorBoundery>
         <MarkdownEditor
@@ -20,7 +21,12 @@ export function Conversation() {
         />
       </main>
       <aside className="w-1/4">
-        <Reviewers />
+        <ErrorBoundery>
+          <Suspense fallback={<img src={spinner} alt="Loading..." />}>
+            {/* repoId & prId 변경 예정 */}
+            <Reviewers repoId={888788} prId={32} />
+          </Suspense>
+        </ErrorBoundery>
       </aside>
     </section>
   );
