@@ -1,17 +1,28 @@
-import { useEffect } from "react";
+import { Suspense } from "react";
 import { useGetPullRequests } from "../../api/queries/useGetPullRequests";
 import book from "../../assets/images/image.png";
 import { PullRequestCard } from "../../components/pullRequestList/pullRequestCard";
-// import { dummy } from "./dummy";
+import { ErrorBoundary } from "../../components/common/errorBoundery";
+
+function PullRequests() {
+  const { data } = useGetPullRequests(1);
+  return (
+    <>
+      {data?.map((pr) => (
+        <PullRequestCard
+          key={pr.prId}
+          prId={pr.prId}
+          title={pr.title}
+          description={pr.description}
+          createAt={pr.createAt}
+          isOpened={pr.isOpened}
+        />
+      ))}
+    </>
+  );
+}
 
 export function PullRequestList() {
-  const { data = [], isLoading } = useGetPullRequests(1);
-  useEffect(() => {
-    if (!isLoading) {
-      console.log(data);
-    }
-  });
-  if (isLoading) return <div>loading</div>;
   return (
     <>
       <header className="w-full p-4">
@@ -27,16 +38,17 @@ export function PullRequestList() {
       </header>
       <main className=" w-[98%] m-auto px-8 py-4 bg-gray-100 rounded-2xl min-h-[calc(100vh-100px)]">
         <div className="flex flex-col gap-5 m-auto w-[80%] pt-10">
-          {data.map((pr) => (
-            <PullRequestCard
-              key={pr.prId}
-              prId={pr.prId}
-              title={pr.title}
-              description={pr.description}
-              createAt={pr.createAt}
-              isOpened={pr.isOpened}
-            />
-          ))}
+          <ErrorBoundary
+            fallbackComponent={
+              <p className="text-red-500">
+                ⚠️ 프로젝트 목록을 불러오는 중 오류 발생
+              </p>
+            }
+          >
+            <Suspense fallback={<>loading</>}>
+              <PullRequests />
+            </Suspense>
+          </ErrorBoundary>
         </div>
       </main>
     </>
