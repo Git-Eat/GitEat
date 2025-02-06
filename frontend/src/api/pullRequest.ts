@@ -10,7 +10,7 @@ export const getPullRequests = async (
     return res.data;
   } catch (e: unknown) {
     console.log(e);
-    return [];
+    throw new Error(e as string);
   }
 };
 
@@ -20,6 +20,6 @@ export const getRepsitories = async (): Promise<Repository[]> => {
     return res.data;
   } catch (e: unknown) {
     console.log(e);
-    return [];
+    throw new Error(e as string);
   }
 };
