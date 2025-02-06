@@ -23,10 +23,6 @@ public class FileCommentDto {
         private String positionType;
         private Integer newLine;
         private Integer oldLine;
-        private Integer newStartLine;
-        private Integer newEndLine;
-        private Integer oldStartLine;
-        private Integer oldEndLine;
         private LineRange lineRange;
 
         @Data

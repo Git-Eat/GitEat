@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
 import java.util.Map;
 
@@ -25,12 +23,8 @@ public class PrController {
     @Operation(summary="PR 목록 확인", description = "PR의 목록을 확인합니다")
     public ResponseEntity<List<PrDto>> getPrList(@PathVariable int repoId){
         List<PrDto> prList = prService.getPrList(repoId);
-        for(PrDto prDto : prList){
-            System.out.println(prDto);
-        }
-        if(prList != null) {
-            System.out.println("prList : NULL" );
-            return ResponseEntity.ok(prList);}
+        System.out.println("data 전송 성공");
+        if(prList != null) {return ResponseEntity.ok(prList);}
         return ResponseEntity.noContent().build();
     }
 
@@ -61,7 +55,7 @@ public class PrController {
 
     
     @GetMapping("/{repoId}/{prId}/comment")
-    @Operation(summary="댓글 조회", description = "PR에 생성된 댓글을 조회합니다(댓글, 대댓글, 코드댓글 포함)")
+    @Operation(summary="댓글 조회", description = "PR에 생성된 댓글을 조회합니다")
     public ResponseEntity<List<CommentDto>> getCommentList(@PathVariable int repoId, @PathVariable int prId) {
         List<CommentDto> comments = prService.getCommentList(repoId, prId);
         if(comments != null) {return ResponseEntity.ok(comments);}
@@ -71,20 +65,11 @@ public class PrController {
 
     @PostMapping("/{repoId}/{prId}/comment")
     @Operation(summary="댓글 등록", description = "PR에 댓글을 등록합니다")
-    public ResponseEntity<Integer> insertComment(@PathVariable String repoId,
-                                                 @PathVariable String prId,
+    public ResponseEntity<Integer> insertComment(@PathVariable int repoId,
+                                                 @PathVariable int prId,
                                                  @RequestBody CommentDto commentDto) {
         int result = prService.insertComment(repoId, prId, commentDto);
         if(result==200) {return ResponseEntity.ok(result);}
-        return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping("/{repoId}/uploads")
-    @Operation(summary="파일 업로드", description = "파일 업로드 하면 markdown을 return합니다")
-    public ResponseEntity<Map<String, String>> uploadsFile(@PathVariable String repoId,
-                                               @RequestParam(value = "file", required = false)MultipartFile file){
-        Map<String, String> result = prService.uploadsFile(repoId, file);
-        if(result != null && !result.isEmpty()) {return ResponseEntity.ok(result);}
         return ResponseEntity.noContent().build();
     }
 
@@ -184,24 +169,27 @@ public class PrController {
 
     @GetMapping("/{repoId}/{prId}/file/raw")
     @Operation(summary="변경 된 코드 확인", description = "변경 된 파일의 전 후 코드를 조회합니다")
-    public ResponseEntity<Map<String, Object>> showChangedCode(@PathVariable String repoId,
+    public ResponseEntity<Map<String, String>> showChangedCode(@PathVariable String repoId,
                                                                @PathVariable String prId,
                                                                @RequestBody FileDto fileDto,
-                                                               @RequestParam String refType) {
-
-        // 1: PR 기준(브랜치), 2: Commit 기준,)
-        Map<String, Object> changedCode = prService.showChangedCode(repoId, prId, fileDto, refType);
+                                                               @RequestParam String refType, // 1: PR 기준, 2: Commit 기준,
+                                                               @RequestParam String ref) {
+        //ref : commitId
+        Map<String, String> changedCode = prService.showChangedCode(repoId, prId, fileDto, refType, ref);
         if(changedCode != null && !changedCode.isEmpty()) {return ResponseEntity.ok(changedCode);}
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{repoId}/{prId}/reviewer")
-    @Operation(summary="리뷰 참여자 조회", description = "PR에 참여한 리뷰어들을 조회합니다")
-    public ResponseEntity<List<ReviewerDto>> getReviewer(@PathVariable String repoId,
-                                                          @PathVariable String prId){
-        List<ReviewerDto> reviewer = prService.getReviewer(repoId, prId);
-        if(reviewer != null) return ResponseEntity.ok(reviewer);
-        return ResponseEntity.noContent().build();
+    /**
+     * 등록한 레포지토리 정보 읽어 오기
+     * @param accessToken
+     * @param repositoryId
+     * @return
+     */
+    @PostMapping("/repositoryData")
+    @Operation(summary="repository의 모든 데이터 읽기", description = "repository에서 모든 데이터를 가져옵니다.")
+    public ResponseEntity<?> saveRepositoryData(@RequestHeader("accessToken") String accessToken , @RequestBody String repositoryId){
+        prService.saveRepositoryData(accessToken, repositoryId);
+        return ResponseEntity.ok().build();
     }
-
 }

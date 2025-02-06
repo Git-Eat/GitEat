@@ -3,27 +3,51 @@ import { http, HttpResponse } from "msw";
 const reviewers = [
   {
     userId: 1,
-    userName: "USER-01",
-    avatarUrl: null,
-    commentType: 2,
-  },
-  {
-    userId: 2,
-    userName: "USER-02",
+    userName: "송용인",
     avatarUrl: null,
     commentType: 1,
   },
   {
+    userId: 2,
+    userName: "조창훈",
+    avatarUrl: null,
+    commentType: 0,
+  },
+  {
     userId: 3,
-    userName: "USER-03",
+    userName: "신지혜",
+    avatarUrl: null,
+    commentType: 0,
+  },
+  {
+    userId: 5,
+    userName: "이다영",
+    avatarUrl: null,
+    commentType: 2,
+  },
+  {
+    userId: 6,
+    userName: "이해루",
     avatarUrl: null,
     commentType: 2,
   },
   {
     userId: 4,
-    userName: "USER-04",
+    userName: "최이화",
     avatarUrl: null,
-    commentType: 3,
+    commentType: 1,
+  },
+  {
+    userId: 4,
+    userName: "최이화",
+    avatarUrl: null,
+    commentType: 0,
+  },
+  {
+    userId: 4,
+    userName: "최이화",
+    avatarUrl: null,
+    commentType: 2,
   },
 ];
 

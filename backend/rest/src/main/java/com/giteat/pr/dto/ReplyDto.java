@@ -18,5 +18,6 @@ public class ReplyDto {
     private String disId;
     private String content;
     private int replyType;
+    private String imageName;
     private LocalDateTime createAt;
 }

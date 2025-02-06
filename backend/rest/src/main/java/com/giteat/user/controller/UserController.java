@@ -1,15 +1,15 @@
 package com.giteat.user.controller;
 
-import com.giteat.user.dto.OAuthTokenDto;
-import com.giteat.user.service.OAuthService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
+import com.giteat.user.model.dto.OAuthTokenDto;
+import com.giteat.user.model.service.OAuthService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/oauth")
-@Slf4j
 public class UserController {
 
     private final OAuthService oAuthService;
@@ -27,16 +27,8 @@ public class UserController {
      */
     @PostMapping("/gitlab")
     public ResponseEntity<?> saveToken(@RequestBody OAuthTokenDto oAuthTokenDto) {
-//        oAuthService.saveToken(oAuthTokenDto);
-//        System.out.println("rest controller 토큰정보: "+ oAuthTokenDto);
-//        return ResponseEntity.ok(oAuthTokenDto);
-        try {
-            oAuthService.saveToken(oAuthTokenDto);
-            return ResponseEntity.ok().body(oAuthTokenDto);
-        } catch (Exception e) {
-            log.error("Token 저장 중 오류 발생: ", e);
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        oAuthService.saveToken(oAuthTokenDto);
+        return ResponseEntity.ok(oAuthTokenDto);
     }
 
     /**
@@ -49,16 +41,20 @@ public class UserController {
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(@RequestBody OAuthTokenDto tokenRequest) {
         OAuthTokenDto newToken = oAuthService.refreshToken(tokenRequest);
-
         return ResponseEntity.ok(newToken);
     }
 
 //    @PostMapping("/logout")
-//    public ResponseEntity<?> logout(@RequestHeader("Authorization") String accessToken) {
-//        return ResponseEntity.ok().build();
+//    public ResponseEntity<?> logout(@RequestBody OAuthTokenDto oAuthTokenDto) {
+//        oAuthService.logout(oAuthTokenDto);
+//        return ResponseEntity.ok(oAuthTokenDto);
+//    }
+//
+//    @PostMapping("/unlink")
+//    public ResponseEntity<?> unlink(@RequestBody OAuthTokenDto oAuthTokenDto) {
+//        oAuthService.unlink(oAuthService);
+//        return ResponseEntity.ok(oAuthTokenDto);
 //    }
 }
-
-
 
 

@@ -6,13 +6,10 @@ import com.giteat.security.user.service.CustomOAuthService;
 import com.giteat.security.util.ApiUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 
-
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/oauth")
 @Slf4j
@@ -33,18 +30,13 @@ public class OAuthController {
      * 3. 생성된 URL을 클라이언트에게 반환
      * 4. 클라이언트는 해당 URL로 리다이렉트되어 GitLab 로그인 페이지로 이동
      *
-     * @param  body Code를 포함한 요청 본문
+     * @param body Authorization Code를 포함한 요청 본문
      * @return OAuth 토큰 정보
      */
     @PostMapping("/gitlab/login")
-    public ResponseEntity<?> gitlabLogin(@RequestBody Map<String, String> body) {
-        System.out.println("클라이언트에서 받은 body값:" + body);
-        String code = body.get("code");
-        System.out.println("code:" + code);
-
+    public ResponseEntity<?> gitlabLogin(@RequestBody Object body){
+        String code = (String) body;
         OAuthTokenDto oAuthTokenDto = oauthService.gitlabLogin(code);
-        System.out.println("security dto: "+ oAuthTokenDto);
-
         return apiUtil.postApi("/oauth/gitlab", oAuthTokenDto);
     }
     /**
@@ -62,25 +54,23 @@ public class OAuthController {
      * GitLab OAuth 일반 로그아웃 처리
      * Access Token을 무효화하고 현재 세션을 종료
      *
-     * @param accessToken OAuth 토큰 정보를 담고 있는 DTO
+     * @param oAuthTokenDto OAuth 토큰 정보를 담고 있는 DTO
      * @return 로그아웃 처리 결과
      */
-    @PostMapping("/gitlab/logout")
-    public ResponseEntity<?> logout(@RequestHeader("Authorization") String accessToken) {
-        return ResponseEntity.ok().build();
-    }
+//    @PostMapping("/gitlab/logout")
+//    public ResponseEntity<?> gitlabLogout(@RequestBody OAuthTokenDto oAuthTokenDto){
+//        return apiUtil.postApi("/oauth/logout", oAuthTokenDto);
+//    }
 
-
-//    /**
-//     * GitLab 계정 연동 해제
-//     * GitLab 계정과 애플리케이션의 연동을 완전히 해제
-//     *
-//     * @param oAuthTokenDto OAuth 토큰 정보를 담고 있는 DTO
-//     * @return 연동 해제 처리 결과
-//     */
-//    @PostMapping("/gitlab/revoke")
+    /**
+     * GitLab 계정 연동 해제
+     * GitLab 계정과 애플리케이션의 연동을 완전히 해제
+     *
+     * @param oAuthTokenDto OAuth 토큰 정보를 담고 있는 DTO
+     * @return 연동 해제 처리 결과
+     */
+//    @PostMapping("/gitlab/unlink")
 //    public ResponseEntity<?> gitlabUnlink(@RequestBody OAuthTokenDto oAuthTokenDto){
-//
-//        return apiUtil.postFormApi("/oauth/revoke", oAuthTokenDto);
+//        return apiUtil.postApi("/oauth/unlink", oAuthTokenDto);
 //    }
 }

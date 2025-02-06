@@ -1,4 +1,4 @@
-package com.giteat.user.repository;
+package com.giteat.user.model.repository;
 
 import com.giteat.user.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,20 +1,23 @@
 package com.giteat.security.util;
 
+
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-/**
- * REST 요청을 수행하는 Utility 클래스
+
+/*
+ * rest 요청을할 때 사용하는 사용하는 util 코드
+ *
  */
 @Component
 @Slf4j
 public class ApiUtil {
 
     private final RestTemplate restTemplate;
-
     @Value("${api.base-url}")
     private String restURL;
 
@@ -42,16 +45,7 @@ public class ApiUtil {
      */
     public ResponseEntity<?> postApi(String url, Object requestBody) {
         String fullURL = restURL + url;
-        log.info("POST 요청 URL: " + fullURL);
-        log.info("ApiUtil Request Body: {}", requestBody);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
-
-        return restTemplate.postForEntity(fullURL, requestEntity, Object.class);
-
+        return restTemplate.postForEntity(fullURL, requestBody, Object.class);
     }
 
     /**
@@ -62,13 +56,7 @@ public class ApiUtil {
      */
     public ResponseEntity<?> putApi(String url, Object requestBody) {
         String fullURL = restURL + url;
-        log.info("PUT 요청 URL: " + fullURL);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
-        restTemplate.exchange(fullURL, HttpMethod.PUT, requestEntity, Void.class);
+        restTemplate.put(fullURL, requestBody);
         return ResponseEntity.ok().build();
     }
 
@@ -77,15 +65,9 @@ public class ApiUtil {
      * @param url
      * @return
      */
-    public ResponseEntity<?> deleteApi(String url, Object requestBody) {
-        String fullURL = restURL + url;
-        log.info("DELETE 요청 URL: " + fullURL);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
-        restTemplate.exchange(fullURL, HttpMethod.DELETE, requestEntity, Void.class);
+    public ResponseEntity<?> deleteApi(String url , String id) {
+        String fullURL = restURL + url + "?id=" + id;
+        restTemplate.delete(fullURL);
         return ResponseEntity.ok().build();
     }
 }

@@ -16,15 +16,7 @@
         <typeAlias type="com.giteat.pr.dto.ReplyDto" alias="replyDto"/>
         <typeAlias type="com.giteat.pr.dto.ReplyShowDto" alias="replyShowDto"/>
         <typeAlias type="com.giteat.pr.dto.FileDto" alias="fileDto"/>
-        <typeAlias type="com.giteat.pr.dto.FileCommentDto" alias="fileCommentDto"/>
-        <typeAlias type="com.giteat.pr.dto.ReviewerDto" alias="reviewerDto"/>
     </typeAliases>
-
-    <!-- TypeHandler 등록 -->
-    <typeHandlers>
-        <typeHandler handler="com.giteat.common.util.JsonTypeHandler"
-                     javaType="com.giteat.pr.dto.FileCommentDto$Position$LineRange"/>
-    </typeHandlers>
 
     <mappers>
         <mapper resource="mapper/UserMapper.xml"/>

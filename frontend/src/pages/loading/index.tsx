@@ -3,7 +3,7 @@ import { useLogin } from "../../api/queries/useLogin";
 import { useNavigate } from "react-router-dom";
 
 export function Loading() {
-  const { mutate: login, isError, error } = useLogin();
+  const { mutate: login, isError } = useLogin();
   const navigation = useNavigate();
   const extractCodeFromUrl = useCallback(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -30,8 +30,7 @@ export function Loading() {
 
   useEffect(() => {
     if (isError) {
-      console.log(error);
-      // window.location.replace("/error");
+      window.location.replace("/error");
     }
   }, [isError]);
 
