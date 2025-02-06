@@ -230,12 +230,6 @@ public class PrServiceImpl implements PrService{
     }
 
 
-    @Override
-    public int saveRepositoryData(String accessToken , String repositoryId){
-
-        return 1;
-    }
-
     // 파일 경로를 URL 인코딩하는 함수
     private String encodePath(String path) {
         try {
