@@ -10,7 +10,9 @@ const comments = [
     avatarUrl: null,
     disId: "1",
     content: "이게 어떤 용도죠?",
+    content: "이게 어떤 용도죠?",
     commentType: 1,
+    createAt: null,
     createAt: null,
     position: {
       baseSha: "5b7a6146752b83f400e07854dfe27bf7000cf058",
@@ -37,6 +39,7 @@ const comments = [
       },
     },
     replyList: [
+    replyList: [
       {
         reCommentId: 1,
         userId: 2,
@@ -45,7 +48,10 @@ const comments = [
         disId: "1",
         content: "답장입니다",
         replyType: 0,
+        content: "답장입니다",
+        replyType: 0,
         imageName: null,
+        createAt: null,
         createAt: null,
       },
     ],
@@ -56,10 +62,14 @@ const comments = [
     repoId: 888788,
     userId: 1,
     userName: "송용인",
+    userId: 1,
+    userName: "송용인",
     avatarUrl: null,
     disId: "2",
     content: "오 수고하셨습니다 ㅎㅎ",
+    content: "오 수고하셨습니다 ㅎㅎ",
     commentType: 1,
+    createAt: null,
     createAt: null,
     position: null,
     replyList: [],
