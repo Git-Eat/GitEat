@@ -53,7 +53,7 @@ const reviewers = [
 
 const reviewersHandlers = [
   // 주소 임의 설정(추후 수정 필요)
-  http.get("*/pr/repoId/prId/reviewer", () => {
+  http.get("*/pr/:repoId/:prId/reviewer", () => {
     return HttpResponse.json(reviewers, { status: 200 });
   }),
 ];
