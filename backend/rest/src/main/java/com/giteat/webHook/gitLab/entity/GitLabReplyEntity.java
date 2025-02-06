@@ -40,9 +40,6 @@ public class GitLabReplyEntity {
     @Column(name = "reply_type")
     private int replyType;
 
-    @Column(name = "image_name")
-    private String imageName;
-
     @Column(name = "create_at")
     private Date createAt;
 

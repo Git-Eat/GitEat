@@ -232,11 +232,7 @@ public class PrServiceImpl implements PrService{
 
     @Override
     public int saveRepositoryData(String accessToken , String repositoryId){
-        // 만들어 놓은 함수 호출
-        // 호출하고 형식 맞춰서 데이터베이스 저장
-        // 저장하고 나 값으로 형식 맞춰서 데이터 넣기
-//        Map<String ,List<Map<String , Object>>> repositoryData = gitLabApi.getAllData(accessToken, repositoryId);
-//        System.out.println("repositoryData : " + repositoryData);
+
         return 1;
     }
 

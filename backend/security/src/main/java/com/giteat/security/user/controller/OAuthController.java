@@ -37,10 +37,14 @@ public class OAuthController {
      * @return OAuth 토큰 정보
      */
     @PostMapping("/gitlab/login")
-    public ResponseEntity<?> gitlabLogin(@RequestBody Object body) {
-        String code = (String) body;
+    public ResponseEntity<?> gitlabLogin(@RequestBody Map<String, String> body) {
+        System.out.println("클라이언트에서 받은 body값:" + body);
+        String code = body.get("code");
+        System.out.println("code:" + code);
+
         OAuthTokenDto oAuthTokenDto = oauthService.gitlabLogin(code);
-        System.out.println(code);
+        System.out.println("security dto: "+ oAuthTokenDto);
+
         return apiUtil.postApi("/oauth/gitlab", oAuthTokenDto);
     }
     /**
