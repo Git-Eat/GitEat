@@ -55,14 +55,13 @@ public class OAuthApi {
      *         실패 시 빈 Map 반환
      */
     public Map<String, String> getAccessToken(String code) {
-        // HTTP 요청 헤더 설정
         try {
             System.out.println("getAccessToken 시작 - 받은 code: " + code);
+            //HttpHeaders headers = new HttpHeaders();
+            System.out.println("getAccessToken 시작 - 받은 code: " + code);
             HttpHeaders headers = new HttpHeaders();
-            // OAuth 토큰 요청 시 (form-urlencoded 사용)
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-            // Oauth access 토큰 요청할 때 서버가 oauth 에게 전달해주는 파라미터
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
             params.add("client_id", clientId);
             params.add("client_secret", clientSecret);
@@ -92,15 +91,26 @@ public class OAuthApi {
             param.put("grant_type", "authorization_code");
             param.put("redirect_uri", redirectUri);
 
+            System.out.println("요청 바디2: " + param);
 
-            ResponseEntity<String> response = restTemplate.postForEntity(tokenUri, param, String.class);
+//            ResponseEntity<String> response = restTemplate.postForEntity(tokenUri, param, String.class);
+
+//            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+//            HttpEntity<Map<String, String>> entity = new HttpEntity<>(param, headers);
+
+            ResponseEntity<Map> response = restTemplate.exchange(tokenUri, HttpMethod.POST, entity, Map.class);
             System.out.println("api response" +response);
 
             System.out.println("토큰 응답 결과:");
             System.out.println("응답 상태코드: " + response.getStatusCode());
             System.out.println("응답 바디: " + response.getBody());
 
-            // JSON 파싱
+            System.out.println("토큰 응답 결과:");
+            System.out.println("응답 상태코드: " + response.getStatusCode());
+            System.out.println("응답 바디: " + response.getBody());
+
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonNode = mapper.readTree(response.getBody());
 
@@ -114,7 +124,14 @@ public class OAuthApi {
 
             System.out.println("파싱된 토큰 정보: " + map);
             return map;
+
         } catch (Exception e) {
+            System.out.println("\n=== getAccessToken 에러 발생 ===");
+            System.out.println("에러 타입: " + e.getClass().getName());
+            System.out.println("에러 메시지: " + e.getMessage());
+            if (e.getCause() != null) {
+                System.out.println("에러 원인: " + e.getCause().getMessage());
+            }
             e.printStackTrace();
             System.out.println("getAccessToken 에러: " + e.getMessage());
             return new HashMap<>();
