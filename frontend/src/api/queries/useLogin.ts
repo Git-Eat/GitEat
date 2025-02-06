@@ -10,5 +10,6 @@ export const useLogin = () => {
       localStorage.setItem("access_token", data.accessToken);
       window.location.replace("/dashboard");
     },
+    retry: false,
   });
 };
