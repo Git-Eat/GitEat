@@ -1,13 +1,13 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { ReComment } from "../../../../api/types/ReComment";
+import { Reply } from "../../../../api/types/Reply";
 import suggest from "../../../../assets/images/suggest.svg";
 import comment from "../../../../assets/images/comment.svg";
 import review from "../../../../assets/images/review.svg";
 import defaultprofile from "../../../../assets/images/user_profile.svg";
 import { useDeleteReComment } from "../../../../api/queries/useDeleteReComment";
 
-interface ReCommentProps extends ReComment {
+interface ReCommentProps extends Reply {
   reCommentCreateAt: string;
   repoId: number;
   prId: number;
@@ -18,7 +18,7 @@ export function ReComments({
   userName,
   avatarUrl,
   content,
-  reCommentType,
+  replyType,
   reCommentCreateAt,
   repoId,
   prId,
@@ -28,7 +28,7 @@ export function ReComments({
     1: { src: comment, alt: "comment" },
     2: { src: review, alt: "review" },
   };
-  const selectedImage = reCommentTypeImages[reCommentType];
+  const selectedImage = reCommentTypeImages[replyType];
   const { mutate: deleteReComment } = useDeleteReComment(repoId, prId);
 
   return (

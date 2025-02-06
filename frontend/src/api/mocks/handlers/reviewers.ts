@@ -51,9 +51,9 @@ const reviewers = [
   },
 ];
 
+const API_BASE = import.meta.env.VITE_API_BASE;
 const reviewersHandlers = [
-  // 주소 임의 설정(추후 수정 필요)
-  http.get("http://backendApi:8080/pr/repoId/prId/reviewer", () => {
+  http.get(API_BASE + `/pr/repoId/prId/reviewer`, () => {
     return HttpResponse.json(reviewers, { status: 200 });
   }),
 ];
