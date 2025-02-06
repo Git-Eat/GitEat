@@ -4,13 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.giteat.user.model.repository.OAuthRepository;
-import com.giteat.user.model.dto.OAuthTokenDto;
+import com.giteat.user.dto.OAuthTokenDto;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -27,11 +23,9 @@ import java.util.Map;
 @Component
 public class GitLabApi {
 
-    private final OAuthRepository oAuthRepository;
     private final RestTemplate restTemplate;
 
-    public GitLabApi(OAuthRepository oAuthDao, OAuthRepository oAuthRepository, RestTemplate restTemplate) {
-        this.oAuthRepository = oAuthRepository;
+    public GitLabApi(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
@@ -47,8 +41,8 @@ public class GitLabApi {
     @Value("${oauth.gitlab.token-uri}")
     private String tokenUri;
 
-    @Value("${oauth.gitlab.user-info-uri}")
-    private String userInfoUri;
+    @Value("${oauth.gitlab.base-uri}")
+    private String baseUri;
 
     /**
      * GitLab OAuth 액세스 토큰 갱신
@@ -56,7 +50,7 @@ public class GitLabApi {
      *
      * @param tokenRequest 갱신에 필요한 토큰 정보를 담고 있는 DTO
      * @return 갱신된 토큰 정보를 담은 Map (access_token, token_type, expires_in, refresh_token, created_at)
-     *         실패 시 null 반환
+     * 실패 시 null 반환
      * @throws RuntimeException JSON 파싱 실패 시 발생
      */
     public Map<String, String> refreshAccessToken(OAuthTokenDto tokenRequest) {
@@ -105,19 +99,5 @@ public class GitLabApi {
             throw new RuntimeException(e);
         }
     }
-
-//    public void logoutUser(String accessToken) {
-//    }
-//
-//    public void unlinkUser(String refreshToken) {
-//        try {
-//
-//        }
-//        catch (Exception e) {
-//            e.printStackTrace();
-//            throw new RuntimeException("Failed to unlink GitLab account", e);
-//        }
-
-
-    }
+}
 

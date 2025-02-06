@@ -1,27 +1,30 @@
 package com.giteat.api;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.giteat.common.util.GitLabTokenService;
 import com.giteat.pr.dto.FileCommentDto;
-import com.giteat.pr.dto.FileDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import com.fasterxml.jackson.core.type.TypeReference;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.*;
 
 @Component
-public class GitLabApi {
+public class LabApi {
     private final RestTemplate restTemplate;
     private final String gitlabApiUrl = "https://lab.ssafy.com/api/v4";
     private final GitLabTokenService gitLabTokenService;
     private final ObjectMapper objectMapper;
-    public GitLabApi(RestTemplate restTemplate , GitLabTokenService gitLabTokenService , ObjectMapper objectMapper) {
+    public LabApi(RestTemplate restTemplate , GitLabTokenService gitLabTokenService , ObjectMapper objectMapper) {
         this.restTemplate = restTemplate;
         this.gitLabTokenService = gitLabTokenService;
         this.objectMapper = objectMapper;
@@ -97,28 +100,53 @@ public class GitLabApi {
         return callPutApi(url, accessToken, requestBody);
     }
 
+    /**
+     * 파일 업로드 함수
+     * Endpoint : /projects/{project_id}/uploads
+     */
+    public Map<String, String> uploadFile(String projectId, MultipartFile file) throws IOException {
+        String url = gitlabApiUrl + "/projects/" +  projectId + "/uploads";
+        HttpHeaders headers = new HttpHeaders();
+        //String accessToken = gitLabTokenService.getAccessToken(jwtAccessToken);
+        headers.set("Private-Token", "UATEgVcVTSsLn7PWao6c"); // 필요하면 OAuth 토큰 사용
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("file", new ByteArrayResource(file.getBytes()) {
+            @Override
+            public String getFilename() {
+                return file.getOriginalFilename();
+            }
+        });
+
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+        ResponseEntity<JsonNode> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, JsonNode.class);
+
+        Map<String, String> fileData = new HashMap<>();
+        fileData.put("full_path", response.getBody().get("full_path").asText());
+        fileData.put("markdown", response.getBody().get("markdown").asText());
+        return fileData;
+    }
 
     // 프로젝트의 Merge Requests 가져오기 예시입니다.
-    public List<Map<String, Object>> getMergeRequests(String projectId , String accessToken) {
+    public Map<String, Object> getMergeRequests(String projectId , String accessToken) {
         String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests";
-        return callGetApi(url ,accessToken);
+        return this.chaneTypeMap(testCallGetApi(url ,accessToken));
     }
+
+    // 프로젝트 repository 정보 가져오는 함수
+    public Map<String, Object> getRepositoryInfo(String projectId , String accessToken) {
+        String url = gitlabApiUrl + "/projects/" + projectId;
+        return callGetApiMap(url , accessToken);
+    }
+
 
     //  프로젝트의 Commits 가져오기
     public List<Map<String, Object>> getCommits(String projectId, String accessToken) {
         //String url = gitlabApiUrl + "/projects/" + projectId + "/repository/commits";
         String url = "http://192.168.31.237/api/v4" + "/projects/" + projectId + "/repository/commits";
         List<Map<String, Object>> commitList = null;
-        try {
-            commitList = objectMapper.readValue(
-                    testCallGetApi(url, accessToken),
-                    new TypeReference<List<Map<String, Object>>>() {
-                    }
-            );
-        } catch (IOException e) {
-            System.err.println("Failed to parse JSON response: " + e.getMessage());
-            e.printStackTrace();  // 디버깅을 위해 예외 출력
-        }
+
         return commitList;
     }
 
@@ -202,6 +230,34 @@ public class GitLabApi {
     }
 
 
+    /**
+     * Map Type으로 get
+     * @param url
+     * @param accessToken
+     * @return
+     */
+    private Map<String, Object> callGetApiMap(String url , String accessToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("PRIVATE-TOKEN", accessToken);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
+        return response.getBody();
+    }
+
+
+    /**
+     * List 방식으로 get
+     * @param url
+     * @param accessToken
+     * @return
+     */
+    private List<Map<String, Object>> callGetApiList(String url , String accessToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("PRIVATE-TOKEN", accessToken);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, entity, List.class);
+        return response.getBody();
+    }
 
     /**
      * restTemplate를 사용해서 데이터를 요청하는 코드

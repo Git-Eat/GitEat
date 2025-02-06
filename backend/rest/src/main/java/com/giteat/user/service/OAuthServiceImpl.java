@@ -1,11 +1,11 @@
-package com.giteat.user.model.service;
+package com.giteat.user.service;
 
 import com.giteat.common.GitLabApi;
 import com.giteat.user.entity.UserEntity;
-import com.giteat.user.model.repository.UserRepository;
-import com.giteat.user.model.dto.OAuthTokenDto;
+import com.giteat.user.repository.UserRepository;
+import com.giteat.user.dto.OAuthTokenDto;
 import com.giteat.user.entity.OAuthEntity;
-import com.giteat.user.model.repository.OAuthRepository;
+import com.giteat.user.repository.OAuthRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -174,33 +174,13 @@ public class OAuthServiceImpl implements OAuthService {
 //            Optional<OAuthEntity> existOAuth = oAuthRepository.findByEmail(oAuthTokenDto.getEmail());
 //            if(existOAuth.isPresent()) {
 //                OAuthEntity entity = existOAuth.get();
-//
-//                // GitLab 세션 종료 (Access Token만 무효화)
-//                api.logoutUser(entity.getAccessToken());
-//
-//                // DB에서 토큰 정보 삭제
-//                oAuthRepository.delete(entity);
+//                // accessToken만 null로 설정하고 나머지 정보는 유지
+//                entity.setAccessToken(null);
+//                oAuthRepository.save(entity);
 //            }
 //        } catch (Exception e) {
 //            System.out.println(e.getMessage());
 //            throw new RuntimeException("Failed to logout user",e);
-//        }
-//
-//    }
-//    @Override
-//    public void unlink(OAuthTokenDto oAuthTokenDto) {
-//        try {
-//            Optional<OAuthEntity> existOAuth = oAuthRepository.findByEmail(oAuthTokenDto.getEmail());
-//            if(existOAuth.isPresent()) {
-//                OAuthEntity entity = existOAuth.get();
-//
-//                api.unlinkUser(entity.getRefreshToken());
-//
-//                oAuthRepository.delete(entity);
-//
-//            }
-//        } catch (Exception e) {
-//            throw new RuntimeException("Failed to unlink user",e);
 //        }
 //    }
 }

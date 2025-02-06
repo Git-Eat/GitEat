@@ -1,13 +1,15 @@
 package com.giteat.pr.service;
 
-import com.giteat.api.GitLabApi;
+import com.giteat.api.LabApi;
 import com.giteat.pr.dto.*;
 import com.giteat.pr.mapper.PrMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +20,7 @@ public class PrServiceImpl implements PrService{
 
     private final PrMapper prMapper;
     private final CommentConverter commentConverter;
-    private final GitLabApi gitLabApi;
+    private final LabApi gitLabApi;
 
 
     @Override
@@ -56,13 +58,20 @@ public class PrServiceImpl implements PrService{
         Map<String, Object> params = new HashMap<>();
         params.put("repoId", repoId);
         params.put("prId", prId);
-        return prMapper.getCommentList(params);
+        List<CommentDto> comments = prMapper.getCommentList(params);
+        for(CommentDto comment : comments){
+            if(comment.getPosition().getNewLine()== null && comment.getPosition().getOldLine() ==null){
+                comment.setPosition(null);
+            }
+        }
+        return comments;
     }
 
+
     @Override
-    public int insertComment(int repoId, int prId, CommentDto commentDto) {
+    public int insertComment(String repoId, String prId, CommentDto commentDto) {
         // GitLab API에 댓글 등록 요청
-        Map<String,Object> response = gitLabApi.insertComment(String.valueOf(repoId), String.valueOf(prId), commentDto.getContent(), "");
+        Map<String,Object> response = gitLabApi.insertComment(repoId, prId, commentDto.getContent(), "");
         if(response != null) return 200;
         return 404;
     }
@@ -90,6 +99,18 @@ public class PrServiceImpl implements PrService{
             return prMapper.deleteComment(params);
         }
         return 404;
+    }
+
+    @Override
+    public Map<String, String> uploadsFile(String repoId, MultipartFile file) {
+
+        Map<String, String> fileData;
+        try {
+            fileData = gitLabApi.uploadFile(repoId, file); // 깃랩 이미지 업로드 API 호출
+        } catch (Exception e) {
+            throw new RuntimeException("이미지 업로드 실패", e);
+        }
+        return fileData;
     }
 
     @Override
@@ -156,7 +177,7 @@ public class PrServiceImpl implements PrService{
     }
 
     @Override
-    public Map<String, String> showChangedCode(String repoId, String prId, FileDto fileDto, String refType, String ref) {
+    public Map<String, Object> showChangedCode(String repoId, String prId, FileDto fileDto, String refType) {
 
         // 1. DB에서 fileId를 기준으로 commit_id, new_path, old_path 가져오기
         String commitId = fileDto.getCommitId();
@@ -173,32 +194,45 @@ public class PrServiceImpl implements PrService{
         // 2. refType 기준으로 PR(1), Commit(2)별 파일 조회 구분
         if(refType.equals("1")){
             newRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, fileDto.getSourceBranch());
-
-            if(status ==2){  // 수정된 파일의 경우
+            if(status==2){  // 수정 된 파일의 경우
                 oldRawFile = gitLabApi.getRawCode(repoId, encodedOldPath, fileDto.getTargetBranch());
+            } else if(status==3){ // 삭제 된 파일의 경우
+                oldRawFile = gitLabApi.getRawCode(repoId, encodedOldPath, fileDto.getTargetBranch());
+                newRawFile = null;
             }
         } else if(refType.equals("2")){
             newRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, commitId);
             oldRawFile = gitLabApi.getRawCode(repoId, encodedOldPath, fileDto.getTargetBranch());
         }
 
-        // 삭제된 파일 깃랩에서 보여주는지 확인해야함
+        // 3. 해당 파일에 달린 댓글 가져오기 > 얘는 Mapper 호출
+        Map<String, Object> params = new HashMap<>();
+        params.put("repoId", repoId);
+        params.put("prId", prId);
+        params.put("fileId", fileDto.getFileId());
+        List<CommentDto> fileComments = prMapper.getCommentListByCode(params);
 
         // 결과를 MAP으로 반환
-        Map<String, String> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>();
         result.put("fileName", fileDto.getFileName());
         result.put("oldCode", oldRawFile);
         result.put("newCode", newRawFile);
+        result.put("comments", fileComments);  // 댓글 리스트 추가
         return result;
     }
 
     @Override
+    public List<ReviewerDto> getReviewer(String repoId, String prId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("repoId", repoId);
+        params.put("prId", prId);
+        return  prMapper.getReviewer(params);
+    }
+
+
+    @Override
     public int saveRepositoryData(String accessToken , String repositoryId){
-        // 만들어 놓은 함수 호출
-        // 호출하고 형식 맞춰서 데이터베이스 저장
-        // 저장하고 나 값으로 형식 맞춰서 데이터 넣기
-//        Map<String ,List<Map<String , Object>>> repositoryData = gitLabApi.getAllData(accessToken, repositoryId);
-//        System.out.println("repositoryData : " + repositoryData);
+
         return 1;
     }
 
