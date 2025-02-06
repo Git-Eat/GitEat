@@ -23,3 +23,16 @@ export const getRepsitories = async (): Promise<Repository[]> => {
     throw new Error(e as string);
   }
 };
+
+export const getPullRequest = async (
+  repoId: number,
+  prId: number
+): Promise<PullRequest> => {
+  try {
+    const res = await authClient.get(`/pr/${repoId}/${prId}`);
+    return res.data;
+  } catch (e: unknown) {
+    console.log(e);
+    throw new Error(e as string);
+  }
+};
