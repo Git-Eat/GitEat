@@ -9,4 +9,5 @@ public interface RepoService {
     RepositoryEntity findByRepoId(int repoId);
     RepositoryEntity insertRepo(int repoId);
     int deleteRepo(int repoId);
+    int saveRepositoryData(String accessToken , String repositoryId);
 }
