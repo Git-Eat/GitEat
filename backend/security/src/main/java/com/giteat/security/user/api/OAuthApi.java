@@ -57,7 +57,8 @@ public class OAuthApi {
     public Map<String, String> getAccessToken(String code) {
         try {
             System.out.println("getAccessToken 시작 - 받은 code: " + code);
-
+            //HttpHeaders headers = new HttpHeaders();
+            System.out.println("getAccessToken 시작 - 받은 code: " + code);
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
@@ -73,14 +74,38 @@ public class OAuthApi {
             System.out.println("redirect_uri: " + redirectUri);
             System.out.println("token_uri: " + tokenUri);
 
+            // 요청 객체 생성
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+
 
             System.out.println("토큰 요청 전 정보:");
             System.out.println("요청 URL: " + tokenUri);
             System.out.println("요청 헤더: " + headers);
             System.out.println("요청 바디: " + params);
 
-            ResponseEntity<String> response = restTemplate.postForEntity(tokenUri, request, String.class);
+            //request test
+            Map<String, String> param = new HashMap<>();
+            param.put("client_id", clientId);
+            param.put("client_secret", clientSecret);
+            param.put("code", code);
+            param.put("grant_type", "authorization_code");
+            param.put("redirect_uri", redirectUri);
+
+            System.out.println("요청 바디2: " + param);
+
+//            ResponseEntity<String> response = restTemplate.postForEntity(tokenUri, param, String.class);
+
+//            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+//            HttpEntity<Map<String, String>> entity = new HttpEntity<>(param, headers);
+
+            ResponseEntity<Map> response = restTemplate.exchange(tokenUri, HttpMethod.POST, entity, Map.class);
+            System.out.println("api response" +response);
+
+            System.out.println("토큰 응답 결과:");
+            System.out.println("응답 상태코드: " + response.getStatusCode());
+            System.out.println("응답 바디: " + response.getBody());
 
             System.out.println("토큰 응답 결과:");
             System.out.println("응답 상태코드: " + response.getStatusCode());
@@ -108,6 +133,7 @@ public class OAuthApi {
                 System.out.println("에러 원인: " + e.getCause().getMessage());
             }
             e.printStackTrace();
+            System.out.println("getAccessToken 에러: " + e.getMessage());
             return new HashMap<>();
         }
     }
