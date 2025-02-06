@@ -20,6 +20,7 @@ public class CustomOAuthService  {
         this.oauthApi = oauthApi;
     }
 
+
     /**
      * GitLab OAuth 로그인 처리
      * Authorization Code를 사용하여 액세스 토큰을 발급받고,
