@@ -56,9 +56,10 @@ public class OAuthApi {
     public Map<String, String> getAccessToken(String code) {
         // HTTP 요청 헤더 설정
         try {
-            //HttpHeaders headers = new HttpHeaders();
+            System.out.println("getAccessToken 시작 - 받은 code: " + code);
+            HttpHeaders headers = new HttpHeaders();
             // OAuth 토큰 요청 시 (form-urlencoded 사용)
-            //headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
             // Oauth access 토큰 요청할 때 서버가 oauth 에게 전달해주는 파라미터
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -69,12 +70,12 @@ public class OAuthApi {
             params.add("redirect_uri", redirectUri);
 
             // 요청 객체 생성
-            //HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
 
 
             System.out.println("토큰 요청 전 정보:");
             System.out.println("요청 URL: " + tokenUri);
-            //System.out.println("요청 헤더: " + headers);
+            System.out.println("요청 헤더: " + headers);
             System.out.println("요청 바디: " + params);
 
             //request test
@@ -87,7 +88,6 @@ public class OAuthApi {
 
             System.out.println("요청 바디2: " + param);
 
-//            ResponseEntity<String> response = restTemplate.postForEntity(tokenUri, param, String.class);
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -103,18 +103,18 @@ public class OAuthApi {
 
             // JSON 파싱
             ObjectMapper mapper = new ObjectMapper();
-            //JsonNode jsonNode = mapper.readTree(response.getBody());
+            JsonNode jsonNode = mapper.readTree(response.getBody());
 
-//            Map<String, String> map = new HashMap<>();
-//            map.put("access_token", jsonNode.get("access_token").asText());
-//            map.put("token_type", jsonNode.get("token_type").asText());
-//            map.put("refresh_token", jsonNode.get("refresh_token").asText());
-//            map.put("expires_in", jsonNode.get("expires_in").asText());
-//            map.put("scope", jsonNode.get("scope").asText());
-//            map.put("created_at", jsonNode.get("created_at").asText());
+            Map<String, String> map = new HashMap<>();
+            map.put("access_token", jsonNode.get("access_token").asText());
+            map.put("token_type", jsonNode.get("token_type").asText());
+            map.put("refresh_token", jsonNode.get("refresh_token").asText());
+            map.put("expires_in", jsonNode.get("expires_in").asText());
+            map.put("scope", jsonNode.get("scope").asText());
+            map.put("created_at", jsonNode.get("created_at").asText());
 
-            //System.out.println("파싱된 토큰 정보: " + map);
-            return param;
+            System.out.println("파싱된 토큰 정보: " + map);
+            return map;
         } catch (Exception e) {
             return new HashMap<>();
         }
