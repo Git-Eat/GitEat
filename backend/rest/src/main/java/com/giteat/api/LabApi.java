@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.giteat.common.util.GitLabTokenService;
 import com.giteat.pr.dto.FileCommentDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -29,6 +30,13 @@ public class LabApi {
         this.gitLabTokenService = gitLabTokenService;
         this.objectMapper = objectMapper;
     }
+
+    @Value("${gpt.api.url}")
+    private String gptApiUrl;
+
+    @Value("${gpt.api.key}") // GPT API 키
+    private String apiKey;
+
 
     /**
      * 최근 정보를 가져오는 함수
@@ -383,5 +391,41 @@ public class LabApi {
         }
         return resultMap;
     }
+
+    @Value("${gpt.api.key}")
+    public String aiReview(String code) {
+        try {
+
+            System.out.println("API키: "+ code);
+            // HTTP 요청 헤더 설정
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("Authorization", "Bearer " + apiKey);
+
+            // 요청 바디 설정
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put("model", "gpt-4");
+            List<Map<String, String>> messages = new ArrayList<>();
+            messages.add(Map.of("role", "user", "content", "Hello, how are you?"));
+            requestBody.put("messages", messages);
+            requestBody.put("temperature", 0.7);
+
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+
+            // GPT API 호출
+            ResponseEntity<Map> response = restTemplate.exchange(gptApiUrl, HttpMethod.POST, entity, Map.class);
+            System.out.println("GPT응답: " + response.getBody().toString());
+
+            return response.getBody().toString();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return "GPT API 호출 실패";
+        }
+    }
+
+
+
+
 
 }
