@@ -1,6 +1,6 @@
-package com.giteat.user.model.service;
+package com.giteat.user.service;
 
-import com.giteat.user.model.dto.OAuthTokenDto;
+import com.giteat.user.dto.OAuthTokenDto;
 
 
 public interface OAuthService {
@@ -10,6 +10,5 @@ public interface OAuthService {
     OAuthTokenDto refreshToken(OAuthTokenDto tokenRequest);
 
 //    void logout(OAuthTokenDto oAuthTokenDto);
-//
-//    void unlink(OAuthService oAuthService);
+
 }

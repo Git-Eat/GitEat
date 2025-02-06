@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.giteat.security.user.dto.OAuthTokenDto;
 import com.giteat.security.user.service.CustomOAuthService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -57,6 +58,8 @@ public class OAuthApi {
         // HTTP 요청 헤더 설정
         try {
             System.out.println("getAccessToken 시작 - 받은 code: " + code);
+            //HttpHeaders headers = new HttpHeaders();
+            System.out.println("getAccessToken 시작 - 받은 code: " + code);
             HttpHeaders headers = new HttpHeaders();
             // OAuth 토큰 요청 시 (form-urlencoded 사용)
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -68,6 +71,11 @@ public class OAuthApi {
             params.add("code", code);
             params.add("grant_type", "authorization_code");
             params.add("redirect_uri", redirectUri);
+
+            System.out.println("요청 파라미터:");
+            System.out.println("client_id: " + clientId);
+            System.out.println("redirect_uri: " + redirectUri);
+            System.out.println("token_uri: " + tokenUri);
 
             // 요청 객체 생성
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
@@ -88,11 +96,12 @@ public class OAuthApi {
 
             System.out.println("요청 바디2: " + param);
 
+//            ResponseEntity<String> response = restTemplate.postForEntity(tokenUri, param, String.class);
 
-            HttpHeaders headers = new HttpHeaders();
+//            HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-            HttpEntity<Map<String, String>> entity = new HttpEntity<>(param, headers);
+//            HttpEntity<Map<String, String>> entity = new HttpEntity<>(param, headers);
 
             ResponseEntity<Map> response = restTemplate.exchange(tokenUri, HttpMethod.POST, entity, Map.class);
             System.out.println("api response" +response);
@@ -116,6 +125,8 @@ public class OAuthApi {
             System.out.println("파싱된 토큰 정보: " + map);
             return map;
         } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("getAccessToken 에러: " + e.getMessage());
             return new HashMap<>();
         }
     }

@@ -4,13 +4,12 @@ export type Comment = {
   commentId: number;
   prId: number;
   repoId: number;
-  userId: number;
   userName: string;
-  avatarUrl: string | null;
+  avatarUrl: string;
   disId: string;
   content: string;
-  commentType: 0 | 1 | 2;
-  createAt: string | null;
-  position: object | null;
+  commentType: number;
+  imageName: string;
+  createAt: string;
   replyList: Reply[];
 };
