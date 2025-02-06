@@ -11,7 +11,6 @@ interface ReCommentProps extends ReComment {
   reCommentCreateAt: string;
   repoId: number;
   prId: number;
-  commentId: number;
 }
 
 export function ReComments({
@@ -23,7 +22,6 @@ export function ReComments({
   reCommentCreateAt,
   repoId,
   prId,
-  commentId,
 }: ReCommentProps) {
   const reCommentTypeImages = {
     0: { src: suggest, alt: "suggest" },
@@ -31,11 +29,7 @@ export function ReComments({
     2: { src: review, alt: "review" },
   };
   const selectedImage = reCommentTypeImages[reCommentType];
-  const { mutate: deleteReComment } = useDeleteReComment(
-    repoId,
-    prId,
-    commentId
-  );
+  const { mutate: deleteReComment } = useDeleteReComment(repoId, prId);
 
   return (
     <section className="bg-gray-100 my-3 p-5 rounded-xl">

@@ -28,12 +28,11 @@ export async function deleteComment(
 export async function deleteReComment(
   repoId: number,
   prId: number,
-  commentId: number,
-  reCommentId: number
+  replyId: number
 ) {
   try {
     const response = await authClient.delete(
-      `pr/${repoId}/${prId}/comment/${commentId}/recomment/${reCommentId}`
+      `pr/${repoId}/${prId}/reply/${replyId}`
     );
     return response.data;
   } catch (error) {

@@ -95,7 +95,6 @@ export function Comments({ repoId, prId }: CommentsProps) {
                       key={reComment.reCommentId}
                       repoId={repoId}
                       prId={prId}
-                      commentId={comment.commentId}
                       {...reComment}
                       reCommentCreateAt={displayDate(reComment.createAt)}
                     />

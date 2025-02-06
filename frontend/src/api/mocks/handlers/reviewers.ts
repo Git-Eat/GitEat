@@ -20,12 +20,6 @@ const reviewers = [
     commentType: 0,
   },
   {
-    userId: 4,
-    userName: "최이화",
-    avatarUrl: null,
-    commentType: 1,
-  },
-  {
     userId: 5,
     userName: "이다영",
     avatarUrl: null,
@@ -34,6 +28,24 @@ const reviewers = [
   {
     userId: 6,
     userName: "이해루",
+    avatarUrl: null,
+    commentType: 2,
+  },
+  {
+    userId: 4,
+    userName: "최이화",
+    avatarUrl: null,
+    commentType: 1,
+  },
+  {
+    userId: 4,
+    userName: "최이화",
+    avatarUrl: null,
+    commentType: 0,
+  },
+  {
+    userId: 4,
+    userName: "최이화",
     avatarUrl: null,
     commentType: 2,
   },

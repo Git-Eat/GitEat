@@ -1,4 +1,5 @@
 import { http, HttpResponse } from "msw";
+import { ReComments } from "../../../components/pullRequest/conversation/reComments";
 
 const comments = [
   {
@@ -145,40 +146,32 @@ const commentsHandlers = [
     }
   ),
   http.delete(
-    "http://backendApi:8080/pr/:repoId/:prId/comment/:commentId/recomment/:reCommentId",
+    "http://backendApi:8080/pr/:repoId/:prId/reply/:replyId",
     (req) => {
       const repoId = Number(req.params.repoId);
       const prId = Number(req.params.prId);
-      const commentId = Number(req.params.commentId);
-      const reCommentId = Number(req.params.reCommentId);
+      const replyId = Number(req.params.replyId);
       const comment = comments.find(
         (comment) =>
           comment.repoId === repoId &&
           comment.prId === prId &&
-          comment.commentId === commentId
+          comment.reCommentList.some(
+            (reComment) => reComment.reCommentId === replyId
+          )
       );
       if (!comment) {
         return HttpResponse.json(
-          { message: "댓글을 찾을 수 없습니다." },
+          { message: "답글을 찾을 수 없습니다." },
           { status: 404 }
         );
-      } else {
-        const reCommentIndex = comment.reCommentList.findIndex(
-          (reComment) => reComment.reCommentId === reCommentId
-        );
-        if (reCommentIndex !== -1) {
-          comment.reCommentList.splice(reCommentIndex, 1);
-          return HttpResponse.json(
-            { message: "답글을 삭제했습니다." },
-            { status: 200 }
-          );
-        } else {
-          return HttpResponse.json(
-            { message: "답글을 찾을 수 없습니다." },
-            { status: 404 }
-          );
-        }
       }
+      comment.reCommentList = comment.reCommentList.filter(
+        (reComment) => reComment.reCommentId != replyId
+      );
+      return HttpResponse.json(
+        { message: "답글을 삭제했습니다." },
+        { status: 200 }
+      );
     }
   ),
   // http.post("api/pr_id/comments/:commentId", () => {}),
