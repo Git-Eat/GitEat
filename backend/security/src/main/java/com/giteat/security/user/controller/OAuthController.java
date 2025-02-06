@@ -33,7 +33,7 @@ public class OAuthController {
      * 3. 생성된 URL을 클라이언트에게 반환
      * 4. 클라이언트는 해당 URL로 리다이렉트되어 GitLab 로그인 페이지로 이동
      *
-     * @param  body Code를 포함한 요청 본문
+     * @param body Authorization Code를 포함한 요청 본문
      * @return OAuth 토큰 정보
      */
     @PostMapping("/gitlab/login")
@@ -44,8 +44,10 @@ public class OAuthController {
 
         OAuthTokenDto oAuthTokenDto = oauthService.gitlabLogin(code);
         System.out.println("security dto: "+ oAuthTokenDto);
-
-        return apiUtil.postApi("/oauth/gitlab", oAuthTokenDto);
+        ResponseEntity<?> testResponse = apiUtil.postApi("/oauth/gitlab", oAuthTokenDto);
+        System.out.println("@@@@@@@@@@찐막@@@@@ : " + testResponse.getBody());
+//        return apiUtil.postApi("/oauth/gitlab", oAuthTokenDto);
+        return testResponse;
     }
     /**
      * GitLab OAuth 토큰 갱신 엔드포인트

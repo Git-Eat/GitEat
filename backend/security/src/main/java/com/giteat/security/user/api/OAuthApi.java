@@ -55,57 +55,30 @@ public class OAuthApi {
      *         실패 시 빈 Map 반환
      */
     public Map<String, String> getAccessToken(String code) {
-        // HTTP 요청 헤더 설정
         try {
-            System.out.println("getAccessToken 시작 - 받은 code: " + code);
+            // HTTP 헤더 설정
             HttpHeaders headers = new HttpHeaders();
-            // OAuth 토큰 요청 시 (form-urlencoded 사용)
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-            // Oauth access 토큰 요청할 때 서버가 oauth 에게 전달해주는 파라미터
+            // 요청 파라미터 설정
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-            params.add("client_id", clientId);
-            params.add("client_secret", clientSecret);
-            params.add("code", code);
-            params.add("grant_type", "authorization_code");
-            params.add("redirect_uri", redirectUri);
-
-            System.out.println("요청 파라미터:");
-            System.out.println("client_id: " + clientId);
-            System.out.println("redirect_uri: " + redirectUri);
-            System.out.println("token_uri: " + tokenUri);
+            params.add("client_id", clientId);           // 클라이언트 ID
+            params.add("client_secret", clientSecret);   // 클라이언트 시크릿
+            params.add("code", code);                    // 받은 code
+            params.add("grant_type", "authorization_code");  // grant_type: authorization_code
+            params.add("redirect_uri", redirectUri);         // 리디렉션 URI
 
             // 요청 객체 생성
-            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+            HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
 
-
-            System.out.println("토큰 요청 전 정보:");
-            System.out.println("요청 URL: " + tokenUri);
-            System.out.println("요청 헤더: " + headers);
-            System.out.println("요청 바디: " + params);
-
-            //request test
-            Map<String, String> param = new HashMap<>();
-            param.put("client_id", clientId);
-            param.put("client_secret", clientSecret);
-            param.put("code", code);
-            param.put("grant_type", "authorization_code");
-            param.put("redirect_uri", redirectUri);
-
-            System.out.println("요청 바디2: " + param);
-
-
-            ResponseEntity<String> response = restTemplate.postForEntity(tokenUri, param, String.class);
-            System.out.println("api response" +response);
-
-            System.out.println("토큰 응답 결과:");
-            System.out.println("응답 상태코드: " + response.getStatusCode());
-            System.out.println("응답 바디: " + response.getBody());
-
+            // 요청 전 디버깅
+            // 토큰 요청
+            ResponseEntity<String> response = restTemplate.exchange(tokenUri, HttpMethod.POST, entity, String.class);
             // JSON 파싱
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonNode = mapper.readTree(response.getBody());
 
+            // 토큰 정보 추출
             Map<String, String> map = new HashMap<>();
             map.put("access_token", jsonNode.get("access_token").asText());
             map.put("token_type", jsonNode.get("token_type").asText());
@@ -114,14 +87,21 @@ public class OAuthApi {
             map.put("scope", jsonNode.get("scope").asText());
             map.put("created_at", jsonNode.get("created_at").asText());
 
-            System.out.println("파싱된 토큰 정보: " + map);
             return map;
+
         } catch (Exception e) {
+            System.out.println("\n=== getAccessToken 에러 발생 ===");
+            System.out.println("에러 타입: " + e.getClass().getName());
+            System.out.println("에러 메시지: " + e.getMessage());
+            if (e.getCause() != null) {
+                System.out.println("에러 원인: " + e.getCause().getMessage());
+            }
             e.printStackTrace();
-            System.out.println("getAccessToken 에러: " + e.getMessage());
             return new HashMap<>();
         }
     }
+
+
 
     /**
      * GitLab API를 통해 사용자 정보를 조회
