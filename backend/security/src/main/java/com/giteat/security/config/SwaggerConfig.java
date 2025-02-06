@@ -20,11 +20,20 @@ import org.springframework.context.annotation.Configuration;
 public class SwaggerConfig {
 
     @Bean
-    public GroupedOpenApi boardGroupedOpenApi() {
+    public GroupedOpenApi mergeRequestOpenApi() {
         return GroupedOpenApi
                 .builder()
                 .group("mergeRequest") // 우측 상단 그룹화
                 .pathsToMatch("/pr/**") // 엔드포인트 설정
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi RepositoryOpenApi() {
+        return GroupedOpenApi
+                .builder()
+                .group("repository") // 우측 상단 그룹화
+                .pathsToMatch("/repo/**") // 엔드포인트 설정
                 .build();
     }
 }
