@@ -88,6 +88,7 @@ public class OAuthApi {
 
             return map;
         } catch (Exception e) {
+            e.printStackTrace();
             return new HashMap<>();
         }
     }
