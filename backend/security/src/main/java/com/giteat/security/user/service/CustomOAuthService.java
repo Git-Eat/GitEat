@@ -40,7 +40,7 @@ public class CustomOAuthService  {
             dto.setRefreshToken(token.get("refresh_token"));
             dto.setExpiresIn(Integer.valueOf(token.get("expires_in")));
             dto.setScope(token.get("scope"));
-            dto.setCreatedAt(LocalDateTime.now());
+//            dto.setCreatedAt(LocalDateTime.now());
 
             Map<String, String> userInfo = oauthApi.getUserInfo(dto.getAccessToken());
             dto.setId(Integer.valueOf(userInfo.get("id")));
