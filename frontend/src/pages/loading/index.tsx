@@ -1,16 +1,16 @@
 import spinner from "../../assets/images/spinner.svg";
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import { useLogin } from "../../api/queries/useLogin";
 import { useNavigate } from "react-router-dom";
 
 export function Loading() {
   const { mutate: login, isError, error } = useLogin();
   const navigation = useNavigate();
-  const extractCodeFromUrl = useCallback(() => {
+  const extractCodeFromUrl = () => {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get("code");
-  }, []);
-  const handleAuthentication = useCallback(() => {
+  };
+  const handleAuthentication = () => {
     const code = extractCodeFromUrl();
     if (code) {
       alert("로그인 시도");
@@ -18,7 +18,7 @@ export function Loading() {
     } else {
       navigation("/error");
     }
-  }, [extractCodeFromUrl, navigation]);
+  };
 
   useEffect(() => {
     handleAuthentication();
