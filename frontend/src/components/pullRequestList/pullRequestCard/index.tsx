@@ -3,7 +3,7 @@ interface PullRequestCardProps {
   prId: number;
   title: string;
   description: string;
-  createAt: number[] | null;
+  createAt: number[];
   isOpened: number;
 }
 
