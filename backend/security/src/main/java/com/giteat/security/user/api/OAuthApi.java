@@ -90,7 +90,7 @@ public class OAuthApi {
 //            ResponseEntity<String> response = restTemplate.postForEntity(tokenUri, param, String.class);
 
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
             HttpEntity<Map<String, String>> entity = new HttpEntity<>(param, headers);
 
