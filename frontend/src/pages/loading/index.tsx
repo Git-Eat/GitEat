@@ -13,6 +13,7 @@ export function Loading() {
   const handleAuthentication = useCallback(() => {
     const code = extractCodeFromUrl();
     if (code) {
+      alert("로그인 시도");
       login(code);
     } else {
       navigation("/error");
