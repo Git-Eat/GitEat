@@ -92,6 +92,8 @@ public class OAuthApi {
             param.put("grant_type", "authorization_code");
             param.put("redirect_uri", redirectUri);
 
+            System.out.println("요청 바디2: " + param);
+
 
             ResponseEntity<String> response = restTemplate.postForEntity(tokenUri, param, String.class);
             System.out.println("api response" +response);
