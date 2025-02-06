@@ -89,6 +89,7 @@ public class OAuthApi {
             return map;
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("getAccessToken 에러: " + e.getMessage());
             return new HashMap<>();
         }
     }
