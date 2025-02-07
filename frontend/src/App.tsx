@@ -16,6 +16,7 @@ import { useLoginStore } from "./store/loginStore";
 function App() {
   const queryClient = new QueryClient();
   const { isLogin, setLogin, setLogout } = useLoginStore();
+  console.log("build!");
   return (
     <>
       <div>
