@@ -1,5 +1,6 @@
 package com.giteat.security.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.giteat.security.util.ApiUtil;
 import com.giteat.security.util.TypeUtil;
@@ -95,11 +96,19 @@ public class MergeRequestController {
     @Operation(summary="파일 업로드", description = "외부 API를 호출하여 파일 업로드 하면 markdown을 return합니다")
     public ResponseEntity<?> uploadsFile (@PathVariable String repoId,
                                          @RequestParam(value = "file", required = false) MultipartFile file){
-        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.postApi("/pr/" + repoId + "/uploads", file);
-        Object json = typeUtil.convertJsonToObject(request.getBody());
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(json);
+        ResponseEntity<?> response = apiUtil.postApi("/pr/" + repoId + "/uploads", file);
+        if (response.getBody() instanceof Map) {
+            Map<String, Object> responseBody = (Map<String, Object>) response.getBody();
+            try{
+                String json = new ObjectMapper().writeValueAsString(responseBody);
+                return ResponseEntity.ok().
+                        contentType(MediaType.APPLICATION_JSON).
+                        body(json);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return ResponseEntity.badRequest().body("404");
     }
 
     @PostMapping("/{repoId}/{prId}/file/comment")
@@ -219,11 +228,21 @@ public class MergeRequestController {
                                              @PathVariable int prId,
                                              @PathVariable String refType,
                                              @RequestBody Map<String, Object> fileDto) {
-        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.postApi("/pr/" + repoId + "/" + prId + "/file/raw/" + refType , fileDto);
-        Object json = typeUtil.convertJsonToObject(request.getBody());
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(json);
+        ResponseEntity<?> response = apiUtil.postApi("/pr/" + repoId + "/" + prId + "/file/raw/" + refType, fileDto);
+
+        if (response.getBody() instanceof Map) {
+            Map<String, Object> responseBody = (Map<String, Object>) response.getBody();
+            try{
+                String json = new ObjectMapper().writeValueAsString(responseBody);
+                return ResponseEntity.ok().
+                        contentType(MediaType.APPLICATION_JSON).
+                        body(json);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+        return ResponseEntity.badRequest().body("404");
     }
 
     @GetMapping("/{repoId}/{prId}/reviewer")
