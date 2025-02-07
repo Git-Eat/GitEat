@@ -1,5 +1,6 @@
 import authClient from "./authClient";
 import client from "./client";
+import { Comment } from "./types/Comment";
 
 export async function getComments(repoId: number, prId: number) {
   try {
@@ -7,6 +8,25 @@ export async function getComments(repoId: number, prId: number) {
     return response.data;
   } catch (error) {
     throw new Error("댓글 가져오기 실패했습니다." + error);
+  }
+}
+
+export async function createComment(
+  repoId: number,
+  prId: number,
+  content: string,
+  commentType: 0 | 1 | 2
+) {
+  try {
+    const response = await authClient.post(`/pr/${repoId}/${prId}/comment`, {
+      repoId,
+      prId,
+      content,
+      commentType,
+    });
+    return response.data as Comment;
+  } catch (error) {
+    throw new Error("댓글 생성 실패했습니다." + error);
   }
 }
 

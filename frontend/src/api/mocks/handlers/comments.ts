@@ -1,5 +1,10 @@
 import { http, HttpResponse } from "msw";
 
+interface CommentBody {
+  content: string;
+  commentType: 0 | 1 | 2;
+}
+
 const comments = [
   {
     commentId: 1,
@@ -11,7 +16,7 @@ const comments = [
     disId: "1",
     content: "이게 어떤 용도죠?",
     commentType: 1,
-    createAt: null,
+    createAt: "2025-02-07T12:34:56.789Z",
     position: {
       baseSha: "5b7a6146752b83f400e07854dfe27bf7000cf058",
       startSha: "5b7a6146752b83f400e07854dfe27bf7000cf058",
@@ -67,7 +72,6 @@ const comments = [
 ];
 
 const commentsHandlers = [
-  // 주소 임의 설정(추후 수정 필요)
   http.get("*/pr/:repoId/:prId/comment", (req) => {
     const repoId = Number(req.params.repoId);
     const prId = Number(req.params.prId);
@@ -124,7 +128,45 @@ const commentsHandlers = [
       { status: 200 }
     );
   }),
-  // http.post("api/pr_id/comments/:commentId", () => {}),
+  http.post("*/pr/:repoId/:prId/comment", async ({ params, request }) => {
+    try {
+      const { repoId, prId } = params;
+      const body = (await request.json()) as CommentBody;
+      const { content, commentType } = body;
+
+      if (!content.trim()) {
+        return HttpResponse.json(
+          { message: "내용을 입력해주세요." },
+          { status: 400 }
+        );
+      }
+
+      const newComment = {
+        commentId: comments.length + 1,
+        prId: Number(prId),
+        repoId: Number(repoId),
+        userId: 1,
+        userName: "테스트 유저",
+        avatarUrl: null,
+        disId: `${comments.length + 1}`,
+        content,
+        commentType,
+        createAt: null,
+        position: null,
+        replyList: [],
+      };
+
+      comments.push(newComment);
+
+      return HttpResponse.json(newComment, { status: 201 });
+    } catch (error) {
+      return HttpResponse.json(
+        { message: "잘못된 요청입니다." + error },
+        { status: 400 }
+      );
+    }
+  }),
+
   // http.update("api/pr_id/comments/:commentId", () => {}),
 ];
 

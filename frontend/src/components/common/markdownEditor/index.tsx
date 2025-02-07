@@ -3,7 +3,7 @@ import MDEditor from "@uiw/react-md-editor";
 import { useState } from "react";
 
 interface MarkdownEditorProps {
-  onAddSingleComment: (value: string) => void;
+  onAddSingleComment: (value: string, category: 0 | 1 | 2) => void;
   onStartReview: (value: string) => void;
 }
 
@@ -11,13 +11,11 @@ export function MarkdownEditor({
   onAddSingleComment,
   onStartReview,
 }: MarkdownEditorProps) {
-  const [category, setCategory] = useState<"comment" | "suggest" | "review">(
-    "comment"
-  );
+  const [category, setCategory] = useState<0 | 1 | 2>(0);
   const [value, setValue] = useState<string>("");
 
   function handleCategory(event: React.ChangeEvent<HTMLSelectElement>) {
-    setCategory(event.target.value as "comment" | "suggest" | "review");
+    setCategory(Number(event.target.value) as 0 | 1 | 2);
   }
 
   function handleCancel() {
@@ -26,7 +24,7 @@ export function MarkdownEditor({
 
   function handleAddSingleComment() {
     if (!value.trim()) return alert("내용을 입력해주세요.");
-    onAddSingleComment(value);
+    onAddSingleComment(value, category);
     setValue("");
   }
 
@@ -43,9 +41,9 @@ export function MarkdownEditor({
         value={category}
         className="border border-gray-300 mb-3 p-1 rounded-md"
       >
-        <option value="comment">comment</option>
-        <option value="suggest">suggest</option>
-        <option value="review">review</option>
+        <option value={0}>suggest</option>
+        <option value={1}>comment</option>
+        <option value={2}>review</option>
       </select>
 
       <MDEditor

@@ -8,7 +8,6 @@ import { ko } from "date-fns/locale";
 import { Comment } from "../../../../api/types/Comment";
 import defaultprofile from "../../../../assets/images/user_profile.svg";
 import { useDeleteComment } from "../../../../api/queries/useDeleteComment";
-
 import suggest from "../../../../assets/images/suggest.svg";
 import comment from "../../../../assets/images/comment.svg";
 import review from "../../../../assets/images/review.svg";
