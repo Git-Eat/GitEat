@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 interface PullRequestCardProps {
   prId: number;
   title: string;
@@ -14,8 +14,10 @@ export function PullRequestCard({
   createAt,
   isOpened,
 }: PullRequestCardProps) {
+  const { repoId } = useParams();
+  console.log(repoId + " = > repoid");
   return (
-    <Link to={`/pull/${prId}`}>
+    <Link to={`/repos/${repoId}/${prId}`}>
       <div className=" bg-white rounded-xl p-7 flex justify-between hover:bg-gray-200 cursor-pointer">
         <div>
           <div className="flex gap-[10px] items-center mb-[10px]">

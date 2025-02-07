@@ -10,9 +10,9 @@ function Repositories() {
   const { data } = useGetRepositories();
   return (
     <>
-      {data?.map((repo, idx) => (
+      {data?.map((repo) => (
         <RepositoryCard
-          key={idx}
+          key={repo.repoId}
           user={"USER"}
           title={repo.name}
           repoId={repo.repoId}

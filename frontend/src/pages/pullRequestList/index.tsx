@@ -3,9 +3,12 @@ import { useGetPullRequests } from "../../api/queries/useGetPullRequests";
 import book from "../../assets/images/image.png";
 import { PullRequestCard } from "../../components/pullRequestList/pullRequestCard";
 import { ErrorBoundary } from "../../components/common/errorBoundery";
+import { useParams } from "react-router-dom";
 
 function PullRequests() {
-  const { data } = useGetPullRequests(1);
+  const { repoId } = useParams();
+  console.log(repoId, Number(repoId));
+  const { data } = useGetPullRequests(Number(repoId));
   return (
     <>
       {data?.map((pr) => (
