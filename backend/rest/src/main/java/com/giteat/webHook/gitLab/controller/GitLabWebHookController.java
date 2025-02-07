@@ -26,17 +26,17 @@ public class GitLabWebHookController {
      * @return
      * GitLab WebBook 이 도착했을떄 수신하는 함수
      */
-    @PostMapping("/event")
-    public ResponseEntity<?> webHookEvent(@RequestBody Map<String , Object> body){
-        String eventType = (String) body.get("object_kind");
-        System.out.println("body : " + body);
-        System.out.println("eventType : " + eventType);
-        if(eventType.equals("merge_request")){
-            webHookService.mergeRequestEvent(body);
-        }else if(eventType.equals("note")){
-            webHookService.noteEvent(body);
-        }
-
-        return ResponseEntity.ok().build();
-    }
+//    @PostMapping("/event")
+//    public ResponseEntity<?> webHookEvent(@RequestBody Map<String , Object> body){
+//        String eventType = (String) body.get("object_kind");
+//        System.out.println("body : " + body);
+//        System.out.println("eventType : " + eventType);
+//        if(eventType.equals("merge_request")){
+//            webHookService.mergeRequestEvent(body);
+//        }else if(eventType.equals("note")){
+//            webHookService.noteEvent(body);
+//        }
+//
+//        return ResponseEntity.ok().build();
+//    }
 }
