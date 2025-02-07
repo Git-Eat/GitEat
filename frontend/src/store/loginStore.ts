@@ -7,7 +7,7 @@ type LoginStore = {
 };
 
 export const useLoginStore = create<LoginStore>()((set) => ({
-  isLogin: false,
+  isLogin: true,
   setLogin: () => set(() => ({ isLogin: true })),
   setLogout: () => set(() => ({ isLogin: false })),
 }));
