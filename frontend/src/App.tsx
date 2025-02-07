@@ -11,31 +11,41 @@ import { Error } from "./pages/error";
 import { QueryClientProvider, QueryClient } from "react-query";
 import { FileChanges } from "./components/pullRequest/fileChanges";
 import { PullRequestList } from "./pages/pullRequestList";
+import { useLoginStore } from "./store/loginStore";
 
 function App() {
   const queryClient = new QueryClient();
-
+  const { isLogin, setLogin, setLogout } = useLoginStore();
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/loading" element={<Loading />} />
-          <Route path="/error" element={<Error />} />
-          <Route element={<AuthLayout />}>
-            <Route path="/repos" element={<RepositoryList />} />
-            <Route path="/dashboard" element={<DashBoard />} />
-            <Route path="/pulls" element={<PullRequestList />} />
-            <Route path="/pull/:id" element={<PullRequest />}>
-              <Route path="conversation" element={<Conversation />} />
-              <Route path="commits" element={<>commits</>} />
-              <Route path="file-changes" element={<FileChanges />} />
-              <Route path="wiki" element={<PullRequest />} />
+    <>
+      <div>
+        <div>{isLogin ? "로그인" : "로그아웃"}</div>
+        <div>
+          <button onClick={setLogin}>로그인</button>
+          <button onClick={setLogout}>로그아웃</button>
+        </div>
+      </div>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/loading" element={<Loading />} />
+            <Route path="/error" element={<Error />} />
+            <Route element={<AuthLayout />}>
+              <Route path="/repos" element={<RepositoryList />} />
+              <Route path="/dashboard" element={<DashBoard />} />
+              <Route path="/pulls" element={<PullRequestList />} />
+              <Route path="/pull/:id" element={<PullRequest />}>
+                <Route path="conversation" element={<Conversation />} />
+                <Route path="commits" element={<>commits</>} />
+                <Route path="file-changes" element={<FileChanges />} />
+                <Route path="wiki" element={<PullRequest />} />
+              </Route>
             </Route>
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </QueryClientProvider>
+          </Routes>
+        </BrowserRouter>
+      </QueryClientProvider>
+    </>
   );
 }
 
