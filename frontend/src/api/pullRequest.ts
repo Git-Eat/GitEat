@@ -9,18 +9,18 @@ export const getPullRequests = async (
     const res = await authClient.get(`/pr/${repoId}`);
     return res.data;
   } catch (e: unknown) {
-    console.log(e);
-    throw new Error(e as string);
+    if (e instanceof Error) throw new Error(e.message);
+    else throw new Error("unknown Error");
   }
 };
 
 export const getRepsitories = async (): Promise<Repository[]> => {
   try {
-    const res = await authClient.get("/repo");
+    const res = await authClient.get("/repo/");
     return res.data;
   } catch (e: unknown) {
-    console.log(e);
-    throw new Error(e as string);
+    if (e instanceof Error) throw new Error(e.message);
+    else throw new Error("unknown Error");
   }
 };
 
@@ -32,7 +32,19 @@ export const getPullRequest = async (
     const res = await authClient.get(`/pr/${repoId}/${prId}`);
     return res.data;
   } catch (e: unknown) {
-    console.log(e);
-    throw new Error(e as string);
+    if (e instanceof Error) throw new Error(e.message);
+    else throw new Error("unknown Error");
+  }
+};
+
+export const addRepository = async (repoId: number): Promise<Repository> => {
+  try {
+    const res = await authClient.post(`/repo`, {
+      repoId: repoId,
+    });
+    return res.data;
+  } catch (e: unknown) {
+    if (e instanceof Error) throw new Error(e.message);
+    else throw new Error("unknown Error");
   }
 };
