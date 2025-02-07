@@ -1,5 +1,6 @@
 package com.giteat.security.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.giteat.security.util.ApiUtil;
 import com.giteat.security.util.TypeUtil;
@@ -95,11 +96,19 @@ public class MergeRequestController {
     @Operation(summary="파일 업로드", description = "외부 API를 호출하여 파일 업로드 하면 markdown을 return합니다")
     public ResponseEntity<?> uploadsFile (@PathVariable String repoId,
                                          @RequestParam(value = "file", required = false) MultipartFile file){
-        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.postApi("/pr/" + repoId + "/uploads", file);
-        Object json = typeUtil.convertJsonToObject(request.getBody());
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(json);
+        ResponseEntity<?> response = apiUtil.postApi("/pr/" + repoId + "/uploads", file);
+        if (response.getBody() instanceof Map) {
+            Map<String, Object> responseBody = (Map<String, Object>) response.getBody();
+            try{
+                String json = new ObjectMapper().writeValueAsString(responseBody);
+                return ResponseEntity.ok().
+                        contentType(MediaType.APPLICATION_JSON).
+                        body(json);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return ResponseEntity.badRequest().body("404");
     }
 
     @PostMapping("/{repoId}/{prId}/file/comment")
@@ -213,17 +222,27 @@ public class MergeRequestController {
                 .body(json);
     }
 
-    @GetMapping("/{repoId}/{prId}/file/raw")
-    @Operation(summary = "변경된 코드 확인", description = "외부 API를 호출하여 변경된 코드 내용을 가져옵니다.")
+    @PostMapping("/{repoId}/{prId}/file/raw/{refType}")
+    @Operation(summary = "변경된 코드 확인", description = "외부 API를 호출하여 변경된 코드 내용을 가져옵니다.(refType =  1 : PR 기준(브랜치), 2: Commit 기준)")
     public ResponseEntity<?> showChangedCode(@PathVariable int repoId,
                                              @PathVariable int prId,
-                                             @RequestParam String refType,
+                                             @PathVariable String refType,
                                              @RequestBody Map<String, Object> fileDto) {
-        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.postApi("/pr/" + repoId + "/" + prId + "/file/raw?refType=" + refType , fileDto);
-        Object json = typeUtil.convertJsonToObject(request.getBody());
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(json);
+        ResponseEntity<?> response = apiUtil.postApi("/pr/" + repoId + "/" + prId + "/file/raw/" + refType, fileDto);
+
+        if (response.getBody() instanceof Map) {
+            Map<String, Object> responseBody = (Map<String, Object>) response.getBody();
+            try{
+                String json = new ObjectMapper().writeValueAsString(responseBody);
+                return ResponseEntity.ok().
+                        contentType(MediaType.APPLICATION_JSON).
+                        body(json);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+        return ResponseEntity.badRequest().body("404");
     }
 
     @GetMapping("/{repoId}/{prId}/reviewer")
