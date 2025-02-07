@@ -4,12 +4,12 @@ import { login } from "../auth.ts";
 import { useNavigate } from "react-router-dom";
 
 export const useLogin = () => {
-  const navagation = useNavigate();
+  const navigation = useNavigate();
   return useMutation(login, {
     mutationKey: "login",
     onSuccess: (data: AuthToken) => {
       localStorage.setItem("access_token", data.accessToken);
-      navagation("/dashboard", { replace: true });
+      navigation("/dashboard", { replace: true });
     },
     retry: false,
   });
