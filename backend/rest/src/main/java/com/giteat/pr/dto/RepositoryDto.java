@@ -14,6 +14,6 @@ public class RepositoryDto {
     private String description; // repo 설명
     private String githubUrl; // 깃허브 URL
     private String gitlabUrl; // 깃랩 URL
-    private LocalDateTime createAt; // repo 생성날짜
+    private String createAt; // repo 생성날짜
 
 }

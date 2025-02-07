@@ -20,7 +20,7 @@ public class CommentDto {
     private String disId;
     private String content;
     private int commentType;
-    private LocalDateTime createAt;
+    private String createAt;
 
     private FileCommentDto.Position position; // 코드 위치 정보
 

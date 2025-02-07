@@ -54,12 +54,13 @@ public class RepoController {
     /**
      * 등록한 레포지토리 정보 읽어 오기
      * @param accessToken
-     * @param repositoryId
+     * @param repoBody
      * @return
      */
     @PostMapping("/repositoryData")
     @Operation(summary="repository의 모든 데이터 읽기", description = "repository에서 모든 데이터를 가져옵니다.")
-    public ResponseEntity<?> saveRepositoryData(@RequestHeader("accessToken") String accessToken , @RequestBody String repositoryId){
+    public ResponseEntity<?> saveRepositoryData(@RequestHeader("accessToken") String accessToken , @RequestBody Map<String, String> repoBody){
+        String repositoryId = repoBody.get("repositoryId");
         RepositoryEntity repository = repoService.saveRepositoryData(accessToken, repositoryId);
         return ResponseEntity.ok(repository);
     }

@@ -14,7 +14,7 @@ public class UsersEntity {
     @Column(name = "user_id", nullable = false) // false
     private Integer userId;
 
-    @Column(nullable = false, unique = true)
+    @Column
     private String email;
 
     @Column(nullable = false)

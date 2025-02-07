@@ -51,7 +51,9 @@ public class RepoServiceImpl implements RepoService{
     @Override
     public RepositoryEntity saveRepositoryData(String accessToken , String projectId){
         accessToken = "UATEgVcVTSsLn7PWao6c";
+        System.out.println(projectId);
         int repoId = Integer.parseInt(projectId);
+        System.out.println(repoId);
 
         // ---------- members 정보 가져오기 ------------ //
         UsersEntity user = new UsersEntity();
@@ -59,7 +61,8 @@ public class RepoServiceImpl implements RepoService{
         for(Map<String, Object> member : membersResponse){
             int memberId = (int) member.get("id");  // GitLab 멤버 ID
             String email = (String) member.get("email");  // GitLab 이메일
-            String name = (String) member.get("name");  // GitLab 사용자 이름
+            String name = (String) member.get("name");  // GitLab 한글 이름
+            String userName = (String) member.get("username"); // 사용자 이름
             String avatarUrl = (String) member.get("avatar_url");  // GitLab 프로필 사진
 
             // 1. users 테이블에서 user_id가 존재하는지 확인
@@ -70,6 +73,7 @@ public class RepoServiceImpl implements RepoService{
                 UsersEntity existingUser = optionalUser.get();
                 existingUser.setEmail(email);
                 existingUser.setName(name);
+                existingUser.setUserName(userName);
                 existingUser.setAvatarUrl(avatarUrl);
                 usersRepository.save(existingUser); // 업데이트
             } else {
@@ -78,6 +82,7 @@ public class RepoServiceImpl implements RepoService{
                 newUser.setUserId(memberId);
                 newUser.setEmail(email);
                 newUser.setName(name);
+                newUser.setUserName(userName);
                 newUser.setAvatarUrl(avatarUrl);
                 usersRepository.save(newUser); // 신규 저장
             }
@@ -91,22 +96,20 @@ public class RepoServiceImpl implements RepoService{
         repository.setName((String) repositoryResponse.get("name"));
         repository.setDescription((String) repositoryResponse.get("description"));
         repository.setGitlabUrl((String) repositoryResponse.get("web_url"));
-        repository.setCreateAt((LocalDateTime) repositoryResponse.get("created_at"));
+        repository.setCreateAt((String) repositoryResponse.get("created_at"));
         // mr 소유자 정보 가져와야함
         repoRepository.save(repository);
         
         // ---------- MR 정보 가져오기 ---------- //
-        Map<String, Object> newMrResponse = gitLabApi.getMergeRequests(projectId, accessToken); // 가장 최상단 MR 번호 가져오기
-        if(newMrResponse.isEmpty()) return repository; // MR 없으면 아래 다 건너뛰어
+        List<Map<String, Object>> newMrResponse = gitLabApi.getMergeRequests(projectId, accessToken);
+        if(newMrResponse.isEmpty()) {return repository;} // MR 없으면 아래 다 건너뛰어
 
-        int newMR = (int) newMrResponse.get("iid"); // 최상단 MR 번호
-        int pageNation = newMR / 100; //100으로 나눈 몫 저장 (이 기준으로 pageNation 요청할거임)
+        int newMR = (int) newMrResponse.get(0).get("iid"); // 최상단 MR 번호
+        int pageNation = Math.max(1, newMR / 100); //100으로 나눈 몫 저장 (이 기준으로 pageNation 요청할거임)
 
         for(int page = 1; page <= pageNation; page++){
             List<Map<String, Object>> mrResponseList = gitLabApi.getMergeRequestsByPageNation(projectId,page,accessToken);
             for(Map<String, Object> mrResponse : mrResponseList){
-
-                Map<String, Object> diffRefsMap = (Map<String, Object>) mrResponse.get("diff_refs");
                 Map<String, Object> author =  (Map<String, Object>) mrResponse.get("author");
                 MergeRequestEntity mr = new MergeRequestEntity();
                 mr.setPrId((Integer) mrResponse.get("iid"));
@@ -117,10 +120,7 @@ public class RepoServiceImpl implements RepoService{
                 mr.setIsOpened("opened".equals(mrResponse.get("state")) ? 1 : 0); // 나중에 수정해야될수도
                 mr.setSourceBranch((String) mrResponse.get("source_branch"));
                 mr.setTargetBranch((String) mrResponse.get("target_branch"));
-                mr.setBaseSha((String) diffRefsMap.get("base_sha"));
-                mr.setHeadSha((String) diffRefsMap.get("head_sha"));
-                mr.setStartSha((String) diffRefsMap.get("start_sha"));
-                mr.setUserId((int) author.get("id")); //userId 어떻게 해야함 ?
+                mr.setUserId((int) author.get("id"));
                 mergeRequestRepository.save(mr);
 
                 // ---------- Commit 정보 가져오기 ---------- //
@@ -144,7 +144,7 @@ public class RepoServiceImpl implements RepoService{
 
                         fileChangeEntity.setFileId(SHA1Util.encryptSHA1((String) fileChange.get("new_path")));
                         fileChangeEntity.setRepoId((int) repositoryResponse.get("id"));
-                        fileChangeEntity.setPrId((int) mrResponse.get("id"));
+                        fileChangeEntity.setPrId((int) mrResponse.get("iid"));
                         fileChangeEntity.setCommitId(commitId);
 
                         String fileName = (String) fileChange.get("new_path");
@@ -180,7 +180,7 @@ public class RepoServiceImpl implements RepoService{
                 // ---------- Comment 가져오기 ---------- //
                 List<Map<String, Object>> CommentList = gitLabApi.getDiscussions(projectId, (Integer) mrResponse.get("iid"), accessToken);
                 for(Map<String, Object> commentResponse : CommentList){
-                    if(!(boolean) commentResponse.get("individual_note")) continue; // individual_note값이 true일때만 DB에 저장
+                    if((boolean) commentResponse.get("individual_note")) continue; // individual_note값이 false 일때만 DB에 저장
 
                     List<Map<String, Object>> notes = (List<Map<String, Object>>) commentResponse.get("notes");
 
@@ -190,7 +190,7 @@ public class RepoServiceImpl implements RepoService{
                     Map<String, Object> commentAuthor = (Map<String, Object>) notes.get(0).get("author");
 
                     comment.setCommentId((int) firstNote.get("id"));
-                    comment.setPrId((int) mrResponse.get("id"));
+                    comment.setPrId((int) mrResponse.get("iid"));
                     comment.setRepoId((int) repositoryResponse.get("id"));
                     comment.setContent((String) firstNote.get("body"));
                     comment.setCommentType(0); // type 알아본 후 재설정하기
@@ -200,15 +200,29 @@ public class RepoServiceImpl implements RepoService{
 
                     if(firstNote.get("position") != null){
                         Map<String, Object> position = (Map<String, Object>) firstNote.get("position");
-                        comment.setNewLine((int) position.get("new_line"));
-                        comment.setOldLine((int) position.get("old_line"));
-                        Map<Map<String, Object>, Object> lineRange = (Map<Map<String, Object>, Object>) position.get("line_range");
-                        Map<String, Object> start = (Map<String, Object>) lineRange.get("start");
-                        Map<String, Object> end = (Map<String, Object>) lineRange.get("end");
-                        comment.setNewStartLine((int) start.get("new_line"));
-                        comment.setNewEndLine((int) end.get("new_line"));
-                        comment.setOldStartLine((int) start.get("old_line"));
-                        comment.setOldEndLine((int) end.get("old_line"));
+                        if(position.get("new_line") !=null) comment.setNewLine((int) position.get("new_line"));
+                        if(position.get("old_line") !=null) comment.setOldLine((int) position.get("old_line"));
+
+                        Optional<MergeRequestEntity> optionalMr = mergeRequestRepository.findByPrId((Integer) mrResponse.get("iid"));
+
+                        if (optionalMr.isPresent()) {
+                            // MR 정보 업데이트
+                            MergeRequestEntity existingMr = optionalMr.get();
+                            existingMr.setBaseSha((String) position.get("base_sha"));
+                            existingMr.setHeadSha((String) position.get("head_sha"));
+                            existingMr.setStartSha((String) position.get("start_sha"));
+                            mergeRequestRepository.save(existingMr); // 업데이트
+                        }
+
+                        Map<String, Object> lineRange = (Map<String, Object>) position.get("line_range");
+                        if(lineRange != null){
+                            Map<String, Object> start = (Map<String, Object>) lineRange.get("start");
+                            Map<String, Object> end = (Map<String, Object>) lineRange.get("end");
+                            if(start.get("new_line") !=null)  comment.setNewStartLine((int) start.get("new_line"));
+                            if(end.get("new_line") !=null) comment.setNewEndLine((int) end.get("new_line"));
+                            if(start.get("old_line") !=null) comment.setOldStartLine((int) start.get("old_line"));
+                            if(end.get("old_line") !=null) comment.setOldEndLine((int) end.get("old_line"));
+                        }
                     }
                     commentRepository.save(comment);
 
@@ -219,14 +233,14 @@ public class RepoServiceImpl implements RepoService{
                         Map<String, Object> replyAuthor = (Map<String, Object>) notes.get(i).get("author");
                         ReplyEntity reply = new ReplyEntity();
                         reply.setRepoId((int) repositoryResponse.get("id"));
-                        reply.setPrId((int) mrResponse.get("id"));
+                        reply.setPrId((int) mrResponse.get("iid"));
                         reply.setCommentId((int) firstNote.get("id")); // 첫 번째 note의 commentId 저장
                         reply.setReCommentId((int) note.get("id"));
-                        reply.setUserId((int) replyAuthor.get("author"));
+                        reply.setUserId((int) replyAuthor.get("id"));
                         reply.setDisId((String) commentResponse.get("id"));
                         reply.setContent((String) note.get("body"));
                         reply.setReplyType(0);
-                        reply.setCreateAt((Date) note.get("updated_at"));
+                        reply.setCreateAt((String) note.get("updated_at"));
                         replyRepository.save(reply);
                     }
 
