@@ -27,11 +27,15 @@ public class ApiUtil {
      * @param url
      * @return
      */
-    public ResponseEntity<?> getApi(String url) {
+    public ResponseEntity<?> getApi(String url, String token) {
         String fullURL = restURL + url;
         log.info("FULL URL : " + fullURL);
-        return restTemplate.getForEntity(fullURL, String.class);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + token);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        return restTemplate.exchange(fullURL, HttpMethod.GET, entity, String.class);
     }
+
 
 
     /**
@@ -40,14 +44,16 @@ public class ApiUtil {
      * @param requestBody
      * @return
      */
-    public ResponseEntity<?> postApi(String url, Object requestBody) {
+    public ResponseEntity<?> postApi(String url, Object requestBody , String token) {
         String fullURL = restURL + url;
         log.info("POST 요청 URL: " + fullURL);
         log.info("ApiUtil Request Body: {}", requestBody);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-
+        if(token != null) {
+            headers.set("Authorization", token);
+        }
         HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
 
         return restTemplate.postForEntity(fullURL, requestEntity, Object.class);
@@ -60,13 +66,15 @@ public class ApiUtil {
      * @param requestBody
      * @return
      */
-    public ResponseEntity<?> putApi(String url, Object requestBody) {
+    public ResponseEntity<?> putApi(String url, Object requestBody , String token) {
         String fullURL = restURL + url;
         log.info("PUT 요청 URL: " + fullURL);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-
+        if(token != null) {
+            headers.set("Authorization", token);
+        }
         HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
         restTemplate.exchange(fullURL, HttpMethod.PUT, requestEntity, Void.class);
         return ResponseEntity.ok().build();
@@ -77,13 +85,15 @@ public class ApiUtil {
      * @param url
      * @return
      */
-    public ResponseEntity<?> deleteApi(String url, Object requestBody) {
+    public ResponseEntity<?> deleteApi(String url, Object requestBody , String token) {
         String fullURL = restURL + url;
         log.info("DELETE 요청 URL: " + fullURL);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-
+        if(token != null) {
+            headers.set("Authorization", token);
+        }
         HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
         restTemplate.exchange(fullURL, HttpMethod.DELETE, requestEntity, Void.class);
         return ResponseEntity.ok().build();

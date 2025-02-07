@@ -28,9 +28,9 @@ public class MergeRequestController {
 
     @GetMapping("/{repoId}")
     @Operation(summary = "PR 목록 확인", description = "외부 API를 호출하여 PR 목록을 가져옵니다.")
-    public ResponseEntity<?> getPrList(@PathVariable int repoId) {
+    public ResponseEntity<?> getPrList(@RequestHeader("Authorization") String token , @PathVariable int repoId) {
         log.info("call PrList Method");
-        ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId);
+        ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId , token);
         Object json = typeUtil.convertJsonToObject(response.getBody());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -39,8 +39,8 @@ public class MergeRequestController {
 
     @GetMapping("/{repoId}/{prId}")
     @Operation(summary = "PR 상세 정보 확인", description = "외부 API를 호출하여 특정 PR 정보를 가져옵니다.")
-    public ResponseEntity<?> getPrById(@PathVariable int repoId, @PathVariable int prId) {
-        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId + "/" + prId);
+    public ResponseEntity<?> getPrById(@RequestHeader("Authorization") String token , @PathVariable int repoId, @PathVariable int prId) {
+        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId + "/" + prId , token);
         Object json = typeUtil.convertJsonToObject(request.getBody());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -49,8 +49,8 @@ public class MergeRequestController {
 
     @GetMapping("/{repoId}/{prId}/commit")
     @Operation(summary = "Commit 목록 확인", description = "외부 API를 호출하여 특정 PR의 Commit 목록을 가져옵니다.")
-    public ResponseEntity<?> getCommitList(@PathVariable int repoId, @PathVariable int prId) {
-        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId + "/" + prId);
+    public ResponseEntity<?> getCommitList(@RequestHeader("Authorization") String token , @PathVariable int repoId, @PathVariable int prId) {
+        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId + "/" + prId , token);
         Object json = typeUtil.convertJsonToObject(request.getBody());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -59,10 +59,11 @@ public class MergeRequestController {
 
     @GetMapping("/{repoId}/{prId}/commit/{commitId}")
     @Operation(summary = "Commit 상세 정보 확인", description = "외부 API를 호출하여 특정 Commit 정보를 가져옵니다.")
-    public ResponseEntity<?> getCommitById(@PathVariable int repoId,
+    public ResponseEntity<?> getCommitById(@RequestHeader("Authorization") String token ,
+                                           @PathVariable int repoId,
                                            @PathVariable int prId,
                                            @PathVariable String commitId) {
-        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId + "/" + prId + "/" + commitId);
+        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId + "/" + prId + "/" + commitId , token);
         Object json = typeUtil.convertJsonToObject(request.getBody());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -71,9 +72,10 @@ public class MergeRequestController {
 
     @GetMapping("/{repoId}/{prId}/comment")
     @Operation(summary = "PR 댓글 조회", description = "외부 API를 호출하여 특정 PR의 댓글 목록을 가져옵니다.(댓글, 대댓글, 코드댓글 포함)")
-    public ResponseEntity<?> getCommentList(@PathVariable int repoId,
+    public ResponseEntity<?> getCommentList(@RequestHeader("Authorization") String token ,
+                                            @PathVariable int repoId,
                                             @PathVariable int prId) {
-        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId + "/" + prId + "/comment");
+        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId + "/" + prId + "/comment" , token);
         Object json = typeUtil.convertJsonToObject(request.getBody());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -82,10 +84,11 @@ public class MergeRequestController {
 
     @PostMapping("/{repoId}/{prId}/comment")
     @Operation(summary = "PR 댓글 등록", description = "외부 API를 호출하여 PR에 댓글을 등록합니다.")
-    public ResponseEntity<?> insertComment(@PathVariable int repoId,
+    public ResponseEntity<?> insertComment(@RequestHeader("Authorization") String token ,
+                                           @PathVariable int repoId,
                                            @PathVariable int prId,
                                            @RequestBody Map<String, Object> commentDto) {
-        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.postApi("/pr/" + repoId + "/" + prId + "/comment", commentDto);
+        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.postApi("/pr/" + repoId + "/" + prId + "/comment", commentDto , token);
         Object json = typeUtil.convertJsonToObject(request.getBody());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -94,9 +97,10 @@ public class MergeRequestController {
 
     @PostMapping("/{repoId}/uploads")
     @Operation(summary="파일 업로드", description = "외부 API를 호출하여 파일 업로드 하면 markdown을 return합니다")
-    public ResponseEntity<?> uploadsFile (@PathVariable String repoId,
+    public ResponseEntity<?> uploadsFile (@RequestHeader("Authorization") String token ,
+                                          @PathVariable String repoId,
                                          @RequestParam(value = "file", required = false) MultipartFile file){
-        ResponseEntity<?> response = apiUtil.postApi("/pr/" + repoId + "/uploads", file);
+        ResponseEntity<?> response = apiUtil.postApi("/pr/" + repoId + "/uploads", file , token);
         if (response.getBody() instanceof Map) {
             Map<String, Object> responseBody = (Map<String, Object>) response.getBody();
             try{
@@ -113,10 +117,11 @@ public class MergeRequestController {
 
     @PostMapping("/{repoId}/{prId}/file/comment")
     @Operation(summary="코드에 댓글 등록", description = "외부 API를 호출하여 파일 코드에 라인별로 댓글을 등록합니다")
-    public ResponseEntity<?> insertFileComment(@PathVariable String repoId,
+    public ResponseEntity<?> insertFileComment(@RequestHeader("Authorization") String token ,
+                                               @PathVariable String repoId,
                                                @PathVariable String prId,
                                                @RequestBody Map<String, Object> customCommentDto){
-       ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.postApi("/pr/" + repoId + "/" + prId + "/file/comment",customCommentDto);
+       ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.postApi("/pr/" + repoId + "/" + prId + "/file/comment",customCommentDto , token);
         Object json = typeUtil.convertJsonToObject(request.getBody());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -126,11 +131,12 @@ public class MergeRequestController {
 
     @PutMapping("/{repoId}/{prId}/comment/{commentId}")
     @Operation(summary = "PR 댓글 수정", description = "외부 API를 호출하여 PR의 댓글을 수정합니다.")
-    public ResponseEntity<?> updateComment(@PathVariable int repoId,
+    public ResponseEntity<?> updateComment(@RequestHeader("Authorization") String token ,
+                                           @PathVariable int repoId,
                                            @PathVariable int prId,
                                            @PathVariable int commentId,
                                            @RequestBody Map<String, Object> commentDto) {
-        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.putApi("/pr/" + repoId + "/" + prId + "/comment/" + commentId, commentDto);
+        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.putApi("/pr/" + repoId + "/" + prId + "/comment/" + commentId, commentDto , token);
         Object json = typeUtil.convertJsonToObject(request.getBody());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -139,10 +145,11 @@ public class MergeRequestController {
 
     @DeleteMapping("/{repoId}/{prId}/comment/{commentId}")
     @Operation(summary = "PR 댓글 삭제", description = "외부 API를 호출하여 PR의 댓글을 삭제합니다.")
-    public ResponseEntity<?> deleteComment(@PathVariable int repoId,
+    public ResponseEntity<?> deleteComment(@RequestHeader("Authorization") String token ,
+                                           @PathVariable int repoId,
                                            @PathVariable int prId,
                                            @PathVariable int commentId) {
-        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.deleteApi("/pr/" + repoId + "/" + prId + "/comment/" + commentId, null);
+        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.deleteApi("/pr/" + repoId + "/" + prId + "/comment/" + commentId, null , token);
         Object json = typeUtil.convertJsonToObject(request.getBody());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -151,10 +158,11 @@ public class MergeRequestController {
 
     @GetMapping("/{repoId}/{prId}/reply/{commentId}")
     @Operation(summary = "대댓글 조회", description = "외부 API를 호출하여 특정 댓글의 대댓글 목록을 가져옵니다.")
-    public ResponseEntity<?> showReply(@PathVariable int repoId,
+    public ResponseEntity<?> showReply(@RequestHeader("Authorization") String token ,
+                                       @PathVariable int repoId,
                                        @PathVariable int prId,
                                        @PathVariable int commentId) {
-        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId + "/" + prId + "/comment/" + commentId + "/reply");
+        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId + "/" + prId + "/comment/" + commentId + "/reply" , token);
         Object json = typeUtil.convertJsonToObject(request.getBody());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -163,11 +171,12 @@ public class MergeRequestController {
 
     @PostMapping("/{repoId}/{prId}/reply/{discussionId}")
     @Operation(summary = "대댓글 등록", description = "외부 API를 호출하여 대댓글을 등록합니다.")
-    public ResponseEntity<?> insertReply(@PathVariable int repoId,
+    public ResponseEntity<?> insertReply(@RequestHeader("Authorization") String token ,
+                                         @PathVariable int repoId,
                                          @PathVariable int prId,
                                          @PathVariable int discussionId,
                                          @RequestBody Map<String, Object> replyDto) {
-        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.postApi("/pr/" + repoId + "/" + prId + "/reply/" + discussionId, replyDto);
+        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.postApi("/pr/" + repoId + "/" + prId + "/reply/" + discussionId, replyDto , token);
         Object json = typeUtil.convertJsonToObject(request.getBody());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -176,11 +185,12 @@ public class MergeRequestController {
 
     @PutMapping("/{repoId}/{prId}/reply/{replyId}")
     @Operation(summary = "대댓글 수정", description = "외부 API를 호출하여 대댓글을 수정합니다.")
-    public ResponseEntity<?> updateReply(@PathVariable int repoId,
+    public ResponseEntity<?> updateReply(@RequestHeader("Authorization") String token ,
+                                         @PathVariable int repoId,
                                          @PathVariable int prId,
                                          @PathVariable int replyId,
                                          @RequestBody Map<String, Object> replyDto) {
-        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.putApi("/pr/" + repoId + "/" + prId + "/reply/" + replyId, replyDto);
+        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.putApi("/pr/" + repoId + "/" + prId + "/reply/" + replyId, replyDto , token);
         Object json = typeUtil.convertJsonToObject(request.getBody());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -189,10 +199,11 @@ public class MergeRequestController {
 
     @DeleteMapping("/{repoId}/{prId}/reply/{reCommentId}")
     @Operation(summary = "대댓글 삭제", description = "외부 API를 호출하여 대댓글을 삭제합니다.")
-    public ResponseEntity<?> deleteReply(@PathVariable int repoId,
+    public ResponseEntity<?> deleteReply(@RequestHeader("Authorization") String token ,
+                                         @PathVariable int repoId,
                                          @PathVariable int prId,
                                          @PathVariable int reCommentId) {
-        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.deleteApi("/pr/" + repoId + "/" + prId + "/reply/"+ reCommentId, null);
+        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.deleteApi("/pr/" + repoId + "/" + prId + "/reply/"+ reCommentId, null , token);
         Object json = typeUtil.convertJsonToObject(request.getBody());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -201,9 +212,10 @@ public class MergeRequestController {
 
     @GetMapping("/{repoId}/{prId}/file")
     @Operation(summary = "PR 내 변경된 파일 목록 조회", description = "외부 API를 호출하여 PR 내 변경된 파일 목록을 가져옵니다.")
-    public ResponseEntity<?> showFileListByPr(@PathVariable int repoId,
+    public ResponseEntity<?> showFileListByPr(@RequestHeader("Authorization") String token ,
+                                              @PathVariable int repoId,
                                               @PathVariable int prId) {
-        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId + "/" + prId + "/file");
+        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId + "/" + prId + "/file" , token);
         Object json = typeUtil.convertJsonToObject(request.getBody());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -212,10 +224,11 @@ public class MergeRequestController {
 
     @GetMapping("/{repoId}/{prId}/file/{commitId}")
     @Operation(summary = "Commit별 변경된 파일 목록 조회", description = "외부 API를 호출하여 특정 Commit 내 변경된 파일 목록을 가져옵니다.")
-    public ResponseEntity<?> showFileListByCommit(@PathVariable int repoId,
+    public ResponseEntity<?> showFileListByCommit(@RequestHeader("Authorization") String token ,
+                                                  @PathVariable int repoId,
                                                   @PathVariable int prId,
                                                   @PathVariable String commitId) {
-        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId + "/" + prId + "/file/" + commitId);
+        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId + "/" + prId + "/file/" + commitId , token);
         Object json = typeUtil.convertJsonToObject(request.getBody());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -224,11 +237,12 @@ public class MergeRequestController {
 
     @PostMapping("/{repoId}/{prId}/file/raw/{refType}")
     @Operation(summary = "변경된 코드 확인", description = "외부 API를 호출하여 변경된 코드 내용을 가져옵니다.(refType =  1 : PR 기준(브랜치), 2: Commit 기준)")
-    public ResponseEntity<?> showChangedCode(@PathVariable int repoId,
+    public ResponseEntity<?> showChangedCode(@RequestHeader("Authorization") String token ,
+                                             @PathVariable int repoId,
                                              @PathVariable int prId,
                                              @PathVariable String refType,
                                              @RequestBody Map<String, Object> fileDto) {
-        ResponseEntity<?> response = apiUtil.postApi("/pr/" + repoId + "/" + prId + "/file/raw/" + refType, fileDto);
+        ResponseEntity<?> response = apiUtil.postApi("/pr/" + repoId + "/" + prId + "/file/raw/" + refType, fileDto , token);
 
         if (response.getBody() instanceof Map) {
             Map<String, Object> responseBody = (Map<String, Object>) response.getBody();
@@ -247,9 +261,10 @@ public class MergeRequestController {
 
     @GetMapping("/{repoId}/{prId}/reviewer")
     @Operation(summary = "리뷰 참여자 조회", description = "외부 API를 호출하여 PR에 참여한 사람 목록을 조회합니다.")
-    public ResponseEntity<?> getReviewer(@PathVariable String repoId,
+    public ResponseEntity<?> getReviewer(@RequestHeader("Authorization") String token ,
+                                         @PathVariable String repoId,
                                          @PathVariable String prId){
-        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId + "/" + prId + "/reviewer" );
+        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId + "/" + prId + "/reviewer" , token);
         Object json = typeUtil.convertJsonToObject(request.getBody());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -258,8 +273,8 @@ public class MergeRequestController {
 
     @PostMapping("/repositoryData")
     @Operation(summary = "Repository 데이터 읽기", description = "외부 API를 호출하여 repository 데이터를 저장합니다.")
-    public ResponseEntity<?> saveRepositoryData(@RequestHeader("accessToken") String accessToken, @RequestBody String repositoryId) {
-        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.postApi("/pr/repositoryData", repositoryId);
+    public ResponseEntity<?> saveRepositoryData(@RequestHeader("Authorization") String token , @RequestBody String repositoryId) {
+        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.postApi("/pr/repositoryData", repositoryId , token);
         Object json = typeUtil.convertJsonToObject(request.getBody());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)

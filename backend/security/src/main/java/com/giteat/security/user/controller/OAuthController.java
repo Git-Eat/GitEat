@@ -43,7 +43,7 @@ public class OAuthController {
         String code = body.get("code");
 
         OAuthTokenDto oAuthTokenDto = oauthService.gitlabLogin(code);
-        ResponseEntity<?> testResponse = apiUtil.postApi("/oauth/gitlab", oAuthTokenDto);
+        ResponseEntity<?> testResponse = apiUtil.postApi("/oauth/gitlab", oAuthTokenDto , null);
 
         return ResponseEntity.ok(testResponse.getBody());
     }
@@ -56,7 +56,7 @@ public class OAuthController {
     @PostMapping("/gitlab/refresh")
     @Operation(summary = "access 재발급", description = "refresh토큰으로 access토큰을 재발급 받을때 사용")
     public ResponseEntity<?> gitlabRefresh(@RequestBody OAuthTokenDto tokenRequest){
-       return apiUtil.postApi("/oauth/refresh", tokenRequest);
+       return apiUtil.postApi("/oauth/refresh", tokenRequest , null);
     }
 
     /**
