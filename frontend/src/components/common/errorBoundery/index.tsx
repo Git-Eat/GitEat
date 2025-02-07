@@ -2,13 +2,14 @@ import React from "react";
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
+  fallbackComponent?: React.ReactNode;
 }
 
 interface ErrorBoundaryState {
   hasError: boolean;
 }
 
-export class ErrorBoundery extends React.Component<
+export class ErrorBoundary extends React.Component<
   ErrorBoundaryProps,
   ErrorBoundaryState
 > {
@@ -27,7 +28,7 @@ export class ErrorBoundery extends React.Component<
 
   render() {
     if (this.state.hasError) {
-      return <div>Something went wrong</div>;
+      return this.props.fallbackComponent || <div>Something went wrong</div>;
     }
 
     return this.props.children;

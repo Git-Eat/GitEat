@@ -1,7 +1,7 @@
 import { Accordion, AccordionSummary } from "@mui/material";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { ErrorBoundery } from "../../../common/errorBoundery";
+import { ErrorBoundary } from "../../../common/errorBoundery";
 import { DiffViewer } from "../diffViewer";
 import { file as dummy } from "../dummy";
 interface FileProps {
@@ -33,13 +33,13 @@ export function FileDiff({ file }: FileProps) {
       </div>
       <div className="flex mt-4">
         <AccordionDetails>
-          <ErrorBoundery>
+          <ErrorBoundary>
             <DiffViewer
               oldCode={dummy.oldCode}
               newCode={dummy.newCode}
               comments={dummy.comments}
             />
-          </ErrorBoundery>
+          </ErrorBoundary>
         </AccordionDetails>
       </div>
     </Accordion>
