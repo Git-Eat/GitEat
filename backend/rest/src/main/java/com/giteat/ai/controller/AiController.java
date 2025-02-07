@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 @RestController
-@RequestMapping("/ai")
+@RequestMapping(path = "/ai", produces="application/json; charset=utf8")
 public class AiController {
 
     private final LabApi labApi;
@@ -16,6 +16,18 @@ public class AiController {
         this.labApi = labApi;
         this.restTemplate = restTemplate;
     }
+
+//    @PostMapping("/review")
+//    public ResponseEntity<String> reviewCode(@RequestBody ReviewRequest request) {
+//        try {
+//            String review = aiReviewService.aiReview(request.getBeforeCode(), request.getAfterCode());
+//            return ResponseEntity.ok(review);
+//        } catch (Exception e) {
+//             ("코드 리뷰 처리 중 오류 발생", e);
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body("코드 리뷰 처리 중 오류가 발생했습니다: " + e.getMessage());
+//        }
+//    }
 
     @PostMapping("/review")
     public ResponseEntity<String> getGpt(@RequestBody String code) {
