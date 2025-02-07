@@ -16,15 +16,12 @@ public class FileChangeEntity {
     @Column(name = "file_id")
     private String fileId;
 
-    @Id
     @Column(name = "repo_id")
     private int repoId;
 
-    @Id
     @Column(name = "pr_id")
     private int prId;
 
-    @Id
     @Column(name = "commit_id")
     private String commitId;
 
