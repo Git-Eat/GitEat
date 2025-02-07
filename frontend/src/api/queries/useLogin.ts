@@ -8,10 +8,8 @@ export const useLogin = () => {
   return useMutation(login, {
     mutationKey: "login",
     onSuccess: (data: AuthToken) => {
-      alert("login success");
       localStorage.setItem("access_token", data.accessToken);
-      navagation("/dashboard");
-      // window.location.replace("/dashboard");
+      navagation("/dashboard", { replace: true });
     },
     retry: false,
   });
