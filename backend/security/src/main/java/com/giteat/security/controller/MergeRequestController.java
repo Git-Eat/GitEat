@@ -213,13 +213,13 @@ public class MergeRequestController {
                 .body(json);
     }
 
-    @GetMapping("/{repoId}/{prId}/file/raw")
-    @Operation(summary = "변경된 코드 확인", description = "외부 API를 호출하여 변경된 코드 내용을 가져옵니다.")
+    @PostMapping("/{repoId}/{prId}/file/raw/{refType}")
+    @Operation(summary = "변경된 코드 확인", description = "외부 API를 호출하여 변경된 코드 내용을 가져옵니다.(refType =  1 : PR 기준(브랜치), 2: Commit 기준)")
     public ResponseEntity<?> showChangedCode(@PathVariable int repoId,
                                              @PathVariable int prId,
-                                             @RequestParam String refType,
+                                             @PathVariable String refType,
                                              @RequestBody Map<String, Object> fileDto) {
-        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.postApi("/pr/" + repoId + "/" + prId + "/file/raw?refType=" + refType , fileDto);
+        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.postApi("/pr/" + repoId + "/" + prId + "/file/raw/" + refType , fileDto);
         Object json = typeUtil.convertJsonToObject(request.getBody());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
