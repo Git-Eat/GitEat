@@ -138,26 +138,30 @@ public class LabApi {
         return fileData;
     }
 
-    // 프로젝트의 Merge Requests 가져오기 예시입니다.
+    // 프로젝트의 Merge Requests 조회함수 (가장 최신 MR만 조회)
     public Map<String, Object> getMergeRequests(String projectId , String accessToken) {
-        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests";
+        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests?per_page=1&sort=desc";
         return this.chaneTypeMap(testCallGetApi(url ,accessToken));
     }
 
+    // MR id를 기준으로 MR 정보를 조회하는 함수
+    public Map<String, Object> getMergeRequestsById(String projectId, int prId, String accessToken){
+        String url = gitlabApiUrl + "/projects/" + projectId +"/merge_requests/"+prId;
+        return this.chaneTypeMap(testCallGetApi(url, accessToken));
+    }
+
     // 프로젝트 repository 정보 가져오는 함수
-    public Map<String, Object> getRepositoryInfo(String projectId , String accessToken) {
+    public Map<String, Object> getRepository(String projectId , String accessToken) {
         String url = gitlabApiUrl + "/projects/" + projectId;
         return callGetApiMap(url , accessToken);
     }
 
 
     //  프로젝트의 Commits 가져오기
-    public List<Map<String, Object>> getCommits(String projectId, String accessToken) {
-        //String url = gitlabApiUrl + "/projects/" + projectId + "/repository/commits";
-        String url = "http://192.168.31.237/api/v4" + "/projects/" + projectId + "/repository/commits";
-        List<Map<String, Object>> commitList = null;
-
-        return commitList;
+    public List<Map<String, Object>> getCommits(String projectId, int mrId, String accessToken) {
+        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + mrId + "commits";
+        //String url = "http://192.168.31.237/api/v4" + "/projects/" + projectId + "/repository/commits";
+        return callGetApiList(url, accessToken);
     }
 
     //  프로젝트의 Issues 가져오기
@@ -167,9 +171,9 @@ public class LabApi {
     }
 
     //  프로젝트의 Discussions(토론) 가져오기
-    public List<Map<String, Object>> getDiscussions(String projectId , String accessToken) {
-        String url = gitlabApiUrl + "/projects/" + projectId + "/discussions";
-        return callGetApi(url , accessToken);
+    public List<Map<String, Object>> getDiscussions(String projectId , int prId, String accessToken) {
+        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + prId + "/discussions";
+        return callGetApiList(url, accessToken);
     }
 
     //  프로젝트의 Comments(노트) 가져오기
@@ -179,31 +183,42 @@ public class LabApi {
     }
 
     // PR내 변경된 파일 목록 가져오기
-    public List<Map<String, Object>> getFiles(String projectId, String prId, String accessToken){
+    public List<Map<String, Object>> getFilesByPr(String projectId, String prId, String accessToken){
         String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + prId + "/changes";
         return callGetApi(url, accessToken);
     }
 
+    // Commit 내 변경된 파일 목록 가져오기
+    public List<Map<String, Object>> getFilesByCommit(String projectId, String commitId, String accessToken){
+        String url = gitlabApiUrl + "/projects/" + projectId +  "/repository/commits/" + commitId + "/diff";
+        return callGetApiList(url, accessToken);
+    }
+
     // webHook에서 commit 데이터 읽어오는 함수
-    public List<Map<String , Object>> getCommits(String projectId , String prId , String id){
-        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests" + prId +"/commits";
-        return callGetApiUseId(url , id);
+    public List<Map<String, Object>> getWebHookCommit(String projectId, String prId, String id) {
+//        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests" + prId +"/commits";
+        String accessToken = "glpat-4y8h33DZ2EvCjxfNk65Y";
+//
+        String url = "http://192.168.31.42:81/api/v4" + "/projects/" + projectId + "/merge_requests/" + prId + "/commits";
+        return callGetApiList(url , accessToken);
     }
 
 
 
     // webHook에서 changeFIle 읽어오는 함수
     public List<Map<String , Object>> getChangeFiles(String projectId , String commitId , String id){
-        String url = gitlabApiUrl + "/projects/" + projectId + "/commits/" + commitId + "/diff";
-        return callGetApiUseId(url , id);
+//        String url = gitlabApiUrl + "/projects/" + projectId + "/commits/" + commitId + "/diff";
+        String url = "http://192.168.31.42:81/api/v4"+"/projects/" + projectId + "/repository/commits/" + commitId + "/diff";
+        String accessToken = "glpat-4y8h33DZ2EvCjxfNk65Y";
+        return callGetApiList(url , accessToken);
     }
 
     public Map<String , Object> getDiffRefs(String projectId , String iid , String id){
-        String accessToken = "glpat-_2SHA1YNyshjLLNSrLAd";
+        String accessToken = "glpat-4y8h33DZ2EvCjxfNk65Y";
 //        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + iid + "/diff";
-        String url = "http://192.168.31.237/api/v4" + "/projects/" + projectId + "/merge_requests/" + iid;
+        String url = "http://192.168.31.42:81/api/v4" + "/projects/" + projectId + "/merge_requests/" + iid;
         //http://192.168.31.237/api/v4/projects/1/merge_requests/1
-        return chaneTypeMap(testCallGetApi(url , accessToken));
+        return this.callGetApiMap(url , accessToken);
     }
 
     // 변경된 Raw 코드 가져오는 함수

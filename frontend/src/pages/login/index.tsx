@@ -4,17 +4,13 @@ import gitlabLogo from "../../assets/images/gitlab_logo.svg";
 import side from "../../assets/images/main_side.png";
 
 export function Login() {
-  // 백엔드에서 처리할 리디렉션 URI 추가해야댐
-
   const gitLabLogin = () => {
     const REDIRECT_URI = import.meta.env.VITE_OAUTH_REDIRECT;
     const CLIENT_ID = import.meta.env.VITE_GITLAB_CLIENT_ID;
-    //state 값은 랜덤값으로 변경 필요함
-    // 깃랩 인증 URL 생성
     const gitLabAuthUrl = `https://lab.ssafy.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
-    // 인증 페이지로 리다이렉트
     window.location.href = gitLabAuthUrl;
   };
+
   return (
     <div className="w-[75%] mx-auto flex items-center justify-center h-screen justify-between">
       <section>
@@ -53,6 +49,7 @@ export function Login() {
           </div>
         </div>
       </section>
+
       <img src={side} alt="side" />
     </div>
   );
