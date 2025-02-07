@@ -48,3 +48,13 @@ export const addRepository = async (repoId: number): Promise<Repository> => {
     else throw new Error("unknown Error");
   }
 };
+
+export const deleteRepository = async <T>(repoId: number): Promise<T> => {
+  try {
+    const res = await authClient.delete(`/repo/${repoId}`);
+    return res.data;
+  } catch (e: unknown) {
+    if (e instanceof Error) throw new Error(e.message);
+    else throw new Error("unknown Error");
+  }
+};

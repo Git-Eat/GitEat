@@ -15,6 +15,7 @@ function Repositories() {
           key={idx}
           user={"USER"}
           title={repo.name}
+          repoId={repo.repoId}
           access={"private"}
           description={repo.description}
         />

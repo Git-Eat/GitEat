@@ -30,6 +30,12 @@ const repositoryHandler = [
   //     { status: 500 }
   //   );
   // }),
+  http.delete(`${API_BASE}/repo/1`, async () => {
+    // 3초(3000ms) 지연
+    console.log("delete");
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    return HttpResponse.json(MOCK_RESPONSE);
+  }),
 ];
 
 export default repositoryHandler;
