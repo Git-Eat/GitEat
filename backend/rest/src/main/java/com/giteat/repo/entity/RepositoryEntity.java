@@ -21,6 +21,7 @@ public class RepositoryEntity {
 
     @Column(name="user_id")
     private int userId;
+    // private String userName;
     private String name;
     private String description;
 

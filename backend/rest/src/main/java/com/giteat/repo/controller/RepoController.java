@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/repo")
@@ -26,8 +27,9 @@ public class RepoController {
 
     @PostMapping("/{repoId}")
     @Operation(summary = "Repo 등록", description = "Repo를 등록합니다")
-    ResponseEntity<RepositoryEntity> insertRepo(@PathVariable int repoId){
-        // repo 등록시 깃랩에서 데이터 받아와서 저장하는 함수 필요 (현재는 임의 코드)
+    ResponseEntity<RepositoryEntity> insertRepo(@RequestBody Map<String, Integer> repoBody){
+        // repo 등록시 깃랩에서 데이터 받아와서 저장하는 함수
+        Integer repoId = repoBody.get("repoId");
         RepositoryEntity repo = repoService.insertRepo(repoId);
         if(repo != null) return ResponseEntity.ok(repo);
         return ResponseEntity.noContent().build();
@@ -58,7 +60,7 @@ public class RepoController {
     @PostMapping("/repositoryData")
     @Operation(summary="repository의 모든 데이터 읽기", description = "repository에서 모든 데이터를 가져옵니다.")
     public ResponseEntity<?> saveRepositoryData(@RequestHeader("accessToken") String accessToken , @RequestBody String repositoryId){
-        repoService.saveRepositoryData(accessToken, repositoryId);
-        return ResponseEntity.ok().build();
+        RepositoryEntity repository = repoService.saveRepositoryData(accessToken, repositoryId);
+        return ResponseEntity.ok(repository);
     }
 }

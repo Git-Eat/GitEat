@@ -128,6 +128,11 @@ public class LabApi {
         return fileData;
     }
 
+    public List<Map<String ,Object>> getMembers(String projectId, String accessToken){
+        String url = gitlabApiUrl + "/projects/" + projectId + "/members";
+        return callGetApiList(url, accessToken);
+    }
+
     // 프로젝트의 Merge Requests 조회함수 (가장 최신 MR만 조회)
     public Map<String, Object> getMergeRequests(String projectId , String accessToken) {
         String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests?per_page=1&sort=desc";
@@ -135,9 +140,9 @@ public class LabApi {
     }
 
     // MR id를 기준으로 MR 정보를 조회하는 함수
-    public Map<String, Object> getMergeRequestsById(String projectId, int prId, String accessToken){
-        String url = gitlabApiUrl + "/projects/" + projectId +"/merge_requests/"+prId;
-        return this.chaneTypeMap(testCallGetApi(url, accessToken));
+    public List<Map<String, Object>> getMergeRequestsByPageNation(String projectId, int pageNation, String accessToken){
+        String url = gitlabApiUrl + "/projects/" + projectId +"/merge_requests/?page="+pageNation+"&per_page=100";
+        return callGetApiList(url, accessToken);
     }
 
     // 프로젝트 repository 정보 가져오는 함수

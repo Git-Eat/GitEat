@@ -23,6 +23,9 @@ public class MergeRequestEntity {
 
     private  String description;
 
+    @Column(name ="user_id")
+    private int userId;
+
     @Column(name = "create_at")
     private String createAt;
 

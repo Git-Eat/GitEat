@@ -24,5 +24,5 @@ public class CommentDto {
 
     private FileCommentDto.Position position; // 코드 위치 정보
 
-    private List<ReplyShowDto> replyList;  // 대댓글 리스트
+    private List<ReplyShowDto> reCommentList;  // 대댓글 리스트
 }
