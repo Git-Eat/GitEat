@@ -17,7 +17,7 @@ export function Replies({
   replyType,
   replyCreateAt,
 }: ReplyProps) {
-  const commentTypeImages = {
+  const commentTypeImages: { [key: number]: { src: string; alt: string } } = {
     1: { src: suggest, alt: "suggest" },
     2: { src: comment, alt: "comment" },
     3: { src: review, alt: "review" },
