@@ -16,7 +16,7 @@ export const getPullRequests = async (
 
 export const getRepsitories = async (): Promise<Repository[]> => {
   try {
-    const res = await authClient.get("/repo/");
+    const res = await authClient.get("/repo");
     return res.data;
   } catch (e: unknown) {
     if (e instanceof Error) throw new Error(e.message);

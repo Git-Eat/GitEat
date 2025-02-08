@@ -4,8 +4,8 @@ export type PullRequest = {
   userId: number;
   title: string;
   description: string;
-  createAt: number[];
-  isOpened: 1 | 2 | 3;
+  createAt: string;
+  isOpened: 0 | 1 | 2;
   targetBranch: string;
   sourceBranch: "develop";
 };
