@@ -1,6 +1,7 @@
 import authClient from "./authClient";
 import client from "./client";
 import { Comment } from "./types/Comment";
+import { Reply } from "./types/Reply";
 
 export async function getComments(repoId: number, prId: number) {
   try {
@@ -37,11 +38,29 @@ export async function deleteComment(
 ) {
   try {
     const response = await authClient.delete(
-      `pr/${repoId}/${prId}/comment/${commentId}`
+      `/pr/${repoId}/${prId}/comment/${commentId}`
     );
     return response.data;
   } catch (error) {
     throw new Error("댓글 삭제 실패했습니다." + error);
+  }
+}
+
+export async function createReply(
+  repoId: number,
+  prId: number,
+  discussionId: string,
+  content: string,
+  replyType: 0 | 1 | 2
+) {
+  try {
+    const response = await authClient.post(
+      `/pr/${repoId}/${prId}/reply/${discussionId}`,
+      { content, discussionId, replyType }
+    );
+    return response.data as Reply;
+  } catch (error) {
+    throw new Error("답글 생성 실패했습니다." + error);
   }
 }
 
@@ -52,7 +71,7 @@ export async function deleteReply(
 ) {
   try {
     const response = await authClient.delete(
-      `pr/${repoId}/${prId}/reply/${replyId}`
+      `/pr/${repoId}/${prId}/reply/${replyId}`
     );
     return response.data;
   } catch (error) {

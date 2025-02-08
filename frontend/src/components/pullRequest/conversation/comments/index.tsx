@@ -12,6 +12,7 @@ import suggest from "../../../../assets/images/suggest.svg";
 import comment from "../../../../assets/images/comment.svg";
 import review from "../../../../assets/images/review.svg";
 import { Replies } from "../replies";
+import { useCreateReply } from "../../../../api/queries/useCreateReply";
 
 interface CommentsProps {
   repoId: number;
@@ -24,6 +25,7 @@ export function Comments({ repoId, prId }: CommentsProps) {
     Record<number, boolean>
   >({});
   const { mutate: deleteComment } = useDeleteComment(repoId, prId);
+  const { mutate: createReply } = useCreateReply(repoId, prId);
   const commentTypeImages = {
     0: { src: suggest, alt: "suggest" },
     1: { src: comment, alt: "comment" },
@@ -46,6 +48,15 @@ export function Comments({ repoId, prId }: CommentsProps) {
       ...prev,
       [commentId]: !prev[commentId],
     }));
+  }
+
+  function handleAddReply(
+    content: string,
+    replyType: 0 | 1 | 2,
+    discussionId: string
+  ) {
+    if (!content.trim()) return;
+    createReply({ content, replyType, discussionId });
   }
 
   return (
@@ -114,7 +125,9 @@ export function Comments({ repoId, prId }: CommentsProps) {
             </footer>
             {isReCommentEditorOpen[comment.commentId] && (
               <MarkdownEditor
-                onAddSingleComment={() => {}}
+                onAddSingleComment={(content, replyType) => {
+                  handleAddReply(content, replyType, comment.disId);
+                }}
                 onStartReview={() => {}}
               />
             )}

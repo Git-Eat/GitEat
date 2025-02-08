@@ -1,11 +1,43 @@
 import { http, HttpResponse } from "msw";
 
+interface Comment {
+  commentId: number;
+  prId: number;
+  repoId: number;
+  userId: number;
+  userName: string;
+  avatarUrl: string | null;
+  disId: string;
+  content: string;
+  commentType: 0 | 1 | 2;
+  createAt: string | null;
+  position: object | null;
+  replyList: Reply[];
+}
+
+interface Reply {
+  reCommentId: number;
+  userId: number;
+  userName: string;
+  avatarUrl: string | null;
+  disId: string;
+  content: string;
+  replyType: 0 | 1 | 2;
+  imageName: string | null;
+  createAt: string | null;
+}
+
 interface CommentBody {
   content: string;
   commentType: 0 | 1 | 2;
 }
 
-const comments = [
+interface ReplyBody {
+  content: string;
+  replyType: 0 | 1 | 2;
+}
+
+const comments: Comment[] = [
   {
     commentId: 1,
     prId: 32,
@@ -17,30 +49,7 @@ const comments = [
     content: "이게 어떤 용도죠?",
     commentType: 1,
     createAt: "2025-02-07T12:34:56.789Z",
-    position: {
-      baseSha: "5b7a6146752b83f400e07854dfe27bf7000cf058",
-      startSha: "5b7a6146752b83f400e07854dfe27bf7000cf058",
-      headSha: "74523366418dcf66994fb3c319344be2bc2c0533",
-      oldPath:
-        "frontend/src/components/pullRequest/conversation/comments/index.tsx",
-      newPath:
-        "frontend/src/components/pullRequest/conversation/comments/index.tsx",
-      positionType: "text",
-      newLine: 74,
-      oldLine: null,
-      newStartLine: 75,
-      newEndLine: 75,
-      oldStartLine: null,
-      oldEndLine: null,
-      lineRange: {
-        start: {
-          lineCode: "809f9e3430dfcad1380bf902c9afd29209973874_0_75",
-        },
-        end: {
-          lineCode: "809f9e3430dfcad1380bf902c9afd29209973874_0_75",
-        },
-      },
-    },
+    position: null,
     replyList: [
       {
         reCommentId: 1,
@@ -104,6 +113,7 @@ const commentsHandlers = [
       );
     }
   }),
+
   http.delete("*/pr/:repoId/:prId/reply/:replyId", (req) => {
     const repoId = Number(req.params.repoId);
     const prId = Number(req.params.prId);
@@ -112,22 +122,27 @@ const commentsHandlers = [
       (comment) =>
         comment.repoId === repoId &&
         comment.prId === prId &&
-        comment.replyList.some((reComment) => reComment.reCommentId === replyId)
+        comment.replyList?.some(
+          (reComment) => reComment.reCommentId === replyId
+        ) // `?.` 추가
     );
+
     if (!comment) {
       return HttpResponse.json(
         { message: "답글을 찾을 수 없습니다." },
         { status: 404 }
       );
     }
+
     comment.replyList = comment.replyList.filter(
-      (reComment) => reComment.reCommentId != replyId
+      (reComment) => reComment.reCommentId !== replyId
     );
     return HttpResponse.json(
       { message: "답글을 삭제했습니다." },
       { status: 200 }
     );
   }),
+
   http.post("*/pr/:repoId/:prId/comment", async ({ params, request }) => {
     try {
       const { repoId, prId } = params;
@@ -141,7 +156,7 @@ const commentsHandlers = [
         );
       }
 
-      const newComment = {
+      const newComment: Comment = {
         commentId: comments.length + 1,
         prId: Number(prId),
         repoId: Number(repoId),
@@ -157,17 +172,66 @@ const commentsHandlers = [
       };
 
       comments.push(newComment);
-
       return HttpResponse.json(newComment, { status: 201 });
     } catch (error) {
       return HttpResponse.json(
-        { message: "잘못된 요청입니다." + error },
+        { message: `잘못된 요청입니다. ${String(error)}` },
         { status: 400 }
       );
     }
   }),
 
-  // http.update("api/pr_id/comments/:commentId", () => {}),
+  http.post(
+    "*/pr/:repoId/:prId/reply/:discussionId",
+    async ({ params, request }) => {
+      try {
+        const { repoId, prId, discussionId } = params;
+        const body = (await request.json()) as ReplyBody;
+        const { content, replyType } = body;
+
+        if (!content.trim()) {
+          return HttpResponse.json(
+            { message: "내용을 입력해주세요." },
+            { status: 400 }
+          );
+        }
+
+        const comment = comments.find(
+          (req) =>
+            req.repoId === Number(repoId) &&
+            req.prId === Number(prId) &&
+            req.disId === discussionId
+        );
+
+        if (!comment) {
+          return HttpResponse.json(
+            { message: "해당하는 댓글을 찾을 수 없습니다." },
+            { status: 404 }
+          );
+        }
+
+        const newReply: Reply = {
+          reCommentId: comment.replyList.length + 1,
+          userId: 1,
+          userName: "테스트 유저",
+          avatarUrl: null,
+          disId: String(discussionId),
+          content,
+          replyType,
+          imageName: null,
+          createAt: new Date().toISOString(),
+        };
+
+        comment.replyList.push(newReply);
+        return HttpResponse.json(newReply, { status: 201 });
+      } catch (error) {
+        return HttpResponse.json(
+          { message: `잘못된 요청입니다. ${String(error)}` },
+          { status: 400 }
+        );
+      }
+    }
+  ),
 ];
 
 export default commentsHandlers;
