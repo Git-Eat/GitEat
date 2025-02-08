@@ -12,7 +12,6 @@ export const prFiles = [
     sourceBranch: "FE/feature/MarkDownEditor",
   },
 ];
-
 export const file = {
   fileName: "index.tsx",
   oldCode:
@@ -30,7 +29,7 @@ export const file = {
         disId: "1",
         content:
           "# 제목 예시입니다.\n\n## 제목 예시입니다.\n\n### 제목 예시입니다.\n\n#### 제목 예시입니다.\n\n##### 제목 예시입니다.\n\n###### 제목 예시입니다.\n\n본문 예시입니다.",
-        commenType: 1,
+        commentType: 1,
         imageName: null,
         createAt: "2025-01-27T12:00:00Z",
         replyList: [
@@ -87,7 +86,7 @@ export const file = {
         disId: "1",
         content:
           "# 제목 예시입니다.\n\n## 제목 예시입니다.\n\n### 제목 예시입니다.\n\n#### 제목 예시입니다.\n\n##### 제목 예시입니다.\n\n###### 제목 예시입니다.\n\n본문 예시입니다.",
-        commenType: 1,
+        commentType: 1,
         imageName: null,
         createAt: "2025-01-27T12:00:00Z",
         replyList: [
@@ -143,7 +142,7 @@ export const file = {
         disId: "1",
         content:
           "# 제목 예시입니다.\n\n## 제목 예시입니다.\n\n### 제목 예시입니다.\n\n#### 제목 예시입니다.\n\n##### 제목 예시입니다.\n\n###### 제목 예시입니다.\n\n본문 예시입니다.",
-        commenType: 1,
+        commentType: 1,
         imageName: null,
         createAt: "2025-01-27T12:00:00Z",
         replyList: [

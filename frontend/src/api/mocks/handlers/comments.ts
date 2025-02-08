@@ -140,10 +140,10 @@ const commentsHandlers = [
       { status: 200 }
     );
   }),
-  http.post(`${API_BASE}/pr/:repoId/uploads`, async () => {
-    // 3초(3000ms) 지연
-    return HttpResponse.json(UPLOAD_MOCK);
-  }),
+  // http.post(`${API_BASE}/pr/:repoId/uploads`, async () => {
+  //   // 3초(3000ms) 지연
+  //   return HttpResponse.json(UPLOAD_MOCK);
+  // }),
   // http.post("api/pr_id/comments/:commentId", () => {}),
   // http.update("api/pr_id/comments/:commentId", () => {}),
 ];
