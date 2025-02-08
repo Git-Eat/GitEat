@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import MDEditor from "@uiw/react-md-editor";
+import { useFileUpload } from "../../../../hooks/useFileUpload"; // 경로는 실제 위치에 맞게 조정
+import { useParams } from "react-router-dom";
 
 interface FileMarkdownEditorProps {
   addReview: (value: string) => void;
@@ -16,29 +18,41 @@ export function FileMarkDownEditor({
   startLine,
   endLine,
 }: FileMarkdownEditorProps) {
-  const [comment, setComment] = useState<string>();
   const [category, setCategory] = useState<"comment" | "suggest" | "review">(
     "comment"
   );
+
+  // 커스텀 훅을 사용하여 파일 업로드 로직과 comment 상태를 관리합니다.
+  const { baseRepoId } = useParams();
+  const { comment, setComment, handleFileDrop, handleDragOver } = useFileUpload(
+    Number(baseRepoId)
+  );
+
   function handleCategory(event: React.ChangeEvent<HTMLSelectElement>) {
     setCategory(event.target.value as "comment" | "suggest" | "review");
   }
-  // 추후 에러 핸들링 toast로 구현
+
   const handleSubmitComment = () => {
-    if (!comment?.trim()) return alert("내용을 입력해주세요");
+    if (!comment.trim()) return alert("내용을 입력해주세요");
     submitComment(comment);
   };
+
   const handleAddReview = () => {
-    if (!comment?.trim()) return alert("내용을 입력해주세요");
+    if (!comment.trim()) return alert("내용을 입력해주세요");
     addReview(comment);
   };
+
   return (
-    <div className="bg-white rounded-xl box-sizing border">
-      <div className="flex gap-[10px] items-center">
+    <div
+      className="bg-white rounded-xl box-sizing border p-3"
+      onDrop={handleFileDrop}
+      onDragOver={handleDragOver}
+    >
+      <div className="flex gap-[10px] items-center mb-1">
         <select
           onChange={handleCategory}
           value={category}
-          className="border border-gray-300 mb-1 p-1 rounded-md"
+          className="border border-gray-300 p-1 rounded-md"
         >
           <option value="comment">comment</option>
           <option value="suggest">suggest</option>
@@ -51,7 +65,7 @@ export function FileMarkDownEditor({
 
       <MDEditor
         value={comment}
-        onChange={(val) => setComment(val)}
+        onChange={(val) => setComment(val || "")}
         preview="edit"
       />
 
