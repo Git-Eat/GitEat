@@ -13,7 +13,6 @@ export function Loading() {
   const handleAuthentication = () => {
     const code = extractCodeFromUrl();
     if (code) {
-      alert("loading 컴포넌트에서 시작");
       login(code);
     } else {
       navigation("/error");
