@@ -106,6 +106,8 @@ public class ApiUtil {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
+        String fullURL = restURL + url;
+
         // MultipartFile을 HttpEntity로 변환
         MultipartBodyBuilder builder = new MultipartBodyBuilder();
         builder.part("file", file.getResource());
@@ -113,6 +115,6 @@ public class ApiUtil {
         HttpEntity<?> entity = new HttpEntity<>(builder.build(), headers);
 
         // 외부 API 호출
-        return restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
+        return restTemplate.exchange(fullURL, HttpMethod.POST, entity, Map.class);
     }
 }
