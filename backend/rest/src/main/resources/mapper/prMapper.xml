@@ -37,7 +37,7 @@
         </association>
 
         <!-- 대댓글 리스트 (ReplyShowDto 매핑) -->
-        <collection property="replyList" ofType="replyShowDto">
+        <collection property="reCommentList" ofType="replyShowDto">
             <id property="reCommentId" column="re_comment_id"/>
             <result property="userId" column="reply_user_id"/>
             <result property="userName" column="reply_user_name"/>
@@ -122,16 +122,15 @@
 
     <!-- 댓글 등록 -->
     <insert id="insertComment" parameterType="commentDto">
-        INSERT INTO comment (pr_id, content, comment_type, depth, created_at)
-        VALUES (#{prId}, #{content}, #{commentType}, #{depth}, NOW())
+        INSERT INTO comment (pr_id, content, comment_type, created_at)
+        VALUES (#{prId}, #{content}, #{commentType}, NOW())
     </insert>
 
     <!-- 댓글 수정 -->
     <update id="updateComment" parameterType="commentDto">
         UPDATE comment
         SET content = #{content},
-            comment_type = #{commentType},
-            depth = #{depth}
+            comment_type = #{commentType}
         WHERE comment_id = #{commentId}
     </update>
 

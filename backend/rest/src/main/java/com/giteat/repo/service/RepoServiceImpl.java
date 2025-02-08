@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service("RepoServiceImpl")
 @RequiredArgsConstructor
@@ -22,6 +23,7 @@ public class RepoServiceImpl implements RepoService{
     private final FileChangeRepository fileChangeRepository;
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
+    private final UsersRepository usersRepository;
     private final LabApi gitLabApi;
 
     @Override
@@ -47,9 +49,45 @@ public class RepoServiceImpl implements RepoService{
     }
 
     @Override
-    public int saveRepositoryData(String accessToken , String projectId){
+    public RepositoryEntity saveRepositoryData(String accessToken , String projectId){
         accessToken = "UATEgVcVTSsLn7PWao6c";
+        System.out.println(projectId);
         int repoId = Integer.parseInt(projectId);
+        System.out.println(repoId);
+
+        // ---------- members 정보 가져오기 ------------ //
+        UsersEntity user = new UsersEntity();
+        List<Map<String,Object>> membersResponse = gitLabApi.getMembers(projectId, accessToken);
+        for(Map<String, Object> member : membersResponse){
+            int memberId = (int) member.get("id");  // GitLab 멤버 ID
+            String email = (String) member.get("email");  // GitLab 이메일
+            String name = (String) member.get("name");  // GitLab 한글 이름
+            String userName = (String) member.get("username"); // 사용자 이름
+            String avatarUrl = (String) member.get("avatar_url");  // GitLab 프로필 사진
+
+            // 1. users 테이블에서 user_id가 존재하는지 확인
+            Optional<UsersEntity> optionalUser = usersRepository.findByUserId(memberId);
+
+            if (optionalUser.isPresent()) {
+                // 2. 이미 존재하면 정보 업데이트
+                UsersEntity existingUser = optionalUser.get();
+                existingUser.setEmail(email);
+                existingUser.setName(name);
+                existingUser.setUserName(userName);
+                existingUser.setAvatarUrl(avatarUrl);
+                usersRepository.save(existingUser); // 업데이트
+            } else {
+                // 3. 존재하지 않으면 새로운 사용자 저장
+                UsersEntity newUser = new UsersEntity();
+                newUser.setUserId(memberId);
+                newUser.setEmail(email);
+                newUser.setName(name);
+                newUser.setUserName(userName);
+                newUser.setAvatarUrl(avatarUrl);
+                usersRepository.save(newUser); // 신규 저장
+            }
+        }
+
 
         // ---------- repo 정보부터 가져오기 ----------- //
         RepositoryEntity repository = new RepositoryEntity();
@@ -58,137 +96,159 @@ public class RepoServiceImpl implements RepoService{
         repository.setName((String) repositoryResponse.get("name"));
         repository.setDescription((String) repositoryResponse.get("description"));
         repository.setGitlabUrl((String) repositoryResponse.get("web_url"));
-        repository.setCreateAt((LocalDateTime) repositoryResponse.get("created_at"));
+        repository.setCreateAt((String) repositoryResponse.get("created_at"));
+        // mr 소유자 정보 가져와야함
         repoRepository.save(repository);
         
         // ---------- MR 정보 가져오기 ---------- //
-        Map<String, Object> newMrResponse = gitLabApi.getMergeRequests(projectId, accessToken); // 가장 최상단 MR 번호 가져오기
-        if(newMrResponse.isEmpty()) return 1; // MR 없으면 아래 다 건너뛰어
+        List<Map<String, Object>> newMrResponse = gitLabApi.getMergeRequests(projectId, accessToken);
+        if(newMrResponse.isEmpty()) {return repository;} // MR 없으면 아래 다 건너뛰어
 
-        Integer newMR = (Integer) newMrResponse.get("iid");
-        for(int iid = 1; iid <= newMR; iid++){
-            Map<String, Object> mrResponse = gitLabApi.getMergeRequestsById(projectId,iid,accessToken);
-            Map<String, Object> diffRefsMap = (Map<String, Object>) mrResponse.get("diff_refs");
-            MergeRequestEntity mr = new MergeRequestEntity();
-            mr.setPrId((Integer) mrResponse.get("iid"));
-            mr.setRepoId(Integer.parseInt(projectId));
-            mr.setTitle((String) mrResponse.get("title"));
-            mr.setDescription((String) mrResponse.get("description"));
-            mr.setCreateAt((String) mrResponse.get("created_at"));
-            mr.setIsOpened("opened".equals(mrResponse.get("state")) ? 1 : 0); // 나중에 수정해야될수도
-            mr.setSourceBranch((String) mrResponse.get("source_branch"));
-            mr.setTargetBranch((String) mrResponse.get("target_branch"));
-            mr.setBaseSha((String) diffRefsMap.get("base_sha"));
-            mr.setHeadSha((String) diffRefsMap.get("head_sha"));
-            mr.setStartSha((String) diffRefsMap.get("start_sha"));
-            //userId 어떻게 해야함 ?
-            mergeRequestRepository.save(mr);
+        int newMR = (int) newMrResponse.get(0).get("iid"); // 최상단 MR 번호
+        int pageNation = Math.max(1, newMR / 100); //100으로 나눈 몫 저장 (이 기준으로 pageNation 요청할거임)
 
-            // ---------- Commit 정보 가져오기 ---------- //
-            List<Map<String, Object>> CommitList = gitLabApi.getCommits(projectId,iid, accessToken);
-            for(Map<String, Object> commitResponse : CommitList){
-                CommitEntity commitEntity = new CommitEntity();
-                commitEntity.setRepositoryId((Integer) repositoryResponse.get("id"));
-                commitEntity.setPrId((Integer) mrResponse.get("iid"));
-                commitEntity.setCommitId((String) commitResponse.get("id"));
-                commitEntity.setContent((String) commitResponse.get("message"));
-                commitEntity.setCommitedAt((String) commitResponse.get("committed_date"));
-                commitRepository.save(commitEntity);
+        for(int page = 1; page <= pageNation; page++){
+            List<Map<String, Object>> mrResponseList = gitLabApi.getMergeRequestsByPageNation(projectId,page,accessToken);
+            for(Map<String, Object> mrResponse : mrResponseList){
+                Map<String, Object> author =  (Map<String, Object>) mrResponse.get("author");
+                MergeRequestEntity mr = new MergeRequestEntity();
+                mr.setPrId((Integer) mrResponse.get("iid"));
+                mr.setRepoId(Integer.parseInt(projectId));
+                mr.setTitle((String) mrResponse.get("title"));
+                mr.setDescription((String) mrResponse.get("description"));
+                mr.setCreateAt((String) mrResponse.get("created_at"));
+                mr.setIsOpened("opened".equals(mrResponse.get("state")) ? 1 : 0); // 나중에 수정해야될수도
+                mr.setSourceBranch((String) mrResponse.get("source_branch"));
+                mr.setTargetBranch((String) mrResponse.get("target_branch"));
+                mr.setUserId((int) author.get("id"));
+                mergeRequestRepository.save(mr);
 
-                // ---------- FileChange 가져오기 ---------- //
-                String commitId = (String) commitResponse.get("id");
-                List<Map<String, Object>> fileChangeList = gitLabApi.getFilesByCommit(projectId, commitId, accessToken);
+                // ---------- Commit 정보 가져오기 ---------- //
+                List<Map<String, Object>> CommitList = gitLabApi.getCommits(projectId,(Integer) mrResponse.get("iid"), accessToken);
+                for(Map<String, Object> commitResponse : CommitList){
+                    CommitEntity commitEntity = new CommitEntity();
+                    commitEntity.setRepositoryId((Integer) repositoryResponse.get("id"));
+                    commitEntity.setPrId((Integer) mrResponse.get("iid"));
+                    commitEntity.setCommitId((String) commitResponse.get("id"));
+                    commitEntity.setContent((String) commitResponse.get("message"));
+                    commitEntity.setCommitedAt((String) commitResponse.get("committed_date"));
 
-                for (Map<String, Object> fileChange : fileChangeList) {
-                    FileChangeEntity fileChangeEntity = new FileChangeEntity();
+                    commitRepository.save(commitEntity);
 
-                    fileChangeEntity.setFileId(SHA1Util.encryptSHA1((String) fileChange.get("new_path")));
-                    fileChangeEntity.setRepoId((int) repositoryResponse.get("id"));
-                    fileChangeEntity.setPrId((int) mrResponse.get("id"));
-                    fileChangeEntity.setCommitId(commitId);
+                    // ---------- FileChange 가져오기 ---------- //
+                    String commitId = (String) commitResponse.get("id");
+                    List<Map<String, Object>> fileChangeList = gitLabApi.getFilesByCommit(projectId, commitId, accessToken);
 
-                    String fileName = (String) fileChange.get("new_path");
-                    int slashIndex = ((String) fileChange.get("new_path")).lastIndexOf("/");
-                    if (slashIndex != -1) {
-                        fileChangeEntity.setFileName(fileName.substring(slashIndex + 1));
-                    } else {
-                        fileChangeEntity.setFileName((String) fileChange.get("new_path"));
+                    for (Map<String, Object> fileChange : fileChangeList) {
+                        FileChangeEntity fileChangeEntity = new FileChangeEntity();
+
+                        fileChangeEntity.setFileId(SHA1Util.encryptSHA1((String) fileChange.get("new_path")));
+                        fileChangeEntity.setRepoId((int) repositoryResponse.get("id"));
+                        fileChangeEntity.setPrId((int) mrResponse.get("iid"));
+                        fileChangeEntity.setCommitId(commitId);
+
+                        String fileName = (String) fileChange.get("new_path");
+                        int slashIndex = ((String) fileChange.get("new_path")).lastIndexOf("/");
+                        if (slashIndex != -1) {
+                            fileChangeEntity.setFileName(fileName.substring(slashIndex + 1));
+                        } else {
+                            fileChangeEntity.setFileName((String) fileChange.get("new_path"));
+                        }
+
+                        fileChangeEntity.setOldPath((String) fileChange.get("old_path"));
+                        fileChangeEntity.setNewPath((String) fileChange.get("new_path"));
+
+                        int fileStatus = 0;  // 기본값 설정
+                        System.out.println((boolean) fileChange.get("renamed_file"));
+
+                        //1. add , 2. update, 3. delete
+                        if ((boolean) fileChange.get("new_file")) {
+                            fileStatus = 1;
+                        } else if ((boolean) fileChange.get("renamed_file")) {
+                            fileStatus = 2;
+                        } else if ((boolean) fileChange.get("deleted_file")) {
+                            fileStatus = 3;
+                        } else if ((!(boolean) fileChange.get("new_file") && !(boolean) fileChange.get("renamed_file") && !(boolean) fileChange.get("deleted_file"))) {
+                            fileStatus = 2;
+                        }
+                        fileChangeEntity.setFileStatus(fileStatus);
+
+                        fileChangeRepository.save(fileChangeEntity);
+                    }
+                }
+
+                // ---------- Comment 가져오기 ---------- //
+                List<Map<String, Object>> CommentList = gitLabApi.getDiscussions(projectId, (Integer) mrResponse.get("iid"), accessToken);
+                for(Map<String, Object> commentResponse : CommentList){
+                    if((boolean) commentResponse.get("individual_note")) continue; // individual_note값이 false 일때만 DB에 저장
+
+                    List<Map<String, Object>> notes = (List<Map<String, Object>>) commentResponse.get("notes");
+
+                    // 첫번째 note는 Comment로 저장
+                    Map<String, Object> firstNote = notes.get(0);
+                    CommentEntity comment = new CommentEntity();
+                    Map<String, Object> commentAuthor = (Map<String, Object>) notes.get(0).get("author");
+
+                    comment.setCommentId((int) firstNote.get("id"));
+                    comment.setPrId((int) mrResponse.get("iid"));
+                    comment.setRepoId((int) repositoryResponse.get("id"));
+                    comment.setContent((String) firstNote.get("body"));
+                    comment.setCommentType(0); // type 알아본 후 재설정하기
+                    comment.setUserId((int) commentAuthor.get("id"));
+                    comment.setDisId((String) commentResponse.get("id"));
+                    comment.setCreateAt((String) firstNote.get("updated_at"));
+
+                    if(firstNote.get("position") != null){
+                        Map<String, Object> position = (Map<String, Object>) firstNote.get("position");
+                        if(position.get("new_line") !=null) comment.setNewLine((int) position.get("new_line"));
+                        if(position.get("old_line") !=null) comment.setOldLine((int) position.get("old_line"));
+
+                        Optional<MergeRequestEntity> optionalMr = mergeRequestRepository.findByPrId((Integer) mrResponse.get("iid"));
+
+                        if (optionalMr.isPresent()) {
+                            // MR 정보 업데이트
+                            MergeRequestEntity existingMr = optionalMr.get();
+                            existingMr.setBaseSha((String) position.get("base_sha"));
+                            existingMr.setHeadSha((String) position.get("head_sha"));
+                            existingMr.setStartSha((String) position.get("start_sha"));
+                            mergeRequestRepository.save(existingMr); // 업데이트
+                        }
+
+                        Map<String, Object> lineRange = (Map<String, Object>) position.get("line_range");
+                        if(lineRange != null){
+                            Map<String, Object> start = (Map<String, Object>) lineRange.get("start");
+                            Map<String, Object> end = (Map<String, Object>) lineRange.get("end");
+                            if(start.get("new_line") !=null)  comment.setNewStartLine((int) start.get("new_line"));
+                            if(end.get("new_line") !=null) comment.setNewEndLine((int) end.get("new_line"));
+                            if(start.get("old_line") !=null) comment.setOldStartLine((int) start.get("old_line"));
+                            if(end.get("old_line") !=null) comment.setOldEndLine((int) end.get("old_line"));
+                        }
+                    }
+                    commentRepository.save(comment);
+
+                    // ---------- Reply 가져오기 ---------- //
+                    // 2번째 note부터는 ReplyEntity로 저장
+                    for (int i = 1; i < notes.size(); i++) {
+                        Map<String, Object> note = notes.get(i);
+                        Map<String, Object> replyAuthor = (Map<String, Object>) notes.get(i).get("author");
+                        ReplyEntity reply = new ReplyEntity();
+                        reply.setRepoId((int) repositoryResponse.get("id"));
+                        reply.setPrId((int) mrResponse.get("iid"));
+                        reply.setCommentId((int) firstNote.get("id")); // 첫 번째 note의 commentId 저장
+                        reply.setReCommentId((int) note.get("id"));
+                        reply.setUserId((int) replyAuthor.get("id"));
+                        reply.setDisId((String) commentResponse.get("id"));
+                        reply.setContent((String) note.get("body"));
+                        reply.setReplyType(0);
+                        reply.setCreateAt((String) note.get("updated_at"));
+                        replyRepository.save(reply);
                     }
 
-                    fileChangeEntity.setOldPath((String) fileChange.get("old_path"));
-                    fileChangeEntity.setNewPath((String) fileChange.get("new_path"));
-
-                    int fileStatus = 0;  // 기본값 설정
-                    System.out.println((boolean) fileChange.get("renamed_file"));
-
-                    //1. add , 2. update, 3. delete
-                    if ((boolean) fileChange.get("new_file")) {
-                        fileStatus = 1;
-                    } else if ((boolean) fileChange.get("renamed_file")) {
-                        fileStatus = 2;
-                    } else if ((boolean) fileChange.get("deleted_file")) {
-                        fileStatus = 3;
-                    } else if ((!(boolean) fileChange.get("new_file") && !(boolean) fileChange.get("renamed_file") && !(boolean) fileChange.get("deleted_file"))) {
-                        fileStatus = 2;
-                    }
-                    fileChangeEntity.setFileStatus(fileStatus);
-
-                    fileChangeRepository.save(fileChangeEntity);
-                }
-            }
-
-            // ---------- Comment 가져오기 ---------- //
-            List<Map<String, Object>> CommentList = gitLabApi.getDiscussions(projectId, iid, accessToken);
-            for(Map<String, Object> commentResponse : CommentList){
-                if(!(boolean) commentResponse.get("individual_note")) continue; // individual_note값이 true일때만 DB에 저장
-
-                List<Map<String, Object>> notes = (List<Map<String, Object>>) commentResponse.get("notes");
-
-                // 첫번째 note는 Comment로 저장
-                Map<String, Object> firstNote = notes.get(0);
-                CommentEntity comment = new CommentEntity();
-                comment.setCommentId((int) firstNote.get("id"));
-                comment.setPrId((int) mrResponse.get("id"));
-                comment.setRepoId((int) repositoryResponse.get("id"));
-                comment.setContent((String) firstNote.get("body"));
-                comment.setCommentType(0); // type 알아본 후 재설정하기
-                // comment.setUserId();
-                comment.setDisId((String) commentResponse.get("id"));
-                comment.setCreateAt((String) firstNote.get("updated_at"));
-
-                if(firstNote.get("position") != null){
-                    Map<String, Object> position = (Map<String, Object>) firstNote.get("position");
-                    comment.setNewLine((int) position.get("new_line"));
-                    comment.setOldLine((int) position.get("old_line"));
-                    Map<Map<String, Object>, Object> lineRange = (Map<Map<String, Object>, Object>) position.get("line_range");
-                    Map<String, Object> start = (Map<String, Object>) lineRange.get("start");
-                    Map<String, Object> end = (Map<String, Object>) lineRange.get("end");
-                    comment.setNewStartLine((int) start.get("new_line"));
-                    comment.setNewEndLine((int) end.get("new_line"));
-                    comment.setOldStartLine((int) start.get("old_line"));
-                    comment.setOldEndLine((int) end.get("old_line"));
-                }
-                commentRepository.save(comment);
-
-                // ---------- Reply 가져오기 ---------- //
-                // 2번째 note부터는 ReplyEntity로 저장
-                for (int i = 1; i < notes.size(); i++) {
-                    Map<String, Object> note = notes.get(i);
-                    ReplyEntity reply = new ReplyEntity();
-                    reply.setRepoId((int) repositoryResponse.get("id"));
-                    reply.setPrId((int) mrResponse.get("id"));
-                    reply.setCommentId((int) firstNote.get("id")); // 첫 번째 note의 commentId 저장
-                    reply.setReCommentId((int) note.get("id"));
-                    // reply.setUserId();
-                    reply.setDisId((String) commentResponse.get("id"));
-                    reply.setContent((String) note.get("body"));
-                    reply.setReplyType(0);
-                    reply.setCreateAt((Date) note.get("updated_at"));
-                    replyRepository.save(reply);
                 }
 
             }
+
         }
-        return 1;
+        return repository;
     }
 }

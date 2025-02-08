@@ -18,5 +18,5 @@ public class ReplyShowDto {
     private String content;
     private int replyType;
     private String imageName;
-    private LocalDateTime createAt;
+    private String createAt;
 }

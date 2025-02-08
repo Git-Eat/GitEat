@@ -18,5 +18,5 @@ public class ReplyDto {
     private String disId;
     private String content;
     private int replyType;
-    private LocalDateTime createAt;
+    private String createAt;
 }
