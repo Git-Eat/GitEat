@@ -8,7 +8,7 @@ export const useGetPullRequest = (repoId: number, prId: number) => {
     {
       staleTime: 1000 * 60 * 5,
       useErrorBoundary: true,
-      // suspense: true,
+      suspense: true,
     }
   );
 };
