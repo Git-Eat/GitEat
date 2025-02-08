@@ -19,10 +19,6 @@ public class RepositoryEntity {
     @Column(name="repo_id")
     private int repoId;
 
-    @Column(name="user_id")
-    private int userId;
-    // private String userName;
-
     @Column(name="name")
     private String name;
 
@@ -38,4 +34,9 @@ public class RepositoryEntity {
     @Column(name="create_at")
     private String createAt;
 
+    @Column(name="owner_name")
+    private String ownerName;
+
+    @Column(name ="access")
+    private int access;
 }

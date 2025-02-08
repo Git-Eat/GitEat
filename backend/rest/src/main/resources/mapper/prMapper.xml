@@ -58,10 +58,15 @@
             title AS title,
             description AS description,
             user_id AS userId,
+            user_name AS userName,
+            user_profile AS userProfile,
             create_at AS createAt,
-            is_opened AS isOpened,
             source_branch AS sourceBranch,
-            target_branch AS targetBranch
+            target_branch AS targetBranch,
+            is_opened AS isOpened,
+            base_sha AS baseSha,
+            head_sha AS headSha,
+            start_sha AS startSha
         FROM pr
         WHERE repo_id = #{repoId}
     </select>
@@ -74,10 +79,15 @@
             title AS title,
             description AS description,
             user_id AS userId,
+            user_name AS userName,
+            user_profile AS userProfile,
             create_at AS createAt,
-            is_opened AS isOpened,
             source_branch AS sourceBranch,
-            target_branch AS targetBranch
+            target_branch AS targetBranch,
+            is_opened AS isOpened,
+            base_sha AS baseSha,
+            head_sha AS headSha,
+            start_sha AS startSha
         FROM pr
         WHERE repo_id = #{repoId} AND pr_id = #{prId}
     </select>
@@ -210,6 +220,5 @@
         FROM comment_view cv
         WHERE cv.repo_id = #{repoId} AND cv.pr_id = #{prId}
     </select>
-
 
 </mapper>
