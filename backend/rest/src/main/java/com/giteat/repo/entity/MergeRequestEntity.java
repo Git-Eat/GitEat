@@ -20,7 +20,6 @@ public class MergeRequestEntity {
 
     private String title;
 
-    @Lob
     @Column(columnDefinition = "LONGTEXT")
     private  String description;
 

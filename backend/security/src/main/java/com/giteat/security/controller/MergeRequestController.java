@@ -7,6 +7,7 @@ import com.giteat.security.util.TypeUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -93,22 +95,29 @@ public class MergeRequestController {
     }
 
     @PostMapping("/{repoId}/uploads")
-    @Operation(summary="파일 업로드", description = "외부 API를 호출하여 파일 업로드 하면 markdown을 return합니다")
-    public ResponseEntity<?> uploadsFile (@PathVariable String repoId,
-                                         @RequestParam(value = "file", required = false) MultipartFile file){
-        ResponseEntity<?> response = apiUtil.postApi("/pr/" + repoId + "/uploads", file);
-        if (response.getBody() instanceof Map) {
-            Map<String, Object> responseBody = (Map<String, Object>) response.getBody();
-            try{
-                String json = new ObjectMapper().writeValueAsString(responseBody);
-                return ResponseEntity.ok().
-                        contentType(MediaType.APPLICATION_JSON).
-                        body(json);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+    @Operation(summary = "파일 업로드", description = "파일 업로드 하면 markdown을 return합니다")
+    public ResponseEntity<?> uploadsFile(@PathVariable String repoId,
+                                         @RequestParam(value = "file", required = false) MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            return ResponseEntity.badRequest().body("No file provided.");
         }
-        return ResponseEntity.badRequest().body("404");
+        try {
+            // 외부 API 호출: 파일을 Multipart로 그대로 전달
+            ResponseEntity<?> response = apiUtil.postApiWithFile("/pr/" + repoId + "/uploads", file);
+
+            if (response.getBody() instanceof Map) {
+                Map<String, Object> responseBody = (Map<String, Object>) response.getBody();
+                String json = new ObjectMapper().writeValueAsString(responseBody);
+                return ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(json);
+            }
+
+            return ResponseEntity.badRequest().body("404");
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error processing file: " + e.getMessage());
+        }
     }
 
     @PostMapping("/{repoId}/{prId}/file/comment")
