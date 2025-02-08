@@ -6,4 +6,5 @@ export type Repository = {
   githubUrl: string;
   gitlabUrl: string;
   createAt: number[];
+  access: number;
 };

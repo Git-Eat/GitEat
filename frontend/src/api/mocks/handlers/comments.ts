@@ -75,6 +75,13 @@ const comments = [
     replyList: [],
   },
 ];
+const UPLOAD_MOCK = {
+  markdown:
+    "![스크린샷_2025-02-08_23.22.32](/uploads/650b18528a659ce5b887167ada2ec2b9/스크린샷_2025-02-08_23.22.32.png)",
+  full_path:
+    "/-/project/888788/uploads/650b18528a659ce5b887167ada2ec2b9/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2025-02-08_23.22.32.png",
+};
+
 const API_BASE = import.meta.env.VITE_API_BASE;
 const commentsHandlers = [
   http.get(API_BASE + `/pr/:repoId/:prId/comment`, (req) => {
@@ -133,6 +140,10 @@ const commentsHandlers = [
       { status: 200 }
     );
   }),
+  // http.post(`${API_BASE}/pr/:repoId/uploads`, async () => {
+  //   // 3초(3000ms) 지연
+  //   return HttpResponse.json(UPLOAD_MOCK);
+  // }),
   // http.post("api/pr_id/comments/:commentId", () => {}),
   // http.update("api/pr_id/comments/:commentId", () => {}),
 ];

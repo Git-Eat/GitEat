@@ -1,13 +1,58 @@
-import { Suspense } from "react";
+import branchOpen from "../../assets/images/branch_open.svg";
+import branchClose from "../../assets/images/branch_close.svg";
+import branchMerge from "../../assets/images/branch_merge.svg";
+import { Suspense, useMemo } from "react";
 import { useGetPullRequests } from "../../api/queries/useGetPullRequests";
 import book from "../../assets/images/image.png";
 import { PullRequestCard } from "../../components/pullRequestList/pullRequestCard";
 import { ErrorBoundary } from "../../components/common/errorBoundery";
+import { useParams } from "react-router-dom";
+
+const BRANCH_STATE_IMAGE = [branchOpen, branchMerge, branchClose];
 
 function PullRequests() {
-  const { data } = useGetPullRequests(1);
+  const { repoId } = useParams();
+  const { data } = useGetPullRequests(Number(repoId));
+  const { totalOpen, totalClosed, totalMerged } = useMemo(() => {
+    let open = 0;
+    let closed = 0;
+    let merged = 0;
+    data?.forEach((pr) => {
+      if (pr.isOpened === 0) {
+        open++;
+      } else if (pr.isOpened === 1) {
+        merged++;
+      } else if (pr.isOpened === 3) {
+        closed++;
+      }
+    });
+    return { totalOpen: open, totalClosed: closed, totalMerged: merged };
+  }, [data]);
   return (
     <>
+      <div className=" bg-white rounded-xl p-7 flex gap-2 hover:bg-gray-200 cursor-pointer">
+        <div className="flex items-center gap-2">
+          <img src={BRANCH_STATE_IMAGE[0]} alt="open" />
+          <div className="flex gap-1">
+            <span>{totalOpen}</span>
+            <span>Open</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <img src={BRANCH_STATE_IMAGE[1]} alt="merge" />
+          <div className="flex gap-1">
+            <span>{totalMerged}</span>
+            <span>Merge</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-1">
+          <img src={BRANCH_STATE_IMAGE[2]} alt="close" />
+          <div className="flex gap-1">
+            <span>{totalClosed}</span>
+            <span>Close</span>
+          </div>
+        </div>
+      </div>
       {data?.map((pr) => (
         <PullRequestCard
           key={pr.prId}
@@ -16,6 +61,7 @@ function PullRequests() {
           description={pr.description}
           createAt={pr.createAt}
           isOpened={pr.isOpened}
+          userName={pr.userName}
         />
       ))}
     </>

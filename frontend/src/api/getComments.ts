@@ -1,10 +1,29 @@
-import client from "./client";
+import authClient from "./authClient";
+import { UploadedFile } from "./types/UploadedFile";
 
-export async function getComments() {
+export async function getComments(repoId: number, prId: number) {
   try {
-    const response = await client.get("/pr/repoId/prId/comment");
+    const response = await authClient.get(`/pr/${repoId}/${prId}/comment`);
     return response.data;
-  } catch (error) {
-    throw new Error("댓글 가져오기 실패했습니다." + error);
+  } catch (e: unknown) {
+    if (e instanceof Error) throw new Error(e.message);
+    else throw new Error("unknown Error");
   }
 }
+
+export const uploadFile = async (
+  repoId: number,
+  imageForm: FormData
+): Promise<UploadedFile> => {
+  try {
+    const response = await authClient.post(`/pr/${repoId}/uploads`, imageForm, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (e: unknown) {
+    if (e instanceof Error) throw new Error(e.message);
+    else throw new Error("unknown Error");
+  }
+};

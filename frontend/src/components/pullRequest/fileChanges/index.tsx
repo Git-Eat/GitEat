@@ -19,7 +19,7 @@ import { prFiles } from "./dummy";
 export function FileChanges() {
   return (
     <div className="flex gap-[35px] justify-between mt-[30px]">
-      <div className="w-1/5 max-w-56 bg-white p-[15px] min-h-[calc(100vh-300px)] max-h-[calc(100vh-300px)] rounded-xl">
+      <div className="w-1/5 max-w-56 bg-white p-[15px] min-h-[calc(100vh-300px)] h-fit rounded-xl">
         <FileTree />
       </div>
       <div className="w-fit">

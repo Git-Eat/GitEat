@@ -7,7 +7,7 @@ import review from "../../../../assets/images/review.svg";
 import { Reviewer } from "../../../../api/types/Reviewer";
 
 export function Reviewers() {
-  const { data } = useGetReviewer();
+  const { data = [] } = useGetReviewer(888788, 32);
   const commentTypeImages = {
     1: { src: suggest, alt: "suggest" },
     2: { src: comment, alt: "comment" },

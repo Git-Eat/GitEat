@@ -5,17 +5,18 @@ import RepositoryAddModal from "../../components/repositoryList/repositoryAddMod
 import { useGetRepositories } from "../../api/queries/useGetRepositories";
 import { Suspense } from "react";
 import { ErrorBoundary } from "../../components/common/errorBoundery";
-
+const ACCESS_GRANT = ["private", "public", "internal"];
 function Repositories() {
   const { data } = useGetRepositories();
   return (
     <>
-      {data?.map((repo, idx) => (
+      {data?.map((repo) => (
         <RepositoryCard
-          key={idx}
-          user={"USER"}
+          key={repo.repoId}
+          user={`${repo.userId}`}
           title={repo.name}
-          access={"private"}
+          repoId={repo.repoId}
+          access={ACCESS_GRANT[repo.access - 1]}
           description={repo.description}
         />
       ))}

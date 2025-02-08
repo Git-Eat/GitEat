@@ -10,7 +10,7 @@ import { Replies } from "../replies";
 import defaultprofile from "../../../../assets/images/user_profile.svg";
 
 export function Comments() {
-  const { data } = useGetComments();
+  const { data } = useGetComments(888788, 32);
   const [isReplyEditorOpen, setIsReplyEditorOpen] = useState<
     Record<number, boolean>
   >({});

@@ -1,26 +1,29 @@
 import { Box } from "@mui/material";
 import { SimpleTreeView, TreeItem } from "@mui/x-tree-view";
-
+import { Node, getFileTree } from "../../../../utils/getTreeStructure";
+const files = [
+  "src/components/Button.tsx",
+  "src/components/Input.tsx",
+  "src/utils/helpers.ts",
+  "src/index.tsx",
+  "public/index.html",
+];
+const renderTree = (node: Node, parentId: string = "") => {
+  return Array.from(node.next.values()).map((child) => (
+    <TreeItem
+      key={parentId + child.file}
+      itemId={parentId + child.file}
+      label={child.file!}
+    >
+      {renderTree(child, parentId + child.file + "/")}
+    </TreeItem>
+  ));
+};
 export function FileTree() {
+  const fileTree = getFileTree(files);
   return (
     <Box>
-      <SimpleTreeView>
-        <TreeItem itemId="grid" label="Data Grid">
-          <TreeItem itemId="grid-community" label="@mui/x-data-grid" />
-          <TreeItem itemId="grid-pro" label="@mui/x-data-grid-pro" />
-          <TreeItem itemId="grid-premium" label="@mui/x-data-grid-premium" />
-        </TreeItem>
-        <TreeItem itemId="pickers" label="Date and Time Pickers">
-          <TreeItem itemId="pickers-community" label="@mui/x-date-pickers" />
-          <TreeItem itemId="pickers-pro" label="@mui/x-date-pickers-pro" />
-        </TreeItem>
-        <TreeItem itemId="charts" label="Charts">
-          <TreeItem itemId="charts-community" label="@mui/x-charts" />
-        </TreeItem>
-        <TreeItem itemId="tree-view" label="Tree View">
-          <TreeItem itemId="tree-view-community" label="@mui/x-tree-view" />
-        </TreeItem>
-      </SimpleTreeView>
+      <SimpleTreeView>{renderTree(fileTree)}</SimpleTreeView>
     </Box>
   );
 }
