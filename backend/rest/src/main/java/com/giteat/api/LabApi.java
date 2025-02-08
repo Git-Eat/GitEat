@@ -6,8 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.giteat.common.util.GitLabTokenService;
 import com.giteat.pr.dto.FileCommentDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -16,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Component
@@ -29,6 +32,13 @@ public class LabApi {
         this.gitLabTokenService = gitLabTokenService;
         this.objectMapper = objectMapper;
     }
+
+    @Value("${gpt.api.url}")
+    private String gptApiUrl; // GPT API URL을 설정 파일에서 주입받음
+
+    @Value("${gpt.api.key}")
+    private String apiKey; // API 키를 설정 파일에서 주입받음
+
 
     /**
      * 최근 정보를 가져오는 함수
@@ -128,16 +138,21 @@ public class LabApi {
         return fileData;
     }
 
+    public List<Map<String ,Object>> getMembers(String projectId, String accessToken){
+        String url = gitlabApiUrl + "/projects/" + projectId + "/members";
+        return callGetApiList(url, accessToken);
+    }
+
     // 프로젝트의 Merge Requests 조회함수 (가장 최신 MR만 조회)
-    public Map<String, Object> getMergeRequests(String projectId , String accessToken) {
+    public List<Map<String, Object>> getMergeRequests(String projectId , String accessToken) {
         String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests?per_page=1&sort=desc";
-        return this.chaneTypeMap(testCallGetApi(url ,accessToken));
+        return callGetApiList(url ,accessToken);
     }
 
     // MR id를 기준으로 MR 정보를 조회하는 함수
-    public Map<String, Object> getMergeRequestsById(String projectId, int prId, String accessToken){
-        String url = gitlabApiUrl + "/projects/" + projectId +"/merge_requests/"+prId;
-        return this.chaneTypeMap(testCallGetApi(url, accessToken));
+    public List<Map<String, Object>> getMergeRequestsByPageNation(String projectId, int pageNation, String accessToken){
+        String url = gitlabApiUrl + "/projects/" + projectId +"/merge_requests/?page="+pageNation+"&per_page=100";
+        return callGetApiList(url, accessToken);
     }
 
     // 프로젝트 repository 정보 가져오는 함수
@@ -149,8 +164,7 @@ public class LabApi {
 
     //  프로젝트의 Commits 가져오기
     public List<Map<String, Object>> getCommits(String projectId, int mrId, String accessToken) {
-        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + mrId + "commits";
-        //String url = "http://192.168.31.237/api/v4" + "/projects/" + projectId + "/repository/commits";
+        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + mrId + "/commits";
         return callGetApiList(url, accessToken);
     }
 
@@ -398,5 +412,112 @@ public class LabApi {
         }
         return resultMap;
     }
+
+    ///////////////////////////////////////////////////////////////////////
+    @Value("${gpt.api.key}")
+    public String aiReview(String code) {
+        try {
+
+            System.out.println("postman에서 받은 질문: "+ code);
+            // HTTP 요청 헤더 설정
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("Authorization", "Bearer " + apiKey);
+            headers.setAcceptCharset(Collections.singletonList(StandardCharsets.UTF_8)); // UTF-8 인코딩 설정
+
+            // 요청 바디 설정
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put("model", "gpt-4");
+            List<Map<String, String>> messages = new ArrayList<>();
+
+            // GPT 역할 정의
+            messages.add(Map.of(
+                    "role",
+                    "system",
+                    "content",
+                    "You are a helpful assistant that provides information about programming. " +
+                            "Please respond in Korean and provide detailed, technical answers."
+            ));
+
+            // 사용자 질문 전달
+            messages.add(Map.of(
+                    "role", "user", "content", code));
+            requestBody.put("messages", messages);
+            requestBody.put("temperature", 0.5);
+
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+
+            // UTF-8로 응답을 처리하도록 설정
+            MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+            converter.setDefaultCharset(StandardCharsets.UTF_8);
+            restTemplate.getMessageConverters().add(0, converter);
+
+            // GPT API 호출
+            ResponseEntity<Map> response = restTemplate.exchange(gptApiUrl, HttpMethod.POST, entity, Map.class);
+
+            // 응답에서 실제 메시지 내용 추출
+            Map responseBody = response.getBody();
+            List<Map<String, Object>> choices = (List<Map<String, Object>>) responseBody.get("choices");
+            Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
+            String content = (String) message.get("content");
+
+            System.out.println("GPT응답: " + content);
+
+            return content;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return "GPT API 호출 실패";
+        }
+    }
+/// //////////////////////////////////////////////////////////////////////////////////////
+//    @Component
+//    public class GptApi {
+//        private static final Logger logger = LoggerFactory.getLogger(GptApi.class);
+//        private final RestTemplate restTemplate;
+//
+//        @Value("${gpt.api.key}")
+//        private String apiKey;
+//
+//        @Value("${gpt.api.url}")
+//        private String gptApiUrl;
+//
+//        public GptApi(RestTemplate restTemplate) {
+//            this.restTemplate = restTemplate;
+//        }
+//
+//        public String callGptApi(String systemPrompt, String userPrompt) {
+//            try {
+//                HttpHeaders headers = new HttpHeaders();
+//                headers.setContentType(MediaType.APPLICATION_JSON);
+//                headers.set("Authorization", "Bearer " + apiKey);
+//                headers.setAcceptCharset(Collections.singletonList(StandardCharsets.UTF_8));
+//
+//                Map<String, Object> requestBody = new HashMap<>();
+//                requestBody.put("model", "gpt-4");
+//
+//                List<Map<String, String>> messages = new ArrayList<>();
+//                messages.add(Map.of("role", "system", "content", systemPrompt));
+//                messages.add(Map.of("role", "user", "content", userPrompt));
+//
+//                requestBody.put("messages", messages);
+//                requestBody.put("temperature", 0.5);
+//
+//                HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+//
+//                ResponseEntity<Map> response = restTemplate.exchange(gptApiUrl, HttpMethod.POST, entity, Map.class);
+//
+//                return Optional.ofNullable(response.getBody())
+//                        .map(body -> (List<Map<String, Object>>) body.get("choices"))
+//                        .filter(choices -> !choices.isEmpty())
+//                        .map(choices -> (Map<String, Object>) choices.get(0).get("message"))
+//                        .map(message -> (String) message.get("content"))
+//                        .orElse("GPT 응답 처리 실패");
+//            } catch (Exception e) {
+//                logger.error("GPT API 호출 실패", e);
+//                throw new RuntimeException("GPT API 호출 실패: " + e.getMessage());
+//            }
+//        }
+//    }
 
 }

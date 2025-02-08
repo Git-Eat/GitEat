@@ -1,10 +1,12 @@
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { Header } from "../../components/common/header";
 import { Suspense } from "react";
 import { ErrorBoundary } from "../../components/common/errorBoundery";
+import { useLoginStore } from "../../store/loginStore";
 
 export function AuthLayout() {
-  return (
+  const { isLogin } = useLoginStore();
+  return isLogin ? (
     <div>
       <Header />
       <div className="flex justify-end">
@@ -17,5 +19,7 @@ export function AuthLayout() {
         </main>
       </div>
     </div>
+  ) : (
+    <Navigate to="/" replace />
   );
 }

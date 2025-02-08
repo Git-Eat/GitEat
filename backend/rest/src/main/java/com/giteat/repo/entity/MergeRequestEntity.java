@@ -1,11 +1,10 @@
 package com.giteat.repo.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "PR")
@@ -21,7 +20,12 @@ public class MergeRequestEntity {
 
     private String title;
 
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     private  String description;
+
+    @Column(name ="user_id")
+    private int userId;
 
     @Column(name = "create_at")
     private String createAt;

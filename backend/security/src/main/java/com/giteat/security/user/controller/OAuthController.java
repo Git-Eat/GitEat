@@ -4,6 +4,7 @@ import com.giteat.security.user.api.OAuthApi;
 import com.giteat.security.user.dto.OAuthTokenDto;
 import com.giteat.security.user.service.CustomOAuthService;
 import com.giteat.security.util.ApiUtil;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
@@ -37,17 +38,13 @@ public class OAuthController {
      * @return OAuth 토큰 정보
      */
     @PostMapping("/gitlab/login")
+    @Operation(summary = "사용자 로그인", description = "gitLab ouath2 로그인")
     public ResponseEntity<?> gitlabLogin(@RequestBody Map<String, String> body) {
-        System.out.println("클라이언트에서 받은 body값:" + body);
         String code = body.get("code");
-        System.out.println("code:" + code);
 
         OAuthTokenDto oAuthTokenDto = oauthService.gitlabLogin(code);
-        System.out.println("security dto: "+ oAuthTokenDto);
         ResponseEntity<?> testResponse = apiUtil.postApi("/oauth/gitlab", oAuthTokenDto);
-        System.out.println("@@@@@@@@@@찐막@@@@@ : " + testResponse.getBody());
-//        return apiUtil.postApi("/oauth/gitlab", oAuthTokenDto);
-        //return testResponse;
+
         return ResponseEntity.ok(testResponse.getBody());
     }
     /**
@@ -57,6 +54,7 @@ public class OAuthController {
      * @return 갱신된 토큰 정보
      */
     @PostMapping("/gitlab/refresh")
+    @Operation(summary = "access 재발급", description = "refresh토큰으로 access토큰을 재발급 받을때 사용")
     public ResponseEntity<?> gitlabRefresh(@RequestBody OAuthTokenDto tokenRequest){
        return apiUtil.postApi("/oauth/refresh", tokenRequest);
     }
@@ -69,21 +67,21 @@ public class OAuthController {
      * @return 로그아웃 처리 결과
      */
     @PostMapping("/gitlab/logout")
+    @Operation(summary = "사용자 로그아웃", description = "아마 안써도 될듯?")
     public ResponseEntity<?> logout(@RequestHeader("Authorization") String accessToken) {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * accessToken으로 사용자 정보를 가져오는 함수
+     * @param token
+     * @return
+     */
+    @GetMapping("/gitlab/userinfo")
+    @Operation(summary = "사용자 정보", description = "accessToken을 기반으로 사용자 정보를 가져옴")
+    public ResponseEntity<?> getMyInfo(@RequestHeader("Authorization") String token) {
+        String accessToken = token.split(" ")[1];
+        return ResponseEntity.ok().body(oauthService.getMyInfo(accessToken));
+    }
 
-//    /**
-//     * GitLab 계정 연동 해제
-//     * GitLab 계정과 애플리케이션의 연동을 완전히 해제
-//     *
-//     * @param oAuthTokenDto OAuth 토큰 정보를 담고 있는 DTO
-//     * @return 연동 해제 처리 결과
-//     */
-//    @PostMapping("/gitlab/revoke")
-//    public ResponseEntity<?> gitlabUnlink(@RequestBody OAuthTokenDto oAuthTokenDto){
-//
-//        return apiUtil.postFormApi("/oauth/revoke", oAuthTokenDto);
-//    }
 }

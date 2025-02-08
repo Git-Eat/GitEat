@@ -14,5 +14,5 @@ public class CommitDto {
     private int repoId;
     private int prId;
     private String content;
-    private LocalDateTime commitedAt;
+    private String commitedAt;
 }

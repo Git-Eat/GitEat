@@ -7,6 +7,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -40,5 +41,5 @@ public class ReplyEntity {
     private int replyType;
 
     @Column(name = "create_at")
-    private Date createAt;
+    private String createAt;
 }
