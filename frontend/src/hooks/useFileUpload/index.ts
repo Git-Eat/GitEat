@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { uploadFile } from "../../api/getComments";
 
-export function useFileUpload(repoId: number) {
-  const [comment, setComment] = useState<string>("");
+export function useFileUpload(
+  repoId: number,
+  setComment: (update: (prev: string) => string) => void
+) {
   const handleFileDrop = async (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     const files = event.dataTransfer.files;
@@ -24,5 +26,5 @@ export function useFileUpload(repoId: number) {
     event.preventDefault();
   };
 
-  return { comment, setComment, handleFileDrop, handleDragOver };
+  return { handleFileDrop, handleDragOver };
 }

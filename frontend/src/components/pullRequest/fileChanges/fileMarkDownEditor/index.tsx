@@ -21,11 +21,11 @@ export function FileMarkDownEditor({
   const [category, setCategory] = useState<"comment" | "suggest" | "review">(
     "comment"
   );
-
-  // 커스텀 훅을 사용하여 파일 업로드 로직과 comment 상태를 관리합니다.
+  const [comment, setComment] = useState("");
   const { baseRepoId } = useParams();
-  const { comment, setComment, handleFileDrop, handleDragOver } = useFileUpload(
-    Number(baseRepoId)
+  const { handleFileDrop, handleDragOver } = useFileUpload(
+    Number(baseRepoId),
+    setComment
   );
 
   function handleCategory(event: React.ChangeEvent<HTMLSelectElement>) {
