@@ -60,7 +60,7 @@ public class PrServiceImpl implements PrService{
         params.put("prId", prId);
         List<CommentDto> comments = prMapper.getCommentList(params);
         for(CommentDto comment : comments){
-            if(comment.getPosition().getNewLine()== null && comment.getPosition().getOldLine() ==null){
+            if(comment.getPosition().getNewLine()==0 && comment.getPosition().getOldLine() ==0){
                 comment.setPosition(null);
             }
         }

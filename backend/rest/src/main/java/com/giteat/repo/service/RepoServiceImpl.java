@@ -192,7 +192,7 @@ public class RepoServiceImpl implements RepoService{
                 // ---------- Comment 가져오기 ---------- //
                 List<Map<String, Object>> CommentList = gitLabApi.getDiscussions(projectId, (Integer) mrResponse.get("iid"), accessToken);
                 for(Map<String, Object> commentResponse : CommentList){
-                    if((boolean) commentResponse.get("individual_note")) continue; // individual_note값이 false 일때만 DB에 저장
+                    //if((boolean) commentResponse.get("individual_note")) continue; // individual_note값이 false 일때만 DB에 저장
 
                     List<Map<String, Object>> notes = (List<Map<String, Object>>) commentResponse.get("notes");
 
