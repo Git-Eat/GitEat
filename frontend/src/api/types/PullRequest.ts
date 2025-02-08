@@ -1,13 +1,18 @@
 export type PullRequest = {
+  baseSha: null | string;
+  createAt: string;
+  description: null | string;
+  headSha: null | string;
+  isOpened: 0 | 1 | 2 | 3;
   prId: number;
   repoId: number;
-  userId: number;
-  title: string;
-  description: string;
-  createAt: string;
-  isOpened: 0 | 1 | 2;
+  sourceBranch: string;
+  startSha: null | string;
   targetBranch: string;
-  sourceBranch: "develop";
+  title: string;
+  userId: number;
+  userName: string;
+  userProfile: string;
 };
 
 export type FileChange = {

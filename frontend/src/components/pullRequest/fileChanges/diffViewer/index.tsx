@@ -3,9 +3,22 @@ import { generateDiffFile } from "@git-diff-view/file";
 import "@git-diff-view/react/styles/diff-view.css";
 import { useMemo } from "react";
 import { FileMarkDownEditor } from "../fileMarkDownEditor";
+import { Reply } from "../../../../api/types/Reply";
+import { CommentThread } from "../commentThread";
+
 type Comment = {
   body: {
+    commentId: number;
+    prId: number;
+    repoId: number;
+    userName: string;
+    avatarUrl: string;
+    disId: string;
     content: string;
+    commentType: number;
+    imageName: string;
+    createAt: string;
+    replyList: Reply[];
   };
   position: {
     base_sha: string;
@@ -79,23 +92,35 @@ export function DiffViewer({ oldCode, newCode, comments }: DiffViewerProps) {
   };
 
   const parseComments = (comments: Comment[]) => {
-    const extendData = {
+    const extendData: {
+      oldFile: { [key: number]: { data: Comment[] } };
+      newFile: { [key: number]: { data: Comment[] } };
+    } = {
       oldFile: {},
       newFile: {},
     };
     comments.forEach((comment) => {
       if (comment.position.new_line !== undefined) {
+        const currentComments =
+          extendData.newFile[comment.position.new_line]?.data ?? [];
         extendData.newFile = {
           ...extendData.newFile,
-          [comment.position.new_line]: { data: comment.body.content },
+          [comment.position.new_line]: {
+            data: [...currentComments, comment],
+          },
         };
       } else if (comment.position.old_line !== undefined) {
+        const currentComments =
+          extendData.oldFile[comment.position.old_line]?.data ?? [];
         extendData.oldFile = {
           ...extendData.oldFile,
-          [comment.position.old_line]: { data: comment.body.content },
+          [comment.position.old_line]: {
+            data: [...currentComments, comment],
+          },
         };
       }
     });
+    console.log(extendData);
     return extendData;
   };
 
@@ -108,7 +133,16 @@ export function DiffViewer({ oldCode, newCode, comments }: DiffViewerProps) {
         extendData={parseComments(comments)}
         diffViewAddWidget
         renderExtendLine={({ data }) => {
-          return <div className="w-full px-10 py-5">{data as string}</div>;
+          if (!data) {
+            return null;
+          }
+          return (
+            <div className="border p-2" onClick={() => console.log(data)}>
+              {data.map((comment: Comment) => (
+                <CommentThread key={comment.body.commentId} comment={comment} />
+              ))}
+            </div>
+          );
         }}
         renderWidgetLine={({ diffFile, side, lineNumber, onClose }) => {
           console.log("side:", side, lineNumber);

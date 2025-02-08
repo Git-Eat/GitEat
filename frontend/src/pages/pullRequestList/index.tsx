@@ -17,17 +17,15 @@ function PullRequests() {
     let open = 0;
     let closed = 0;
     let merged = 0;
-    if (data) {
-      data.forEach((pr) => {
-        if (pr.isOpened === 0) {
-          open++;
-        } else if (pr.isOpened === 1) {
-          closed++;
-        } else if (pr.isOpened === 2) {
-          merged++;
-        }
-      });
-    }
+    data?.forEach((pr) => {
+      if (pr.isOpened === 0) {
+        open++;
+      } else if (pr.isOpened === 1) {
+        merged++;
+      } else if (pr.isOpened === 3) {
+        closed++;
+      }
+    });
     return { totalOpen: open, totalClosed: closed, totalMerged: merged };
   }, [data]);
   return (
@@ -43,15 +41,15 @@ function PullRequests() {
         <div className="flex items-center gap-2">
           <img src={BRANCH_STATE_IMAGE[1]} alt="merge" />
           <div className="flex gap-1">
-            <span>{totalClosed}</span>
-            <span>Close</span>
+            <span>{totalMerged}</span>
+            <span>Merge</span>
           </div>
         </div>
         <div className="flex items-center gap-1">
           <img src={BRANCH_STATE_IMAGE[2]} alt="close" />
           <div className="flex gap-1">
-            <span>{totalMerged}</span>
-            <span>Merge</span>
+            <span>{totalClosed}</span>
+            <span>Close</span>
           </div>
         </div>
       </div>
@@ -63,6 +61,7 @@ function PullRequests() {
           description={pr.description}
           createAt={pr.createAt}
           isOpened={pr.isOpened}
+          userName={pr.userName}
         />
       ))}
     </>

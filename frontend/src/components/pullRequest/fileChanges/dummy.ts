@@ -22,8 +22,42 @@ export const file = {
   comments: [
     {
       body: {
-        content: "잘했음",
+        commentId: 1,
+        prId: 1,
+        repoId: 1,
+        userName: "USER-01",
+        avatarUrl: null,
+        disId: "1",
+        content:
+          "# 제목 예시입니다.\n\n## 제목 예시입니다.\n\n### 제목 예시입니다.\n\n#### 제목 예시입니다.\n\n##### 제목 예시입니다.\n\n###### 제목 예시입니다.\n\n본문 예시입니다.",
+        commenType: 1,
+        imageName: null,
+        createAt: "2025-01-27T12:00:00Z",
+        replyList: [
+          {
+            reCommentId: 1,
+            userName: "USER-02",
+            avatarUrl: null,
+            disId: "4",
+            content:
+              "## 첫 번째 대댓글은 **볼드체**와 *이탤릭체* 그리고 [링크](https://example.com)가 포함되어 있습니다.",
+            replyType: 1,
+            imageName: null,
+            createAt: "2025-02-02T08:05:00Z",
+          },
+          {
+            reCommentId: 2,
+            userName: "USER-03",
+            avatarUrl: null,
+            disId: "4",
+            content: "## 두 번째 대댓글입니다.",
+            replyType: 2,
+            imageName: null,
+            createAt: "2025-02-03T06:05:00Z",
+          },
+        ],
       },
+
       position: {
         base_sha: "46edebc6b129916f4e0f2b485add074ccb8f385a",
         start_sha: "46edebc6b129916f4e0f2b485add074ccb8f385a",
@@ -45,8 +79,42 @@ export const file = {
     },
     {
       body: {
-        content: "못했음음",
+        commentId: 2,
+        prId: 1,
+        repoId: 1,
+        userName: "USER-01",
+        avatarUrl: null,
+        disId: "1",
+        content:
+          "# 제목 예시입니다.\n\n## 제목 예시입니다.\n\n### 제목 예시입니다.\n\n#### 제목 예시입니다.\n\n##### 제목 예시입니다.\n\n###### 제목 예시입니다.\n\n본문 예시입니다.",
+        commenType: 1,
+        imageName: null,
+        createAt: "2025-01-27T12:00:00Z",
+        replyList: [
+          {
+            reCommentId: 1,
+            userName: "USER-02",
+            avatarUrl: null,
+            disId: "4",
+            content:
+              "## 첫 번째 대댓글은 **볼드체**와 *이탤릭체* 그리고 [링크](https://example.com)가 포함되어 있습니다.",
+            replyType: 1,
+            imageName: null,
+            createAt: "2025-02-02T08:05:00Z",
+          },
+          {
+            reCommentId: 2,
+            userName: "USER-03",
+            avatarUrl: null,
+            disId: "4",
+            content: "## 두 번째 대댓글입니다.",
+            replyType: 2,
+            imageName: null,
+            createAt: "2025-02-03T06:05:00Z",
+          },
+        ],
       },
+
       position: {
         base_sha: "46edebc6b129916f4e0f2b485add074ccb8f385a",
         start_sha: "46edebc6b129916f4e0f2b485add074ccb8f385a",
@@ -67,7 +135,40 @@ export const file = {
     },
     {
       body: {
-        content: "평범함",
+        commentId: 3,
+        prId: 1,
+        repoId: 1,
+        userName: "USER-01",
+        avatarUrl: null,
+        disId: "1",
+        content:
+          "# 제목 예시입니다.\n\n## 제목 예시입니다.\n\n### 제목 예시입니다.\n\n#### 제목 예시입니다.\n\n##### 제목 예시입니다.\n\n###### 제목 예시입니다.\n\n본문 예시입니다.",
+        commenType: 1,
+        imageName: null,
+        createAt: "2025-01-27T12:00:00Z",
+        replyList: [
+          {
+            reCommentId: 1,
+            userName: "USER-02",
+            avatarUrl: null,
+            disId: "4",
+            content:
+              "## 첫 번째 대댓글은 **볼드체**와 *이탤릭체* 그리고 [링크](https://example.com)가 포함되어 있습니다.",
+            replyType: 1,
+            imageName: null,
+            createAt: "2025-02-02T08:05:00Z",
+          },
+          {
+            reCommentId: 2,
+            userName: "USER-03",
+            avatarUrl: null,
+            disId: "4",
+            content: "## 두 번째 대댓글입니다.",
+            replyType: 2,
+            imageName: null,
+            createAt: "2025-02-03T06:05:00Z",
+          },
+        ],
       },
       position: {
         base_sha: "46edebc6b129916f4e0f2b485add074ccb8f385a",

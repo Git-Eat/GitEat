@@ -4,7 +4,8 @@ export async function getComments(repoId: number, prId: number) {
   try {
     const response = await client.get(`/pr/${repoId}/${prId}/comment`);
     return response.data;
-  } catch (error) {
-    throw new Error("댓글 가져오기 실패했습니다." + error);
+  } catch (e: unknown) {
+    if (e instanceof Error) throw new Error(e.message);
+    else throw new Error("unknown Error");
   }
 }

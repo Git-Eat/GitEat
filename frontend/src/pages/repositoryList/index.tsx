@@ -5,7 +5,7 @@ import RepositoryAddModal from "../../components/repositoryList/repositoryAddMod
 import { useGetRepositories } from "../../api/queries/useGetRepositories";
 import { Suspense } from "react";
 import { ErrorBoundary } from "../../components/common/errorBoundery";
-
+const ACCESS_GRANT = ["private", "public", "internal"];
 function Repositories() {
   const { data } = useGetRepositories();
   return (
@@ -16,7 +16,7 @@ function Repositories() {
           user={`${repo.userId}`}
           title={repo.name}
           repoId={repo.repoId}
-          access={"private"}
+          access={ACCESS_GRANT[repo.access - 1]}
           description={repo.description}
         />
       ))}

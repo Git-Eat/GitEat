@@ -3,14 +3,15 @@ import branchClose from "../../../assets/images/branch_close.svg";
 import branchMerge from "../../../assets/images/branch_merge.svg";
 import { Link, useParams } from "react-router-dom";
 import { getParsedDate } from "../../../utils/getParsedDate";
-const BRANCH_STATE_IMAGE = [branchOpen, branchMerge, branchClose];
+const BRANCH_STATE_IMAGE = [branchOpen, branchMerge, "", branchClose];
 const STATEMENT = ["Opened", "Merged", "Closed"];
 interface PullRequestCardProps {
   prId: number;
   title: string;
-  description: string;
+  description: null | string;
   createAt: string;
   isOpened: number;
+  userName: string;
 }
 
 export function PullRequestCard({
@@ -18,6 +19,7 @@ export function PullRequestCard({
   title,
   createAt,
   isOpened,
+  userName,
 }: PullRequestCardProps) {
   const { repoId } = useParams();
 
@@ -33,7 +35,9 @@ export function PullRequestCard({
             </span>
           </div>
           <div className="flex gap-[10px] items-center mb-[10px]">
-            <span className="text-xl font-semibold">{title}</span>
+            <span className="text-xl font-semibold">
+              {userName}/{title}
+            </span>
           </div>
         </div>
       </div>
