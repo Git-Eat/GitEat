@@ -3,8 +3,13 @@ package com.giteat.security.util;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * REST 요청을 수행하는 Utility 클래스
@@ -87,5 +92,27 @@ public class ApiUtil {
         HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
         restTemplate.exchange(fullURL, HttpMethod.DELETE, requestEntity, Void.class);
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * 파일 POST용 api
+     * @param url
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    public ResponseEntity<?> postApiWithFile(String url, MultipartFile file) throws IOException {
+        // 파일을 전달할 HttpEntity 생성
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        // MultipartFile을 HttpEntity로 변환
+        MultipartBodyBuilder builder = new MultipartBodyBuilder();
+        builder.part("file", file.getResource());
+
+        HttpEntity<?> entity = new HttpEntity<>(builder.build(), headers);
+
+        // 외부 API 호출
+        return restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
     }
 }
