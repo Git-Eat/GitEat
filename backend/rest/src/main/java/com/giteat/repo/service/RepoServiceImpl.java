@@ -92,12 +92,18 @@ public class RepoServiceImpl implements RepoService{
         // ---------- repo 정보부터 가져오기 ----------- //
         RepositoryEntity repository = new RepositoryEntity();
         Map<String, Object> repositoryResponse = gitLabApi.getRepository(projectId,accessToken);
+        Map<String, Object> nameSpace = (Map<String, Object>) repositoryResponse.get("namespace");
         repository.setRepoId((Integer) repositoryResponse.get("id"));
         repository.setName((String) repositoryResponse.get("name"));
         repository.setDescription((String) repositoryResponse.get("description"));
         repository.setGitlabUrl((String) repositoryResponse.get("web_url"));
         repository.setCreateAt((String) repositoryResponse.get("created_at"));
-        // mr 소유자 정보 가져와야함
+        repository.setOwnerName((String) nameSpace.get("name"));
+
+        if(repositoryResponse.get("visibility").equals("private")) repository.setAccess(1);
+        else if(repositoryResponse.get("visibility").equals("public")) repository.setAccess(2);
+        else repository.setAccess(3);
+
         repoRepository.save(repository);
         
         // ---------- MR 정보 가져오기 ---------- //
@@ -105,7 +111,7 @@ public class RepoServiceImpl implements RepoService{
         if(newMrResponse.isEmpty()) {return repository;} // MR 없으면 아래 다 건너뛰어
 
         int newMR = (int) newMrResponse.get(0).get("iid"); // 최상단 MR 번호
-        int pageNation = Math.max(1, newMR / 100); //100으로 나눈 몫 저장 (이 기준으로 pageNation 요청할거임)
+        int pageNation = Math.max(1, newMR / 100); // 100으로 나눈 몫 저장 (이 기준으로 pageNation 요청할거임)
 
         for(int page = 1; page <= pageNation; page++){
             List<Map<String, Object>> mrResponseList = gitLabApi.getMergeRequestsByPageNation(projectId,page,accessToken);
@@ -117,10 +123,16 @@ public class RepoServiceImpl implements RepoService{
                 mr.setTitle((String) mrResponse.get("title"));
                 mr.setDescription((String) mrResponse.get("description"));
                 mr.setCreateAt((String) mrResponse.get("created_at"));
-                mr.setIsOpened("opened".equals(mrResponse.get("state")) ? 1 : 0); // 나중에 수정해야될수도
+
+                if(mrResponse.get("state").equals("merged"))  mr.setIsOpened(1); // 병합
+                else if(mrResponse.get("state").equals("closed")) mr.setIsOpened(3); // 닫힘
+                else mr.setIsOpened(2); // 열려있음
+
                 mr.setSourceBranch((String) mrResponse.get("source_branch"));
                 mr.setTargetBranch((String) mrResponse.get("target_branch"));
                 mr.setUserId((int) author.get("id"));
+                mr.setUserName((String) author.get("name"));
+                mr.setUserProfile((String) author.get("avatar_url"));
                 mergeRequestRepository.save(mr);
 
                 // ---------- Commit 정보 가져오기 ---------- //
