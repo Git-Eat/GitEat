@@ -13,6 +13,7 @@ import comment from "../../../../assets/images/comment.svg";
 import review from "../../../../assets/images/review.svg";
 import { Replies } from "../replies";
 import { useCreateReply } from "../../../../api/queries/useCreateReply";
+import { useUpdateComment } from "../../../../api/queries/useUpdateComment";
 
 interface CommentsProps {
   repoId: number;
@@ -21,11 +22,16 @@ interface CommentsProps {
 
 export function Comments({ repoId, prId }: CommentsProps) {
   const { data } = useGetComments(repoId, prId);
-  const [isReCommentEditorOpen, setIsReCommentEditorOpen] = useState<
+  const [isReplyEditorOpen, setIsReplyEditorOpen] = useState<
     Record<number, boolean>
   >({});
   const { mutate: deleteComment } = useDeleteComment(repoId, prId);
   const { mutate: createReply } = useCreateReply(repoId, prId);
+  const { mutate: updateComment } = useUpdateComment(repoId, prId);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editCommentId, setEditCommentId] = useState<number | null>(null);
+  const [editContent, setEditContent] = useState<string>("");
+  const [editCategory, setEditCategory] = useState<0 | 1 | 2>(0);
   const commentTypeImages = {
     0: { src: suggest, alt: "suggest" },
     1: { src: comment, alt: "comment" },
@@ -43,8 +49,8 @@ export function Comments({ repoId, prId }: CommentsProps) {
     });
   }
 
-  function toggleReCommentEditor(commentId: number) {
-    setIsReCommentEditorOpen((prev) => ({
+  function toggleReplyEditor(commentId: number) {
+    setIsReplyEditorOpen((prev) => ({
       ...prev,
       [commentId]: !prev[commentId],
     }));
@@ -57,6 +63,22 @@ export function Comments({ repoId, prId }: CommentsProps) {
   ) {
     if (!content.trim()) return;
     createReply({ content, replyType, discussionId });
+  }
+
+  function handleEditComment(comment: Comment) {
+    setIsEditing(true);
+    setEditCommentId(comment.commentId);
+    setEditCategory(comment.commentType);
+    setEditContent(comment.content);
+  }
+
+  function handleSaveEdit(content: string, category: 0 | 1 | 2) {
+    if (editCommentId === null) return;
+    updateComment({ commentId: editCommentId, content, commentType: category });
+    setIsEditing(false);
+    setEditCommentId(null);
+    setEditContent("");
+    setEditCategory(0);
   }
 
   return (
@@ -83,9 +105,26 @@ export function Comments({ repoId, prId }: CommentsProps) {
                     alt={commentTypeImages[comment.commentType].alt}
                   />
                 </div>
-                <button onClick={() => deleteComment(comment.commentId)}>
-                  댓글 삭제
-                </button>
+                <div>
+                  <button
+                    className="mr-2"
+                    onClick={() => {
+                      if (isEditing) {
+                        setIsEditing(false);
+                        setEditCommentId(null);
+                        setEditContent("");
+                        setEditCategory(0);
+                      } else {
+                        handleEditComment(comment);
+                      }
+                    }}
+                  >
+                    {isEditing ? "수정 취소" : "댓글 수정"}
+                  </button>
+                  <button onClick={() => deleteComment(comment.commentId)}>
+                    댓글 삭제
+                  </button>
+                </div>
               </section>
               <time className="block px-11">
                 {displayDate(comment.createAt)}
@@ -97,6 +136,16 @@ export function Comments({ repoId, prId }: CommentsProps) {
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
                   {comment.content}
                 </ReactMarkdown>
+                {editCommentId === comment.commentId && (
+                  <MarkdownEditor
+                    onAddSingleComment={() => {}}
+                    onStartReview={() => {}}
+                    onUpdateComment={handleSaveEdit}
+                    initialValue={editContent}
+                    initialCategory={editCategory}
+                    isEditing={true}
+                  />
+                )}
               </div>
               <hr className="my-4" />
               <p className="mt-3 text-right">
@@ -117,18 +166,19 @@ export function Comments({ repoId, prId }: CommentsProps) {
               )}
             </article>
             <footer className="flex justify-end mt-2">
-              <button onClick={() => toggleReCommentEditor(comment.commentId)}>
-                {isReCommentEditorOpen[comment.commentId]
+              <button onClick={() => toggleReplyEditor(comment.commentId)}>
+                {isReplyEditorOpen[comment.commentId]
                   ? "답글 접기"
                   : "답글 추가"}
               </button>
             </footer>
-            {isReCommentEditorOpen[comment.commentId] && (
+            {isReplyEditorOpen[comment.commentId] && (
               <MarkdownEditor
                 onAddSingleComment={(content, replyType) => {
                   handleAddReply(content, replyType, comment.disId);
                 }}
                 onStartReview={() => {}}
+                onUpdateComment={() => {}}
               />
             )}
           </li>

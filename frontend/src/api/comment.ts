@@ -78,3 +78,36 @@ export async function deleteReply(
     throw new Error("답글 삭제 실패했습니다." + error);
   }
 }
+
+export async function updateComment(
+  repoId: number,
+  prId: number,
+  commentId: number,
+  commentType: 0 | 1 | 2,
+  content: string
+) {
+  try {
+    const response = await authClient.put(
+      `/pr/${repoId}/${prId}/comment/${commentId}`,
+      { commentType, content }
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error("댓글 수정 실패했습니다." + error);
+  }
+}
+
+// export async function updateReply(
+//   repoId: number,
+//   prId: number,
+//   replyId: number
+// ) {
+//   try {
+//     const response = await authClient.put(
+//       `/pr/${repoId}/${prId}/reply/${replyId}`
+//     );
+//     return response.data;
+//   } catch (error) {
+//     throw new Error("답글 수정 실패했습니다." + error);
+//   }
+// }

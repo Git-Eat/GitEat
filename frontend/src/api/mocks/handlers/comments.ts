@@ -124,7 +124,7 @@ const commentsHandlers = [
         comment.prId === prId &&
         comment.replyList?.some(
           (reComment) => reComment.reCommentId === replyId
-        ) // `?.` 추가
+        )
     );
 
     if (!comment) {
@@ -232,6 +232,95 @@ const commentsHandlers = [
       }
     }
   ),
+
+  http.put(
+    "*/pr/:repoId/:prId/comment/:commentId",
+    async ({ params, request }) => {
+      try {
+        const { repoId, prId, commentId } = params;
+        const body = (await request.json()) as CommentBody;
+        const { content, commentType } = body;
+
+        const commentIndex = comments.findIndex(
+          (comment) =>
+            comment.repoId === Number(repoId) &&
+            comment.prId === Number(prId) &&
+            comment.commentId === Number(commentId)
+        );
+
+        if (commentIndex === -1) {
+          return HttpResponse.json(
+            { message: "댓글을 찾을 수 없습니다." },
+            { status: 404 }
+          );
+        }
+
+        const updatedComment = {
+          ...comments[commentIndex],
+          content,
+          commentType,
+        };
+        comments[commentIndex] = updatedComment;
+
+        return HttpResponse.json(updatedComment, { status: 200 });
+      } catch (error) {
+        return HttpResponse.json(
+          { message: `잘못된 요청입니다. ${String(error)}` },
+          { status: 400 }
+        );
+      }
+    }
+  ),
+
+  http.put("*/pr/:repoId/:prId/reply/:replyId", async ({ params, request }) => {
+    try {
+      const { repoId, prId, replyId } = params;
+      const body = (await request.json()) as ReplyBody;
+      const { content, replyType } = body;
+
+      const comment = comments.find(
+        (comment) =>
+          comment.repoId === Number(repoId) &&
+          comment.prId === Number(prId) &&
+          comment.replyList?.some(
+            (reply) => reply.reCommentId === Number(replyId)
+          )
+      );
+
+      if (!comment) {
+        return HttpResponse.json(
+          { message: "해당하는 답글을 찾을 수 없습니다." },
+          { status: 404 }
+        );
+      }
+
+      const replyIndex = comment.replyList?.findIndex(
+        (reply) => reply.reCommentId === Number(replyId)
+      );
+
+      if (replyIndex === undefined || replyIndex === -1) {
+        return HttpResponse.json(
+          { message: "답글을 찾을 수 없습니다." },
+          { status: 404 }
+        );
+      }
+
+      const updatedReply = {
+        ...comment.replyList[replyIndex],
+        content,
+        replyType,
+      };
+
+      comment.replyList[replyIndex] = updatedReply;
+
+      return HttpResponse.json(updatedReply, { status: 200 });
+    } catch (error) {
+      return HttpResponse.json(
+        { message: `잘못된 요청입니다. ${String(error)}` },
+        { status: 400 }
+      );
+    }
+  }),
 ];
 
 export default commentsHandlers;
