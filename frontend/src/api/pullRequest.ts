@@ -1,6 +1,7 @@
 import authClient from "./authClient";
 import { ChangedFile } from "./types/ChangedFile";
 import { PullRequest } from "./types/PullRequest";
+import { RawFileResponse } from "./types/RawFile";
 import { Repository } from "./types/Repository";
 
 export const getPullRequests = async (
@@ -66,6 +67,24 @@ export const getFileChanges = async (
 ): Promise<ChangedFile[]> => {
   try {
     const res = await authClient.get(`/pr/${repoId}/${prId}/file`);
+    return res.data;
+  } catch (e: unknown) {
+    if (e instanceof Error) throw new Error(e.message);
+    else throw new Error("unknown Error");
+  }
+};
+
+export const getRawFile = async (
+  repoId: number,
+  prId: number,
+  file: ChangedFile,
+  refType: number
+): Promise<RawFileResponse> => {
+  try {
+    const res = await authClient.post(
+      `/pr/${repoId}/${prId}/file/raw/${refType}`,
+      file
+    );
     return res.data;
   } catch (e: unknown) {
     if (e instanceof Error) throw new Error(e.message);

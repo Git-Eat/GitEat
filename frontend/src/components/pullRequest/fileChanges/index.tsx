@@ -1,6 +1,9 @@
+import { Suspense } from "react";
 import { usePRStore } from "../../../store/pullRequestStore";
+import { ErrorBoundary } from "../../common/errorBoundery";
 import { FileDiff } from "./fileDiff";
 import { FileTree } from "./fileTree";
+import { useParams } from "react-router-dom";
 /**
  * DONE
  * - 트리 렌더링
@@ -17,6 +20,7 @@ import { FileTree } from "./fileTree";
  */
 
 export function FileChanges() {
+  const { baseRepoId, prId } = useParams();
   const { files } = usePRStore();
   return (
     <div className="flex gap-[35px] justify-between mt-[30px]">
@@ -27,7 +31,15 @@ export function FileChanges() {
         <div className="mt-4">
           <div className="border border-gray-200 p-4 my-4 rounded-md">
             {files.map((file) => (
-              <FileDiff key={file.fileId} file={file} />
+              <ErrorBoundary key={file.fileId} fallbackComponent={<>ERROR!!</>}>
+                <Suspense fallback={<>loading...</>}>
+                  <FileDiff
+                    file={file}
+                    repoId={Number(baseRepoId)}
+                    prId={Number(prId)}
+                  />
+                </Suspense>
+              </ErrorBoundary>
             ))}
           </div>
         </div>
