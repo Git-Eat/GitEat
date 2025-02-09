@@ -1,7 +1,7 @@
 import { Comments } from "./comments";
 import { MarkdownEditor } from "../../common/markdownEditor";
 import { Reviewers } from "./reviewers";
-import { CodeBlock } from "./codeBlock";
+import { CodeBlock } from "./codeBlock";
 export const oldCode: string = `
 function example() {
   console.log("Line 1: Start function");
