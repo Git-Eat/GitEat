@@ -1,4 +1,3 @@
-import { Box } from "@mui/material";
 import { SimpleTreeView, TreeItem } from "@mui/x-tree-view";
 import { Node, getFileTree } from "../../../../utils/getTreeStructure";
 import { usePRStore } from "../../../../store/pullRequestStore";
@@ -17,8 +16,8 @@ export function FileTree() {
   const { files } = usePRStore();
   const fileTree = getFileTree(files.map((file) => file.newPath));
   return (
-    <Box>
+    <div>
       <SimpleTreeView>{renderTree(fileTree)}</SimpleTreeView>
-    </Box>
+    </div>
   );
 }
