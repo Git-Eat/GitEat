@@ -83,21 +83,26 @@ export function Replies({
           <img src={selectedImage.src} alt={selectedImage.alt} />
           <time className="mr-2">{replyCreateAt}</time>
         </div>
-        <button
-          onClick={() => {
-            if (isEditing) {
-              setIsEditing(false);
-              setEditReplyId(null);
-              setEditContent("");
-              setEditCategory(0);
-            } else {
-              handleEditReply(reply);
-            }
-          }}
-        >
-          {isEditing ? "수정 취소" : "답글 수정"}
-        </button>
-        <button onClick={() => deleteReComment(reCommentId)}>답글 삭제</button>
+        <div>
+          <button
+            onClick={() => {
+              if (isEditing) {
+                setIsEditing(false);
+                setEditReplyId(null);
+                setEditContent("");
+                setEditCategory(0);
+              } else {
+                handleEditReply(reply);
+              }
+            }}
+            className="mr-2"
+          >
+            {isEditing ? "수정 취소" : "답글 수정"}
+          </button>
+          <button onClick={() => deleteReComment(reCommentId)}>
+            답글 삭제
+          </button>
+        </div>
       </header>
       <section className="px-10 py-3">
         <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>

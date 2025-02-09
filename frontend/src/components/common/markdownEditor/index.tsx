@@ -26,7 +26,7 @@ export function MarkdownEditor({
     setCategory(Number(event.target.value) as 0 | 1 | 2);
   }
 
-  function handleCancel() {
+  function handleReset() {
     setValue("");
   }
 
@@ -70,17 +70,17 @@ export function MarkdownEditor({
       />
       <div className="mt-3 text-right">
         <button
-          onClick={handleCancel}
+          onClick={handleReset}
           className="px-2 border mr-2 border-gray-300 p-1 rounded-md"
         >
-          Cancel
+          초기화
         </button>
         {isEditing ? (
           <button
             onClick={handleUpdateComment}
             className="px-2 text-white border border-sky-400 bg-sky-400 p-1 rounded-md"
           >
-            Save
+            저장
           </button>
         ) : (
           <>
@@ -88,13 +88,13 @@ export function MarkdownEditor({
               onClick={handleAddSingleComment}
               className="px-2 border mr-2 border-gray-300 p-1 rounded-md"
             >
-              Add single comment
+              제출
             </button>
             <button
               onClick={handleStartReview}
               className="px-2 text-white border border-sky-400 bg-sky-400 p-1 rounded-md"
             >
-              Start review
+              리뷰 시작
             </button>
           </>
         )}
