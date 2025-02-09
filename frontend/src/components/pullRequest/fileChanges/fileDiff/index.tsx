@@ -21,7 +21,7 @@ interface FileProps {
 }
 export function FileDiff({ file }: FileProps) {
   return (
-    <Accordion key={file.fileId} defaultExpanded>
+    <Accordion key={file.fileId}>
       <div className="flex justify-between items-center">
         <AccordionSummary
           expandIcon={<ArrowDropDownIcon />}

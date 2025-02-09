@@ -1,6 +1,6 @@
+import { usePRStore } from "../../../store/pullRequestStore";
 import { FileDiff } from "./fileDiff";
 import { FileTree } from "./fileTree";
-import { prFiles } from "./dummy";
 /**
  * DONE
  * - 트리 렌더링
@@ -17,6 +17,7 @@ import { prFiles } from "./dummy";
  */
 
 export function FileChanges() {
+  const { files } = usePRStore();
   return (
     <div className="flex gap-[35px] justify-between mt-[30px]">
       <div className="w-1/5 max-w-56 bg-white p-[15px] min-h-[calc(100vh-300px)] h-fit rounded-xl">
@@ -25,8 +26,8 @@ export function FileChanges() {
       <div className="w-fit">
         <div className="mt-4">
           <div className="border border-gray-200 p-4 my-4 rounded-md">
-            {prFiles.map((file) => (
-              <FileDiff key={file.fileName} file={file} />
+            {files.map((file) => (
+              <FileDiff key={file.fileId} file={file} />
             ))}
           </div>
         </div>
