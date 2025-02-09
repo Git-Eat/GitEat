@@ -111,15 +111,15 @@ public class RepoServiceImpl implements RepoService{
         if(newMrResponse.isEmpty()) {return repository;} // MR 없으면 아래 다 건너뛰어
 
         int newMR = (int) newMrResponse.get(0).get("iid"); // 최상단 MR 번호
-        int pageNation = Math.max(1, newMR / 100); // 100으로 나눈 몫 저장 (이 기준으로 pageNation 요청할거임)
+        int pageNation = Math.max(1, (newMR + 99) / 100); // 100으로 나눈 몫 저장 (이 기준으로 pageNation 요청할거임)
 
         for(int page = 1; page <= pageNation; page++){
             List<Map<String, Object>> mrResponseList = gitLabApi.getMergeRequestsByPageNation(projectId,page,accessToken);
             for(Map<String, Object> mrResponse : mrResponseList){
                 Map<String, Object> author =  (Map<String, Object>) mrResponse.get("author");
                 MergeRequestEntity mr = new MergeRequestEntity();
-                mr.setPrId((Integer) mrResponse.get("iid"));
-                mr.setRepoId(Integer.parseInt(projectId));
+                MergeRequestId mrId = new MergeRequestId((Integer) mrResponse.get("iid"), Integer.parseInt(projectId));
+                mr.setId(mrId);
                 mr.setTitle((String) mrResponse.get("title"));
                 mr.setDescription((String) mrResponse.get("description"));
                 mr.setCreateAt((String) mrResponse.get("created_at"));
@@ -139,26 +139,23 @@ public class RepoServiceImpl implements RepoService{
                 List<Map<String, Object>> CommitList = gitLabApi.getCommits(projectId,(Integer) mrResponse.get("iid"), accessToken);
                 for(Map<String, Object> commitResponse : CommitList){
                     CommitEntity commitEntity = new CommitEntity();
-                    commitEntity.setRepositoryId((Integer) repositoryResponse.get("id"));
-                    commitEntity.setPrId((Integer) mrResponse.get("iid"));
-                    commitEntity.setCommitId((String) commitResponse.get("id"));
+                    CommitId commitId = new CommitId((String) commitResponse.get("id"), (Integer) repositoryResponse.get("id"),(Integer) mrResponse.get("iid"));
+                    commitEntity.setId(commitId);
                     commitEntity.setContent((String) commitResponse.get("message"));
                     commitEntity.setCommitedAt((String) commitResponse.get("committed_date"));
 
                     commitRepository.save(commitEntity);
 
                     // ---------- FileChange 가져오기 ---------- //
-                    String commitId = (String) commitResponse.get("id");
-                    List<Map<String, Object>> fileChangeList = gitLabApi.getFilesByCommit(projectId, commitId, accessToken);
+                    String commitIdTemp = (String) commitResponse.get("id");
+                    List<Map<String, Object>> fileChangeList = gitLabApi.getFilesByCommit(projectId, commitIdTemp, accessToken);
 
                     for (Map<String, Object> fileChange : fileChangeList) {
                         FileChangeEntity fileChangeEntity = new FileChangeEntity();
+                        FileChangeId fileChangeId = new FileChangeId(SHA1Util.encryptSHA1((String) fileChange.get("new_path")),
+                                (int) repositoryResponse.get("id"), (int) mrResponse.get("iid"), commitIdTemp);
 
-                        fileChangeEntity.setFileId(SHA1Util.encryptSHA1((String) fileChange.get("new_path")));
-                        fileChangeEntity.setRepoId((int) repositoryResponse.get("id"));
-                        fileChangeEntity.setPrId((int) mrResponse.get("iid"));
-                        fileChangeEntity.setCommitId(commitId);
-
+                        fileChangeEntity.setId(fileChangeId);
                         String fileName = (String) fileChange.get("new_path");
                         int slashIndex = ((String) fileChange.get("new_path")).lastIndexOf("/");
                         if (slashIndex != -1) {
@@ -199,11 +196,10 @@ public class RepoServiceImpl implements RepoService{
                     // 첫번째 note는 Comment로 저장
                     Map<String, Object> firstNote = notes.get(0);
                     CommentEntity comment = new CommentEntity();
+                    CommentId commentId = new CommentId((int) firstNote.get("id"), (int) mrResponse.get("iid"), (int) repositoryResponse.get("id"));
                     Map<String, Object> commentAuthor = (Map<String, Object>) notes.get(0).get("author");
 
-                    comment.setCommentId((int) firstNote.get("id"));
-                    comment.setPrId((int) mrResponse.get("iid"));
-                    comment.setRepoId((int) repositoryResponse.get("id"));
+                    comment.setId(commentId);
                     comment.setContent((String) firstNote.get("body"));
                     comment.setCommentType(0); // type 알아본 후 재설정하기
                     comment.setUserId((int) commentAuthor.get("id"));
@@ -215,7 +211,7 @@ public class RepoServiceImpl implements RepoService{
                         if(position.get("new_line") !=null) comment.setNewLine((int) position.get("new_line"));
                         if(position.get("old_line") !=null) comment.setOldLine((int) position.get("old_line"));
 
-                        Optional<MergeRequestEntity> optionalMr = mergeRequestRepository.findByPrId((Integer) mrResponse.get("iid"));
+                        Optional<MergeRequestEntity> optionalMr = mergeRequestRepository.findById_PrId((Integer) mrResponse.get("iid"));
 
                         if (optionalMr.isPresent()) {
                             // MR 정보 업데이트
@@ -244,10 +240,8 @@ public class RepoServiceImpl implements RepoService{
                         Map<String, Object> note = notes.get(i);
                         Map<String, Object> replyAuthor = (Map<String, Object>) notes.get(i).get("author");
                         ReplyEntity reply = new ReplyEntity();
-                        reply.setRepoId((int) repositoryResponse.get("id"));
-                        reply.setPrId((int) mrResponse.get("iid"));
-                        reply.setCommentId((int) firstNote.get("id")); // 첫 번째 note의 commentId 저장
-                        reply.setReCommentId((int) note.get("id"));
+                        ReplyId replyId = new ReplyId((int) note.get("id"), (int) firstNote.get("id"), (int) mrResponse.get("iid"), (int) repositoryResponse.get("id"));
+                        reply.setId(replyId);
                         reply.setUserId((int) replyAuthor.get("id"));
                         reply.setDisId((String) commentResponse.get("id"));
                         reply.setContent((String) note.get("body"));
