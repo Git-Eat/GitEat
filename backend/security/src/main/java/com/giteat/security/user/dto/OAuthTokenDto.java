@@ -15,7 +15,7 @@ public class OAuthTokenDto {
     private String code;
 
 //    private Integer oauthId;
-    private Integer Id;
+    private Integer id;
     private String userId;
     private String userName;
     private String providerType;
@@ -27,6 +27,6 @@ public class OAuthTokenDto {
     private String email;
     private String name;
     private String avatarUrl;
-//    private LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 
 }

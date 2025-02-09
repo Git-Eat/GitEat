@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!-- ✅ SQL 실행 결과를 Java 객체로 자동 변환 -->
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="cacheEnabled" value="true"/>
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="aggressiveLazyLoading" value="false"/>
+        <setting name="multipleResultSetsEnabled" value="true"/>
+        <setting name="useGeneratedKeys" value="true"/>
+        <setting name="defaultExecutorType" value="REUSE"/>
+        <setting name="defaultStatementTimeout" value="30"/>
+        <setting name="jdbcTypeForNull" value="NULL"/>
+    </settings>
+
+    <!-- ✅ 타입 핸들러 (필요하면 사용) -->
+    <typeHandlers>
+        <!-- 예: boolean 값을 0,1로 저장 -->
+        <!-- <typeHandler handler="org.apache.ibatis.type.BooleanTypeHandler"/> -->
+    </typeHandlers>
+
+    <!-- ✅ Mapper 위치 설정 -->
+    <mappers>
+        <mapper resource="mapper/UserMapper.xml"/>
+    </mappers>
+
+</configuration>
