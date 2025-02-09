@@ -1,13 +1,7 @@
 import { Box } from "@mui/material";
 import { SimpleTreeView, TreeItem } from "@mui/x-tree-view";
 import { Node, getFileTree } from "../../../../utils/getTreeStructure";
-const files = [
-  "src/components/Button.tsx",
-  "src/components/Input.tsx",
-  "src/utils/helpers.ts",
-  "src/index.tsx",
-  "public/index.html",
-];
+import { usePRStore } from "../../../../store/pullRequestStore";
 const renderTree = (node: Node, parentId: string = "") => {
   return Array.from(node.next.values()).map((child) => (
     <TreeItem
@@ -20,7 +14,8 @@ const renderTree = (node: Node, parentId: string = "") => {
   ));
 };
 export function FileTree() {
-  const fileTree = getFileTree(files);
+  const { files } = usePRStore();
+  const fileTree = getFileTree(files.map((file) => file.newPath));
   return (
     <Box>
       <SimpleTreeView>{renderTree(fileTree)}</SimpleTreeView>
