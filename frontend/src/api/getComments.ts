@@ -27,3 +27,39 @@ export const uploadFile = async (
     else throw new Error("unknown Error");
   }
 };
+
+export const updateComment = async (
+  repoId: number,
+  prId: number,
+  commentId: number,
+  comment: string
+): Promise<Comment> => {
+  try {
+    const response = await authClient.put(
+      `/pr/${repoId}/${prId}/comment/${commentId}`,
+      {
+        content: comment,
+      }
+    );
+    return response.data;
+  } catch (e: unknown) {
+    if (e instanceof Error) throw new Error(e.message);
+    else throw new Error("unknown Error");
+  }
+};
+
+export const deleteComment = async (
+  repoId: number,
+  prId: number,
+  commentId: number
+): Promise<number> => {
+  try {
+    const response = await authClient.delete(
+      `/pr/${repoId}/${prId}/comment/${commentId}`
+    );
+    return response.status;
+  } catch (e: unknown) {
+    if (e instanceof Error) throw new Error(e.message);
+    else throw new Error("unknown Error");
+  }
+};
