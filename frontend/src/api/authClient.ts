@@ -9,7 +9,7 @@ const authClient = axios.create({
 });
 
 authClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("access_token");
   if (token) {
     config.headers["Authorization"] = `Bearer ${token}`;
   }
@@ -23,7 +23,8 @@ authClient.interceptors.response.use(
   (error) => {
     if (error.response.status === 401) {
       localStorage.removeItem("token");
-      window.location.replace("/login");
+      alert("기간만료!");
+      window.location.replace("/");
     }
     return Promise.reject(error);
   }
