@@ -21,8 +21,5 @@ public class FileChangeId implements Serializable {
 
     @Column(name = "pr_id")
     private int prId;
-
-    @Column(name = "commit_id")
-    private String commitId;
 }
 

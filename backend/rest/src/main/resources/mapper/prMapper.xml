@@ -45,7 +45,7 @@
             <result property="avatarUrl" column="reply_avatar_url"/>
             <result property="disId" column="reply_dis_id"/>
             <result property="content" column="reply_content"/>
-            <result property="replyType" column="reply_type"/>
+            <result property="reCommentType" column="reply_type"/>
             <result property="createAt" column="reply_create_at"/>
         </collection>
     </resultMap>
@@ -162,7 +162,6 @@
     <select id="showFileListByPr" parameterType="map" resultType="fileDto">
         SELECT
             cf.file_id AS fileId,
-            cf.commit_id AS commitId,
             cf.repo_id AS repoId,
             cf.pr_id AS prId,
             cf.file_name AS fileName,

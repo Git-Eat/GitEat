@@ -34,7 +34,7 @@ public interface PrService {
     /* 파일 변경 관련 함수 */
     List<FileDto> showFileListByPr(int repoId, int prId); // 변경 된 파일 목록 확인
     List<FileDto> showFileListByCommit(int repoId, int prId, String commitId);
-    Map<String, Object> showChangedCode(String repoId, String prId, FileDto fileDto, String refType); // 변경 된 코드 확인
+    Map<String, Object> showChangedCode(String repoId, String prId, FileDto fileDto); // 변경 된 코드 확인
 
     /* 리뷰 참여자 조회 */
     List<ReviewerDto> getReviewer(String repoId, String prId);
