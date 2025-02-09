@@ -149,6 +149,12 @@ public class LabApi {
         return callGetApiList(url ,accessToken);
     }
 
+    // 특정 Merge Request 조회 함수 (MR id로 조회)
+    public Map<String, Object> getMergeRequestsById(String projectId , String prId, String accessToken) {
+        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/"+prId;
+        return callGetApiMap(url ,accessToken);
+    }
+
     // MR id를 기준으로 MR 정보를 조회하는 함수
     public List<Map<String, Object>> getMergeRequestsByPageNation(String projectId, int pageNation, String accessToken){
         String url = gitlabApiUrl + "/projects/" + projectId +"/merge_requests/?page="+pageNation+"&per_page=100";
@@ -186,9 +192,9 @@ public class LabApi {
         return callGetApi(url , accessToken);
     }
 
-    // PR내 변경된 파일 목록 가져오기
-    public List<Map<String, Object>> getFilesByPr(String projectId, String prId, String accessToken){
-        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + prId + "/changes";
+    // PR내 변경된 파일 목록 가져오기 > 이걸 쓸거임
+    public List<Map<String, Object>> getFilesByPr(String projectId, int prId, int prPageNation, String accessToken){
+        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + prId + "/diffs?page="+prPageNation+"&per_page=20";
         return callGetApi(url, accessToken);
     }
 
@@ -250,8 +256,9 @@ public class LabApi {
      */
     private List<Map<String, Object>> callGetApi(String url , String jwtAccessToken) {
         HttpHeaders headers = new HttpHeaders();
-        String accessToken = gitLabTokenService.getAccessToken(jwtAccessToken);
-        headers.set("Private-Token", accessToken);
+        //String accessToken = gitLabTokenService.getAccessToken(jwtAccessToken);
+        headers.set("Private-Token", "UATEgVcVTSsLn7PWao6c");
+        //headers.set("Private-Token", accessToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, entity, List.class);
@@ -267,7 +274,8 @@ public class LabApi {
      */
     private Map<String, Object> callGetApiMap(String url , String accessToken) {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("PRIVATE-TOKEN", accessToken);
+        //headers.set("PRIVATE-TOKEN", accessToken);
+        headers.set("Private-Token", "UATEgVcVTSsLn7PWao6c");
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
         return response.getBody();

@@ -143,17 +143,20 @@ public class RepoServiceImpl implements RepoService{
                     commitEntity.setId(commitId);
                     commitEntity.setContent((String) commitResponse.get("message"));
                     commitEntity.setCommitedAt((String) commitResponse.get("committed_date"));
-
                     commitRepository.save(commitEntity);
+                }
 
-                    // ---------- FileChange 가져오기 ---------- //
-                    String commitIdTemp = (String) commitResponse.get("id");
-                    List<Map<String, Object>> fileChangeList = gitLabApi.getFilesByCommit(projectId, commitIdTemp, accessToken);
+                // ---------- FileChange 가져오기 (PR기준) ---------- //
+                // 일단 pageNation은 20까지만 했음 PR한번에 filechange 400개까지 받아오는거 가능//
+
+                for(int prPageNation = 1; prPageNation <=20; prPageNation++){
+                    List<Map<String, Object>> fileChangeList = gitLabApi.getFilesByPr(projectId, (Integer) mrResponse.get("iid"), prPageNation, accessToken);
+                    if(fileChangeList.isEmpty()) break; // 배열이 비어있다면(받아온 값이 없다면) for문 탈출
 
                     for (Map<String, Object> fileChange : fileChangeList) {
                         FileChangeEntity fileChangeEntity = new FileChangeEntity();
                         FileChangeId fileChangeId = new FileChangeId(SHA1Util.encryptSHA1((String) fileChange.get("new_path")),
-                                (int) repositoryResponse.get("id"), (int) mrResponse.get("iid"), commitIdTemp);
+                                (int) repositoryResponse.get("id"), (int) mrResponse.get("iid"));
 
                         fileChangeEntity.setId(fileChangeId);
                         String fileName = (String) fileChange.get("new_path");
@@ -168,9 +171,8 @@ public class RepoServiceImpl implements RepoService{
                         fileChangeEntity.setNewPath((String) fileChange.get("new_path"));
 
                         int fileStatus = 0;  // 기본값 설정
-                        System.out.println((boolean) fileChange.get("renamed_file"));
 
-                        //1. add , 2. update, 3. delete
+                        // 1. add , 2. update, 3. delete
                         if ((boolean) fileChange.get("new_file")) {
                             fileStatus = 1;
                         } else if ((boolean) fileChange.get("renamed_file")) {
@@ -245,7 +247,7 @@ public class RepoServiceImpl implements RepoService{
                         reply.setUserId((int) replyAuthor.get("id"));
                         reply.setDisId((String) commentResponse.get("id"));
                         reply.setContent((String) note.get("body"));
-                        reply.setReplyType(0);
+                        reply.setReCommentType(1);
                         reply.setCreateAt((String) note.get("updated_at"));
                         replyRepository.save(reply);
                     }
