@@ -11,12 +11,9 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class MergeRequestEntity {
-    @Id
-    @Column(name = "pr_id")
-    private int prId;
 
-    @Column(name = "repo_id")
-    private int repoId;
+    @EmbeddedId
+    private MergeRequestId id;
 
     private String title;
 

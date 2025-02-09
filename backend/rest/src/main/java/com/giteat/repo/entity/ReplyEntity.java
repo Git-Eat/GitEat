@@ -1,9 +1,6 @@
 package com.giteat.repo.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,18 +12,8 @@ import java.util.Date;
 @Getter
 @Setter
 public class ReplyEntity {
-    @Id
-    @Column(name = "re_comment_id")
-    private int reCommentId;
-
-    @Column(name = "repo_id")
-    private int repoId;
-
-    @Column(name = "pr_id")
-    private int prId;
-
-    @Column(name = "comment_id")
-    private int commentId;
+    @EmbeddedId
+    private ReplyId id;
 
     @Column(name = "user_id")
     private int userId;

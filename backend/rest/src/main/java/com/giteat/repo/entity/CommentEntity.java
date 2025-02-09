@@ -11,15 +11,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class CommentEntity {
-    @Id
-    @Column(name = "comment_id")
-    private int commentId;
-
-    @Column(name = "pr_id")
-    private int prId;
-
-    @Column(name = "repo_id")
-    private int repoId;
+    @EmbeddedId
+    private CommentId id;
 
     @Lob
     @Column(columnDefinition = "TEXT")
