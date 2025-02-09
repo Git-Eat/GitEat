@@ -12,7 +12,7 @@ interface Comment {
   commentType: 0 | 1 | 2;
   createAt: string | null;
   position: object | null;
-  replyList: Reply[];
+  reCommentList: Reply[];
 }
 
 interface Reply {
@@ -50,7 +50,7 @@ const comments: Comment[] = [
     commentType: 1,
     createAt: "2025-02-07T12:34:56.789Z",
     position: null,
-    replyList: [
+    reCommentList: [
       {
         reCommentId: 1,
         userId: 2,
@@ -76,7 +76,7 @@ const comments: Comment[] = [
     commentType: 1,
     createAt: null,
     position: null,
-    replyList: [],
+    reCommentList: [],
   },
 ];
 
@@ -122,7 +122,7 @@ const commentsHandlers = [
       (comment) =>
         comment.repoId === repoId &&
         comment.prId === prId &&
-        comment.replyList?.some(
+        comment.reCommentList?.some(
           (reComment) => reComment.reCommentId === replyId
         )
     );
@@ -134,7 +134,7 @@ const commentsHandlers = [
       );
     }
 
-    comment.replyList = comment.replyList.filter(
+    comment.reCommentList = comment.reCommentList.filter(
       (reComment) => reComment.reCommentId !== replyId
     );
     return HttpResponse.json(
@@ -168,7 +168,7 @@ const commentsHandlers = [
         commentType,
         createAt: null,
         position: null,
-        replyList: [],
+        reCommentList: [],
       };
 
       comments.push(newComment);
@@ -211,7 +211,7 @@ const commentsHandlers = [
         }
 
         const newReply: Reply = {
-          reCommentId: comment.replyList.length + 1,
+          reCommentId: comment.reCommentList.length + 1,
           userId: 1,
           userName: "테스트 유저",
           avatarUrl: null,
@@ -222,7 +222,7 @@ const commentsHandlers = [
           createAt: new Date().toISOString(),
         };
 
-        comment.replyList.push(newReply);
+        comment.reCommentList.push(newReply);
         return HttpResponse.json(newReply, { status: 201 });
       } catch (error) {
         return HttpResponse.json(
@@ -282,7 +282,7 @@ const commentsHandlers = [
         (comment) =>
           comment.repoId === Number(repoId) &&
           comment.prId === Number(prId) &&
-          comment.replyList?.some(
+          comment.reCommentList?.some(
             (reply) => reply.reCommentId === Number(replyId)
           )
       );
@@ -294,7 +294,7 @@ const commentsHandlers = [
         );
       }
 
-      const replyIndex = comment.replyList?.findIndex(
+      const replyIndex = comment.reCommentList?.findIndex(
         (reply) => reply.reCommentId === Number(replyId)
       );
 
@@ -306,12 +306,12 @@ const commentsHandlers = [
       }
 
       const updatedReply = {
-        ...comment.replyList[replyIndex],
+        ...comment.reCommentList[replyIndex],
         content,
         replyType,
       };
 
-      comment.replyList[replyIndex] = updatedReply;
+      comment.reCommentList[replyIndex] = updatedReply;
 
       return HttpResponse.json(updatedReply, { status: 200 });
     } catch (error) {

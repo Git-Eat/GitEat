@@ -9,7 +9,7 @@ import { useCreateComment } from "../../../api/queries/useCreateComment";
 export function Conversation() {
   /* repoId & prId 변경 예정 */
   const repoId = 888788;
-  const prId = 18;
+  const prId = 32;
   const { mutate: createComment } = useCreateComment(repoId, prId);
 
   function handleAddComment(content: string, commentType: 0 | 1 | 2) {

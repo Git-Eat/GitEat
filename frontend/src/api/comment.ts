@@ -97,17 +97,20 @@ export async function updateComment(
   }
 }
 
-// export async function updateReply(
-//   repoId: number,
-//   prId: number,
-//   replyId: number
-// ) {
-//   try {
-//     const response = await authClient.put(
-//       `/pr/${repoId}/${prId}/reply/${replyId}`
-//     );
-//     return response.data;
-//   } catch (error) {
-//     throw new Error("답글 수정 실패했습니다." + error);
-//   }
-// }
+export async function updateReply(
+  repoId: number,
+  prId: number,
+  reCommentId: number,
+  replyType: 0 | 1 | 2,
+  content: string
+) {
+  try {
+    const response = await authClient.put(
+      `/pr/${repoId}/${prId}/reply/${reCommentId}`,
+      { replyType, content }
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error("답글 수정 실패했습니다." + error);
+  }
+}
