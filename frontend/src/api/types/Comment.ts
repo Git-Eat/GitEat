@@ -12,5 +12,5 @@ export type Comment = {
   commentType: 0 | 1 | 2;
   createAt: string | null;
   position: object;
-  replyList: Reply[];
+  reCommentList: Reply[];
 };

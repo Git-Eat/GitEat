@@ -38,7 +38,7 @@ export function Replies({
           <img
             src={avatarUrl || defaultprofile}
             alt="user profile"
-            className="w-9 h-9 rounded"
+            className="w-9 h-9 rounded-full"
           />
           <h1 className="text-[16px] font-semibold">{userName}</h1>
           <img src={selectedImage.src} alt={selectedImage.alt} />

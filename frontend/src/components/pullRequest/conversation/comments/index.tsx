@@ -95,7 +95,7 @@ export function Comments({ repoId, prId }: CommentsProps) {
                   <img
                     src={comment.avatarUrl || defaultprofile}
                     alt="user profile"
-                    className="w-9 h-9"
+                    className="w-9 h-9 rounded-full"
                   />
                   <h1 className="text-[16px] font-semibold">
                     {comment.userName}
@@ -149,11 +149,11 @@ export function Comments({ repoId, prId }: CommentsProps) {
               </div>
               <hr className="my-4" />
               <p className="mt-3 text-right">
-                {comment.replyList?.length || 0}개의 답글
+                {comment.reCommentList?.length || 0}개의 답글
               </p>
-              {(comment.replyList?.length ?? 0) > 0 && (
+              {(comment.reCommentList?.length ?? 0) > 0 && (
                 <section>
-                  {comment.replyList?.map((reComment) => (
+                  {comment.reCommentList?.map((reComment) => (
                     <Replies
                       key={reComment.reCommentId}
                       repoId={repoId}

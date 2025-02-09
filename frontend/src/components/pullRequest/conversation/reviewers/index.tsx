@@ -41,7 +41,7 @@ export function Reviewers({ repoId, prId }: ReviewersProps) {
             <img
               src={reviewer.avatarUrl || defaultprofile}
               alt="profile Image"
-              className="inline-block mr-2 max-w-6"
+              className="inline-block mr-2 max-w-6 rounded-full"
             />
             <p className="inline mr-2 text-[12px] font-semibold">
               {reviewer.userName}
