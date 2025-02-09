@@ -24,10 +24,10 @@ export function FileChanges() {
   const { files } = usePRStore();
   return (
     <div className="flex gap-[35px] justify-between mt-[30px]">
-      <div className="w-1/5 max-w-56 bg-white p-[15px] min-h-[calc(100vh-300px)] h-fit rounded-xl">
+      <div className="w-1/5 max-w- bg-white p-[15px] min-h-[calc(100vh-300px)] h-fit rounded-xl">
         <FileTree />
       </div>
-      <div className="w-fit">
+      <div className="w-4/5">
         <div className="mt-4">
           <div className="border border-gray-200 p-4 my-4 rounded-md">
             {files.map((file) => (
