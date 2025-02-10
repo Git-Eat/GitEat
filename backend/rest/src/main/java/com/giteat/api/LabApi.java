@@ -344,6 +344,7 @@ public class LabApi {
      */
     private Map<String, Object> callPostApi(String url, String accessToken, Map<String, String> requestBody) {
         System.out.println("ACCESS TOKEN : " + accessToken);
+        System.out.println("BODY : " +requestBody);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Private-Token", accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
