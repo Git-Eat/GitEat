@@ -1,5 +1,6 @@
 import authClient from "./authClient";
 import { ChangedFile } from "./types/ChangedFile";
+import { FileCommentRequest } from "./types/Comment";
 import { PullRequest } from "./types/PullRequest";
 import { RawFileResponse } from "./types/RawFile";
 import { Repository } from "./types/Repository";
@@ -41,8 +42,9 @@ export const getPullRequest = async (
 
 export const addRepository = async (repoId: number): Promise<Repository> => {
   try {
-    const res = await authClient.post(`/repo`, {
-      repoId: repoId,
+    console.log(repoId);
+    const res = await authClient.post(`/repo/${repoId}`, {
+      repositoryId: repoId,
     });
     return res.data;
   } catch (e: unknown) {
@@ -81,6 +83,23 @@ export const getRawFile = async (
 ): Promise<RawFileResponse> => {
   try {
     const res = await authClient.post(`/pr/${repoId}/${prId}/file/raw`, file);
+    return res.data;
+  } catch (e: unknown) {
+    if (e instanceof Error) throw new Error(e.message);
+    else throw new Error("unknown Error");
+  }
+};
+
+export const createFileComment = async <T>(
+  repoId: number,
+  prId: number,
+  comment: FileCommentRequest
+): Promise<T> => {
+  try {
+    const res = await authClient.post(
+      `/pr/${repoId}/${prId}/file/comment`,
+      comment
+    );
     return res.data;
   } catch (e: unknown) {
     if (e instanceof Error) throw new Error(e.message);

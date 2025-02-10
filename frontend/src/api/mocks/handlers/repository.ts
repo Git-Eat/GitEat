@@ -13,12 +13,12 @@ const repositoryHandler = [
   //   http.post(`${API_BASE}/repo`, () => {
   //     return HttpResponse.json(MOCK_RESPONSE);
   //   }),
-  http.post(`${API_BASE}/repo`, async () => {
-    // 3초(3000ms) 지연
-    console.log("add");
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    return HttpResponse.json(MOCK_RESPONSE);
-  }),
+  // http.post(`${API_BASE}/repo`, async () => {
+  //   // 3초(3000ms) 지연
+  //   console.log("add");
+  //   await new Promise((resolve) => setTimeout(resolve, 3000));
+  //   return HttpResponse.json(MOCK_RESPONSE);
+  // }),
 
   // 3초 후에 실패하는 핸들러
   // http.post(`${API_BASE}/repo`, async () => {
