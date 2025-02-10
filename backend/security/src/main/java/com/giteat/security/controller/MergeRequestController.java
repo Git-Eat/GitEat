@@ -218,13 +218,12 @@ public class MergeRequestController {
 
     @GetMapping("/{repoId}/{prId}/file")
     @Operation(summary = "PR 내 변경된 파일 목록 조회", description = "외부 API를 호출하여 PR 내 변경된 파일 목록을 가져옵니다.")
-    public ResponseEntity<?> showFileListByPr(@PathVariable int repoId,
+    public ResponseEntity<?> showFileListByPr(@RequestHeader(value = "Authorization") String header ,
+                                              @PathVariable int repoId,
                                               @PathVariable int prId) {
-        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId + "/" + prId + "/file");
-        Object json = typeUtil.convertJsonToObject(request.getBody());
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(json);
+        String accessToken = header.split(" ")[1];
+        ResponseEntity<?> request =  apiUtil.getApi("/pr/" + repoId + "/" + prId + "/file" , accessToken);
+        return ResponseEntity.ok(request.getBody());
     }
 
 //    @GetMapping("/{repoId}/{prId}/file/{commitId}")

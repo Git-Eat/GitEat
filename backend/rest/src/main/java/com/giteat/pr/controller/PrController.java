@@ -137,10 +137,12 @@ public class PrController {
 
     @DeleteMapping("/{repoId}/{prId}/comment/{commentId}")
     @Operation(summary = "댓글 삭제", description = "PR에 작성한 댓글을 삭제합니다")
-    public ResponseEntity<Integer> deleteComment(@PathVariable String repoId,
+    public ResponseEntity<Integer> deleteComment(@RequestHeader(value = "Authorization") String header,
+                                                 @PathVariable String repoId,
                                                  @PathVariable String prId,
                                                  @PathVariable String commentId) {
-        int result = prService.deleteComment(repoId, prId, commentId);
+        String accessToken = header.split(" ")[1];
+        int result = prService.deleteComment(repoId, prId, commentId, accessToken);
         if (result != 0) {
             return ResponseEntity.ok(result);
         }
@@ -189,10 +191,13 @@ public class PrController {
 
     @DeleteMapping("/{repoId}/{prId}/reply/{reCommentId}")
     @Operation(summary = "대댓글 삭제", description = "대댓글을 삭제합니다")
-    public ResponseEntity<Integer> deleteReply(@PathVariable String repoId,
+    public ResponseEntity<Integer> deleteReply(@RequestHeader(value = "Authorization") String header,
+                                               @PathVariable String repoId,
                                                @PathVariable String prId,
                                                @PathVariable String reCommentId) {
-        int result = prService.deleteComment(repoId, prId, reCommentId);
+        String accessToken = header.split(" ")[1];
+
+        int result = prService.deleteComment(repoId, prId, reCommentId , accessToken);
         if (result != 0) {
             return ResponseEntity.ok(result);
         }
@@ -201,9 +206,11 @@ public class PrController {
 
     @GetMapping("/{repoId}/{prId}/file")
     @Operation(summary = "파일 목록 조회(PR)", description = "PR내에 변경된 모든 파일 목록을 조회합니다")
-    public ResponseEntity<List<FileDto>> showFileListByPr(@PathVariable int repoId,
+    public ResponseEntity<List<FileDto>> showFileListByPr(@RequestHeader(value = "Authorization") String header,
+                                                          @PathVariable int repoId,
                                                           @PathVariable int prId) {
-        List<FileDto> fileList = prService.showFileListByPr(repoId, prId);
+        String accessToken = header.split(" ")[1];
+        List<FileDto> fileList = prService.showFileListByPr(repoId, prId , accessToken);
         if (fileList != null) {
             return ResponseEntity.ok(fileList);
         }

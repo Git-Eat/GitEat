@@ -86,10 +86,10 @@ public class PrServiceImpl implements PrService{
     }
 
     @Override
-    public int deleteComment(String repoId, String prId, String commentId) {
+    public int deleteComment(String repoId, String prId, String commentId , String accessToken) {
 
         // GitLab API에 댓글 삭제 요청
-        boolean response = gitLabApi.deleteComment(repoId, prId, commentId,"");
+        boolean response = gitLabApi.deleteComment(repoId, prId, commentId,accessToken);
 
         // 우리 DB에서도 삭제
         if(response){
@@ -161,7 +161,7 @@ public class PrServiceImpl implements PrService{
     }
 
     @Override
-    public List<FileDto> showFileListByPr(int repoId, int prId) {
+    public List<FileDto> showFileListByPr(int repoId, int prId , String accessToken) {
         Map<String, Object> params = new HashMap<>();
         params.put("repoId", repoId);
         params.put("prId", prId);
@@ -233,7 +233,7 @@ public class PrServiceImpl implements PrService{
             }
         }
 
-        
+
         // 3. 해당 파일에 달린 댓글 가져오기 > 얘는 Mapper 호출
         Map<String, Object> params = new HashMap<>();
         params.put("repoId", repoId);
