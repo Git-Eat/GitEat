@@ -69,10 +69,12 @@ public class PrController {
 
     @PostMapping("/{repoId}/{prId}/comment")
     @Operation(summary="댓글 등록", description = "PR에 댓글을 등록합니다")
-    public ResponseEntity<Integer> insertComment(@PathVariable String repoId,
+    public ResponseEntity<Integer> insertComment(@RequestHeader(value = "Authorization") String header ,
+                                                 @PathVariable String repoId,
                                                  @PathVariable String prId,
                                                  @RequestBody CommentDto commentDto) {
-        int result = prService.insertComment(repoId, prId, commentDto);
+        String accessToken = header.split(" ")[1];
+        int result = prService.insertComment(repoId, prId, commentDto , accessToken);
         if(result==200) {return ResponseEntity.ok(result);}
         return ResponseEntity.noContent().build();
     }

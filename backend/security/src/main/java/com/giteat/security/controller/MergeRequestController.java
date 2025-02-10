@@ -85,14 +85,13 @@ public class MergeRequestController {
 
     @PostMapping("/{repoId}/{prId}/comment")
     @Operation(summary = "PR 댓글 등록", description = "외부 API를 호출하여 PR에 댓글을 등록합니다.")
-    public ResponseEntity<?> insertComment(@PathVariable int repoId,
+    public ResponseEntity<?> insertComment(@RequestHeader(value = "Authorization") String header ,
+                                           @PathVariable int repoId,
                                            @PathVariable int prId,
                                            @RequestBody Map<String, Object> commentDto) {
-        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.postApi("/pr/" + repoId + "/" + prId + "/comment", commentDto);
-        Object json = typeUtil.convertJsonToObject(request.getBody());
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(json);
+        String accessToken = header.split(" ")[1];
+        ResponseEntity<?> request =  apiUtil.postApi("/pr/" + repoId + "/" + prId + "/comment", commentDto , accessToken);
+        return ResponseEntity.ok(request.getBody());
     }
 
     @PostMapping("/{repoId}/uploads")
