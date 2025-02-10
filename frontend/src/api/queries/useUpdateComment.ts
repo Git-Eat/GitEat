@@ -8,12 +8,11 @@ export const useUpdateComment = (repoId: number, prId: number) => {
     mutationFn: ({
       commentId,
       content,
-      commentType,
     }: {
       commentId: number;
       content: string;
-      commentType: 0 | 1 | 2;
-    }) => updateComment(repoId, prId, commentId, commentType, content),
+      commentType: number;
+    }) => updateComment(repoId, prId, commentId, content),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["comments", repoId, prId] });
     },

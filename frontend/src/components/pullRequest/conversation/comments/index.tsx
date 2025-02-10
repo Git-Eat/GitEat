@@ -31,7 +31,7 @@ export function Comments({ repoId, prId }: CommentsProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editCommentId, setEditCommentId] = useState<number | null>(null);
   const [editContent, setEditContent] = useState<string>("");
-  const [editCategory, setEditCategory] = useState<0 | 1 | 2>(0);
+  const [editCategory, setEditCategory] = useState<number>(0);
   const commentTypeImages = {
     0: { src: suggest, alt: "suggest" },
     1: { src: comment, alt: "comment" },
@@ -58,7 +58,7 @@ export function Comments({ repoId, prId }: CommentsProps) {
 
   function handleAddReply(
     content: string,
-    replyType: 0 | 1 | 2,
+    replyType: number,
     discussionId: string
   ) {
     if (!content.trim()) return;
@@ -72,13 +72,17 @@ export function Comments({ repoId, prId }: CommentsProps) {
     setEditContent(comment.content);
   }
 
-  function handleSaveEdit(content: string, category: 0 | 1 | 2) {
+  function handleSaveEdit(content: string, category: number) {
     if (editCommentId === null) return;
     updateComment({ commentId: editCommentId, content, commentType: category });
     setIsEditing(false);
     setEditCommentId(null);
     setEditContent("");
     setEditCategory(0);
+  }
+
+  function isValidCommentType(type: number): type is 0 | 1 | 2 {
+    return type === 0 || type === 1 || type === 2;
   }
 
   return (
@@ -100,10 +104,14 @@ export function Comments({ repoId, prId }: CommentsProps) {
                   <h1 className="text-[16px] font-semibold">
                     {comment.userName}
                   </h1>
-                  <img
-                    src={commentTypeImages[comment.commentType].src}
-                    alt={commentTypeImages[comment.commentType].alt}
-                  />
+                  {isValidCommentType(comment.commentType) ? (
+                    <img
+                      src={commentTypeImages[comment.commentType].src}
+                      alt={commentTypeImages[comment.commentType].alt}
+                    />
+                  ) : (
+                    <></>
+                  )}
                 </div>
                 <div>
                   <button
@@ -153,13 +161,13 @@ export function Comments({ repoId, prId }: CommentsProps) {
               </p>
               {(comment.reCommentList?.length ?? 0) > 0 && (
                 <section>
-                  {comment.reCommentList?.map((reComment) => (
+                  {comment.reCommentList?.map((reply) => (
                     <Replies
-                      key={reComment.reCommentId}
+                      key={reply.reCommentId}
                       repoId={repoId}
                       prId={prId}
-                      {...reComment}
-                      replyCreateAt={displayDate(reComment.createAt)}
+                      {...reply}
+                      replyCreateAt={displayDate(reply.createAt)}
                     />
                   ))}
                 </section>

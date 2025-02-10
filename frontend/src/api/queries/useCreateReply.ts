@@ -7,14 +7,13 @@ export const useCreateReply = (repoId: number, prId: number) => {
   return useMutation({
     mutationFn: ({
       content,
-      replyType,
       discussionId,
     }: {
       content: string;
-      replyType: 0 | 1 | 2;
+      replyType: number;
       discussionId: string;
     }) => {
-      return createReply(repoId, prId, discussionId, content, replyType);
+      return createReply(repoId, prId, discussionId, content);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["comments", repoId, prId] });

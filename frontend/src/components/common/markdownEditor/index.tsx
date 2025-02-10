@@ -3,11 +3,11 @@ import MDEditor from "@uiw/react-md-editor";
 import { useState } from "react";
 
 interface MarkdownEditorProps {
-  onAddSingleComment: (value: string, category: 0 | 1 | 2) => void;
+  onAddSingleComment: (value: string, category: number) => void;
   onStartReview: (value: string) => void;
-  onUpdateComment: (value: string, category: 0 | 1 | 2) => void;
+  onUpdateComment: (value: string, category: number) => void;
   initialValue?: string;
-  initialCategory?: 0 | 1 | 2;
+  initialCategory?: number;
   isEditing?: boolean;
 }
 
@@ -19,11 +19,11 @@ export function MarkdownEditor({
   initialCategory = 0,
   isEditing = false,
 }: MarkdownEditorProps) {
-  const [category, setCategory] = useState<0 | 1 | 2>(initialCategory);
+  const [category, setCategory] = useState<number>(initialCategory);
   const [value, setValue] = useState<string>(initialValue);
 
   function handleCategory(event: React.ChangeEvent<HTMLSelectElement>) {
-    setCategory(Number(event.target.value) as 0 | 1 | 2);
+    setCategory(Number(event.target.value) as number);
   }
 
   function handleReset() {

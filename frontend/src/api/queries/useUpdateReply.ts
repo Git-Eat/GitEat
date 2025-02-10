@@ -8,12 +8,11 @@ export const useUpdateReply = (repoId: number, prId: number) => {
     mutationFn: ({
       reCommentId,
       content,
-      replyType,
     }: {
       reCommentId: number;
       content: string;
-      replyType: 0 | 1 | 2;
-    }) => updateReply(repoId, prId, reCommentId, replyType, content),
+      replyType: number;
+    }) => updateReply(repoId, prId, reCommentId, content),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["comments", repoId, prId] });
     },

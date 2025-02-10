@@ -46,13 +46,12 @@ export function Replies({
     1: { src: comment, alt: "comment" },
     2: { src: review, alt: "review" },
   };
-  const selectedImage = replyTypeImages[replyType];
   const { mutate: deleteReComment } = useDeleteReply(repoId, prId);
   const { mutate: updateReply } = useUpdateReply(repoId, prId);
   const [isEditing, setIsEditing] = useState(false);
   const [editReplyId, setEditReplyId] = useState<number | null>(null);
   const [editContent, setEditContent] = useState<string>("");
-  const [editCategory, setEditCategory] = useState<0 | 1 | 2>(0);
+  const [editCategory, setEditCategory] = useState<number>(0);
 
   function handleEditReply(reply: Reply) {
     setIsEditing(true);
@@ -61,13 +60,17 @@ export function Replies({
     setEditContent(reply.content);
   }
 
-  function handleSaveEdit(content: string, category: 0 | 1 | 2) {
+  function handleSaveEdit(content: string, category: number) {
     if (editReplyId === null) return;
     updateReply({ reCommentId: editReplyId, content, replyType: category });
     setIsEditing(false);
     setEditReplyId(null);
     setEditContent("");
     setEditCategory(0);
+  }
+
+  function isValidReplyType(type: number): type is 0 | 1 | 2 {
+    return type === 0 || type === 1 || type === 2;
   }
 
   return (
@@ -80,7 +83,14 @@ export function Replies({
             className="w-9 h-9 rounded-full"
           />
           <h1 className="text-[16px] font-semibold">{userName}</h1>
-          <img src={selectedImage.src} alt={selectedImage.alt} />
+          {isValidReplyType(replyType) ? (
+            <img
+              src={replyTypeImages[replyType].src}
+              alt={replyTypeImages[replyType].alt}
+            />
+          ) : (
+            <></>
+          )}
           <time className="mr-2">{replyCreateAt}</time>
         </div>
         <div>

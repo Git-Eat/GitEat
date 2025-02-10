@@ -5,12 +5,12 @@ export type Comment = {
   prId: number;
   repoId: number;
   userId: number;
-  userName: string | null;
+  userName: string;
   avatarUrl: string;
   disId: string;
   content: string;
-  commentType: 0 | 1 | 2;
-  createAt: string | null;
+  commentType: number;
+  createAt: string;
   position: object;
   reCommentList: Reply[];
 };

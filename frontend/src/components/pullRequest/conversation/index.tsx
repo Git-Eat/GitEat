@@ -12,7 +12,7 @@ export function Conversation() {
   const prId = 6;
   const { mutate: createComment } = useCreateComment(repoId, prId);
 
-  function handleAddComment(content: string, commentType: 0 | 1 | 2) {
+  function handleAddComment(content: string, commentType: number) {
     if (!content.trim()) return;
     createComment({ content, commentType });
   }
