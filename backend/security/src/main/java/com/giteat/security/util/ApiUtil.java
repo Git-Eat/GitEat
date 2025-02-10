@@ -55,7 +55,8 @@ public class ApiUtil {
 
         HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
 
-        return restTemplate.postForEntity(fullURL, requestEntity, Object.class);
+        restTemplate.postForEntity(fullURL, requestEntity, Object.class);
+        return ResponseEntity.ok().build();
 
     }
 
@@ -73,7 +74,6 @@ public class ApiUtil {
         restTemplate.postForEntity(fullURL, requestEntity, Object.class);
         System.out.println("SUCCESS GET DATA");
         return ResponseEntity.ok().build();
-
     }
 
     /**

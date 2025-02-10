@@ -67,11 +67,13 @@ public class RepositoryController {
 
     @PostMapping("")
     @Operation(summary = "Repo 등록", description = "외부 API를 호출하여 Repo를 등록합니다.")
-    public ResponseEntity<?> saveRepositoryData(@RequestBody Map<String, String> repoBody) {
+    public ResponseEntity<?> saveRepositoryData(@RequestBody Map<String, String> repoBody,
+                                                @RequestHeader(value = "Authorization") String header) {
         log.info("call insertRepo Method");
-        System.out.println(repoBody);
-        ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.postApi("/repo",repoBody);
+        String accessToken = header.split(" ")[1];
+        ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.postApi("/repo",repoBody, accessToken);
         System.out.println(response);
+
         Object json = typeUtil.convertJsonToObject(response.getBody());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)

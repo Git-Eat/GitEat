@@ -49,9 +49,10 @@ public class RepoController {
      */
     @PostMapping("")
     @Operation(summary="repository의 모든 데이터 읽기", description = "repository에서 모든 데이터를 가져옵니다.")
-    public ResponseEntity<?> saveRepositoryData(@RequestBody Map<String, String> repoBody){
+    public ResponseEntity<?> saveRepositoryData(@RequestHeader(value = "Authorization") String header,
+                                                @RequestBody Map<String, String> repoBody){
         String repositoryId = repoBody.get("repoId");
-        String accessToken = "UATEgVcVTSsLn7PWao6c";
+        String accessToken = header.split(" ")[1];
         RepositoryEntity repository = repoService.saveRepositoryData(accessToken, repositoryId);
         return ResponseEntity.ok(repository);
     }
