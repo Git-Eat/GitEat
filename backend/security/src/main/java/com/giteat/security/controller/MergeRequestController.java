@@ -129,7 +129,7 @@ public class MergeRequestController {
                                                @RequestBody CustomCommentDto customCommentDto){
         String accessToken = header.split(" ")[1];
        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.postApi("/pr/" + repoId + "/" + prId + "/file/comment",customCommentDto,accessToken);
-
+        System.out.println("CONTROLLER SUCCESS TO GET DATA");
         return ResponseEntity.ok(request.getBody());
 
 //        Object json = typeUtil.convertJsonToObject(request.getBody());

@@ -70,8 +70,9 @@ public class ApiUtil {
         headers.add("Authorization", "Bearer " + accessToken);
 
         HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
-
-        return restTemplate.postForEntity(fullURL, requestEntity, Object.class);
+        restTemplate.postForEntity(fullURL, requestEntity, Object.class);
+        System.out.println("SUCCESS GET DATA");
+        return ResponseEntity.ok().build();
 
     }
 

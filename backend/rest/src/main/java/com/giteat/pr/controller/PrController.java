@@ -96,7 +96,7 @@ public class PrController {
         String result = prService.insertFileComment(repoId, prId, customCommentDto , accessToken);
 //        if(result.equals("200")) {return ResponseEntity.ok(result);}
 //        return ResponseEntity.noContent().build();
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("success");
     }
 
 
