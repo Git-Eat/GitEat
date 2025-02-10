@@ -152,6 +152,7 @@ export function Comments({ repoId, prId }: CommentsProps) {
                     initialValue={editContent}
                     initialCategory={editCategory}
                     isEditing={true}
+                    repoId={repoId}
                   />
                 )}
               </div>
@@ -187,6 +188,7 @@ export function Comments({ repoId, prId }: CommentsProps) {
                 }}
                 onStartReview={() => {}}
                 onUpdateComment={() => {}}
+                repoId={repoId}
               />
             )}
           </li>

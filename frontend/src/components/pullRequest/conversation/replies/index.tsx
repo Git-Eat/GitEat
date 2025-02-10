@@ -125,6 +125,7 @@ export function Replies({
           initialValue={editContent}
           initialCategory={editCategory}
           isEditing={true}
+          repoId={repoId}
         />
       )}
     </section>

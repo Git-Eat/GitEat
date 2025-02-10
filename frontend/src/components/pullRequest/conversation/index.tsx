@@ -35,6 +35,7 @@ export function Conversation() {
           }}
           onStartReview={() => {}}
           onUpdateComment={() => {}}
+          repoId={numericRepoId}
         />
       </main>
       <aside className="w-1/4">
