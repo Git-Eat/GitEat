@@ -29,8 +29,9 @@ public class RepoController {
 
     @DeleteMapping("/{repoId}")
     @Operation(summary = "Repo 삭제", description = "Repo를 삭제합니다")
-    ResponseEntity<Integer> deleteRepo(@PathVariable int repoId){
-        int result = repoService.deleteRepo(repoId);
+    ResponseEntity<Integer> deleteRepo(@RequestHeader("Authorization") String header , @PathVariable int repoId){
+        String accessToken = header.split(" ")[1];
+        int result = repoService.deleteRepo(repoId , accessToken);
         if(result != 0) return ResponseEntity.ok(result);
         return ResponseEntity.noContent().build();
     }

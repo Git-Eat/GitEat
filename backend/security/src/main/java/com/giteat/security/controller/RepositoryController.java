@@ -44,13 +44,11 @@ public class RepositoryController {
 
     @DeleteMapping("/{repoId}")
     @Operation(summary = "Repo 삭제", description = "외부 API를 호출하여 Repo를 삭제합니다.")
-    public ResponseEntity<?> deleteRepo(@PathVariable int repoId) {
+    public ResponseEntity<?> deleteRepo(@RequestHeader(value = "Authorization") String header , @PathVariable int repoId) {
         log.info("call deleteRepo Method");
-        ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.deleteApi("/repo/" + repoId , String.valueOf(repoId));
-        Object json = typeUtil.convertJsonToObject(response.getBody());
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(json);
+        String accessToken = header.split(" ")[1];
+        ResponseEntity<?> response = apiUtil.deleteApi("/repo/" + repoId , String.valueOf(repoId) , accessToken);
+        return ResponseEntity.ok(response.getBody());
     }
 
     @GetMapping("/{repoId}")

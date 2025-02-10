@@ -47,8 +47,7 @@ public class RepoServiceImpl implements RepoService{
     }
 
     @Override
-    public int deleteRepo(int repoId) {
-        String accessToken = "UATEgVcVTSsLn7PWao6c";
+    public int deleteRepo(int repoId , String accessToken) {
         Map<String, Object> userResponse = gitLabApi.getUser(accessToken); // user 정보 불러오는 Endpoint 호출
         int userId = (int) userResponse.get("id");
         return repoRepository.deleteRepo(repoId, userId);

@@ -130,6 +130,18 @@ public class ApiUtil {
         return ResponseEntity.ok().build();
     }
 
+    public ResponseEntity<?> deleteApi(String url, Object requestBody , String accessToken) {
+        String fullURL = restURL + url;
+        log.info("DELETE 요청 URL: " + fullURL);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(accessToken); // Authorization 헤더 설정
+
+        HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
+        return restTemplate.exchange(fullURL, HttpMethod.DELETE, requestEntity, Void.class);
+    }
+
     /**
      * 파일 POST용 api
      * @param url

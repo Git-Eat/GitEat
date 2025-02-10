@@ -8,6 +8,6 @@ public interface RepoService {
     List<RepositoryEntity> getRepoList(String accessToken);
     RepositoryEntity findByRepoId(int repoId);
     RepositoryEntity insertRepo(int repoId);
-    int deleteRepo(int repoId);
+    int deleteRepo(int repoId , String accessToken);
     RepositoryEntity saveRepositoryData(String accessToken , String repositoryId);
 }
