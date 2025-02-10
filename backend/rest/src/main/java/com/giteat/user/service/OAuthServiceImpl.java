@@ -47,6 +47,7 @@ public class OAuthServiceImpl implements OAuthService {
         } else {
             // 신규 사용자면 새로 저장
             userEntity = new UserEntity();
+            userEntity.setUserId(oAuthTokenDto.getUserId());
             userEntity.setEmail(oAuthTokenDto.getEmail());
             userEntity.setName(oAuthTokenDto.getName());
             userEntity.setAvatarUrl(oAuthTokenDto.getAvatarUrl());
@@ -57,6 +58,7 @@ public class OAuthServiceImpl implements OAuthService {
         Optional<OAuthEntity> existOAuth = oAuthRepository.findByEmail(oAuthTokenDto.getEmail());
         if (existOAuth.isPresent()) {
             OAuthEntity oAuthEntity = existOAuth.get();
+            oAuthEntity.setUserId(oAuthTokenDto.getUserId());
             oAuthEntity.setAccessToken(oAuthTokenDto.getAccessToken());
             oAuthEntity.setRefreshToken(oAuthTokenDto.getRefreshToken());
             oAuthEntity.setExpiresIn(oAuthTokenDto.getExpiresIn());
@@ -126,6 +128,7 @@ public class OAuthServiceImpl implements OAuthService {
                 // 1. 토큰이 만료되지 않고 아직 유효하다면 현재 토큰 반환
                 if(!tokenExpired(tokenRequest.getEmail())) {
                     OAuthTokenDto dto = new OAuthTokenDto();
+                    dto.setUserId(entity.getUserId());
                     dto.setEmail(entity.getEmail());
                     dto.setAccessToken(entity.getAccessToken());
                     dto.setRefreshToken(entity.getRefreshToken());
@@ -141,7 +144,7 @@ public class OAuthServiceImpl implements OAuthService {
 
             // 3. DTO에 갱신된 토큰 정보 설정
             OAuthTokenDto dto = new OAuthTokenDto();
-
+            dto.setUserId(entity.getUserId());
             dto.setEmail(entity.getEmail()); // 기존 entity에서 email 가져오기
             dto.setAccessToken(token.get("access_token"));
             dto.setTokenType(token.get("token_type"));
