@@ -25,15 +25,6 @@ public class RepoController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{repoId}")
-    @Operation(summary = "Repo 등록", description = "Repo를 등록합니다")
-    ResponseEntity<RepositoryEntity> insertRepo(@RequestBody Map<String, Integer> repoBody){
-        // repo 등록시 깃랩에서 데이터 받아와서 저장하는 함수
-        Integer repoId = repoBody.get("repoId");
-        RepositoryEntity repo = repoService.insertRepo(repoId);
-        if(repo != null) return ResponseEntity.ok(repo);
-        return ResponseEntity.noContent().build();
-    }
 
     @DeleteMapping("/{repoId}")
     @Operation(summary = "Repo 삭제", description = "Repo를 삭제합니다")
@@ -53,15 +44,18 @@ public class RepoController {
 
     /**
      * 등록한 레포지토리 정보 읽어 오기
-     * @param accessToken
      * @param repoBody
      * @return
      */
-    @PostMapping("/repositoryData")
+    @PostMapping("")
     @Operation(summary="repository의 모든 데이터 읽기", description = "repository에서 모든 데이터를 가져옵니다.")
-    public ResponseEntity<?> saveRepositoryData(@RequestHeader("accessToken") String accessToken , @RequestBody Map<String, String> repoBody){
-        String repositoryId = repoBody.get("repositoryId");
+    public ResponseEntity<?> saveRepositoryData(@RequestHeader(value = "Authorization") String header,
+                                                @RequestBody Map<String, String> repoBody){
+        String repositoryId = repoBody.get("repoId");
+        String accessToken = header.split(" ")[1];
         RepositoryEntity repository = repoService.saveRepositoryData(accessToken, repositoryId);
+        System.out.println("REPOSITORY : " + repository) ;
+        System.out.println("@@@@@@@@@@@@@@@@@@" + repository);
         return ResponseEntity.ok(repository);
     }
 }

@@ -24,11 +24,15 @@ public class RepoServiceImpl implements RepoService{
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
     private final UsersRepository usersRepository;
+    private final RepositoryMemberRepository repositoryMemberRepository;
     private final LabApi gitLabApi;
 
     @Override
     public List<RepositoryEntity> getRepoList() {
-        return repoRepository.getRepoList();
+        String accessToken = "UATEgVcVTSsLn7PWao6c";
+        Map<String, Object> userResponse = gitLabApi.getUser(accessToken); // user 정보 불러오는 Endpoint 호출
+        int userId = (int) userResponse.get("id");
+        return repoRepository.getRepoList(userId);
     }
 
     @Override
@@ -45,15 +49,15 @@ public class RepoServiceImpl implements RepoService{
 
     @Override
     public int deleteRepo(int repoId) {
-        return repoRepository.deleteRepo(repoId);
+        String accessToken = "UATEgVcVTSsLn7PWao6c";
+        Map<String, Object> userResponse = gitLabApi.getUser(accessToken); // user 정보 불러오는 Endpoint 호출
+        int userId = (int) userResponse.get("id");
+        return repoRepository.deleteRepo(repoId, userId);
     }
 
     @Override
     public RepositoryEntity saveRepositoryData(String accessToken , String projectId){
-        accessToken = "UATEgVcVTSsLn7PWao6c";
-        System.out.println(projectId);
         int repoId = Integer.parseInt(projectId);
-        System.out.println(repoId);
 
         // ---------- members 정보 가져오기 ------------ //
         UsersEntity user = new UsersEntity();
@@ -88,6 +92,23 @@ public class RepoServiceImpl implements RepoService{
             }
         }
 
+        Map<String, Object> userResponse = gitLabApi.getUser(accessToken); // user 정보 불러오는 Endpoint 호출
+        int userId = (int) userResponse.get("id");
+        RepositoryMemberEntity repositoryMemberEntity = new RepositoryMemberEntity();
+
+        // repo 정보 있는지 확인 > 있다면 repo_member만 업데이트 하고 저장 //
+        RepositoryEntity repositoryInfo = repoRepository.findByRepoId(repoId);
+        if(repositoryInfo != null){
+            // repo_member에 저장
+            RepositoryMemberId repositoryMemberId = new RepositoryMemberId(repoId, userId);
+            System.out.println("repo log");
+            repositoryMemberEntity.setId(repositoryMemberId);
+            repositoryMemberRepository.save(repositoryMemberEntity);
+            System.out.println("이미 정보가 있는 repo입니다." + repositoryInfo);
+            System.out.println("레포 아이디: " + repositoryInfo.getName());
+            return repositoryInfo;
+        }
+
 
         // ---------- repo 정보부터 가져오기 ----------- //
         RepositoryEntity repository = new RepositoryEntity();
@@ -105,6 +126,12 @@ public class RepoServiceImpl implements RepoService{
         else repository.setAccess(3);
 
         repoRepository.save(repository);
+
+
+        // -------------- RepositoryMember 업데이트 ------------------- //
+        RepositoryMemberId repositoryMemberId = new RepositoryMemberId(repoId, userId);
+        repositoryMemberEntity.setId(repositoryMemberId);
+        repositoryMemberRepository.save(repositoryMemberEntity);
         
         // ---------- MR 정보 가져오기 ---------- //
         List<Map<String, Object>> newMrResponse = gitLabApi.getMergeRequests(projectId, accessToken);

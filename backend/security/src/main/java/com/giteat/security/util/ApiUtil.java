@@ -55,8 +55,25 @@ public class ApiUtil {
 
         HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
 
-        return restTemplate.postForEntity(fullURL, requestEntity, Object.class);
+        restTemplate.postForEntity(fullURL, requestEntity, Object.class);
+        return ResponseEntity.ok().build();
 
+    }
+
+
+    public ResponseEntity<?> postApi(String url, Object requestBody , String accessToken) {
+        String fullURL = restURL + url;
+        log.info("POST 요청 URL: " + fullURL);
+        log.info("ApiUtil Request Body: {}", requestBody);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("Authorization", "Bearer " + accessToken);
+
+        HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
+        restTemplate.postForEntity(fullURL, requestEntity, Object.class);
+        System.out.println("SUCCESS GET DATA");
+        return ResponseEntity.ok().build();
     }
 
     /**

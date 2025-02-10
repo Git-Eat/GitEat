@@ -31,17 +31,17 @@ public class RepositoryController {
                 .body(json);
     }
 
-    @PostMapping("/{repoId}")
-    @Operation(summary = "Repo 등록", description = "외부 API를 호출하여 Repo를 등록합니다.")
-    public ResponseEntity<?> insertRepo(@RequestBody Map<String, Integer> repoBody) {
-        log.info("call insertRepo Method");
-        Integer repoId = repoBody.get("repoId");
-        ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.postApi("/repo/" + repoId, repoBody);
-        Object json = typeUtil.convertJsonToObject(response.getBody());
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(json);
-    }
+//    @PostMapping("/{repoId}")
+//    @Operation(summary = "Repo 등록", description = "외부 API를 호출하여 Repo를 등록합니다.")
+//    public ResponseEntity<?> insertRepo(@RequestBody Map<String, Integer> repoBody) {
+//        log.info("call insertRepo Method");
+//        Integer repoId = repoBody.get("repoId");
+//        ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.postApi("/repo/" + repoId, repoBody);
+//        Object json = typeUtil.convertJsonToObject(response.getBody());
+//        return ResponseEntity.ok()
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .body(json);
+//    }
 
     @DeleteMapping("/{repoId}")
     @Operation(summary = "Repo 삭제", description = "외부 API를 호출하여 Repo를 삭제합니다.")
@@ -58,11 +58,27 @@ public class RepositoryController {
     @Operation(summary = "Repo 상세 조회", description = "외부 API를 호출하여 Repo 상세정보를 가져옵니다.")
     public ResponseEntity<?> findRepoById(@PathVariable int repoId) {
         log.info("call findRepoById Method");
-        ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.getApi("/repo/" + repoId);
+        ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.getApi("/repo");
         Object json = typeUtil.convertJsonToObject(response.getBody());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(json);
+    }
+
+    @PostMapping("")
+    @Operation(summary = "Repo 등록", description = "외부 API를 호출하여 Repo를 등록합니다.")
+    public ResponseEntity<?> saveRepositoryData(@RequestBody Map<String, String> repoBody,
+                                                @RequestHeader(value = "Authorization") String header) {
+        log.info("call insertRepo Method");
+        String accessToken = header.split(" ")[1];
+        ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.postApi("/repo",repoBody, accessToken);
+        System.out.println(response);
+
+        Object json = typeUtil.convertJsonToObject(response.getBody());
+        return ResponseEntity.ok(json);
+//        return ResponseEntity.ok()
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .body(json);
     }
 
 }

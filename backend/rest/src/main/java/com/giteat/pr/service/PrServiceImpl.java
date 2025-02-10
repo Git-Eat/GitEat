@@ -114,14 +114,14 @@ public class PrServiceImpl implements PrService{
     }
 
     @Override
-    public int insertFileComment(String repoId, String prId, CustomCommentDto customCommentDto) {
+    public String insertFileComment(String repoId, String prId, CustomCommentDto customCommentDto , String accessToken) {
         // RequestBody 데이터 변환
-        FileCommentDto gitLabRequest = commentConverter.converToGitLabFormat(customCommentDto);
+        Map<String, Object> gitLabRequest = commentConverter.converToGitLabFormat(customCommentDto);
 
         // 깃랩 API에 댓글 등록 요청
-        Map<String,Object> response = gitLabApi.insertFileComment(repoId, prId, gitLabRequest, "");
-        if(response != null) return 200;
-        return 404;
+        Map<String,Object> response = gitLabApi.insertFileComment(repoId, prId, gitLabRequest, accessToken);
+        if(response != null) return "ok";
+        return "fail";
     }
 
     @Override

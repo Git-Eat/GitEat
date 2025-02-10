@@ -1,18 +1,18 @@
 import { useMutation, useQueryClient } from "react-query";
-import { updateComment } from "../comment";
+import { updateReply } from "../comment";
 
-export const useUpdateComment = (repoId: number, prId: number) => {
+export const useUpdateReply = (repoId: number, prId: number) => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({
-      commentId,
+      reCommentId,
       content,
     }: {
-      commentId: number;
+      reCommentId: number;
       content: string;
-      commentType: number;
-    }) => updateComment(repoId, prId, commentId, content),
+      replyType: number;
+    }) => updateReply(repoId, prId, reCommentId, content),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["comments", repoId, prId] });
     },
