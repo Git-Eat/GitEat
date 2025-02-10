@@ -78,7 +78,7 @@ public class ApiUtil {
         System.out.println("request : "  + request);
         System.out.println("request body : " + request.getBody());
 //        return ResponseEntity.ok(request.getBody());
-        return restTemplate.postForEntity(fullURL, requestEntity, Object.class);
+        return request;
     }
 
     /**
