@@ -69,11 +69,14 @@ public class RepositoryController {
     @Operation(summary = "Repo 등록", description = "외부 API를 호출하여 Repo를 등록합니다.")
     public ResponseEntity<?> saveRepositoryData(@RequestBody Map<String, String> repoBody) {
         log.info("call insertRepo Method");
-        ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.postApi("/repo",repoBody);
-        Object json = typeUtil.convertJsonToObject(response.getBody());
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(json);
+        System.out.println(repoBody);
+        ResponseEntity<?> response = (ResponseEntity<?>) apiUtil.postApi("/repo",repoBody);
+        System.out.println(response);
+        return response;
+//        Object json = typeUtil.convertJsonToObject(response.getBody());
+//        return ResponseEntity.ok()
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .body(json);
     }
 
 }
