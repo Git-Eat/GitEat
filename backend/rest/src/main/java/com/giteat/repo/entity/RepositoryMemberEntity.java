@@ -15,8 +15,4 @@ public class RepositoryMemberEntity {
 
     @EmbeddedId
     private RepositoryMemberId id;
-
-    @ManyToOne
-    @JoinColumn(name = "repo_id", insertable = false, updatable = false)
-    private RepositoryEntity repository;
 }
