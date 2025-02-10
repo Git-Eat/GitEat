@@ -67,8 +67,7 @@ public class RepositoryController {
 
     @PostMapping("")
     @Operation(summary = "Repo 등록", description = "외부 API를 호출하여 Repo를 등록합니다.")
-    public ResponseEntity<?> saveRepositoryData(@RequestHeader("accessToken") String accessToken ,
-                                                @RequestBody Map<String, String> repoBody) {
+    public ResponseEntity<?> saveRepositoryData(@RequestBody Map<String, String> repoBody) {
         log.info("call insertRepo Method");
         ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.postApi("/repo",repoBody);
         Object json = typeUtil.convertJsonToObject(response.getBody());
