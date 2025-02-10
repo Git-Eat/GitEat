@@ -57,7 +57,6 @@ public class RepoServiceImpl implements RepoService{
 
     @Override
     public RepositoryEntity saveRepositoryData(String accessToken , String projectId){
-        accessToken = "UATEgVcVTSsLn7PWao6c";
         int repoId = Integer.parseInt(projectId);
 
         // ---------- members 정보 가져오기 ------------ //

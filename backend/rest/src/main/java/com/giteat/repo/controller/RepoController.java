@@ -54,6 +54,7 @@ public class RepoController {
         String repositoryId = repoBody.get("repoId");
         String accessToken = header.split(" ")[1];
         RepositoryEntity repository = repoService.saveRepositoryData(accessToken, repositoryId);
+        System.out.println("REPOSITORY : " + repository) ;
         return ResponseEntity.ok(repository);
     }
 }

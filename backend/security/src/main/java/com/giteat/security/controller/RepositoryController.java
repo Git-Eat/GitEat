@@ -75,9 +75,10 @@ public class RepositoryController {
         System.out.println(response);
 
         Object json = typeUtil.convertJsonToObject(response.getBody());
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(json);
+        return ResponseEntity.ok(json);
+//        return ResponseEntity.ok()
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .body(json);
     }
 
 }
