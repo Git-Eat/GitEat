@@ -5,12 +5,16 @@ import spinner from "../../../assets/images/spinner.svg";
 import { useCreateComment } from "../../../api/queries/useCreateComment";
 import { Suspense } from "react";
 import { ErrorBoundary } from "../../common/errorBoundery";
+import { useParams } from "react-router-dom";
 
 export function Conversation() {
-  /* repoId & prId 변경 예정 */
-  const repoId = 888788;
-  const prId = 6;
-  const { mutate: createComment } = useCreateComment(repoId, prId);
+  const { baseRepoId, prId } = useParams();
+  const numericRepoId = Number(baseRepoId);
+  const numericPrId = Number(prId);
+  const { mutate: createComment } = useCreateComment(
+    numericRepoId,
+    numericPrId
+  );
 
   function handleAddComment(content: string, commentType: number) {
     if (!content.trim()) return;
@@ -22,7 +26,7 @@ export function Conversation() {
       <main className="w-3/4">
         <ErrorBoundary>
           <Suspense fallback={<img src={spinner} alt="Loading..." />}>
-            <Comments repoId={repoId} prId={prId} />
+            <Comments repoId={numericRepoId} prId={numericPrId} />
           </Suspense>
         </ErrorBoundary>
         <MarkdownEditor
@@ -36,7 +40,7 @@ export function Conversation() {
       <aside className="w-1/4">
         <ErrorBoundary>
           <Suspense fallback={<img src={spinner} alt="Loading..." />}>
-            <Reviewers repoId={repoId} prId={prId} />
+            <Reviewers repoId={numericRepoId} prId={numericPrId} />
           </Suspense>
         </ErrorBoundary>
       </aside>
