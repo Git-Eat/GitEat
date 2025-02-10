@@ -346,7 +346,7 @@ public class LabApi {
         System.out.println("ACCESS TOKEN : " + accessToken);
         System.out.println("BODY : " +requestBody);
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Private-Token", accessToken);
+        headers.set("Authorization", "Bearer " + accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<Map<String, String>> entity = new HttpEntity<>(requestBody, headers);
