@@ -8,6 +8,7 @@ import com.giteat.security.util.TypeUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
@@ -85,20 +86,21 @@ public class MergeRequestController {
 
     @PostMapping("/{repoId}/{prId}/comment")
     @Operation(summary = "PR 댓글 등록", description = "외부 API를 호출하여 PR에 댓글을 등록합니다.")
-    public ResponseEntity<?> insertComment(@PathVariable int repoId,
+    public ResponseEntity<?> insertComment(@RequestHeader(value = "Authorization") String header ,
+                                           @PathVariable int repoId,
                                            @PathVariable int prId,
                                            @RequestBody Map<String, Object> commentDto) {
-        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.postApi("/pr/" + repoId + "/" + prId + "/comment", commentDto);
-        Object json = typeUtil.convertJsonToObject(request.getBody());
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(json);
+        String accessToken = header.split(" ")[1];
+        ResponseEntity<?> request =  apiUtil.postApi("/pr/" + repoId + "/" + prId + "/comment", commentDto , accessToken);
+        return ResponseEntity.ok(request.getBody());
     }
 
     @PostMapping("/{repoId}/uploads")
     @Operation(summary = "파일 업로드", description = "파일 업로드 하면 markdown을 return합니다")
-    public ResponseEntity<?> uploadsFile(@PathVariable String repoId,
+    public ResponseEntity<?> uploadsFile(@RequestHeader(value = "Authorization") String header ,
+                                         @PathVariable String repoId,
                                          @RequestParam(value = "file", required = false) MultipartFile file) {
+        String accessToken = header.split(" ")[1];
         if (file == null || file.isEmpty()) {
             return ResponseEntity.badRequest().body("No file provided.");
         }
@@ -128,7 +130,7 @@ public class MergeRequestController {
                                                @PathVariable String prId,
                                                @RequestBody CustomCommentDto customCommentDto){
         String accessToken = header.split(" ")[1];
-       ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.postApi("/pr/" + repoId + "/" + prId + "/file/comment",customCommentDto,accessToken);
+       ResponseEntity<?> request =  apiUtil.postApi("/pr/" + repoId + "/" + prId + "/file/comment",customCommentDto,accessToken);
         System.out.println("CONTROLLER SUCCESS TO GET DATA");
         return ResponseEntity.ok(request.getBody());
 
@@ -141,15 +143,15 @@ public class MergeRequestController {
 
     @PutMapping("/{repoId}/{prId}/comment/{commentId}")
     @Operation(summary = "PR 댓글 수정", description = "외부 API를 호출하여 PR의 댓글을 수정합니다.")
-    public ResponseEntity<?> updateComment(@PathVariable int repoId,
+    public ResponseEntity<?> updateComment(@RequestHeader("Authorization") String header ,
+                                           @PathVariable int repoId,
                                            @PathVariable int prId,
                                            @PathVariable int commentId,
                                            @RequestBody Map<String, Object> commentDto) {
-        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.putApi("/pr/" + repoId + "/" + prId + "/comment/" + commentId, commentDto);
-        Object json = typeUtil.convertJsonToObject(request.getBody());
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(json);
+        String accessToken = header.split(" ")[1];
+        ResponseEntity<?> request = apiUtil.putApi("/pr/" + repoId + "/" + prId + "/comment/" + commentId, commentDto , accessToken);
+
+        return ResponseEntity.ok(request.getBody());
     }
 
     @DeleteMapping("/{repoId}/{prId}/comment/{commentId}")
@@ -216,13 +218,12 @@ public class MergeRequestController {
 
     @GetMapping("/{repoId}/{prId}/file")
     @Operation(summary = "PR 내 변경된 파일 목록 조회", description = "외부 API를 호출하여 PR 내 변경된 파일 목록을 가져옵니다.")
-    public ResponseEntity<?> showFileListByPr(@PathVariable int repoId,
+    public ResponseEntity<?> showFileListByPr(@RequestHeader(value = "Authorization") String header ,
+                                              @PathVariable int repoId,
                                               @PathVariable int prId) {
-        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId + "/" + prId + "/file");
-        Object json = typeUtil.convertJsonToObject(request.getBody());
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(json);
+        String accessToken = header.split(" ")[1];
+        ResponseEntity<?> request =  apiUtil.getApi("/pr/" + repoId + "/" + prId + "/file" , accessToken);
+        return ResponseEntity.ok(request.getBody());
     }
 
 //    @GetMapping("/{repoId}/{prId}/file/{commitId}")

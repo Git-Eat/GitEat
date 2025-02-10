@@ -7,10 +7,10 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
-@Table(name = "comment")
-@Getter
-@Setter
+//@Entity
+//@Table(name = "comment")
+//@Getter
+//@Setter
 public class GitLabCommentEntity {
 
     @Id

@@ -23,12 +23,11 @@ public class RepositoryController {
 
     @GetMapping("")
     @Operation(summary = "Repo 목록 조회", description = "외부 API를 호출하여 Repo 목록을 가져옵니다.")
-    public ResponseEntity<?> getRepoList() {
-        ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.getApi("/repo");
-        Object json = typeUtil.convertJsonToObject(response.getBody());
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(json);
+    public ResponseEntity<?> getRepoList(@RequestHeader(value = "Authorization") String header) {
+        String accessToken = header.split(" ")[1];
+        ResponseEntity<?> response = apiUtil.getApi("/repo" , accessToken);
+
+        return ResponseEntity.ok(response.getBody());
     }
 
 //    @PostMapping("/{repoId}")
@@ -45,13 +44,11 @@ public class RepositoryController {
 
     @DeleteMapping("/{repoId}")
     @Operation(summary = "Repo 삭제", description = "외부 API를 호출하여 Repo를 삭제합니다.")
-    public ResponseEntity<?> deleteRepo(@PathVariable int repoId) {
+    public ResponseEntity<?> deleteRepo(@RequestHeader(value = "Authorization") String header , @PathVariable int repoId) {
         log.info("call deleteRepo Method");
-        ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.deleteApi("/repo/" + repoId , String.valueOf(repoId));
-        Object json = typeUtil.convertJsonToObject(response.getBody());
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(json);
+        String accessToken = header.split(" ")[1];
+        ResponseEntity<?> response = apiUtil.deleteApi("/repo/" + repoId , String.valueOf(repoId) , accessToken);
+        return ResponseEntity.ok(response.getBody());
     }
 
     @GetMapping("/{repoId}")
@@ -71,14 +68,9 @@ public class RepositoryController {
                                                 @RequestHeader(value = "Authorization") String header) {
         log.info("call insertRepo Method");
         String accessToken = header.split(" ")[1];
-        ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.postApi("/repo",repoBody, accessToken);
-        System.out.println(response);
-
-        Object json = typeUtil.convertJsonToObject(response.getBody());
-        return ResponseEntity.ok(json);
-//        return ResponseEntity.ok()
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .body(json);
+        ResponseEntity<?> response = apiUtil.postApi("/repo",repoBody, accessToken);
+        System.out.println("@@@@@@@@@ DATA  :" + response.getBody());
+        return ResponseEntity.ok(response.getBody());
     }
 
 }

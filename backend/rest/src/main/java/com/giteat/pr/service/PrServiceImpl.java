@@ -69,26 +69,27 @@ public class PrServiceImpl implements PrService{
 
 
     @Override
-    public int insertComment(String repoId, String prId, CommentDto commentDto) {
+    public int insertComment(String repoId, String prId, CommentDto commentDto , String accessToken) {
         // GitLab API에 댓글 등록 요청
-        Map<String,Object> response = gitLabApi.insertComment(repoId, prId, commentDto.getContent(), "");
+        Map<String,Object> response = gitLabApi.insertComment(repoId, prId, commentDto.getContent(), accessToken);
         if(response != null) return 200;
         return 404;
     }
 
     @Override
-    public int updateComment(int repoId, int prId, CommentDto commentDto) {
+    public int updateComment(int repoId, int prId, CommentDto commentDto , String accessToken) {
         // GitLab API에 댓글 수정 요청
-        Map<String,Object> response = gitLabApi.updateComment(String.valueOf(repoId), String.valueOf(prId),  String.valueOf(commentDto.getCommentId()) ,commentDto.getContent(),"");
+        Map<String,Object> response = gitLabApi.updateComment(String.valueOf(repoId), String.valueOf(prId),  String.valueOf(commentDto.getCommentId()) ,commentDto.getContent(),accessToken
+        );
         if(response != null) return 200;
         return 404;
     }
 
     @Override
-    public int deleteComment(String repoId, String prId, String commentId) {
+    public int deleteComment(String repoId, String prId, String commentId , String accessToken) {
 
         // GitLab API에 댓글 삭제 요청
-        boolean response = gitLabApi.deleteComment(repoId, prId, commentId,"");
+        boolean response = gitLabApi.deleteComment(repoId, prId, commentId,accessToken);
 
         // 우리 DB에서도 삭제
         if(response){
@@ -102,11 +103,11 @@ public class PrServiceImpl implements PrService{
     }
 
     @Override
-    public Map<String, String> uploadsFile(String repoId, MultipartFile file) {
+    public Map<String, String> uploadsFile(String repoId, MultipartFile file , String accessToken) {
 
         Map<String, String> fileData;
         try {
-            fileData = gitLabApi.uploadFile(repoId, file); // 깃랩 이미지 업로드 API 호출
+            fileData = gitLabApi.uploadFile(repoId, file , accessToken); // 깃랩 이미지 업로드 API 호출
         } catch (Exception e) {
             throw new RuntimeException("이미지 업로드 실패", e);
         }
@@ -160,7 +161,7 @@ public class PrServiceImpl implements PrService{
     }
 
     @Override
-    public List<FileDto> showFileListByPr(int repoId, int prId) {
+    public List<FileDto> showFileListByPr(int repoId, int prId , String accessToken) {
         Map<String, Object> params = new HashMap<>();
         params.put("repoId", repoId);
         params.put("prId", prId);
@@ -232,7 +233,7 @@ public class PrServiceImpl implements PrService{
             }
         }
 
-        
+
         // 3. 해당 파일에 달린 댓글 가져오기 > 얘는 Mapper 호출
         Map<String, Object> params = new HashMap<>();
         params.put("repoId", repoId);

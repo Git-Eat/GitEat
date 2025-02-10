@@ -19,8 +19,9 @@ public class RepoController {
 
     @GetMapping("")
     @Operation(summary = "Repo 목록 조회", description = "등록된 Repo 목록을 조회합니다")
-    ResponseEntity<List<RepositoryEntity>> getRepoList() {
-        List<RepositoryEntity> repoList = repoService.getRepoList();
+    ResponseEntity<List<RepositoryEntity>> getRepoList(@RequestHeader(value = "Authorization") String header) {
+        String accessToken = header.split(" ")[1];
+        List<RepositoryEntity> repoList = repoService.getRepoList(accessToken);
         if(repoList != null) return ResponseEntity.ok(repoList);
         return ResponseEntity.noContent().build();
     }
@@ -28,8 +29,9 @@ public class RepoController {
 
     @DeleteMapping("/{repoId}")
     @Operation(summary = "Repo 삭제", description = "Repo를 삭제합니다")
-    ResponseEntity<Integer> deleteRepo(@PathVariable int repoId){
-        int result = repoService.deleteRepo(repoId);
+    ResponseEntity<Integer> deleteRepo(@RequestHeader("Authorization") String header , @PathVariable int repoId){
+        String accessToken = header.split(" ")[1];
+        int result = repoService.deleteRepo(repoId , accessToken);
         if(result != 0) return ResponseEntity.ok(result);
         return ResponseEntity.noContent().build();
     }
@@ -56,6 +58,6 @@ public class RepoController {
         RepositoryEntity repository = repoService.saveRepositoryData(accessToken, repositoryId);
         System.out.println("REPOSITORY : " + repository) ;
         System.out.println("@@@@@@@@@@@@@@@@@@" + repository);
-        return ResponseEntity.ok(repository);
+        return ResponseEntity.ok().body(repository);
     }
 }

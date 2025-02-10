@@ -28,8 +28,7 @@ public class RepoServiceImpl implements RepoService{
     private final LabApi gitLabApi;
 
     @Override
-    public List<RepositoryEntity> getRepoList() {
-        String accessToken = "UATEgVcVTSsLn7PWao6c";
+    public List<RepositoryEntity> getRepoList(String accessToken) {
         Map<String, Object> userResponse = gitLabApi.getUser(accessToken); // user 정보 불러오는 Endpoint 호출
         int userId = (int) userResponse.get("id");
         return repoRepository.getRepoList(userId);
@@ -48,8 +47,7 @@ public class RepoServiceImpl implements RepoService{
     }
 
     @Override
-    public int deleteRepo(int repoId) {
-        String accessToken = "UATEgVcVTSsLn7PWao6c";
+    public int deleteRepo(int repoId , String accessToken) {
         Map<String, Object> userResponse = gitLabApi.getUser(accessToken); // user 정보 불러오는 Endpoint 호출
         int userId = (int) userResponse.get("id");
         return repoRepository.deleteRepo(repoId, userId);
@@ -64,7 +62,7 @@ public class RepoServiceImpl implements RepoService{
         List<Map<String,Object>> membersResponse = gitLabApi.getMembers(projectId, accessToken);
         for(Map<String, Object> member : membersResponse){
             int memberId = (int) member.get("id");  // GitLab 멤버 ID
-            String email = (String) member.get("email");  // GitLab 이메일
+            String email = (String) member.get("email");  // GiㅎㄷㄱtLab 이메일
             String name = (String) member.get("name");  // GitLab 한글 이름
             String userName = (String) member.get("username"); // 사용자 이름
             String avatarUrl = (String) member.get("avatar_url");  // GitLab 프로필 사진
