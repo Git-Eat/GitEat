@@ -25,12 +25,7 @@ public class PrController {
     @Operation(summary="PR 목록 확인", description = "PR의 목록을 확인합니다")
     public ResponseEntity<List<PrDto>> getPrList(@PathVariable int repoId){
         List<PrDto> prList = prService.getPrList(repoId);
-        for(PrDto prDto : prList){
-            System.out.println(prDto);
-        }
-        if(prList != null) {
-            System.out.println("prList : NULL" );
-            return ResponseEntity.ok(prList);}
+        if(prList != null) {return ResponseEntity.ok(prList);}
         return ResponseEntity.noContent().build();
     }
 
@@ -53,7 +48,9 @@ public class PrController {
 
     @GetMapping("/{repoId}/{prId}/commit/{commitId}")
     @Operation(summary="PR 정보 확인", description = "PR의 상세 정보를 확인합니다")
-    public ResponseEntity<CommitDto> getCommitById(@PathVariable int repoId,@PathVariable int prId, @PathVariable String commitId) {
+    public ResponseEntity<CommitDto> getCommitById(@PathVariable int repoId,
+                                                   @PathVariable int prId,
+                                                   @PathVariable String commitId) {
         CommitDto commit = prService.getCommitById(repoId, prId, commitId);
         if(commit != null) {return ResponseEntity.ok(commit);}
         return ResponseEntity.noContent().build();
@@ -62,7 +59,8 @@ public class PrController {
     
     @GetMapping("/{repoId}/{prId}/comment")
     @Operation(summary="댓글 조회", description = "PR에 생성된 댓글을 조회합니다(댓글, 대댓글, 코드댓글 포함)")
-    public ResponseEntity<List<CommentDto>> getCommentList(@PathVariable int repoId, @PathVariable int prId) {
+    public ResponseEntity<List<CommentDto>> getCommentList(@PathVariable int repoId,
+                                                           @PathVariable int prId) {
         List<CommentDto> comments = prService.getCommentList(repoId, prId);
         if(comments != null) {return ResponseEntity.ok(comments);}
         return ResponseEntity.noContent().build();
@@ -125,7 +123,9 @@ public class PrController {
 
     @GetMapping("/{repoId}/{prId}/comment/{commentId}/reply")
     @Operation(summary = "대댓글 조회", description = "대댓글을 조회합니다")
-    public ResponseEntity<List<ReplyDto>> showReply(@PathVariable int repoId, @PathVariable int prId, @PathVariable int commentId){
+    public ResponseEntity<List<ReplyDto>> showReply(@PathVariable int repoId,
+                                                    @PathVariable int prId,
+                                                    @PathVariable int commentId){
         List<ReplyDto> replies = prService.showReply(repoId, prId, commentId);
         if(replies != null) return ResponseEntity.ok(replies);
         return ResponseEntity.noContent().build();
@@ -168,29 +168,21 @@ public class PrController {
 
     @GetMapping("/{repoId}/{prId}/file")
     @Operation(summary="파일 목록 조회(PR)", description = "PR내에 변경된 모든 파일 목록을 조회합니다")
-    public ResponseEntity<List<FileDto>> showFileListByPr(@PathVariable int repoId, @PathVariable int prId) {
+    public ResponseEntity<List<FileDto>> showFileListByPr(@PathVariable int repoId,
+                                                          @PathVariable int prId) {
         List<FileDto> fileList = prService.showFileListByPr(repoId, prId);
         if(fileList != null) {return ResponseEntity.ok(fileList);}
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{repoId}/{prId}/file/{commitId}")
-    @Operation(summary="파일 목록 조회(commit별)", description = "Commit내에 변경된 파일 목록을 조회합니다")
-    public ResponseEntity<List<FileDto>> showFileListByCommit(@PathVariable int repoId, @PathVariable int prId, @PathVariable String commitId) {
-        List<FileDto> fileList = prService.showFileListByCommit(repoId, prId, commitId);
-        if(fileList != null) {return ResponseEntity.ok(fileList);}
-        return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/{repoId}/{prId}/file/raw")
+    @PostMapping("/{repoId}/{prId}/file/raw")
     @Operation(summary="변경 된 코드 확인", description = "변경 된 파일의 전 후 코드를 조회합니다")
     public ResponseEntity<Map<String, Object>> showChangedCode(@PathVariable String repoId,
                                                                @PathVariable String prId,
-                                                               @RequestBody FileDto fileDto,
-                                                               @RequestParam String refType) {
+                                                               @RequestBody FileDto fileDto) {
 
-        // 1: PR 기준(브랜치), 2: Commit 기준,)
-        Map<String, Object> changedCode = prService.showChangedCode(repoId, prId, fileDto, refType);
+        // 1: PR 기준(브랜치), 2: Commit 기준
+        Map<String, Object> changedCode = prService.showChangedCode(repoId, prId, fileDto);
         if(changedCode != null && !changedCode.isEmpty()) {return ResponseEntity.ok(changedCode);}
         return ResponseEntity.noContent().build();
     }

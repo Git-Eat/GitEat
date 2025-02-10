@@ -80,15 +80,16 @@ const comments: Comment[] = [
   },
 ];
 
+// const API_BASE = import.meta.env.VITE_API_BASE;
 const commentsHandlers = [
-  http.get("*/pr/:repoId/:prId/comment", (req) => {
-    const repoId = Number(req.params.repoId);
-    const prId = Number(req.params.prId);
-    const filteredComments = comments.filter(
-      (comment) => comment.repoId === repoId && comment.prId === prId
-    );
-    return HttpResponse.json(filteredComments, { status: 200 });
-  }),
+  // http.get(API_BASE + `/pr/:repoId/:prId/comment`, (req) => {
+  //   const repoId = Number(req.params.repoId);
+  //   const prId = Number(req.params.prId);
+  //   const filteredComments = comments.filter(
+  //     (comment) => comment.repoId === repoId && comment.prId === prId
+  //   );
+  //   return HttpResponse.json(filteredComments, { status: 200 });
+  // }),
 
   http.delete("*/pr/:repoId/:prId/comment/:commentId", (req) => {
     const repoId = Number(req.params.repoId);

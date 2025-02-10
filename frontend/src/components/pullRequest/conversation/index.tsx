@@ -1,10 +1,10 @@
-import { Suspense } from "react";
 import { Comments } from "./comments";
 import { MarkdownEditor } from "../../common/markdownEditor";
-import { ErrorBoundery } from "../../common/errorBoundery";
 import { Reviewers } from "./reviewers";
 import spinner from "../../../assets/images/spinner.svg";
 import { useCreateComment } from "../../../api/queries/useCreateComment";
+import { Suspense } from "react";
+import { ErrorBoundary } from "../../common/errorBoundery";
 
 export function Conversation() {
   /* repoId & prId 변경 예정 */
@@ -20,11 +20,11 @@ export function Conversation() {
   return (
     <section className="flex gap-5">
       <main className="w-3/4">
-        <ErrorBoundery>
+        <ErrorBoundary>
           <Suspense fallback={<img src={spinner} alt="Loading..." />}>
             <Comments repoId={repoId} prId={prId} />
           </Suspense>
-        </ErrorBoundery>
+        </ErrorBoundary>
         <MarkdownEditor
           onAddSingleComment={(content, commentType) => {
             handleAddComment(content, commentType);
@@ -34,11 +34,11 @@ export function Conversation() {
         />
       </main>
       <aside className="w-1/4">
-        <ErrorBoundery>
+        <ErrorBoundary>
           <Suspense fallback={<img src={spinner} alt="Loading..." />}>
             <Reviewers repoId={repoId} prId={prId} />
           </Suspense>
-        </ErrorBoundery>
+        </ErrorBoundary>
       </aside>
     </section>
   );

@@ -1,6 +1,9 @@
+import { Suspense } from "react";
+import { usePRStore } from "../../../store/pullRequestStore";
+import { ErrorBoundary } from "../../common/errorBoundery";
 import { FileDiff } from "./fileDiff";
 import { FileTree } from "./fileTree";
-import { prFiles } from "./dummy";
+import { useParams } from "react-router-dom";
 /**
  * DONE
  * - 트리 렌더링
@@ -17,16 +20,26 @@ import { prFiles } from "./dummy";
  */
 
 export function FileChanges() {
+  const { baseRepoId, prId } = useParams();
+  const { files } = usePRStore();
   return (
     <div className="flex gap-[35px] justify-between mt-[30px]">
-      <div className="w-1/5 max-w-56 bg-white p-[15px] min-h-[calc(100vh-300px)] max-h-[calc(100vh-300px)] rounded-xl">
+      <div className="w-1/5 max-w- bg-white p-[15px] min-h-[calc(100vh-300px)] h-fit rounded-xl">
         <FileTree />
       </div>
-      <div className="w-fit">
+      <div className="w-4/5">
         <div className="mt-4">
           <div className="border border-gray-200 p-4 my-4 rounded-md">
-            {prFiles.map((file) => (
-              <FileDiff key={file.fileName} file={file} />
+            {files.map((file) => (
+              <ErrorBoundary key={file.fileId} fallbackComponent={<>ERROR!!</>}>
+                <Suspense fallback={<>loading...</>}>
+                  <FileDiff
+                    file={file}
+                    repoId={Number(baseRepoId)}
+                    prId={Number(prId)}
+                  />
+                </Suspense>
+              </ErrorBoundary>
             ))}
           </div>
         </div>

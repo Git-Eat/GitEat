@@ -5,7 +5,7 @@ export type Reply = {
   avatarUrl: string;
   disId: string;
   content: string;
-  replyType: 0 | 1 | 2;
+  replyType: number;
   imageName: string;
   createAt: string;
 };

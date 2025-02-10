@@ -36,4 +36,13 @@ public class SwaggerConfig {
                 .pathsToMatch("/repo/**") // 엔드포인트 설정
                 .build();
     }
+
+    @Bean
+    public GroupedOpenApi UserOpenApi() {
+        return GroupedOpenApi
+                .builder()
+                .group("user") // 우측 상단 그룹화
+                .pathsToMatch("/oauth/**") // 엔드포인트 설정
+                .build();
+    }
 }
