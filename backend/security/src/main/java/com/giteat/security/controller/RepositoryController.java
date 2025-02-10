@@ -73,12 +73,7 @@ public class RepositoryController {
         String accessToken = header.split(" ")[1];
         ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.postApi("/repo",repoBody, accessToken);
         System.out.println("@@@@@@@@@ DATA  :" + response.getBody());
-
-        Object json = typeUtil.convertJsonToObject(response.getBody());
-        return ResponseEntity.ok(json);
-//        return ResponseEntity.ok()
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .body(json);
+        return ResponseEntity.ok(response.getBody());
     }
 
 }
