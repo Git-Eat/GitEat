@@ -61,7 +61,7 @@ public class CustomOAuthService  {
                 return null;
             }
 
-            dto.setId(Integer.valueOf(userInfo.get("id")));
+            dto.setUserId(Integer.valueOf(userInfo.get("id")));
             dto.setUserName(userInfo.get("username"));
             dto.setEmail(userInfo.get("email"));
             dto.setName(userInfo.get("name"));
