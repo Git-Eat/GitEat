@@ -343,6 +343,7 @@ public class LabApi {
      * @return API 응답 데이터 (등록된 댓글 정보)
      */
     private Map<String, Object> callPostApi(String url, String accessToken, Map<String, String> requestBody) {
+        System.out.println("ACCESS TOKEN : " + accessToken);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Private-Token", accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
