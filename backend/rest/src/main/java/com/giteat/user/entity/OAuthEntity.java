@@ -18,7 +18,7 @@ public class OAuthEntity {
 
     @Id
     @Column(name = "user_id")
-    private Integer user_id;
+    private Integer userId;
 
     @Column(name = "user_name")
     private String userName;
