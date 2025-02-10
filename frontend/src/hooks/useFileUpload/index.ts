@@ -1,5 +1,5 @@
 import React from "react";
-import { uploadFile } from "../../api/getComments";
+import { uploadFile } from "../../api/comment";
 
 export function useFileUpload(
   repoId: number,

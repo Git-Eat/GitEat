@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from "react-query";
-import { deleteComment } from "../comment";
+import { deleteReply } from "../comment";
 
-export const useDeleteComment = (repoId: number, prId: number) => {
+export const useDeleteReply = (repoId: number, prId: number) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (commentId: number) => deleteComment(repoId, prId, commentId),
+    mutationFn: (reCommentId: number) => deleteReply(repoId, prId, reCommentId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["comments", repoId, prId] });
     },
