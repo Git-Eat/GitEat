@@ -36,8 +36,8 @@ public class OAuthEntity {
     @Column(name = "refresh_token", nullable = true)
     private String refreshToken;
 
-    @Column(name = "created_at", nullable = true)
-    private LocalDateTime createdAt;
+    @Column(name = "create_at", nullable = true)
+    private LocalDateTime createAt;
 
     // GitHub만 제공하는 필드
     @Column(nullable = true)

@@ -63,7 +63,7 @@ public class OAuthServiceImpl implements OAuthService {
             oAuthEntity.setRefreshToken(oAuthTokenDto.getRefreshToken());
             oAuthEntity.setExpiresIn(oAuthTokenDto.getExpiresIn());
             oAuthEntity.setTokenType(oAuthTokenDto.getTokenType());
-            oAuthEntity.setCreatedAt(LocalDateTime.now());
+            oAuthEntity.setCreateAt(LocalDateTime.now());
             oAuthEntity.setUserEntity(userEntity);
 
             oAuthRepository.save(oAuthEntity);
@@ -75,7 +75,7 @@ public class OAuthServiceImpl implements OAuthService {
             oAuthEntity.setTokenType(oAuthTokenDto.getTokenType());
             oAuthEntity.setExpiresIn(oAuthTokenDto.getExpiresIn());
             oAuthEntity.setRefreshToken(oAuthTokenDto.getRefreshToken());
-            oAuthEntity.setCreatedAt(LocalDateTime.now());
+            oAuthEntity.setCreateAt(LocalDateTime.now());
             oAuthEntity.setScope(oAuthTokenDto.getScope());
             oAuthEntity.setEmail(oAuthTokenDto.getEmail());
             oAuthEntity.setName(oAuthTokenDto.getName());
@@ -98,7 +98,7 @@ public class OAuthServiceImpl implements OAuthService {
         // 토큰이 존재한다면 만료 되었는지 확인
         if(oAuthEntity.isPresent()) {
             OAuthEntity oAuthEntity2 = oAuthEntity.get();
-            LocalDateTime createTime = oAuthEntity2.getCreatedAt();
+            LocalDateTime createTime = oAuthEntity2.getCreateAt();
             int expiresIn = oAuthEntity2.getExpiresIn();
 
             // 현재 시간이 (토큰 생성 시간 + 유효기간)을 지났는지 확인
@@ -137,32 +137,32 @@ public class OAuthServiceImpl implements OAuthService {
                     return dto;
                 }
 
-            // 2. 토큰이 만료됐거나 없으면 API를 통해 토큰 갱신
-            Map<String, String> token =  api.refreshAccessToken(tokenRequest);
-            if(token == null) { return null; }
+                // 2. 토큰이 만료됐거나 없으면 API를 통해 토큰 갱신
+                Map<String, String> token =  api.refreshAccessToken(tokenRequest);
+                if(token == null) { return null; }
 
-            // 3. DTO에 갱신된 토큰 정보 설정
-            OAuthTokenDto dto = new OAuthTokenDto();
-            dto.setUserId(entity.getUserId());
-            dto.setEmail(entity.getEmail()); // 기존 entity에서 email 가져오기
-            dto.setAccessToken(token.get("access_token"));
-            dto.setTokenType(token.get("token_type"));
-            dto.setRefreshToken(token.get("refresh_token"));
-            dto.setExpiresIn(Integer.valueOf(token.get("expires_in")));
-            dto.setScope(token.get("scope"));
-            dto.setCreatedAt(LocalDateTime.now());
+                // 3. DTO에 갱신된 토큰 정보 설정
+                OAuthTokenDto dto = new OAuthTokenDto();
+                dto.setUserId(entity.getUserId());
+                dto.setEmail(entity.getEmail()); // 기존 entity에서 email 가져오기
+                dto.setAccessToken(token.get("access_token"));
+                dto.setTokenType(token.get("token_type"));
+                dto.setRefreshToken(token.get("refresh_token"));
+                dto.setExpiresIn(Integer.valueOf(token.get("expires_in")));
+                dto.setScope(token.get("scope"));
+                dto.setCreatedAt(LocalDateTime.now());
 
-            // 4. 갱신된 토큰 정보 DB에 저장
-            entity.setAccessToken(dto.getAccessToken());
-            entity.setTokenType(dto.getTokenType());
-            entity.setRefreshToken(dto.getRefreshToken());
-            entity.setExpiresIn(dto.getExpiresIn());
-            entity.setScope(dto.getScope());
-            entity.setCreatedAt(LocalDateTime.now());
+                // 4. 갱신된 토큰 정보 DB에 저장
+                entity.setAccessToken(dto.getAccessToken());
+                entity.setTokenType(dto.getTokenType());
+                entity.setRefreshToken(dto.getRefreshToken());
+                entity.setExpiresIn(dto.getExpiresIn());
+                entity.setScope(dto.getScope());
+                entity.setCreateAt(LocalDateTime.now());
 
-            oAuthRepository.save(entity);
-            return dto;
-        }
+                oAuthRepository.save(entity);
+                return dto;
+            }
             return null;
         } catch (Exception e) {
             return null;
