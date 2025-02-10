@@ -130,10 +130,12 @@ public class MergeRequestController {
         String accessToken = header.split(" ")[1];
        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.postApi("/pr/" + repoId + "/" + prId + "/file/comment",customCommentDto,accessToken);
 
-        Object json = typeUtil.convertJsonToObject(request.getBody());
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(json); // Integer 반환
+        return ResponseEntity.ok(request.getBody());
+
+//        Object json = typeUtil.convertJsonToObject(request.getBody());
+//        return ResponseEntity.ok()
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .body(json); // Integer 반환
     }
 
 

@@ -88,14 +88,15 @@ public class PrController {
 
     @PostMapping("/{repoId}/{prId}/file/comment")
     @Operation(summary="코드에 댓글 등록", description = "파일 코드에 라인별로 댓글을 등록합니다")
-    public ResponseEntity<String> insertFileComment(@RequestHeader(value = "Authorization") String header ,
+    public ResponseEntity<?> insertFileComment(@RequestHeader(value = "Authorization") String header ,
                                                      @PathVariable String repoId,
                                                      @PathVariable String prId,
                                                      @RequestBody CustomCommentDto customCommentDto){
         String accessToken = header.split(" ")[1];
         String result = prService.insertFileComment(repoId, prId, customCommentDto , accessToken);
-        if(result.equals("200")) {return ResponseEntity.ok(result);}
-        return ResponseEntity.noContent().build();
+//        if(result.equals("200")) {return ResponseEntity.ok(result);}
+//        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
 
