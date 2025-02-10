@@ -5,6 +5,7 @@ import com.giteat.security.user.dto.OAuthTokenDto;
 import com.giteat.security.user.service.CustomOAuthService;
 import com.giteat.security.util.ApiUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
@@ -39,13 +40,12 @@ public class OAuthController {
      */
     @PostMapping("/gitlab/login")
     @Operation(summary = "사용자 로그인", description = "gitLab ouath2 로그인")
-    public ResponseEntity<?> gitlabLogin(@RequestBody Map<String, String> body) {
+    public ResponseEntity<?> gitlabLogin(@RequestBody Map<String, String> body , HttpServletResponse response) {
         String code = body.get("code");
-
-        OAuthTokenDto oAuthTokenDto = oauthService.gitlabLogin(code);
+        OAuthTokenDto oAuthTokenDto = oauthService.gitlabLogin(code , response);
         ResponseEntity<?> testResponse = apiUtil.postApi("/oauth/gitlab", oAuthTokenDto , oAuthTokenDto.getAccessToken());
-
-        return ResponseEntity.ok(testResponse.getBody());
+        oauthService.createCookieAndToken(oAuthTokenDto.getAccessToken() , response);
+        return ResponseEntity.ok(testResponse.getStatusCode());
     }
     /**
      * GitLab OAuth 토큰 갱신 엔드포인트

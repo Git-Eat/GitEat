@@ -26,8 +26,8 @@ public class WebConfig implements WebMvcConfigurer{
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(oauthInterceptor)
-                .addPathPatterns("/**") // 모든 요청에 적용
-                .excludePathPatterns("/login", "/signup"); // 로그인, 회원가입 제외
+                .addPathPatterns("/**"); // 모든 요청에 적용
+//                .excludePathPatterns("/login", "/signup"); // 로그인, 회원가입 제외
         // TODO : exlude 경로는 /api/rest 는 빼도 된다.
 
     }
