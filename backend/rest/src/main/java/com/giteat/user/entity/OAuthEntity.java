@@ -49,9 +49,6 @@ public class OAuthEntity {
     @Column(nullable = false)
     private String name;
 
-    @Column(name = "avatar_url", nullable = true)
-    private String avatarUrl;
-
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false) // false
     private UserEntity userEntity;
