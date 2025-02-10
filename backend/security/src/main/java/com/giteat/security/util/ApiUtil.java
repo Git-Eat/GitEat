@@ -55,10 +55,12 @@ public class ApiUtil {
 
         HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
 
-        restTemplate.postForEntity(fullURL, requestEntity, Object.class);
-        return ResponseEntity.ok().build();
+//        restTemplate.postForEntity(fullURL, requestEntity, Object.class);
+//        return ResponseEntity.ok().build();
 
+        return restTemplate.postForEntity(fullURL, requestEntity, Object.class);
     }
+
 
 
     public ResponseEntity<?> postApi(String url, Object requestBody , String accessToken) {
