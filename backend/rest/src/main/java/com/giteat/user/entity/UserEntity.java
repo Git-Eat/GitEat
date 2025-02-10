@@ -16,7 +16,6 @@ public class UserEntity {
 
     @Id
     @Column(name = "user_id", nullable = false) // false
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto_increment
     private Integer userId;
 
     @Column(nullable = false)

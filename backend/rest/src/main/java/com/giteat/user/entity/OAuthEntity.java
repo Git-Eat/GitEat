@@ -17,18 +17,11 @@ import java.time.LocalDateTime;
 public class OAuthEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "oauth_id")
-    private Integer oauthId;
-
-    @Column(name = "id")
-    private Integer id;
+    @Column(name = "user_id")
+    private Integer user_id;
 
     @Column(name = "user_name")
     private String userName;
-
-    @Column(name = "provider_type", nullable = true) // false
-    private String providerType;
 
     @Column(name = "access_token", nullable = false)
     private String accessToken;
@@ -65,7 +58,6 @@ public class OAuthEntity {
 
 //    @OneToOne(mappedBy = "oauthToken", cascade = CascadeType.ALL)
 //    private TokenEntity token;
-
 
 
 }
