@@ -382,8 +382,7 @@ public class LabApi {
      */
     private Map<String, Object> callPutApi(String url, String accessToken, Map<String, String> requestBody) {
         HttpHeaders headers = new HttpHeaders();
-        String gitLabToken = gitLabTokenService.getAccessToken(accessToken);
-        headers.set("Private-Token", gitLabToken);
+        headers.set("Authorization", "Bearer " + accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<Map<String, String>> entity = new HttpEntity<>(requestBody, headers);
@@ -400,8 +399,8 @@ public class LabApi {
      */
     private boolean callDeleteApi(String url, String accessToken) {
         HttpHeaders headers = new HttpHeaders();
-        String gitLabToken = gitLabTokenService.getAccessToken(accessToken);
-        headers.set("Private-Token", gitLabToken);
+        headers.set("Authorization", "Bearer " + accessToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
