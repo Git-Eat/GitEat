@@ -79,7 +79,6 @@ public class OAuthServiceImpl implements OAuthService {
             oAuthEntity.setScope(oAuthTokenDto.getScope());
             oAuthEntity.setEmail(oAuthTokenDto.getEmail());
             oAuthEntity.setName(oAuthTokenDto.getName());
-            oAuthEntity.setAvatarUrl(oAuthTokenDto.getAvatarUrl());
             oAuthEntity.setUserEntity(userEntity);
 
             oAuthRepository.save(oAuthEntity);
