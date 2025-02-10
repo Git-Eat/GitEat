@@ -53,13 +53,12 @@ public class RepositoryController {
 
     @GetMapping("/{repoId}")
     @Operation(summary = "Repo 상세 조회", description = "외부 API를 호출하여 Repo 상세정보를 가져옵니다.")
-    public ResponseEntity<?> findRepoById(@PathVariable int repoId) {
+    public ResponseEntity<?> findRepoById(@RequestHeader(value = "Authorization") String header , @PathVariable int repoId) {
         log.info("call findRepoById Method");
-        ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.getApi("/repo");
-        Object json = typeUtil.convertJsonToObject(response.getBody());
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(json);
+        String accessToken = header.split(" ")[1];
+        ResponseEntity<?> response = apiUtil.getApi("/repo" , accessToken);
+
+        return ResponseEntity.ok(response.getBody());
     }
 
     @PostMapping("")

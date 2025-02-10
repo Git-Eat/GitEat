@@ -164,7 +164,7 @@ public class ApiUtil {
      * @return
      * @throws IOException
      */
-    public ResponseEntity<?> postApiWithFile(String url, MultipartFile file) throws IOException {
+    public ResponseEntity<?> postApiWithFile(String url, MultipartFile file , String accessToken) throws IOException {
         // 파일을 전달할 HttpEntity 생성
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
