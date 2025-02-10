@@ -22,7 +22,7 @@ public interface OAuthRepository extends JpaRepository<OAuthEntity, Long> {
             "   o.tokenType = :tokenType, " +
             "   o.refreshToken = :refreshToken, " +
             "   o.expiresIn = :expiresIn, " +
-            "   o.createdAt = :createAt " +
+            "   o.createAt = :createAt " +
             "WHERE o.email = :email"
     )
     void updateTokens(@Param("email") String email,
