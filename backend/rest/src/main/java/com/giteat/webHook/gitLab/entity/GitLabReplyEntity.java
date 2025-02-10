@@ -9,10 +9,10 @@ import lombok.Setter;
 
 import java.util.Date;
 
-@Entity
-@Table(name = "reply")
-@Getter
-@Setter
+//@Entity
+//@Table(name = "reply")
+//@Getter
+//@Setter
 public class GitLabReplyEntity {
 
     @Id
