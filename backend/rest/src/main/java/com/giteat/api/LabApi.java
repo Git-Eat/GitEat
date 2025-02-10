@@ -138,6 +138,11 @@ public class LabApi {
         return fileData;
     }
 
+    public Map<String, Object> getUser(String accessToken){
+        String url = gitlabApiUrl + "/user";
+        return callGetApiMap(url, accessToken);
+    }
+
     public List<Map<String ,Object>> getMembers(String projectId, String accessToken){
         String url = gitlabApiUrl + "/projects/" + projectId + "/members";
         return callGetApiList(url, accessToken);
