@@ -1,7 +1,7 @@
 import { http, HttpResponse } from "msw";
 import commentsHandlers from "./handlers/comments";
 import reviewersHandlers from "./handlers/reviewers";
-import repositoryHandler from "./handlers/repository";
+// import repositoryHandler from "./handlers/repository";
 
 const MOCK_REGION = [
   {
@@ -24,7 +24,7 @@ const handler = [
   }),
   ...commentsHandlers,
   ...reviewersHandlers,
-  ...repositoryHandler,
+  // ...repositoryHandler,
 ];
 
 export default handler;

@@ -43,8 +43,8 @@ export const getPullRequest = async (
 export const addRepository = async (repoId: number): Promise<Repository> => {
   try {
     console.log(repoId);
-    const res = await authClient.post(`/repo/${repoId}`, {
-      repositoryId: repoId,
+    const res = await authClient.post(`/repo`, {
+      repoId: repoId,
     });
     return res.data;
   } catch (e: unknown) {
