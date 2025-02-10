@@ -112,11 +112,11 @@ public class LabApi {
      * 파일 업로드 함수
      * Endpoint : /projects/{project_id}/uploads
      */
-    public Map<String, String> uploadFile(String projectId, MultipartFile file) throws IOException {
+    public Map<String, String> uploadFile(String projectId, MultipartFile file , String accessToken) throws IOException {
         String url = gitlabApiUrl + "/projects/" +  projectId + "/uploads";
         HttpHeaders headers = new HttpHeaders();
         //String accessToken = gitLabTokenService.getAccessToken(jwtAccessToken);
-        headers.set("Private-Token", "UATEgVcVTSsLn7PWao6c"); // 필요하면 OAuth 토큰 사용
+        headers.set("Private-Token", accessToken); // 필요하면 OAuth 토큰 사용
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();

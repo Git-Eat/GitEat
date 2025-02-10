@@ -20,7 +20,7 @@ public interface PrService {
     int deleteComment(String repoId, String prId, String commentId); // 댓글 및 대댓글 삭제
 
     /* 깃랩에 파일 업로드 */
-    Map<String, String> uploadsFile(String repoId, MultipartFile file);
+    Map<String, String> uploadsFile(String repoId, MultipartFile file , String accessToken);
 
     /* 파일에 댓글 달기*/
     String insertFileComment(String repoId, String prId, CustomCommentDto customCommentDto , String accessToken);

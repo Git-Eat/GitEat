@@ -103,11 +103,11 @@ public class PrServiceImpl implements PrService{
     }
 
     @Override
-    public Map<String, String> uploadsFile(String repoId, MultipartFile file) {
+    public Map<String, String> uploadsFile(String repoId, MultipartFile file , String accessToken) {
 
         Map<String, String> fileData;
         try {
-            fileData = gitLabApi.uploadFile(repoId, file); // 깃랩 이미지 업로드 API 호출
+            fileData = gitLabApi.uploadFile(repoId, file , accessToken); // 깃랩 이미지 업로드 API 호출
         } catch (Exception e) {
             throw new RuntimeException("이미지 업로드 실패", e);
         }
