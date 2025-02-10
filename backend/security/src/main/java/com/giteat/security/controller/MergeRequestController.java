@@ -2,6 +2,7 @@ package com.giteat.security.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.giteat.security.dto.CustomCommentDto;
 import com.giteat.security.util.ApiUtil;
 import com.giteat.security.util.TypeUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -125,9 +126,9 @@ public class MergeRequestController {
     public ResponseEntity<?> insertFileComment(@RequestHeader("Authorization") String header ,
                                                @PathVariable String repoId,
                                                @PathVariable String prId,
-                                               @RequestBody Map<String, Object> customCommentDto){
+                                               @RequestBody CustomCommentDto customCommentDto){
         String accessToken = header.split(" ")[1];
-       ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.postApi("/pr/" + repoId + "/" + prId + "/file/comment",customCommentDto , accessToken);
+       ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.postApi("/pr/" + repoId + "/" + prId + "/file/comment",customCommentDto,accessToken);
         Object json = typeUtil.convertJsonToObject(request.getBody());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)

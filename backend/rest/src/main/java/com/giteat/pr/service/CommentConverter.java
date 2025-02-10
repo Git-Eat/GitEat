@@ -50,7 +50,7 @@ public class CommentConverter {
 
         lineRange.put("start", start);
         lineRange.put("end", end);
-        
+
         return requestBody;
     }
 
