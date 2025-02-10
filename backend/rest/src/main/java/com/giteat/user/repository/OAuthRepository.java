@@ -12,7 +12,9 @@ import java.util.Optional;
 
 public interface OAuthRepository extends JpaRepository<OAuthEntity, Long> {
 
-    Optional<OAuthEntity> findByEmail(String email);
+    Optional<OAuthEntity> findByUserId(int userId);
+
+
     Optional<OAuthEntity> findByRefreshToken(String refreshToken);
 
     //갱신 토큰 DB 저장
@@ -23,13 +25,13 @@ public interface OAuthRepository extends JpaRepository<OAuthEntity, Long> {
             "   o.refreshToken = :refreshToken, " +
             "   o.expiresIn = :expiresIn, " +
             "   o.createAt = :createAt " +
-            "WHERE o.email = :email"
+            "WHERE o.userId = :userId"
     )
-    void updateTokens(@Param("email") String email,
+    void updateTokens(@Param("userId") int userId,
                       @Param("accessToken") String accessToken,
                       @Param("tokenType") String tokenType,
                       @Param("refreshToken") String refreshToken,
                       @Param("expiresIn") Integer expiresIn,
-                      @Param("createdAt") LocalDateTime createdAt
+                      @Param("createAt") LocalDateTime createdAt
     );
 }

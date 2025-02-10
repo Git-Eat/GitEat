@@ -39,7 +39,7 @@ public class OAuthServiceImpl implements OAuthService {
         UserEntity userEntity;
 
         // 이메일로 기존 사용자 검색
-        Optional<UserEntity> existUser = userRepository.findByEmail(oAuthTokenDto.getEmail());
+        Optional<UserEntity> existUser = userRepository.findByUserId(oAuthTokenDto.getUserId());
 
         // 기존 사용자면 그대로 사용
         if (existUser.isPresent()) {
@@ -55,7 +55,7 @@ public class OAuthServiceImpl implements OAuthService {
         }
 
         // 이메일로 기존 사용자 확인
-        Optional<OAuthEntity> existOAuth = oAuthRepository.findByEmail(oAuthTokenDto.getEmail());
+        Optional<OAuthEntity> existOAuth = oAuthRepository.findByUserId(oAuthTokenDto.getUserId());
         if (existOAuth.isPresent()) {
             OAuthEntity oAuthEntity = existOAuth.get();
             oAuthEntity.setUserId(oAuthTokenDto.getUserId());
@@ -87,11 +87,11 @@ public class OAuthServiceImpl implements OAuthService {
      * OAuth 토큰의 만료 여부를 확인
      * 토큰 생성 시간과 유효 기간을 기준으로 만료 여부 판단
      *
-     * @param email 확인할 사용자의 이메일
+     * @param id 확인할 사용자의 이메일
      * @return true: 토큰 만료됨, false: 토큰 유효함
      */
-    public boolean tokenExpired(String email) {
-        Optional<OAuthEntity> oAuthEntity = oAuthRepository.findByEmail(email);
+    public boolean tokenExpired(String id) {
+        Optional<OAuthEntity> oAuthEntity = oAuthRepository.findById(Long.valueOf(id));
 
         // 토큰이 존재한다면 만료 되었는지 확인
         if(oAuthEntity.isPresent()) {
