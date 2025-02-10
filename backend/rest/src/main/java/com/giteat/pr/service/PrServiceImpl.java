@@ -198,6 +198,7 @@ public class PrServiceImpl implements PrService{
 
         if (optionalMr.isPresent()) {
             MergeRequestEntity existingMr = optionalMr.get();
+            // 값이 없는 경우
             if(existingMr.getBaseSha()==null || existingMr.getHeadSha()==null){
                 Map<String, Object> mrResponse = gitLabApi.getMergeRequestsById(repoId, String.valueOf(fileDto.getPrId()), "");
                 Map<String, Object> shaInfo = (Map<String, Object>) mrResponse.get("diff_refs");
@@ -207,6 +208,9 @@ public class PrServiceImpl implements PrService{
 
                 base_sha = (String) shaInfo.get("base_sha");
                 head_sha = (String) shaInfo.get("head_sha");
+            } else {
+                base_sha = existingMr.getBaseSha();
+                head_sha = existingMr.getHeadSha();
             }
             mergeRequestRepository.save(existingMr); // 업데이트
 
