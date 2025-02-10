@@ -51,15 +51,10 @@ public class LabApi {
      * 파일에 댓글을 등록하는 함수
      * Endpoint : /projects/:id/merge_requests/:merge_iid/discussions
      */
-    public Map<String, Object> insertFileComment(String projectId, String prId, FileCommentDto fileCommentDto, String accessToken){
+    public Map<String, Object> insertFileComment(String projectId, String prId, Map<String, Object> requestBody, String accessToken){
         String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + prId + "/discussions";
-        Map<String, String> requestBody = new HashMap<>();
-
-        System.out.println(fileCommentDto.toString());
-        requestBody.put("position", String.valueOf(fileCommentDto.getPosition()));
-        requestBody.put("body", fileCommentDto.getBody());
         System.out.println(requestBody);
-        return callPostApi(url, accessToken, requestBody);
+        return callPostApiObject(url, accessToken, requestBody);
     }
 
 
@@ -353,6 +348,19 @@ public class LabApi {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<Map<String, String>> entity = new HttpEntity<>(requestBody, headers);
+
+        ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
+        return response.getBody();
+    }
+
+    private Map<String, Object> callPostApiObject(String url, String accessToken, Map<String, Object> requestBody) {
+        System.out.println("ACCESS TOKEN : " + accessToken);
+        System.out.println("BODY : " +requestBody);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
 
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
         return response.getBody();
