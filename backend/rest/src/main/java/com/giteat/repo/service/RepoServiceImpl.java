@@ -51,9 +51,7 @@ public class RepoServiceImpl implements RepoService{
     @Override
     public RepositoryEntity saveRepositoryData(String accessToken , String projectId){
         accessToken = "UATEgVcVTSsLn7PWao6c";
-        System.out.println(projectId);
         int repoId = Integer.parseInt(projectId);
-        System.out.println(repoId);
 
         // ---------- members 정보 가져오기 ------------ //
         UsersEntity user = new UsersEntity();
@@ -86,6 +84,15 @@ public class RepoServiceImpl implements RepoService{
                 newUser.setAvatarUrl(avatarUrl);
                 usersRepository.save(newUser); // 신규 저장
             }
+        }
+
+        // repo 정보 있는지 확인 > 있다면 repo_member만 업데이트 하고 저장 //
+        RepositoryEntity repositoryInfo = repoRepository.findByRepoId(repoId);
+        if(repositoryInfo != null){
+            //repo_member 업데이트
+
+            System.out.println("이미 정보가 있는 repo입니다.");
+            return repositoryInfo;
         }
 
 
