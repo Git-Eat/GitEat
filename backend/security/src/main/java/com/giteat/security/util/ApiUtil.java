@@ -38,6 +38,16 @@ public class ApiUtil {
         return restTemplate.getForEntity(fullURL, String.class);
     }
 
+    public ResponseEntity<?> getApi(String url , String accessToken) {
+        String fullURL = restURL + url;
+        log.info("FULL URL : " + fullURL);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("Authorization", "Bearer " + accessToken);
+
+        return restTemplate.getForEntity(fullURL, String.class);
+    }
+
 
     /**
      * restAPI 호출 POST
