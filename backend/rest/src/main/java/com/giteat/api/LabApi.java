@@ -254,13 +254,12 @@ public class LabApi {
     /**
      * restTemplate를 사용해서 데이터를 요청하는 코드
      * @param url
-     * @param jwtAccessToken
+     * @param accessToken
      * @return
      */
-    private List<Map<String, Object>> callGetApi(String url , String jwtAccessToken) {
+    private List<Map<String, Object>> callGetApi(String url , String accessToken) {
         HttpHeaders headers = new HttpHeaders();
-        //String accessToken = gitLabTokenService.getAccessToken(jwtAccessToken);
-        headers.set("Private-Token", "UATEgVcVTSsLn7PWao6c");
+        headers.set("Private-Token", "Bearer " + accessToken);
         //headers.set("Private-Token", accessToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
@@ -278,7 +277,7 @@ public class LabApi {
     private Map<String, Object> callGetApiMap(String url , String accessToken) {
         HttpHeaders headers = new HttpHeaders();
         //headers.set("PRIVATE-TOKEN", accessToken);
-        headers.set("Private-Token", "UATEgVcVTSsLn7PWao6c");
+        headers.set("Private-Token", "Bearer " + accessToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
         return response.getBody();
@@ -293,7 +292,7 @@ public class LabApi {
      */
     private List<Map<String, Object>> callGetApiList(String url , String accessToken) {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("PRIVATE-TOKEN", accessToken);
+        headers.set("PRIVATE-TOKEN", "Bearer " + accessToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, entity, List.class);
         return response.getBody();
@@ -308,7 +307,7 @@ public class LabApi {
     private String testCallGetApi(String url , String jwtAccessToken) {
         System.out.println(url);
         HttpHeaders headers = new HttpHeaders();
-        headers.set("PRIVATE-TOKEN", jwtAccessToken);
+        headers.set("PRIVATE-TOKEN", "Bearer " + jwtAccessToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
