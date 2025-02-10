@@ -19,8 +19,9 @@ public class RepoController {
 
     @GetMapping("")
     @Operation(summary = "Repo 목록 조회", description = "등록된 Repo 목록을 조회합니다")
-    ResponseEntity<List<RepositoryEntity>> getRepoList() {
-        List<RepositoryEntity> repoList = repoService.getRepoList();
+    ResponseEntity<List<RepositoryEntity>> getRepoList(@RequestHeader(value = "Authorization") String header) {
+        String accessToken = header.split(" ")[1];
+        List<RepositoryEntity> repoList = repoService.getRepoList(accessToken);
         if(repoList != null) return ResponseEntity.ok(repoList);
         return ResponseEntity.noContent().build();
     }
