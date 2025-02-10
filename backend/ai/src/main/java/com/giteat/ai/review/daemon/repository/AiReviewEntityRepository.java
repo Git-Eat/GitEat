@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface AiReviewRepository extends JpaRepository<AiReviewStatusEntity, Long> {
-   List<AiReviewStatusEntity> findByStatus(int status);
+public interface AiReviewEntityRepository extends JpaRepository<AiReviewEntity, Long> {
 
 }

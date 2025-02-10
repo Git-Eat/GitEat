@@ -24,7 +24,7 @@ public class AiReviewStatusEntity {
 
     @OneToOne
     @JoinColumn(name = "ar_status_id")
-    private AiReviewEntity aiReviewEntity;
+    private AiReviewEntity aiReview;
 
 
 }
