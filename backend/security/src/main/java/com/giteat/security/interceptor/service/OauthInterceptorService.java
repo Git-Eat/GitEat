@@ -1,11 +1,13 @@
 package com.giteat.security.interceptor.service;
 
-import com.giteat.security.user.repository.OauthRepository;
+import com.giteat.security.user.mapper.OauthMapper;
 import com.giteat.security.user.api.OAuthApi;
 import com.giteat.security.user.dto.OAuthTokenDto;
+import com.giteat.security.user.repository.OauthRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,8 +19,9 @@ public class OauthInterceptorService {
 
 
     private final OAuthApi oAuthApi;
+    private final OauthMapper oauthMapper;
+//    private final OauthRepository oauthRepository;
 
-    private final OauthRepository oauthRepository;
 
 
 
@@ -83,8 +86,10 @@ public class OauthInterceptorService {
      */
     public void saveNewToken(String authenticationId , OAuthTokenDto oauthTokenDto) {
         oauthTokenDto.setId(Integer.valueOf(authenticationId));
-        oauthRepository.updateToken(oauthTokenDto);
+        oauthMapper.updateNewToken(oauthTokenDto);
+
     }
+
 
 
 

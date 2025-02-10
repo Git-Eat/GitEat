@@ -3,23 +3,23 @@ package com.giteat.security.interceptor;
 import com.giteat.security.interceptor.service.OauthInterceptorService;
 import com.giteat.security.user.dto.OAuthTokenDto;
 import com.giteat.security.user.dto.User;
+import com.giteat.security.util.TokenContext;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.antlr.v4.runtime.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
 
 @Component
 @AllArgsConstructor
 public class OauthInterceptor implements HandlerInterceptor {
 
-
-    @Lazy
     private final OauthInterceptorService oauthInterceptorService;
-
 
 
     @Override
@@ -50,12 +50,31 @@ public class OauthInterceptor implements HandlerInterceptor {
 
         }
         oauthInterceptorService.saveNewToken(authenticationId, oAuthTokenDto);
-
-
-        //발급받은 access토큰을 thread에 저장하는 로직 필요
-        //dto를 저장한다.
-
-
+        String newAccessToken = oAuthTokenDto.getAccessToken();
+        TokenContext.setAccessToken(newAccessToken);
+        TokenContext.setRefreshToken(refreshToken);
         return true;
     }
+
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+        int maxAge = 10 * 365 * 24 * 60 * 60;
+        String accessToken = TokenContext.getAccessToken();
+        String refreshToken = TokenContext.getRefreshToken();
+
+        // cookie 설정
+        Cookie cookie = new Cookie("refreshToken", refreshToken);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(maxAge);
+
+        response.addCookie(cookie);
+
+        // accessToken을 HTTP 응답 헤더에 추가
+        response.setHeader("Authorization", "Bearer " + accessToken);
+        TokenContext.removeAccessToken();
+        TokenContext.removeRefreshToken();
+    }
+
 }

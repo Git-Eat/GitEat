@@ -4,6 +4,7 @@ import com.giteat.security.user.api.OAuthApi;
 import com.giteat.security.user.dto.OAuthTokenDto;
 
 import com.giteat.security.user.dto.User;
+import com.giteat.security.util.TokenContext;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -75,7 +76,8 @@ public class CustomOAuthService  {
             return null;
         }
     }
-    public Map<String , String> getMyInfo(String accessToken){
+    public Map<String , String> getMyInfo(){
+        String accessToken = TokenContext.getAccessToken();
         Map<String , String> userInfo = oauthApi.getUserInfo(accessToken);
         return userInfo;
     }

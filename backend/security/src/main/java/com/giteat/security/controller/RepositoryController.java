@@ -22,8 +22,8 @@ public class RepositoryController {
 
     @GetMapping("/")
     @Operation(summary = "Repo 목록 조회", description = "외부 API를 호출하여 Repo 목록을 가져옵니다.")
-    public ResponseEntity<?> getRepoList(@RequestHeader("Authorization") String token) {
-        ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.getApi("/repo" , token);
+    public ResponseEntity<?> getRepoList() {
+        ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.getApi("/repo");
         Object json = typeUtil.convertJsonToObject(response.getBody());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -32,9 +32,9 @@ public class RepositoryController {
 
     @PostMapping("/{repoId}")
     @Operation(summary = "Repo 등록", description = "외부 API를 호출하여 Repo를 등록합니다.")
-    public ResponseEntity<?> insertRepo(@RequestHeader("Authorization") String token ,@PathVariable int repoId) {
+    public ResponseEntity<?> insertRepo(@PathVariable int repoId) {
         log.info("call insertRepo Method");
-        ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.postApi("/repo/" + repoId, null , token);
+        ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.postApi("/repo/" + repoId, null );
         Object json = typeUtil.convertJsonToObject(response.getBody());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -43,9 +43,9 @@ public class RepositoryController {
 
     @DeleteMapping("/{repoId}")
     @Operation(summary = "Repo 삭제", description = "외부 API를 호출하여 Repo를 삭제합니다.")
-    public ResponseEntity<?> deleteRepo(@RequestHeader("Authorization") String token , @PathVariable int repoId) {
+    public ResponseEntity<?> deleteRepo(@PathVariable int repoId) {
         log.info("call deleteRepo Method");
-        ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.deleteApi("/repo/" + repoId , String.valueOf(repoId) , token);
+        ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.deleteApi("/repo/" + repoId , String.valueOf(repoId) );
         Object json = typeUtil.convertJsonToObject(response.getBody());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -54,9 +54,9 @@ public class RepositoryController {
 
     @GetMapping("/{repoId}")
     @Operation(summary = "Repo 상세 조회", description = "외부 API를 호출하여 Repo 상세정보를 가져옵니다.")
-    public ResponseEntity<?> findRepoById(@RequestHeader("Authorization") String token , @PathVariable int repoId) {
+    public ResponseEntity<?> findRepoById(@PathVariable int repoId) {
         log.info("call findRepoById Method");
-        ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.getApi("/repo/" + repoId , token);
+        ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.getApi("/repo/" + repoId);
         Object json = typeUtil.convertJsonToObject(response.getBody());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)

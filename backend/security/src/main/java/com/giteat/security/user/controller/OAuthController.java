@@ -43,7 +43,7 @@ public class OAuthController {
         String code = body.get("code");
 
         OAuthTokenDto oAuthTokenDto = oauthService.gitlabLogin(code);
-        ResponseEntity<?> testResponse = apiUtil.postApi("/oauth/gitlab", oAuthTokenDto , null);
+        ResponseEntity<?> testResponse = apiUtil.postApi("/oauth/gitlab", oAuthTokenDto , oAuthTokenDto.getAccessToken());
 
         return ResponseEntity.ok(testResponse.getBody());
     }
@@ -56,32 +56,30 @@ public class OAuthController {
     @PostMapping("/gitlab/refresh")
     @Operation(summary = "access 재발급", description = "refresh토큰으로 access토큰을 재발급 받을때 사용")
     public ResponseEntity<?> gitlabRefresh(@RequestBody OAuthTokenDto tokenRequest){
-       return apiUtil.postApi("/oauth/refresh", tokenRequest , null);
+       return apiUtil.postApi("/oauth/refresh", tokenRequest);
     }
 
     /**
      * GitLab OAuth 일반 로그아웃 처리
      * Access Token을 무효화하고 현재 세션을 종료
      *
-     * @param accessToken OAuth 토큰 정보를 담고 있는 DTO
+     *
      * @return 로그아웃 처리 결과
      */
     @PostMapping("/gitlab/logout")
     @Operation(summary = "사용자 로그아웃", description = "아마 안써도 될듯?")
-    public ResponseEntity<?> logout(@RequestHeader("Authorization") String accessToken) {
+    public ResponseEntity<?> logout() {
         return ResponseEntity.ok().build();
     }
 
     /**
      * accessToken으로 사용자 정보를 가져오는 함수
-     * @param token
      * @return
      */
     @GetMapping("/gitlab/userinfo")
     @Operation(summary = "사용자 정보", description = "accessToken을 기반으로 사용자 정보를 가져옴")
-    public ResponseEntity<?> getMyInfo(@RequestHeader("Authorization") String token) {
-        String accessToken = token.split(" ")[1];
-        return ResponseEntity.ok().body(oauthService.getMyInfo(accessToken));
+    public ResponseEntity<?> getMyInfo() {
+        return ResponseEntity.ok().body(oauthService.getMyInfo());
     }
 
 }
