@@ -6,10 +6,9 @@ import { ChangedFile } from "../types/ChangedFile";
 export const useGetRawFile = (
   repoId: number,
   prId: number,
-  file: ChangedFile,
-  refType: number
+  file: ChangedFile
 ) => {
   return useMutation(`getRawFile${repoId}${prId}${file.fileId}`, () =>
-    getRawFile(repoId, prId, file, refType)
+    getRawFile(repoId, prId, file)
   );
 };
