@@ -146,9 +146,7 @@ export function DiffViewer({
         extendData={parseComments(comments)}
         diffViewAddWidget
         renderExtendLine={({ data }) => {
-          if (!data) {
-            return null;
-          }
+          console.log(data);
           return (
             <div className="border p-2" onClick={() => console.log(data)}>
               {data.map((comment: Comment) => (

@@ -66,7 +66,22 @@ export function FileMarkDownEditor({
 
   const handleAddReview = () => {
     if (!comment.trim()) return alert("내용을 입력해주세요");
-    // addReview(comment);
+    const commentData = {
+      fileId: file.fileId,
+      baseSha: prDetail.baseSha,
+      startSha: prDetail.startSha,
+      headSha: prDetail.headSha,
+      oldPath: file.oldPath,
+      newPath: file.newPath,
+      oldEndLine: oldEndLine,
+      newEndLine: newEndLine,
+      oldStartLine: oldStartLine,
+      newStartLine: newStartLine,
+      newOrOld: lineType === 1 ? 2 : 1,
+      positionType: "text",
+      body: comment,
+    };
+    addComment(commentData);
   };
 
   return (
