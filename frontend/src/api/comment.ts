@@ -1,12 +1,11 @@
 import authClient from "./authClient";
-import client from "./client";
 import { Comment } from "./types/Comment";
 import { Reply } from "./types/Reply";
 import { UploadedFile } from "./types/UploadedFile";
 
 export async function getComments(repoId: number, prId: number) {
   try {
-    const response = await client.get(`/pr/${repoId}/${prId}/comment`);
+    const response = await authClient.get(`/pr/${repoId}/${prId}/comment`);
     return response.data;
   } catch (e: unknown) {
     if (e instanceof Error) throw new Error(e.message);
