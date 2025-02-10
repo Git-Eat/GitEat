@@ -20,8 +20,6 @@ public class OAuthEntity {
     @Column(name = "user_id")
     private Integer userId;
 
-    @Column(name = "user_name")
-    private String userName;
 
     @Column(name = "access_token", nullable = false)
     private String accessToken;

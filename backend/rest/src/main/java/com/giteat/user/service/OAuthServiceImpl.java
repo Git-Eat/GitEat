@@ -70,7 +70,6 @@ public class OAuthServiceImpl implements OAuthService {
         } else {
             OAuthEntity oAuthEntity = new OAuthEntity();
             oAuthEntity.setUserId(oAuthTokenDto.getUserId());
-            oAuthEntity.setUserName(oAuthTokenDto.getUserName());
             oAuthEntity.setAccessToken(oAuthTokenDto.getAccessToken());
             oAuthEntity.setTokenType(oAuthTokenDto.getTokenType());
             oAuthEntity.setExpiresIn(oAuthTokenDto.getExpiresIn());
