@@ -38,15 +38,19 @@ public class ApiUtil {
         return restTemplate.getForEntity(fullURL, String.class);
     }
 
-    public ResponseEntity<?> getApi(String url , String accessToken) {
+    public ResponseEntity<?> getApi(String url, String accessToken) {
         String fullURL = restURL + url;
         log.info("FULL URL : " + fullURL);
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("Authorization", "Bearer " + accessToken);
+        headers.setBearerAuth(accessToken); // Authorization 헤더 설정
 
-        return restTemplate.getForEntity(fullURL, String.class);
+        HttpEntity<Object> requestEntity = new HttpEntity<>(headers);
+
+        return restTemplate.exchange(fullURL, HttpMethod.GET, requestEntity, Object.class);
     }
+
 
 
     /**
