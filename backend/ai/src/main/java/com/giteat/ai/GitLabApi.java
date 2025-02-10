@@ -91,71 +91,33 @@ public class GitLabApi {
                     List.class
             );
             return response.getBody();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("[GitLabApi] MR 변경 파일 조회 실패: " + e.getMessage());
             return null;
         }
     }
 
-    // 브랜치 정보 조회
-//    public Map<String, String> getMergeRequestBranches(String projectId, String mergeRequestIid) {
-//        try {
-//            System.out.println("[GitLabApi] MR 브랜치 정보 조회 시작");
-//            String url = String.format("%s/projects/%s/merge_requests/%s",
-//                    gitlabApiUrl, projectId, mergeRequestIid);
-//
-//            HttpHeaders headers = new HttpHeaders();
-//            headers.set("Private-Token", "UATEgVcVTSsLn7PWao6c");
-//
-//            HttpEntity<String> entity = new HttpEntity<>(headers);
-//            ResponseEntity<Map> response = restTemplate.exchange(
-//                    url,
-//                    HttpMethod.GET,
-//                    entity,
-//                    Map.class
-//            );
-//
-//            Map<String, Object> mrInfo = response.getBody();
-//            if (mrInfo != null) {
-//                Map<String, String> branches = new HashMap<>();
-//                branches.put("source_branch", (String) mrInfo.get("source_branch"));
-//                branches.put("target_branch", (String) mrInfo.get("target_branch"));
-//
-//                System.out.println("[GitLabApi] 브랜치 정보:");
-//                System.out.println("- Source Branch: " + branches.get("source_branch"));
-//                System.out.println("- Target Branch: " + branches.get("target_branch"));
-//
-//                return branches;
-//            }
-//            return null;
-//        } catch (Exception e) {
-//            System.out.println("[GitLabApi] MR 브랜치 정보 조회 실패: " + e.getMessage());
-//            return null;
-//        }
-//    }
-
     // 특정 Merge Request 조회 함수 (MR id로 조회)
-    public Map<String, Object> getMergeRequestsById(String projectId , int prId, String accessToken) {
-        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/"+prId;
-        return callGetApiMap(url ,accessToken);
-    }
+    public Map<String, Object> getMergeRequestsById(String projectId, int prId, String accessToken) {
+        try {
+            String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + prId;
 
-    /**
-     * restTemplate를 사용해서 데이터를 요청하는 코드
-     * @param url
-     * @param accessToken
-     * @return
-     */
-    private Map<String, Object> callGetApiMap(String url, String accessToken) {
-        HttpHeaders headers = new HttpHeaders();
-        //String accessToken = gitLabTokenService.getAccessToken(jwtAccessToken);
-        headers.set("Private-Token", "UATEgVcVTSsLn7PWao6c");
-        //headers.set("Private-Token", accessToken);
-        HttpEntity<String> entity = new HttpEntity<>(headers);
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Private-Token", "UATEgVcVTSsLn7PWao6c");
 
-        ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, entity, List.class);
-        return (Map<String, Object>) response.getBody();
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+
+            ResponseEntity<Map> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    entity,
+                    Map.class
+            );
+
+            return response.getBody();
+        } catch (Exception e) {
+            System.out.println("[GitLabApi] MR 조회 실패: " + e.getMessage());
+            return null;
+        }
     }
-    
 }

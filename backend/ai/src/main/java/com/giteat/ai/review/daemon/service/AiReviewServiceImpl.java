@@ -62,15 +62,22 @@ public class AiReviewServiceImpl implements AiReviewService {
 
         if (optionalMr.isPresent()) {
             MergeRequestEntity existingMr = optionalMr.get();
+            System.out.println("[getChangedCode] MR 정보:");
+            System.out.println("- Base SHA: " + existingMr.getBaseSha());
+            System.out.println("- Head SHA: " + existingMr.getHeadSha());
 
             if (existingMr.getBaseSha() == null || existingMr.getHeadSha() == null) {
+                System.out.println("[getChangedCode] SHA가 없어서 MR 정보를 가져옵니다.");
                 Map<String, Object> mrResponse = gitLabApi.getMergeRequestsById(repoId, prId, "");
+                System.out.println("- MR Response: " + mrResponse);  // API 응답 확인
                 existingMr.setBaseSha((String) mrResponse.get("base_commit_sha"));
                 existingMr.setHeadSha((String) mrResponse.get("head_commit_sha"));
                 existingMr.setStartSha((String) mrResponse.get("start_commit_sha"));
 
                 base_sha = existingMr.getBaseSha();
                 head_sha = existingMr.getHeadSha();
+                System.out.println("- Updated Base SHA: " + base_sha);
+                System.out.println("- Updated Head SHA: " + head_sha);
             } else {
                 base_sha = existingMr.getBaseSha();
                 head_sha = existingMr.getHeadSha();
@@ -79,13 +86,17 @@ public class AiReviewServiceImpl implements AiReviewService {
         }
         // 파일 상태에 따라 코드 가져오기
         if (status == 1) {
+            // 파일이 추가 된 경우, fileStatus = 1
             newRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, head_sha);
         } else if (status == 2) {
+            // 파일 내용이 수정된 경우, fileStatus = 2
             oldRawFile = gitLabApi.getRawCode(repoId, encodedOldPath, base_sha);
             newRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, head_sha);
         } else if (status == 3) {
+            // 파일이 삭제 된 경우,  fileStatus = 3
             oldRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, base_sha);
         } else if (!oldPath.equals(newPath)) {
+            // 파일 경로가 수정된 경우
             oldRawFile = gitLabApi.getRawCode(repoId, encodedOldPath, base_sha);
             newRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, head_sha);
         }
@@ -94,8 +105,10 @@ public class AiReviewServiceImpl implements AiReviewService {
         result.put("fileName", fileDto.getFileName());
         result.put("beforeCode", oldRawFile);
         result.put("afterCode", newRawFile);
+        System.out.println("AireviewServiceImpl result" + result);
         return result;
     }
+
 
     @Override
     public boolean createAiReview(AiReviewStatusEntity statusEntity, FileDto fileDto) {
@@ -131,10 +144,10 @@ public class AiReviewServiceImpl implements AiReviewService {
             }
 
             // AI 리뷰 생성
-            String reviewContent = aiReviewApi.generateReview(
-                    changedCode.get("beforeCode"),
-                    changedCode.get("afterCode")
-                    );
+//            String reviewContent = aiReviewApi.generateReview(
+//                    changedCode.get("beforeCode"),
+//                    changedCode.get("afterCode")
+//                    );
 
             // AI 리뷰 엔티티 생성 및 저장
             System.out.println("[createAiReview] 리뷰 엔티티 생성 시작");
@@ -144,7 +157,7 @@ public class AiReviewServiceImpl implements AiReviewService {
             reviewEntity.setArStatusId(statusEntity.getArStatusId());
             reviewEntity.setBefore_code(changedCode.get("beforeCode"));
             reviewEntity.setAfter_code(changedCode.get("afterCode"));
-            reviewEntity.setContent(reviewContent);
+//            reviewEntity.setContent(reviewContent);
             reviewEntity.setCreateTime(LocalDateTime.now());
 
             aiReviewEntityRepository.save(reviewEntity);

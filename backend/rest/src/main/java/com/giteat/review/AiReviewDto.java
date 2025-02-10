@@ -1,8 +1,6 @@
-package com.giteat.ai.review.daemon.dto;
+package com.giteat.review;
 
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -15,7 +13,7 @@ public class AiReviewDto {
     int pr_id;
     int ar_status_id;
     String content;
-//    String before_code;
+    //    String before_code;
 //    String after_code;
     String create_at;
 }

@@ -26,5 +26,4 @@ public class AiReviewStatusEntity {
     @JoinColumn(name = "ar_status_id")
     private AiReviewEntity aiReview;
 
-
 }

@@ -24,19 +24,6 @@ public class AiReviewApi {
     @Value("${gpt.api.url}")
     private String gptApiUrl;
 
-    // 중요한 코드 패턴 정의
-    private static final Pattern[] IMPORTANT_PATTERNS = {
-            Pattern.compile("@(Controller|Service|Repository)"), // 스프링 컴포넌트
-            Pattern.compile("public.*class"),
-            Pattern.compile("@RequestMapping"), // API 엔드포인트
-            Pattern.compile("@(Get|Post|Put|Delete|Patch)Mapping"),
-            Pattern.compile("try|catch|throw"), // 예외 처리
-            Pattern.compile("if|else|for|while|switch"),
-            Pattern.compile("private.*final"),
-            Pattern.compile("@Transactional"),
-            Pattern.compile("@Async"),
-            Pattern.compile("synchronized")
-    };
 
     public AiReviewApi(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -93,71 +80,6 @@ public class AiReviewApi {
         headers.set("Authorization", "Bearer " + apiKey);
         headers.setAcceptCharset(Collections.singletonList(StandardCharsets.UTF_8));
         return headers;
-    }
-
-    private String analyzeChanges(String beforeCode, String afterCode) {
-        // 코드 구조 파싱 - 클래스, 메서드, 제어문 등을 구조적으로 분석
-        List<CodeStructure> beforeStructures = parseCodeStructure(beforeCode);
-        List<CodeStructure> afterStructures = parseCodeStructure(afterCode);
-
-        // 중요 변경사항 감지
-        return detectSignificantChanges(beforeStructures, afterStructures);
-    }
-
-    private List<CodeStructure> parseCodeStructure(String code) {
-        List<CodeStructure> structures = new ArrayList<>();
-        String[] lines = code.split("\n");
-        Stack<CodeStructure> stack = new Stack<>();
-
-        for (int i = 0; i < lines.length; i++) {
-            String line = lines[i].trim();
-
-            if (line.isEmpty() || line.startsWith("//")) continue;
-
-            // 클래스 감지
-            if (line.matches(".*class\\s+\\w+.*\\{")) {
-                CodeStructure cls = new CodeStructure();
-                cls.type = "class";
-                cls.name = extractClassName(line);
-                cls.startLine = i;
-                stack.push(cls);
-            }
-            // 메서드 감지
-            else if (line.matches("(public|private|protected)?\\s+\\w+\\s+\\w+\\s*\\(.*\\).*\\{")) {
-                CodeStructure method = new CodeStructure();
-                method.type = "method";
-                method.name = extractMethodName(line);
-                method.startLine = i;
-                if (!stack.isEmpty()) {
-                    stack.peek().children.add(method);
-                }
-                stack.push(method);
-            }
-            // 제어 구문 감지
-            else if (line.matches("(if|for|while|switch)\\s*\\(.*\\).*\\{")) {
-                CodeStructure control = new CodeStructure();
-                control.type = extractControlType(line);
-                control.startLine = i;
-                if (!stack.isEmpty()) {
-                    stack.peek().children.add(control);
-                }
-                stack.push(control);
-            }
-            // 닫는 괄호 감지
-            else if (line.contains("}")) {
-                if (!stack.isEmpty()) {
-                    CodeStructure current = stack.pop();
-                    current.endLine = i;
-                    current.content = String.join("\n",
-                            Arrays.copyOfRange(lines, current.startLine, current.endLine + 1));
-                    if (stack.isEmpty()) {
-                        structures.add(current);
-                    }
-                }
-            }
-        }
-
-        return structures;
     }
 
     private String detectSignificantChanges(List<CodeStructure> before, List<CodeStructure> after) {
@@ -255,6 +177,7 @@ public class AiReviewApi {
             5. 코드 품질 및 클린 코드 원칙
             
             형식적인 변경(공백, 주석 등)은 무시하고, 핵심적인 변경사항에 집중해주세요.
+           
             """;
 
         List<Map<String, String>> messages = new ArrayList<>();

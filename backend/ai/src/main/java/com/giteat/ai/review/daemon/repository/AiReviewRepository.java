@@ -10,5 +10,4 @@ import java.util.List;
 @Repository
 public interface AiReviewRepository extends JpaRepository<AiReviewStatusEntity, Long> {
    List<AiReviewStatusEntity> findByStatus(int status);
-
 }
