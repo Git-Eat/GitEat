@@ -72,7 +72,7 @@ public class RepositoryController {
         log.info("call insertRepo Method");
         String accessToken = header.split(" ")[1];
         ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.postApi("/repo",repoBody, accessToken);
-        System.out.println(response);
+        System.out.println("@@@@@@@@@ DATA  :" + response.getBody());
 
         Object json = typeUtil.convertJsonToObject(response.getBody());
         return ResponseEntity.ok(json);
