@@ -43,12 +43,6 @@ public class OAuthEntity {
     @Column(nullable = true)
     private String scope;
 
-    @Column(nullable = false)
-    private String email;
-
-    @Column(nullable = false)
-    private String name;
-
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false) // false
     private UserEntity userEntity;
