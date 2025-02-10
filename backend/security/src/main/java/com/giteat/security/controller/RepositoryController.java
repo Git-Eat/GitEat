@@ -70,13 +70,12 @@ public class RepositoryController {
     public ResponseEntity<?> saveRepositoryData(@RequestBody Map<String, String> repoBody) {
         log.info("call insertRepo Method");
         System.out.println(repoBody);
-        ResponseEntity<?> response = (ResponseEntity<?>) apiUtil.postApi("/repo",repoBody);
+        ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.postApi("/repo",repoBody);
         System.out.println(response);
-        return response;
-//        Object json = typeUtil.convertJsonToObject(response.getBody());
-//        return ResponseEntity.ok()
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .body(json);
+        Object json = typeUtil.convertJsonToObject(response.getBody());
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(json);
     }
 
 }
