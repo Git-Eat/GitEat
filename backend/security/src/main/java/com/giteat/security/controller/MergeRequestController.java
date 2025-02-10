@@ -8,6 +8,7 @@ import com.giteat.security.util.TypeUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
@@ -96,8 +97,10 @@ public class MergeRequestController {
 
     @PostMapping("/{repoId}/uploads")
     @Operation(summary = "파일 업로드", description = "파일 업로드 하면 markdown을 return합니다")
-    public ResponseEntity<?> uploadsFile(@PathVariable String repoId,
+    public ResponseEntity<?> uploadsFile(@RequestHeader(value = "Authorization") String header ,
+                                         @PathVariable String repoId,
                                          @RequestParam(value = "file", required = false) MultipartFile file) {
+        String accessToken = header.split(" ")[1];
         if (file == null || file.isEmpty()) {
             return ResponseEntity.badRequest().body("No file provided.");
         }
@@ -140,15 +143,15 @@ public class MergeRequestController {
 
     @PutMapping("/{repoId}/{prId}/comment/{commentId}")
     @Operation(summary = "PR 댓글 수정", description = "외부 API를 호출하여 PR의 댓글을 수정합니다.")
-    public ResponseEntity<?> updateComment(@PathVariable int repoId,
+    public ResponseEntity<?> updateComment(@RequestHeader("Authorization") String header ,
+                                           @PathVariable int repoId,
                                            @PathVariable int prId,
                                            @PathVariable int commentId,
                                            @RequestBody Map<String, Object> commentDto) {
-        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.putApi("/pr/" + repoId + "/" + prId + "/comment/" + commentId, commentDto);
-        Object json = typeUtil.convertJsonToObject(request.getBody());
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(json);
+        String accessToken = header.split(" ")[1];
+        ResponseEntity<?> request = apiUtil.putApi("/pr/" + repoId + "/" + prId + "/comment/" + commentId, commentDto , accessToken);
+
+        return ResponseEntity.ok(request.getBody());
     }
 
     @DeleteMapping("/{repoId}/{prId}/comment/{commentId}")

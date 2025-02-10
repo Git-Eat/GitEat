@@ -113,6 +113,19 @@ public class ApiUtil {
         return ResponseEntity.ok().build();
     }
 
+    public ResponseEntity<?> putApi(String url, Object requestBody , String accessToken) {
+        String fullURL = restURL + url;
+        log.info("PUT 요청 URL: " + fullURL);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("Authorization", "Bearer " + accessToken);
+
+        HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
+        ResponseEntity<?> request = restTemplate.postForEntity(fullURL, requestEntity, Object.class);
+        return request;
+    }
+
     /**
      * restAPI 호출 DELETE
      * @param url

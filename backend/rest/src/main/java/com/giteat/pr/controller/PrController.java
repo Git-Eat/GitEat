@@ -104,12 +104,14 @@ public class PrController {
 
     @PutMapping("/{repoId}/{prId}/comment/{commentId}")
     @Operation(summary="댓글 수정", description = "PR에 작성한 댓글을 수정합니다")
-    public ResponseEntity<Integer> updateComment(@PathVariable int repoId,
+    public ResponseEntity<Integer> updateComment(@RequestHeader("Authorization") String header ,
+                                                 @PathVariable int repoId,
                                                  @PathVariable int prId,
                                                  @PathVariable int commentId,
                                                  @RequestBody CommentDto commentDto) {
+        String accessToken = header.split(" ")[1];
         commentDto.setCommentId(commentId);
-        int result = prService.updateComment(repoId, prId, commentDto);
+        int result = prService.updateComment(repoId, prId, commentDto , accessToken);
         if(result ==200) {return ResponseEntity.ok(result);}
         return ResponseEntity.noContent().build();
     }

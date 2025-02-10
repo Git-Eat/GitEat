@@ -77,9 +77,10 @@ public class PrServiceImpl implements PrService{
     }
 
     @Override
-    public int updateComment(int repoId, int prId, CommentDto commentDto) {
+    public int updateComment(int repoId, int prId, CommentDto commentDto , String accessToken) {
         // GitLab API에 댓글 수정 요청
-        Map<String,Object> response = gitLabApi.updateComment(String.valueOf(repoId), String.valueOf(prId),  String.valueOf(commentDto.getCommentId()) ,commentDto.getContent(),"");
+        Map<String,Object> response = gitLabApi.updateComment(String.valueOf(repoId), String.valueOf(prId),  String.valueOf(commentDto.getCommentId()) ,commentDto.getContent(),accessToken
+        );
         if(response != null) return 200;
         return 404;
     }
