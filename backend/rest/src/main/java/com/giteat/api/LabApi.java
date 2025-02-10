@@ -259,7 +259,7 @@ public class LabApi {
      */
     private List<Map<String, Object>> callGetApi(String url , String accessToken) {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Private-Token", "Bearer " + accessToken);
+        headers.set("Authorization", "Bearer " + accessToken);
         //headers.set("Private-Token", accessToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
@@ -278,7 +278,8 @@ public class LabApi {
         HttpHeaders headers = new HttpHeaders();
         //headers.set("PRIVATE-TOKEN", accessToken);
         System.out.println("callGetApiMap : " + accessToken);
-        headers.set("Private-Token", "Bearer " + accessToken);
+        headers.set("Authorization", "Bearer " + accessToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
         System.out.println("callGEtApi 호출 완료!!!!");
@@ -295,7 +296,8 @@ public class LabApi {
     private List<Map<String, Object>> callGetApiList(String url , String accessToken) {
         HttpHeaders headers = new HttpHeaders();
         System.out.println("getApiList : " + accessToken);
-        headers.set("PRIVATE-TOKEN", "Bearer " + accessToken);
+        headers.set("Authorization", "Bearer " + accessToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, entity, List.class);
         System.out.println("callGetAPI 호출완료!!!");
@@ -329,7 +331,7 @@ public class LabApi {
     private List<Map<String ,Object>> callGetApiUseId(String url , String id){
         HttpHeaders headers = new HttpHeaders();
         String accessToken = gitLabTokenService.getAccessTokenById(id);
-        headers.set("Private-Token", accessToken);
+        headers.set("Authorization", accessToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, entity, List.class);
