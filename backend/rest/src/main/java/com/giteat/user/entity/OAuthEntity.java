@@ -17,9 +17,14 @@ import java.time.LocalDateTime;
 public class OAuthEntity {
 
     @Id
+    @Column(name = "Id")
+    private Integer Id;
+
     @Column(name = "user_id")
     private Integer userId;
 
+    @Column(name = "user_name")
+    private String userName;
 
     @Column(name = "access_token", nullable = false)
     private String accessToken;
@@ -34,8 +39,14 @@ public class OAuthEntity {
     @Column(name = "refresh_token", nullable = true)
     private String refreshToken;
 
-    @Column(name = "create_at", nullable = true)
-    private LocalDateTime createAt;
+    @Column(name = "created_at", nullable = true)
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private String email;
+
+    @Column(nullable = false)
+    private String name;
 
     // GitHub만 제공하는 필드
     @Column(nullable = true)
