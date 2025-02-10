@@ -54,8 +54,11 @@ public class LabApi {
     public Map<String, Object> insertFileComment(String projectId, String prId, FileCommentDto fileCommentDto, String accessToken){
         String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + prId + "/discussions";
         Map<String, String> requestBody = new HashMap<>();
+
+        System.out.println(fileCommentDto.toString());
         requestBody.put("position", String.valueOf(fileCommentDto.getPosition()));
         requestBody.put("body", fileCommentDto.getBody());
+        System.out.println(requestBody);
         return callPostApi(url, accessToken, requestBody);
     }
 
