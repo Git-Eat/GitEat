@@ -77,14 +77,10 @@ export const getFileChanges = async (
 export const getRawFile = async (
   repoId: number,
   prId: number,
-  file: ChangedFile,
-  refType: number
+  file: ChangedFile
 ): Promise<RawFileResponse> => {
   try {
-    const res = await authClient.post(
-      `/pr/${repoId}/${prId}/file/raw/${refType}`,
-      file
-    );
+    const res = await authClient.post(`/pr/${repoId}/${prId}/file/raw`, file);
     return res.data;
   } catch (e: unknown) {
     if (e instanceof Error) throw new Error(e.message);

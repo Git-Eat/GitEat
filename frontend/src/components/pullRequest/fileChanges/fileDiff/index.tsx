@@ -13,14 +13,8 @@ interface FileProps {
   prId: number;
   file: ChangedFile;
 }
-const REF_TYPE = 1;
 export function FileDiff({ repoId, prId, file }: FileProps) {
-  const { mutate: getFile, data: rawFile } = useGetRawFile(
-    repoId,
-    prId,
-    file,
-    REF_TYPE
-  );
+  const { mutate: getFile, data: rawFile } = useGetRawFile(repoId, prId, file);
   const [isExpand, , , setReverse] = useBooleanState(false);
   useEffect(() => {
     if (isExpand) {
@@ -47,8 +41,8 @@ export function FileDiff({ repoId, prId, file }: FileProps) {
           <AccordionDetails>
             <ErrorBoundary>
               <DiffViewer
-                oldCode={rawFile.oldCode}
-                newCode={rawFile.newCode}
+                oldCode={rawFile.oldCode !== null ? rawFile.oldCode : ""}
+                newCode={rawFile.newCode !== null ? rawFile.newCode : ""}
                 comments={rawFile.comments}
               />
             </ErrorBoundary>

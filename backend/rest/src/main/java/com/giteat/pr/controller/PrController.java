@@ -175,25 +175,14 @@ public class PrController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{repoId}/{prId}/file/{commitId}")
-    @Operation(summary="파일 목록 조회(commit별)", description = "Commit내에 변경된 파일 목록을 조회합니다")
-    public ResponseEntity<List<FileDto>> showFileListByCommit(@PathVariable int repoId,
-                                                              @PathVariable int prId,
-                                                              @PathVariable String commitId) {
-        List<FileDto> fileList = prService.showFileListByCommit(repoId, prId, commitId);
-        if(fileList != null) {return ResponseEntity.ok(fileList);}
-        return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping("/{repoId}/{prId}/file/raw/{refType}")
+    @PostMapping("/{repoId}/{prId}/file/raw")
     @Operation(summary="변경 된 코드 확인", description = "변경 된 파일의 전 후 코드를 조회합니다")
     public ResponseEntity<Map<String, Object>> showChangedCode(@PathVariable String repoId,
                                                                @PathVariable String prId,
-                                                               @PathVariable String refType,
                                                                @RequestBody FileDto fileDto) {
 
         // 1: PR 기준(브랜치), 2: Commit 기준
-        Map<String, Object> changedCode = prService.showChangedCode(repoId, prId, fileDto, refType);
+        Map<String, Object> changedCode = prService.showChangedCode(repoId, prId, fileDto);
         if(changedCode != null && !changedCode.isEmpty()) {return ResponseEntity.ok(changedCode);}
         return ResponseEntity.noContent().build();
     }

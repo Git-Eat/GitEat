@@ -25,7 +25,7 @@ public class ReplyEntity {
     private String content;
 
     @Column(name = "reply_type")
-    private int replyType;
+    private int reCommentType;
 
     @Column(name = "create_at")
     private String createAt;

@@ -219,25 +219,24 @@ public class MergeRequestController {
                 .body(json);
     }
 
-    @GetMapping("/{repoId}/{prId}/file/{commitId}")
-    @Operation(summary = "Commit별 변경된 파일 목록 조회", description = "외부 API를 호출하여 특정 Commit 내 변경된 파일 목록을 가져옵니다.")
-    public ResponseEntity<?> showFileListByCommit(@PathVariable int repoId,
-                                                  @PathVariable int prId,
-                                                  @PathVariable String commitId) {
-        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId + "/" + prId + "/file/" + commitId);
-        Object json = typeUtil.convertJsonToObject(request.getBody());
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(json);
-    }
+//    @GetMapping("/{repoId}/{prId}/file/{commitId}")
+//    @Operation(summary = "Commit별 변경된 파일 목록 조회", description = "외부 API를 호출하여 특정 Commit 내 변경된 파일 목록을 가져옵니다.")
+//    public ResponseEntity<?> showFileListByCommit(@PathVariable int repoId,
+//                                                  @PathVariable int prId,
+//                                                  @PathVariable String commitId) {
+//        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId + "/" + prId + "/file/" + commitId);
+//        Object json = typeUtil.convertJsonToObject(request.getBody());
+//        return ResponseEntity.ok()
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .body(json);
+//    }
 
-    @PostMapping("/{repoId}/{prId}/file/raw/{refType}")
-    @Operation(summary = "변경된 코드 확인", description = "외부 API를 호출하여 변경된 코드 내용을 가져옵니다.(refType =  1 : PR 기준(브랜치), 2: Commit 기준)")
+    @PostMapping("/{repoId}/{prId}/file/raw")
+    @Operation(summary = "변경된 코드 확인", description = "외부 API를 호출하여 변경된 코드 내용을 가져옵니다.")
     public ResponseEntity<?> showChangedCode(@PathVariable int repoId,
                                              @PathVariable int prId,
-                                             @PathVariable String refType,
                                              @RequestBody Map<String, Object> fileDto) {
-        ResponseEntity<?> response = apiUtil.postApi("/pr/" + repoId + "/" + prId + "/file/raw/" + refType, fileDto);
+        ResponseEntity<?> response = apiUtil.postApi("/pr/" + repoId + "/" + prId + "/file/raw", fileDto);
 
         if (response.getBody() instanceof Map) {
             Map<String, Object> responseBody = (Map<String, Object>) response.getBody();

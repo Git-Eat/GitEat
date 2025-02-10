@@ -17,6 +17,6 @@ public class ReplyDto {
     private int userId;
     private String disId;
     private String content;
-    private int replyType;
+    private int reCommentType;
     private String createAt;
 }
