@@ -122,10 +122,12 @@ public class MergeRequestController {
 
     @PostMapping("/{repoId}/{prId}/file/comment")
     @Operation(summary="코드에 댓글 등록", description = "외부 API를 호출하여 파일 코드에 라인별로 댓글을 등록합니다")
-    public ResponseEntity<?> insertFileComment(@PathVariable String repoId,
+    public ResponseEntity<?> insertFileComment(@RequestHeader("Authorization") String header ,
+                                               @PathVariable String repoId,
                                                @PathVariable String prId,
                                                @RequestBody Map<String, Object> customCommentDto){
-       ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.postApi("/pr/" + repoId + "/" + prId + "/file/comment",customCommentDto);
+        String accessToken = header.split(" ")[1];
+       ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.postApi("/pr/" + repoId + "/" + prId + "/file/comment",customCommentDto , accessToken);
         Object json = typeUtil.convertJsonToObject(request.getBody());
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)

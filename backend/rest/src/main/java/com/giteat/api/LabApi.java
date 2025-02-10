@@ -346,9 +346,10 @@ public class LabApi {
      * @return API 응답 데이터 (등록된 댓글 정보)
      */
     private Map<String, Object> callPostApi(String url, String accessToken, Map<String, String> requestBody) {
+        System.out.println("ACCESS TOKEN : " + accessToken);
+        System.out.println("BODY : " +requestBody);
         HttpHeaders headers = new HttpHeaders();
-        String gitLabToken = gitLabTokenService.getAccessToken(accessToken);
-        headers.set("Private-Token", gitLabToken);
+        headers.set("Authorization", "Bearer " + accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<Map<String, String>> entity = new HttpEntity<>(requestBody, headers);
@@ -356,6 +357,8 @@ public class LabApi {
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
         return response.getBody();
     }
+
+
 
     /**
      * restTemplate으로 PUT 요청하는 함수

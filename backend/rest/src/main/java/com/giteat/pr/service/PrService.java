@@ -23,7 +23,7 @@ public interface PrService {
     Map<String, String> uploadsFile(String repoId, MultipartFile file);
 
     /* 파일에 댓글 달기*/
-    int insertFileComment(String repoId, String prId, CustomCommentDto customCommentDto);
+    int insertFileComment(String repoId, String prId, CustomCommentDto customCommentDto , String accessToken);
 
     /* 대댓글 관련 함수 */
     List<ReplyDto> showReply(int repoId, int prId, int commentId); // 대댓글 조회
