@@ -38,7 +38,7 @@ public class OAuthServiceImpl implements OAuthService {
     public void saveToken(OAuthTokenDto oAuthTokenDto) {
         UserEntity userEntity;
 
-        // 이메일로 기존 사용자 검색
+        // 기존 사용자 검색
         Optional<UserEntity> existUser = userRepository.findByUserId(oAuthTokenDto.getUserId());
 
         // 기존 사용자면 그대로 사용
@@ -57,6 +57,7 @@ public class OAuthServiceImpl implements OAuthService {
 
         // 기존 사용자 확인
         Optional<OAuthEntity> existOAuth = oAuthRepository.findByUserId(oAuthTokenDto.getUserId());
+
         if (existOAuth.isPresent()) {
             OAuthEntity oAuthEntity = existOAuth.get();
 //            oAuthEntity.setId(oAuthTokenDto.getId());
@@ -82,6 +83,7 @@ public class OAuthServiceImpl implements OAuthService {
             oAuthEntity.setScope(oAuthTokenDto.getScope());
             // email, name, avatarUrl 삭제
             oAuthEntity.setUserEntity(userEntity);
+            userEntity.setOAuthEntity(oAuthEntity); 
 
             oAuthRepository.save(oAuthEntity);
         }

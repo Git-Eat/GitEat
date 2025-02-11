@@ -31,7 +31,7 @@ public class UserEntity {
     private String userName;
 
     // OAuthToken 과 1:1 매핑관계
-    @OneToOne(mappedBy = "userEntity", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(mappedBy = "userEntity", cascade = CascadeType.ALL)
     private OAuthEntity oAuthEntity;
 
 }
