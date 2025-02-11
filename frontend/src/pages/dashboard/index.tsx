@@ -4,6 +4,8 @@ import { Participants } from "../../components/dashboard/participants";
 import { BarChartExample } from "../../components/dashboard/pRStatistics";
 import { PieChart } from "../../components/dashboard/pieChart";
 import { MixedChartByLine } from "../../components/dashboard/mixedChartByLine";
+import { Suspense } from "react";
+import { ErrorBoundary } from "../../components/common/errorBoundery";
 
 export function DashBoard() {
   return (
@@ -21,7 +23,11 @@ export function DashBoard() {
         <div className="w-[80%] m-auto flex flex-col gap-10">
           <div className="flex w-[90%] m-auto justify-between">
             <div className="w-[48%]">
-              <TotalCommits />
+              <ErrorBoundary fallbackComponent={<>error occured</>}>
+                <Suspense fallback={<>loading</>}>
+                  <TotalCommits />
+                </Suspense>
+              </ErrorBoundary>
             </div>
             <div className="w-[48%]">
               <Participants />
