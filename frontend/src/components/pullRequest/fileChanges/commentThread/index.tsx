@@ -57,13 +57,9 @@ export function CommentThread({ comment }: CommentThreadProps) {
     Number(baseRepoId),
     Number(prId)
   );
-  function handleAddReply(
-    content: string,
-    replyType: number,
-    discussionId: string
-  ) {
+  function handleAddReply(content: string, discussionId: string) {
     if (!content.trim()) return;
-    createReply({ content, replyType, discussionId });
+    createReply({ content, discussionId });
   }
   function toggleReplyEditor(commentId: number) {
     setIsReplyEditorOpen((prev) => ({
@@ -112,8 +108,8 @@ export function CommentThread({ comment }: CommentThreadProps) {
       </footer>
       {isReplyEditorOpen[comment.commentId] && (
         <MarkdownEditor
-          onAddSingleComment={(content, replyType) => {
-            handleAddReply(content, replyType, comment.disId);
+          onAddSingleComment={(content) => {
+            handleAddReply(content, comment.disId);
           }}
           onStartReview={() => {}}
           onUpdateComment={() => {}}
