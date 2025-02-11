@@ -48,7 +48,7 @@ public class OAuthServiceImpl implements OAuthService {
             // 신규 사용자면 새로 저장
             userEntity = new UserEntity();
             userEntity.setUserId(oAuthTokenDto.getUserId());
-            userEntity.setUserName(oAuthTokenDto.getUserName());
+//            userEntity.setUserName(oAuthTokenDto.getUserName());
             userEntity.setEmail(oAuthTokenDto.getEmail());
             userEntity.setName(oAuthTokenDto.getName());
             userEntity.setAvatarUrl(oAuthTokenDto.getAvatarUrl());
@@ -83,7 +83,7 @@ public class OAuthServiceImpl implements OAuthService {
             oAuthEntity.setScope(oAuthTokenDto.getScope());
             // email, name, avatarUrl 삭제
             oAuthEntity.setUserEntity(userEntity);
-            userEntity.setOAuthEntity(oAuthEntity); 
+            userEntity.setOAuthEntity(oAuthEntity);
 
             oAuthRepository.save(oAuthEntity);
         }

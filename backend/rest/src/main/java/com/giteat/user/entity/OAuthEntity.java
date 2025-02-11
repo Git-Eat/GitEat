@@ -54,8 +54,7 @@ public class OAuthEntity {
     private String scope;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @MapsId // user_id를 PK이자 FK로 사용
-    @JoinColumn(name = "user_id", nullable = false) // false
+    @JoinColumn(name = "user_id", nullable = false)
     private UserEntity userEntity;
 
 //    @OneToOne(mappedBy = "oauthToken", cascade = CascadeType.ALL)
