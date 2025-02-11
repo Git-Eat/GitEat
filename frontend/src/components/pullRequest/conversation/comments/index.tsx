@@ -56,13 +56,9 @@ export function Comments({ repoId, prId }: CommentsProps) {
     }));
   }
 
-  function handleAddReply(
-    content: string,
-    replyType: number,
-    discussionId: string
-  ) {
+  function handleAddReply(content: string, discussionId: string) {
     if (!content.trim()) return;
-    createReply({ content, replyType, discussionId });
+    createReply({ content, discussionId });
   }
 
   function handleEditComment(comment: Comment) {
@@ -183,8 +179,8 @@ export function Comments({ repoId, prId }: CommentsProps) {
             </footer>
             {isReplyEditorOpen[comment.commentId] && (
               <MarkdownEditor
-                onAddSingleComment={(content, replyType) => {
-                  handleAddReply(content, replyType, comment.disId);
+                onAddSingleComment={(content) => {
+                  handleAddReply(content, comment.disId);
                 }}
                 onStartReview={() => {}}
                 onUpdateComment={() => {}}

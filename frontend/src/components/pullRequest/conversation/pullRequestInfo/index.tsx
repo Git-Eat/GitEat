@@ -10,7 +10,7 @@ interface PullRequestInfoProps {
 export function PullRequestInfo({ repoId, prId }: PullRequestInfoProps) {
   const { data } = useGetPullRequest(repoId, prId);
   return (
-    <section>
+    <section className="mb-8 bg-white my-5 p-5 rounded-xl">
       <ReactMarkdown remarkPlugins={[remarkGfm]}>
         {data?.description}
       </ReactMarkdown>

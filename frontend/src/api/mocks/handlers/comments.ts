@@ -40,8 +40,8 @@ interface ReplyBody {
 const comments: Comment[] = [
   {
     commentId: 1,
-    prId: 32,
-    repoId: 888788,
+    prId: 1,
+    repoId: 101,
     userId: 1,
     userName: "송용인",
     avatarUrl: null,
@@ -66,8 +66,8 @@ const comments: Comment[] = [
   },
   {
     commentId: 2,
-    prId: 32,
-    repoId: 888788,
+    prId: 1,
+    repoId: 101,
     userId: 1,
     userName: "송용인",
     avatarUrl: null,

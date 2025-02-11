@@ -17,9 +17,9 @@ export function Conversation() {
     numericPrId
   );
 
-  function handleAddComment(content: string, commentType: number) {
+  function handleAddComment(content: string) {
     if (!content.trim()) return;
-    createComment({ content, commentType });
+    createComment({ content });
   }
 
   return (
@@ -36,8 +36,8 @@ export function Conversation() {
           </Suspense>
         </ErrorBoundary>
         <MarkdownEditor
-          onAddSingleComment={(content, commentType) => {
-            handleAddComment(content, commentType);
+          onAddSingleComment={(content) => {
+            handleAddComment(content);
           }}
           onStartReview={() => {}}
           onUpdateComment={() => {}}
