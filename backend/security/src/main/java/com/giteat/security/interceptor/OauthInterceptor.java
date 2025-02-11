@@ -53,7 +53,9 @@ public class OauthInterceptor implements HandlerInterceptor {
         String authenticationId = oauthInterceptorService.getUserIdFromUserInfo(accessToken); // 인증받은 사용자 id
 
         if (authenticationId == null) {        //null일 경우 accessToken이 만료되었음으로 refresh 토큰을 검사한다.
+            log.info("if문 안에서 호출");
             oAuthTokenDto = oauthInterceptorService.getNewToken(refreshToken);
+            System.out.println("if문 dto :" + oAuthTokenDto);
             if (oAuthTokenDto == null) {          //null 일 경우 refreshToken이 만료된 값임으로 실패
                 responseSetting(response);
                 log.error("refreshToken is invalid");
@@ -61,7 +63,9 @@ public class OauthInterceptor implements HandlerInterceptor {
             }
             authenticationId = oauthInterceptorService.getUserIdFromUserInfo(oAuthTokenDto.getAccessToken());
         } else {
+            log.info("else문 안에서 호출");
             oAuthTokenDto = oauthInterceptorService.getNewToken(refreshToken);
+            System.out.println("else dto : " + oAuthTokenDto);
 
         }
         oauthInterceptorService.saveNewToken(authenticationId, oAuthTokenDto);
