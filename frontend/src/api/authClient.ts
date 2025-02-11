@@ -10,15 +10,19 @@ const authClient = axios.create({
 
 authClient.interceptors.request.use((config) => {
   const token = localStorage.getItem("access_token");
-  console.log(token);
+  config.withCredentials = true;
   if (token) {
-    config.headers["Authorization"] = `Bearer ${token}`;
+    config.headers["authorization"] = `${token}`;
   }
   return config;
 });
 
 authClient.interceptors.response.use(
   (response) => {
+    console.log(response.headers["authorization"]);
+    if (response.headers["authorization"]) {
+      localStorage.setItem("access_token", response.headers["authorization"]);
+    }
     return response;
   },
   (error) => {

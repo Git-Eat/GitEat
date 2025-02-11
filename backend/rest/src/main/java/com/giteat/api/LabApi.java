@@ -32,14 +32,6 @@ public class LabApi {
         this.gitLabTokenService = gitLabTokenService;
         this.objectMapper = objectMapper;
     }
-
-    @Value("${gpt.api.url}")
-    private String gptApiUrl; // GPT API URL을 설정 파일에서 주입받음
-
-    @Value("${gpt.api.key}")
-    private String apiKey; // API 키를 설정 파일에서 주입받음
-
-
     /**
      * 최근 정보를 가져오는 함수
      */
@@ -331,7 +323,7 @@ public class LabApi {
     private List<Map<String ,Object>> callGetApiUseId(String url , String id){
         HttpHeaders headers = new HttpHeaders();
         String accessToken = gitLabTokenService.getAccessTokenById(id);
-        headers.set("Authorization", accessToken);
+        headers.set("Authorization", "Bearer" + accessToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, entity, List.class);
@@ -443,5 +435,4 @@ public class LabApi {
         }
         return resultMap;
     }
-
 }

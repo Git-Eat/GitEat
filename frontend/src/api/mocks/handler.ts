@@ -2,6 +2,7 @@ import { http, HttpResponse } from "msw";
 import commentsHandlers from "./handlers/comments";
 import reviewersHandlers from "./handlers/reviewers";
 import repositoryHandler from "./handlers/repository";
+import dashBoardHandler from "./handlers/dashboard";
 
 const MOCK_REGION = [
   {
@@ -25,6 +26,7 @@ const handler = [
   ...commentsHandlers,
   ...reviewersHandlers,
   ...repositoryHandler,
+  ...dashBoardHandler,
 ];
 
 export default handler;

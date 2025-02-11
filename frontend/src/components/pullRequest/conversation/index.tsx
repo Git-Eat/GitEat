@@ -6,6 +6,7 @@ import { useCreateComment } from "../../../api/queries/useCreateComment";
 import { Suspense } from "react";
 import { ErrorBoundary } from "../../common/errorBoundery";
 import { useParams } from "react-router-dom";
+import { PullRequestInfo } from "./pullRequestInfo";
 
 export function Conversation() {
   const { baseRepoId, prId } = useParams();
@@ -16,9 +17,9 @@ export function Conversation() {
     numericPrId
   );
 
-  function handleAddComment(content: string, commentType: number) {
+  function handleAddComment(content: string) {
     if (!content.trim()) return;
-    createComment({ content, commentType });
+    createComment({ content });
   }
 
   return (
@@ -26,15 +27,21 @@ export function Conversation() {
       <main className="w-3/4">
         <ErrorBoundary>
           <Suspense fallback={<img src={spinner} alt="Loading..." />}>
+            <PullRequestInfo repoId={numericRepoId} prId={numericPrId} />
+          </Suspense>
+        </ErrorBoundary>
+        <ErrorBoundary>
+          <Suspense fallback={<img src={spinner} alt="Loading..." />}>
             <Comments repoId={numericRepoId} prId={numericPrId} />
           </Suspense>
         </ErrorBoundary>
         <MarkdownEditor
-          onAddSingleComment={(content, commentType) => {
-            handleAddComment(content, commentType);
+          onAddSingleComment={(content) => {
+            handleAddComment(content);
           }}
           onStartReview={() => {}}
           onUpdateComment={() => {}}
+          repoId={numericRepoId}
         />
       </main>
       <aside className="w-1/4">

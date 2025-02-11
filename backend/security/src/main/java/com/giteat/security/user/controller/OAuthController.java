@@ -5,6 +5,7 @@ import com.giteat.security.user.dto.OAuthTokenDto;
 import com.giteat.security.user.service.CustomOAuthService;
 import com.giteat.security.util.ApiUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
@@ -39,13 +40,12 @@ public class OAuthController {
      */
     @PostMapping("/gitlab/login")
     @Operation(summary = "사용자 로그인", description = "gitLab ouath2 로그인")
-    public ResponseEntity<?> gitlabLogin(@RequestBody Map<String, String> body) {
+    public ResponseEntity<?> gitlabLogin(@RequestBody Map<String, String> body , HttpServletResponse response) {
         String code = body.get("code");
-
-        OAuthTokenDto oAuthTokenDto = oauthService.gitlabLogin(code);
-        ResponseEntity<?> testResponse = apiUtil.postApi("/oauth/gitlab", oAuthTokenDto);
-
-        return ResponseEntity.ok(testResponse.getBody());
+        OAuthTokenDto oAuthTokenDto = oauthService.gitlabLogin(code , response);
+        ResponseEntity<?> testResponse = apiUtil.postApi("/oauth/gitlab", oAuthTokenDto , oAuthTokenDto.getAccessToken());
+        oauthService.createCookieAndToken(oAuthTokenDto.getAccessToken() ,oAuthTokenDto.getRefreshToken() , response);
+        return ResponseEntity.ok(testResponse.getStatusCode());
     }
     /**
      * GitLab OAuth 토큰 갱신 엔드포인트
@@ -63,25 +63,23 @@ public class OAuthController {
      * GitLab OAuth 일반 로그아웃 처리
      * Access Token을 무효화하고 현재 세션을 종료
      *
-     * @param accessToken OAuth 토큰 정보를 담고 있는 DTO
+     *
      * @return 로그아웃 처리 결과
      */
     @PostMapping("/gitlab/logout")
     @Operation(summary = "사용자 로그아웃", description = "아마 안써도 될듯?")
-    public ResponseEntity<?> logout(@RequestHeader("Authorization") String accessToken) {
+    public ResponseEntity<?> logout() {
         return ResponseEntity.ok().build();
     }
 
     /**
      * accessToken으로 사용자 정보를 가져오는 함수
-     * @param token
      * @return
      */
     @GetMapping("/gitlab/userinfo")
     @Operation(summary = "사용자 정보", description = "accessToken을 기반으로 사용자 정보를 가져옴")
-    public ResponseEntity<?> getMyInfo(@RequestHeader("Authorization") String token) {
-        String accessToken = token.split(" ")[1];
-        return ResponseEntity.ok().body(oauthService.getMyInfo(accessToken));
+    public ResponseEntity<?> getMyInfo() {
+        return ResponseEntity.ok().body(oauthService.getMyInfo());
     }
 
 }

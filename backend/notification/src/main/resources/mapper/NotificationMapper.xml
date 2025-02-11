@@ -30,7 +30,7 @@
             nt.noti_url,
             n.msg_status
         from notification as n
-        join noti_token as nt
+        left join noti_token as nt
         on n.repo_id = nt.repo_id
         and n.user_id = nt.user_id
         where n.msg_status =0;

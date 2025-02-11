@@ -35,12 +35,12 @@ public class RepoServiceImpl implements RepoService{
     }
 
     @Override
-    public RepositoryEntity findByRepoId(int repoId) {
+    public RepositoryEntity findByRepoId(int repoId , String accessToken) {
         return repoRepository.findByRepoId(repoId);
     }
 
     @Override
-    public RepositoryEntity insertRepo(int repoId) {
+    public RepositoryEntity insertRepo(int repoId , String accessToken) {
         RepositoryEntity repo = new RepositoryEntity();
         repo.setRepoId(repoId);
         return repoRepository.save(repo);
@@ -216,8 +216,6 @@ public class RepoServiceImpl implements RepoService{
                 // ---------- Comment 가져오기 ---------- //
                 List<Map<String, Object>> CommentList = gitLabApi.getDiscussions(projectId, (Integer) mrResponse.get("iid"), accessToken);
                 for(Map<String, Object> commentResponse : CommentList){
-                    //if((boolean) commentResponse.get("individual_note")) continue; // individual_note값이 false 일때만 DB에 저장
-
                     List<Map<String, Object>> notes = (List<Map<String, Object>>) commentResponse.get("notes");
 
                     // 첫번째 note는 Comment로 저장
@@ -232,6 +230,7 @@ public class RepoServiceImpl implements RepoService{
                     comment.setUserId((int) commentAuthor.get("id"));
                     comment.setDisId((String) commentResponse.get("id"));
                     comment.setCreateAt((String) firstNote.get("updated_at"));
+                    if((boolean) notes.get(0).get("system")) continue; // system이 쓴 댓글이면 continue
 
                     if(firstNote.get("position") != null){
                         Map<String, Object> position = (Map<String, Object>) firstNote.get("position");
