@@ -16,10 +16,16 @@ import java.time.LocalDateTime;
 @AllArgsConstructor // 모든 필드를 파라미터로 받는 생성자 자동 생성
 public class OAuthEntity {
 
+//    @Id
+//    @Column(name = "Id")
+//    private Integer Id;
+
     @Id
     @Column(name = "user_id")
     private Integer userId;
 
+    @Column(name = "user_name")
+    private String userName;
 
     @Column(name = "access_token", nullable = false)
     private String accessToken;
@@ -34,15 +40,16 @@ public class OAuthEntity {
     @Column(name = "refresh_token", nullable = true)
     private String refreshToken;
 
-    @Column(name = "create_at", nullable = true)
-    private LocalDateTime createAt;
+    @Column(name = "created_at", nullable = true)
+    private LocalDateTime createdAt;
 
     // GitHub만 제공하는 필드
     @Column(nullable = true)
     private String scope;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", nullable = false) // false
+    @OneToOne(cascade = CascadeType.ALL)
+    @MapsId
+    @JoinColumn(name = "user_id", nullable = false)
     private UserEntity userEntity;
 
 //    @OneToOne(mappedBy = "oauthToken", cascade = CascadeType.ALL)

@@ -27,6 +27,9 @@ public class UserEntity {
     @Column(name = "avatar_url", nullable = true) // 프로필 이미지는 optional
     private String avatarUrl;
 
+    @Column(name = "user_name", nullable = false)
+    private String userName;
+
     // OAuthToken 과 1:1 매핑관계
     @OneToOne(mappedBy = "userEntity", cascade = CascadeType.ALL)
     private OAuthEntity oAuthEntity;
