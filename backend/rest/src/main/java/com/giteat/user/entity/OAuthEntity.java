@@ -16,10 +16,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor // 모든 필드를 파라미터로 받는 생성자 자동 생성
 public class OAuthEntity {
 
-    @Id
-    @Column(name = "Id")
-    private Integer Id;
+//    @Id
+//    @Column(name = "Id")
+//    private Integer Id;
 
+    @Id
     @Column(name = "user_id")
     private Integer userId;
 
@@ -42,11 +43,11 @@ public class OAuthEntity {
     @Column(name = "created_at", nullable = true)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
-    private String email;
-
-    @Column(nullable = false)
-    private String name;
+//    @Column(nullable = false)
+//    private String email;
+//
+//    @Column(nullable = false)
+//    private String name;
 
     // GitHub만 제공하는 필드
     @Column(nullable = true)

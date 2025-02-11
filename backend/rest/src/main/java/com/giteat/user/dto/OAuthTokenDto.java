@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @ToString
 @NoArgsConstructor
 public class OAuthTokenDto {
-    private Integer Id;
+//    private Integer Id;
     private int userId;
     private String accessToken;
     private String tokenType;

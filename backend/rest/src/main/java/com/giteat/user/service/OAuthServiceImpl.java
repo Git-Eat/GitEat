@@ -58,7 +58,7 @@ public class OAuthServiceImpl implements OAuthService {
         Optional<OAuthEntity> existOAuth = oAuthRepository.findByUserId(oAuthTokenDto.getUserId());
         if (existOAuth.isPresent()) {
             OAuthEntity oAuthEntity = existOAuth.get();
-            oAuthEntity.setId(oAuthTokenDto.getId());
+//            oAuthEntity.setId(oAuthTokenDto.getId());
             oAuthEntity.setUserId(oAuthTokenDto.getUserId());
             oAuthEntity.setAccessToken(oAuthTokenDto.getAccessToken());
             oAuthEntity.setRefreshToken(oAuthTokenDto.getRefreshToken());
@@ -70,7 +70,7 @@ public class OAuthServiceImpl implements OAuthService {
             oAuthRepository.save(oAuthEntity);
         } else {
             OAuthEntity oAuthEntity = new OAuthEntity();
-            oAuthEntity.setId(oAuthTokenDto.getId());
+//            oAuthEntity.setId(oAuthTokenDto.getId());
             oAuthEntity.setUserName(oAuthTokenDto.getUserName());
             oAuthEntity.setUserId(oAuthTokenDto.getUserId());
             oAuthEntity.setAccessToken(oAuthTokenDto.getAccessToken());
