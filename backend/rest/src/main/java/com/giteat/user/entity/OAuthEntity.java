@@ -21,7 +21,7 @@ public class OAuthEntity {
 //    private Integer Id;
 
     @Id
-    @MapsId // user_id를 PK이자 FK로 사용
+
     @Column(name = "user_id")
     private Integer userId;
 
@@ -55,6 +55,7 @@ public class OAuthEntity {
     private String scope;
 
     @OneToOne
+    @MapsId // user_id를 PK이자 FK로 사용
     @JoinColumn(name = "user_id", nullable = false) // false
     private UserEntity userEntity;
 
