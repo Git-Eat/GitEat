@@ -4,8 +4,13 @@ import com.giteat.security.user.api.OAuthApi;
 import com.giteat.security.user.dto.OAuthTokenDto;
 
 import com.giteat.security.user.dto.User;
+import com.giteat.security.util.TokenContext;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -31,7 +36,7 @@ public class CustomOAuthService  {
      * @return OAuth 토큰 및 사용자 정보가 매핑된 DTO
      *         실패 시 null 반환
      */
-    public OAuthTokenDto gitlabLogin(String code){
+    public OAuthTokenDto gitlabLogin(String code , HttpServletResponse response ){
         // CSRF 공격 방지를 위한 상태 토큰 생성
         // String state = UUID.randomUUID().toString();
         try {
@@ -75,9 +80,25 @@ public class CustomOAuthService  {
             return null;
         }
     }
-    public Map<String , String> getMyInfo(String accessToken){
+    public Map<String , String> getMyInfo(){
+        String accessToken = TokenContext.getAccessToken();
         Map<String , String> userInfo = oauthApi.getUserInfo(accessToken);
         return userInfo;
+    }
+
+    public void createCookieAndToken(String accessToken, HttpServletResponse response){
+        response.setHeader("Authorization", "Bearer " + accessToken);
+
+        // 쿠키 설정 (accessToken을 쿠키에 추가)
+        int maxAge = 10 * 365 * 24 * 60 * 60;
+        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
+        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setSecure(true);
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setMaxAge(maxAge);
+
+        // 쿠키를 응답에 추가
+        response.addCookie(accessTokenCookie);
     }
 }
 
