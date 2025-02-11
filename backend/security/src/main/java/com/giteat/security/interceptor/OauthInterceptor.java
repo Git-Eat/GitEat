@@ -73,22 +73,26 @@ public class OauthInterceptor implements HandlerInterceptor {
         }
         oauthInterceptorService.saveNewToken(authenticationId, oAuthTokenDto);
         String newAccessToken = oAuthTokenDto.getAccessToken();
+        String newRefreshToken = oAuthTokenDto.getRefreshToken();
         TokenContext.setAccessToken(newAccessToken);
-        TokenContext.setRefreshToken(refreshToken);
+        TokenContext.setRefreshToken(newRefreshToken);
         return true;
     }
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         String requestURI = request.getRequestURI();
+        System.out.println("종료 경로 : " + requestURI);
         if(requestURI.startsWith("/api/oauth/gitlab/login")){
             return;
         }
+        System.out.println("return 할때 cookie 생성");
 
         int maxAge = 10 * 365 * 24 * 60 * 60;
         String accessToken = TokenContext.getAccessToken();
         String refreshToken = TokenContext.getRefreshToken();
-
+        System.out.println("새로 만들어서 반환 access : " + accessToken);
+        System.out.println("새로 만들어서 반환 refresh : " + refreshToken);
         // cookie 설정
         Cookie cookie = new Cookie("refreshToken", refreshToken);
         cookie.setHttpOnly(true);
