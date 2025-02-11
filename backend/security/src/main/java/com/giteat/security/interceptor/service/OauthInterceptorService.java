@@ -36,6 +36,7 @@ public class OauthInterceptorService {
         if(userInfo == null){
             return null;
         }
+        System.out.println("userInfo : " + userInfo);
         return userInfo.get("id");
     }
 
