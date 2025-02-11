@@ -1,19 +1,16 @@
-package com.giteat.user.dto;
+package com.giteat.statistics.dto;
 
 import lombok.*;
 
-@Data
+@Builder
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class UserDto {
+@AllArgsConstructor
+public class CommentByUserDto {
     private int userId;
-    private String email;
+    private int commentCount;
     private String name;
     private String userName;
     private String avatarUrl;
-    private String mmWebHook;
-
-
 }

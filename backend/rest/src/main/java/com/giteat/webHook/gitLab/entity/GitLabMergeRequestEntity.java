@@ -4,10 +4,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
-@Table(name = "PR")
-@Getter
-@Setter
+//@Entity
+//@Table(name = "PR")
+//@Getter
+//@Setter
 public class GitLabMergeRequestEntity {
     @Id
     @Column(name = "pr_id")

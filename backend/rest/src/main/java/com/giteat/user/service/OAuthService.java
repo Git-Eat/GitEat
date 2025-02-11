@@ -9,6 +9,5 @@ public interface OAuthService {
 
     OAuthTokenDto refreshToken(OAuthTokenDto tokenRequest);
 
-//    void logout(OAuthTokenDto oAuthTokenDto);
 
 }

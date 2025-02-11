@@ -16,7 +16,6 @@ public class UserEntity {
 
     @Id
     @Column(name = "user_id", nullable = false) // false
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto_increment
     private Integer userId;
 
     @Column(nullable = false)
@@ -28,8 +27,8 @@ public class UserEntity {
     @Column(name = "avatar_url", nullable = true) // 프로필 이미지는 optional
     private String avatarUrl;
 
-    @Column(name = "mm_webhook", nullable = true) // webhook도 optional일 수 있음
-    private String mmWebhook;
+    @Column(name = "user_name", nullable = false)
+    private String userName;
 
     // OAuthToken 과 1:1 매핑관계
     @OneToOne(mappedBy = "userEntity", cascade = CascadeType.ALL)
