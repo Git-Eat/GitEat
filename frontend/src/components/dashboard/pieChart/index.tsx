@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useMemo } from "react";
 import ReactApexChart from "react-apexcharts";
-import { ApexOptions } from "apexcharts";
-
+import { useGetCommentStatistics } from "../../../api/queries/useGetCommentStatistics";
+import { useParams } from "react-router-dom";
 // formatter 함수에서 사용하는 opts 객체의 타입 정의
 interface FormatterOptions {
   seriesIndex: number;
@@ -14,31 +14,32 @@ interface FormatterOptions {
   };
 }
 
-interface ChartData {
-  series: number[];
-  options: ApexOptions;
-}
-
 export function PieChart() {
-  const [chartData] = React.useState<ChartData>({
-    series: [25, 15, 44, 55, 41, 17],
+  const { baseRepoId } = useParams();
+  const { data: commentStatistics } = useGetCommentStatistics(
+    baseRepoId as string
+  );
+
+  // commentStatistics가 준비되었으므로 각 배열 생성
+  const commentCounts = useMemo(() => {
+    if (!commentStatistics) return [];
+    return commentStatistics.userList.map((user) => user.commentCount);
+  }, [commentStatistics]);
+
+  const commentUsers = useMemo(() => {
+    if (!commentStatistics) return [];
+    return commentStatistics.userList.map((user) => user.name);
+  }, [commentStatistics]);
+
+  const [state] = React.useState({
+    series: commentCounts,
     options: {
       chart: {
         width: "100%",
         height: "100%",
         type: "pie" as const,
-        toolbar: {
-          show: false, // 메뉴(툴바) 제거
-        },
       },
-      labels: [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-      ],
+      labels: commentUsers,
       theme: {
         monochrome: {
           enabled: true,
@@ -60,7 +61,7 @@ export function PieChart() {
         },
       },
       dataLabels: {
-        formatter: function (val: number, opts: FormatterOptions): string[] {
+        formatter(val: number, opts: FormatterOptions): string[] {
           const name = opts.w.globals.labels[opts.seriesIndex];
           return [name, val.toFixed(1) + "%"];
         },
@@ -76,12 +77,12 @@ export function PieChart() {
       <div className="mb-10">
         <h2 className="text-xl font-bold flex justify-between">
           <span>총 PR 개수</span>
-          <span>{9999}개</span>
+          <span>{commentStatistics?.totalComment}개</span>
         </h2>
       </div>
       <ReactApexChart
-        series={chartData.series}
-        options={chartData.options}
+        series={state.series}
+        options={state.options}
         type="pie"
         height={350}
       />

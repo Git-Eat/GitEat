@@ -1,5 +1,9 @@
 import client from "./client";
-import { Participants, PRStatistics } from "./types/DashBoard";
+import {
+  CommentStatistics,
+  Participants,
+  PRStatistics,
+} from "./types/DashBoard";
 
 export const getTotalCommits = async (repoId: string) => {
   try {
@@ -28,6 +32,18 @@ export const getPrStatistics = async (
 ): Promise<PRStatistics> => {
   try {
     const res = await client.get(`/statistics/repo/${repoId}/pr`);
+    return res.data;
+  } catch (e: unknown) {
+    if (e instanceof Error) throw new Error(e.message);
+    else throw new Error("unknown Error");
+  }
+};
+
+export const getCommentStatistics = async (
+  repoId: string
+): Promise<CommentStatistics> => {
+  try {
+    const res = await client.get(`/statistics/repo/${repoId}/comment`);
     return res.data;
   } catch (e: unknown) {
     if (e instanceof Error) throw new Error(e.message);

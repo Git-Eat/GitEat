@@ -47,7 +47,11 @@ export function DashBoard() {
               </ErrorBoundary>
             </div>
             <div className="w-[48%]">
-              <PieChart />
+              <ErrorBoundary fallbackComponent={<>error occured</>}>
+                <Suspense fallback={<Skeleton width="100%" height={500} />}>
+                  <PieChart />
+                </Suspense>
+              </ErrorBoundary>
             </div>
           </div>
           <div className="flex flex-col w-[90%] m-auto justify-between bg-white border-lg p-12">

@@ -16,3 +16,8 @@ export type PRStatistics = {
   totalMergeRequest: number;
   userList: (Participant & { mergeRequestCount: number })[];
 };
+
+export type CommentStatistics = {
+  totalComment: number;
+  userList: (Participant & { commentCount: number })[];
+};
