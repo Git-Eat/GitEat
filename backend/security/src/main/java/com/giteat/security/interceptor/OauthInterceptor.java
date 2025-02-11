@@ -107,6 +107,7 @@ public class OauthInterceptor implements HandlerInterceptor {
 
             // accessToken을 HTTP 응답 헤더에 추가
             response.setHeader("Authorization", "Bearer " + accessToken);
+            response.addHeader("Authorization", "Bearer " + accessToken);
             TokenContext.removeAccessToken();
             TokenContext.removeRefreshToken();
             System.out.println("resonse HEADER :  " + response.getHeader("Authorization"));
