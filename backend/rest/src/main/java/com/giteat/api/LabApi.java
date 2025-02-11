@@ -32,14 +32,6 @@ public class LabApi {
         this.gitLabTokenService = gitLabTokenService;
         this.objectMapper = objectMapper;
     }
-
-    @Value("${gpt.api.url}")
-    private String gptApiUrl; // GPT API URL을 설정 파일에서 주입받음
-
-    @Value("${gpt.api.key}")
-    private String apiKey; // API 키를 설정 파일에서 주입받음
-
-
     /**
      * 최근 정보를 가져오는 함수
      */
@@ -112,11 +104,11 @@ public class LabApi {
      * 파일 업로드 함수
      * Endpoint : /projects/{project_id}/uploads
      */
-    public Map<String, String> uploadFile(String projectId, MultipartFile file) throws IOException {
+    public Map<String, String> uploadFile(String projectId, MultipartFile file , String accessToken) throws IOException {
         String url = gitlabApiUrl + "/projects/" +  projectId + "/uploads";
         HttpHeaders headers = new HttpHeaders();
         //String accessToken = gitLabTokenService.getAccessToken(jwtAccessToken);
-        headers.set("Private-Token", "UATEgVcVTSsLn7PWao6c"); // 필요하면 OAuth 토큰 사용
+        headers.set("Private-Token", accessToken); // 필요하면 OAuth 토큰 사용
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
@@ -331,7 +323,7 @@ public class LabApi {
     private List<Map<String ,Object>> callGetApiUseId(String url , String id){
         HttpHeaders headers = new HttpHeaders();
         String accessToken = gitLabTokenService.getAccessTokenById(id);
-        headers.set("Authorization", accessToken);
+        headers.set("Authorization", "Bearer" + accessToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, entity, List.class);
@@ -382,8 +374,7 @@ public class LabApi {
      */
     private Map<String, Object> callPutApi(String url, String accessToken, Map<String, String> requestBody) {
         HttpHeaders headers = new HttpHeaders();
-        String gitLabToken = gitLabTokenService.getAccessToken(accessToken);
-        headers.set("Private-Token", gitLabToken);
+        headers.set("Authorization", "Bearer " + accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<Map<String, String>> entity = new HttpEntity<>(requestBody, headers);
@@ -400,8 +391,8 @@ public class LabApi {
      */
     private boolean callDeleteApi(String url, String accessToken) {
         HttpHeaders headers = new HttpHeaders();
-        String gitLabToken = gitLabTokenService.getAccessToken(accessToken);
-        headers.set("Private-Token", gitLabToken);
+        headers.set("Authorization", "Bearer " + accessToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
@@ -444,5 +435,4 @@ public class LabApi {
         }
         return resultMap;
     }
-
 }

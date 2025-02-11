@@ -40,8 +40,8 @@ interface ReplyBody {
 const comments: Comment[] = [
   {
     commentId: 1,
-    prId: 32,
-    repoId: 888788,
+    prId: 1,
+    repoId: 101,
     userId: 1,
     userName: "송용인",
     avatarUrl: null,
@@ -66,8 +66,8 @@ const comments: Comment[] = [
   },
   {
     commentId: 2,
-    prId: 32,
-    repoId: 888788,
+    prId: 1,
+    repoId: 101,
     userId: 1,
     userName: "송용인",
     avatarUrl: null,
@@ -80,16 +80,15 @@ const comments: Comment[] = [
   },
 ];
 
-// const API_BASE = import.meta.env.VITE_API_BASE;
 const commentsHandlers = [
-  // http.get(API_BASE + `/pr/:repoId/:prId/comment`, (req) => {
-  //   const repoId = Number(req.params.repoId);
-  //   const prId = Number(req.params.prId);
-  //   const filteredComments = comments.filter(
-  //     (comment) => comment.repoId === repoId && comment.prId === prId
-  //   );
-  //   return HttpResponse.json(filteredComments, { status: 200 });
-  // }),
+  http.get("*/pr/:repoId/:prId/comment", (req) => {
+    const repoId = Number(req.params.repoId);
+    const prId = Number(req.params.prId);
+    const filteredComments = comments.filter(
+      (comment) => comment.repoId === repoId && comment.prId === prId
+    );
+    return HttpResponse.json(filteredComments, { status: 200 });
+  }),
 
   http.delete("*/pr/:repoId/:prId/comment/:commentId", (req) => {
     const repoId = Number(req.params.repoId);

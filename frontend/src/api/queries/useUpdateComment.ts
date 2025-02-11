@@ -1,8 +1,9 @@
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation } from "react-query";
 import { updateComment } from "../comment";
+import { usePRStore } from "../../store/pullRequestStore";
 
 export const useUpdateComment = (repoId: number, prId: number) => {
-  const queryClient = useQueryClient();
+  const { comments, setComments } = usePRStore();
 
   return useMutation({
     mutationFn: ({
@@ -13,8 +14,14 @@ export const useUpdateComment = (repoId: number, prId: number) => {
       content: string;
       commentType: number;
     }) => updateComment(repoId, prId, commentId, content),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["comments", repoId, prId] });
+    onSuccess: (updateComment) => {
+      setComments(
+        comments.map((comment) =>
+          comment.commentId === updateComment.commentId
+            ? { ...comment, content: updateComment.content }
+            : comment
+        )
+      );
     },
   });
 };

@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useRef } from "react";
 import MDEditor from "@uiw/react-md-editor";
 import { useState } from "react";
+import { useFileUpload } from "../../../hooks/useFileUpload";
 
 interface MarkdownEditorProps {
   onAddSingleComment: (value: string, category: number) => void;
@@ -9,6 +10,7 @@ interface MarkdownEditorProps {
   initialValue?: string;
   initialCategory?: number;
   isEditing?: boolean;
+  repoId: number;
 }
 
 export function MarkdownEditor({
@@ -18,9 +20,12 @@ export function MarkdownEditor({
   initialValue = "",
   initialCategory = 0,
   isEditing = false,
+  repoId,
 }: MarkdownEditorProps) {
   const [category, setCategory] = useState<number>(initialCategory);
   const [value, setValue] = useState<string>(initialValue);
+  const editorRef = useRef<HTMLDivElement>(null);
+  const { handleFileDrop, handleDragOver } = useFileUpload(repoId, setValue);
 
   function handleCategory(event: React.ChangeEvent<HTMLSelectElement>) {
     setCategory(Number(event.target.value) as number);
@@ -53,7 +58,12 @@ export function MarkdownEditor({
   }
 
   return (
-    <div className="bg-white my-5 p-5 rounded-xl">
+    <div
+      ref={editorRef}
+      className="bg-white my-5 p-5 rounded-xl"
+      onDrop={handleFileDrop}
+      onDrag={handleDragOver}
+    >
       <select
         onChange={handleCategory}
         value={category}

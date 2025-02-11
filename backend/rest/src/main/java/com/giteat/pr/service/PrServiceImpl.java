@@ -24,12 +24,12 @@ public class PrServiceImpl implements PrService{
 
 
     @Override
-    public List<PrDto> getPrList (int repoId) {
+    public List<PrDto> getPrList (int repoId , String accessToken) {
         return prMapper.getPrList(repoId);
     }
 
     @Override
-    public PrDto getPrById(int repoId, int prId) {
+    public PrDto getPrById(int repoId, int prId , String accessToken) {
         Map<String, Object> params = new HashMap<>();
         params.put("repoId", repoId);
         params.put("prId", prId);
@@ -37,7 +37,7 @@ public class PrServiceImpl implements PrService{
     }
 
     @Override
-    public List<CommitDto> getCommitList(int repoId,int prId) {
+    public List<CommitDto> getCommitList(int repoId,int prId , String accessToken) {
         Map<String, Object> params = new HashMap<>();
         params.put("repoId", repoId);
         params.put("prId", prId);
@@ -45,7 +45,7 @@ public class PrServiceImpl implements PrService{
     }
 
     @Override
-    public CommitDto getCommitById(int repoId, int prId, String commitId) {
+    public CommitDto getCommitById(int repoId, int prId, String commitId , String accessToken) {
         Map<String, Object> params = new HashMap<>();
         params.put("repoId", repoId);
         params.put("prId", prId);
@@ -54,7 +54,7 @@ public class PrServiceImpl implements PrService{
     }
 
     @Override
-    public List<CommentDto> getCommentList(int repoId, int prId) {
+    public List<CommentDto> getCommentList(int repoId, int prId , String accessToken) {
         Map<String, Object> params = new HashMap<>();
         params.put("repoId", repoId);
         params.put("prId", prId);
@@ -69,26 +69,27 @@ public class PrServiceImpl implements PrService{
 
 
     @Override
-    public int insertComment(String repoId, String prId, CommentDto commentDto) {
+    public int insertComment(String repoId, String prId, CommentDto commentDto , String accessToken) {
         // GitLab API에 댓글 등록 요청
-        Map<String,Object> response = gitLabApi.insertComment(repoId, prId, commentDto.getContent(), "");
+        Map<String,Object> response = gitLabApi.insertComment(repoId, prId, commentDto.getContent(), accessToken);
         if(response != null) return 200;
         return 404;
     }
 
     @Override
-    public int updateComment(int repoId, int prId, CommentDto commentDto) {
+    public int updateComment(int repoId, int prId, CommentDto commentDto , String accessToken) {
         // GitLab API에 댓글 수정 요청
-        Map<String,Object> response = gitLabApi.updateComment(String.valueOf(repoId), String.valueOf(prId),  String.valueOf(commentDto.getCommentId()) ,commentDto.getContent(),"");
+        Map<String,Object> response = gitLabApi.updateComment(String.valueOf(repoId), String.valueOf(prId),  String.valueOf(commentDto.getCommentId()) ,commentDto.getContent(),accessToken
+        );
         if(response != null) return 200;
         return 404;
     }
 
     @Override
-    public int deleteComment(String repoId, String prId, String commentId) {
+    public int deleteComment(String repoId, String prId, String commentId , String accessToken) {
 
         // GitLab API에 댓글 삭제 요청
-        boolean response = gitLabApi.deleteComment(repoId, prId, commentId,"");
+        boolean response = gitLabApi.deleteComment(repoId, prId, commentId,accessToken);
 
         // 우리 DB에서도 삭제
         if(response){
@@ -102,11 +103,11 @@ public class PrServiceImpl implements PrService{
     }
 
     @Override
-    public Map<String, String> uploadsFile(String repoId, MultipartFile file) {
+    public Map<String, String> uploadsFile(String repoId, MultipartFile file , String accessToken) {
 
         Map<String, String> fileData;
         try {
-            fileData = gitLabApi.uploadFile(repoId, file); // 깃랩 이미지 업로드 API 호출
+            fileData = gitLabApi.uploadFile(repoId, file , accessToken); // 깃랩 이미지 업로드 API 호출
         } catch (Exception e) {
             throw new RuntimeException("이미지 업로드 실패", e);
         }
@@ -125,28 +126,28 @@ public class PrServiceImpl implements PrService{
     }
 
     @Override
-    public List<ReplyDto> showReply(int repoId, int prId, int commentId) {
+    public List<ReplyDto> showReply(int repoId, int prId, int commentId , String accessToken) {
         return prMapper.showReply(repoId, prId, commentId);
     }
 
     @Override
-    public int insertReply(String repoId, String prId, String discussionId, ReplyDto replyDto) {
-        Map<String,Object> response = gitLabApi.insertReply(repoId, prId, discussionId, replyDto.getContent(), "");
+    public int insertReply(String repoId, String prId, String discussionId, ReplyDto replyDto , String accessToken) {
+        Map<String,Object> response = gitLabApi.insertReply(repoId, prId, discussionId, replyDto.getContent(), accessToken);
         if(response != null) return 200;
         return 404;
     }
 
     @Override
-    public int updateReply(String repoId, String prId, String reCommentId, ReplyDto replyDto) {
-        Map<String,Object> response = gitLabApi.updateReply(repoId, prId, reCommentId, replyDto.getContent(), "");
+    public int updateReply(String repoId, String prId, String reCommentId, ReplyDto replyDto , String accessToken) {
+        Map<String,Object> response = gitLabApi.updateReply(repoId, prId, reCommentId, replyDto.getContent(), accessToken);
         if(response != null) return 200;
         return 404;
     }
 
     @Override
-    public int deleteReply(String repoId, String prId, String reCommentId) {
+    public int deleteReply(String repoId, String prId, String reCommentId , String accessToken) {
         // GitLab API에 댓글 삭제 요청
-        boolean response = gitLabApi.deleteComment(repoId, prId, reCommentId,"");
+        boolean response = gitLabApi.deleteComment(repoId, prId, reCommentId,accessToken);
 
         // 우리 DB에서도 삭제
         if(response){
@@ -160,7 +161,7 @@ public class PrServiceImpl implements PrService{
     }
 
     @Override
-    public List<FileDto> showFileListByPr(int repoId, int prId) {
+    public List<FileDto> showFileListByPr(int repoId, int prId , String accessToken) {
         Map<String, Object> params = new HashMap<>();
         params.put("repoId", repoId);
         params.put("prId", prId);
@@ -168,7 +169,7 @@ public class PrServiceImpl implements PrService{
     }
 
     @Override
-    public List<FileDto> showFileListByCommit(int repoId, int prId, String commitId) {
+    public List<FileDto> showFileListByCommit(int repoId, int prId, String commitId , String accessToken) {
         Map<String, Object> params = new HashMap<>();
         params.put("repoId", repoId);
         params.put("prId", prId);
@@ -177,7 +178,7 @@ public class PrServiceImpl implements PrService{
     }
 
     @Override
-    public Map<String, Object> showChangedCode(String repoId, String prId, FileDto fileDto) {
+    public Map<String, Object> showChangedCode(String repoId, String prId, FileDto fileDto , String accessToken) {
 
         // 1. DB에서 fileId를 기준으로 commit_id, new_path, old_path 가져오기
         String newPath = fileDto.getNewPath();
@@ -200,7 +201,7 @@ public class PrServiceImpl implements PrService{
             MergeRequestEntity existingMr = optionalMr.get();
             // 값이 없는 경우
             if(existingMr.getBaseSha()==null || existingMr.getHeadSha()==null){
-                Map<String, Object> mrResponse = gitLabApi.getMergeRequestsById(repoId, String.valueOf(fileDto.getPrId()), "");
+                Map<String, Object> mrResponse = gitLabApi.getMergeRequestsById(repoId, String.valueOf(fileDto.getPrId()), accessToken);
                 Map<String, Object> shaInfo = (Map<String, Object>) mrResponse.get("diff_refs");
                 existingMr.setBaseSha((String) shaInfo.get("base_sha"));
                 existingMr.setHeadSha((String) shaInfo.get("head_sha"));
@@ -232,7 +233,7 @@ public class PrServiceImpl implements PrService{
             }
         }
 
-        
+
         // 3. 해당 파일에 달린 댓글 가져오기 > 얘는 Mapper 호출
         Map<String, Object> params = new HashMap<>();
         params.put("repoId", repoId);
@@ -255,7 +256,7 @@ public class PrServiceImpl implements PrService{
     }
 
     @Override
-    public List<ReviewerDto> getReviewer(String repoId, String prId) {
+    public List<ReviewerDto> getReviewer(String repoId, String prId , String accessToken) {
         Map<String, Object> params = new HashMap<>();
         params.put("repoId", repoId);
         params.put("prId", prId);

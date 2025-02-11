@@ -35,20 +35,19 @@ public class RepoServiceImpl implements RepoService{
     }
 
     @Override
-    public RepositoryEntity findByRepoId(int repoId) {
+    public RepositoryEntity findByRepoId(int repoId , String accessToken) {
         return repoRepository.findByRepoId(repoId);
     }
 
     @Override
-    public RepositoryEntity insertRepo(int repoId) {
+    public RepositoryEntity insertRepo(int repoId , String accessToken) {
         RepositoryEntity repo = new RepositoryEntity();
         repo.setRepoId(repoId);
         return repoRepository.save(repo);
     }
 
     @Override
-    public int deleteRepo(int repoId) {
-        String accessToken = "UATEgVcVTSsLn7PWao6c";
+    public int deleteRepo(int repoId , String accessToken) {
         Map<String, Object> userResponse = gitLabApi.getUser(accessToken); // user 정보 불러오는 Endpoint 호출
         int userId = (int) userResponse.get("id");
         return repoRepository.deleteRepo(repoId, userId);

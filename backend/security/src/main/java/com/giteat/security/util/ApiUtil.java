@@ -38,15 +38,19 @@ public class ApiUtil {
         return restTemplate.getForEntity(fullURL, String.class);
     }
 
-    public ResponseEntity<?> getApi(String url , String accessToken) {
+    public ResponseEntity<?> getApi(String url, String accessToken) {
         String fullURL = restURL + url;
         log.info("FULL URL : " + fullURL);
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("Authorization", "Bearer " + accessToken);
+        headers.setBearerAuth(accessToken); // Authorization 헤더 설정
 
-        return restTemplate.getForEntity(fullURL, String.class);
+        HttpEntity<Object> requestEntity = new HttpEntity<>(headers);
+
+        return restTemplate.exchange(fullURL, HttpMethod.GET, requestEntity, Object.class);
     }
+
 
 
     /**
@@ -109,6 +113,21 @@ public class ApiUtil {
         return ResponseEntity.ok().build();
     }
 
+    public ResponseEntity<?> putApi(String url, Object requestBody, String accessToken) {
+        String fullURL = restURL + url;
+        log.info("PUT 요청 URL: " + fullURL);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(accessToken); // setBearerAuth 사용
+
+        HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
+
+        // HttpMethod.PUT을 명시적으로 지정해야 함!
+        return restTemplate.exchange(fullURL, HttpMethod.PUT, requestEntity, Object.class);
+    }
+
+
     /**
      * restAPI 호출 DELETE
      * @param url
@@ -126,6 +145,18 @@ public class ApiUtil {
         return ResponseEntity.ok().build();
     }
 
+    public ResponseEntity<?> deleteApi(String url, Object requestBody , String accessToken) {
+        String fullURL = restURL + url;
+        log.info("DELETE 요청 URL: " + fullURL);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(accessToken); // Authorization 헤더 설정
+
+        HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
+        return restTemplate.exchange(fullURL, HttpMethod.DELETE, requestEntity, Void.class);
+    }
+
     /**
      * 파일 POST용 api
      * @param url
@@ -133,7 +164,7 @@ public class ApiUtil {
      * @return
      * @throws IOException
      */
-    public ResponseEntity<?> postApiWithFile(String url, MultipartFile file) throws IOException {
+    public ResponseEntity<?> postApiWithFile(String url, MultipartFile file , String accessToken) throws IOException {
         // 파일을 전달할 HttpEntity 생성
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
