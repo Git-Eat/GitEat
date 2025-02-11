@@ -74,7 +74,7 @@ public class OauthInterceptor implements HandlerInterceptor {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         String requestURI = request.getRequestURI();
-        if(requestURI.startsWith("/api/gitlab/login")){
+        if(requestURI.startsWith("/api/oauth/gitlab/login")){
             return;
         }
 
