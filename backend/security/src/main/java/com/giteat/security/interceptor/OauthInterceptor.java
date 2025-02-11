@@ -81,6 +81,7 @@ public class OauthInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
+        System.out.println("처음 진입 response : "   + response);
         String requestURI = request.getRequestURI();
         System.out.println("종료 경로 : " + requestURI);
         if(requestURI.startsWith("/api/oauth/gitlab/login")){
@@ -108,6 +109,7 @@ public class OauthInterceptor implements HandlerInterceptor {
             response.setHeader("Authorization", "Bearer " + accessToken);
             TokenContext.removeAccessToken();
             TokenContext.removeRefreshToken();
+            System.out.println("resonse : " + response);
             System.out.println("모든 postHandle 실행완료");
         }catch (Exception e){
             e.printStackTrace();
