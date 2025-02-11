@@ -30,7 +30,7 @@ export function DashBoard() {
                 </Suspense>
               </ErrorBoundary>
             </div>
-            <div className="w-[48%]">
+            <div className="w-[48%] h-[100px]">
               <ErrorBoundary fallbackComponent={<>error occured</>}>
                 <Suspense fallback={<Skeleton width="100%" height="100%" />}>
                   <Participants />
@@ -39,9 +39,9 @@ export function DashBoard() {
             </div>
           </div>
           <div className="flex w-[90%] m-auto justify-between">
-            <div className="w-[48%]">
+            <div className="w-[48%] h-[500px]">
               <ErrorBoundary fallbackComponent={<>error occured</>}>
-                <Suspense fallback={<Skeleton width="100%" height="100%" />}>
+                <Suspense fallback={<Skeleton width="100%" height={500} />}>
                   <BarChartExample />
                 </Suspense>
               </ErrorBoundary>

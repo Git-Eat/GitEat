@@ -11,3 +11,8 @@ type Participant = {
 export type Participants = {
   participants: Participant[];
 };
+
+export type PRStatistics = {
+  totalMergeRequest: number;
+  userList: (Participant & { mergeRequestCount: number })[];
+};

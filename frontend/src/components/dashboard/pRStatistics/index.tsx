@@ -1,19 +1,33 @@
-import React from "react";
+import React, { useMemo } from "react";
 import ReactApexChart from "react-apexcharts";
+import { useGetPrStatistics } from "../../../api/queries/useGetPrStatistics";
+import { useParams } from "react-router-dom";
 
 export function BarChartExample() {
-  // 차트에 표시할 데이터와 옵션을 state에 정의합니다.
+  const { baseRepoId } = useParams();
+  const { data: statistic } = useGetPrStatistics(baseRepoId as string);
+
+  const prCount = useMemo(() => {
+    if (!statistic) return []; // null 대신 빈 배열 반환
+    return statistic.userList.map((user) => user.mergeRequestCount);
+  }, [statistic]);
+
+  const participants = useMemo(() => {
+    if (!statistic) return []; // null 대신 빈 배열 반환
+    return statistic.userList.map((user) => user.name);
+  }, [statistic]);
+
   const [chartData] = React.useState({
     series: [
       {
-        name: "user",
-        data: [21, 22, 10, 28, 16, 21, 13, 30],
+        name: "commits",
+        data: prCount,
       },
     ],
     options: {
       chart: {
-        height: 350,
-        type: "bar" as const, // 리터럴 타입으로 지정
+        // height: 350,
+        type: "bar" as const,
         toolbar: {
           show: false, // 메뉴(툴바) 제거
         },
@@ -21,7 +35,7 @@ export function BarChartExample() {
       colors: ["skyblue"],
       plotOptions: {
         bar: {
-          columnWidth: "70%",
+          columnWidth: "50px",
           distributed: true,
         },
       },
@@ -32,7 +46,7 @@ export function BarChartExample() {
         show: false,
       },
       xaxis: {
-        categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"],
+        categories: participants,
         labels: {
           style: {
             colors: ["#FF4560"],
@@ -48,14 +62,14 @@ export function BarChartExample() {
       <div className="mb-10">
         <h2 className="text-xl font-bold flex justify-between">
           <span>총 PR 개수</span>
-          <span>{9999}개</span>
+          <span>{statistic?.totalMergeRequest}개</span>
         </h2>
       </div>
       <ReactApexChart
         series={chartData.series}
         options={chartData.options}
         type="bar"
-        height={350}
+        // height={}
       />
     </div>
   );
