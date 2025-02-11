@@ -1,27 +1,33 @@
 package com.giteat.repo.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "PR")
 @Getter
 @Setter
 public class MergeRequestEntity {
-    @Id
-    @Column(name = "pr_id")
-    private int prId;
 
-    @Column(name = "repo_id")
-    private int repoId;
+    @EmbeddedId
+    private MergeRequestId id;
 
     private String title;
 
+    @Column(columnDefinition = "LONGTEXT")
     private  String description;
+
+    @Column(name ="user_id")
+    private int userId;
+
+    @Column(name = "user_name")
+    private String userName;
+
+    @Column(name = "user_profile")
+    private String userProfile;
 
     @Column(name = "create_at")
     private String createAt;

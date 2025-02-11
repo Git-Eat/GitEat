@@ -4,10 +4,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
-@Table(name = "change_file")
-@Getter
-@Setter
+//@Entity
+//@Table(name = "change_file")
+//@Getter
+//@Setter
 public class GitLabFileChangeEntity {
     @Id
     @Column(name = "file_id")

@@ -1,20 +1,22 @@
 import {
   ClickAwayListener,
-  Grow,
   MenuItem,
   MenuList,
   Paper,
   Popper,
+  Zoom,
 } from "@mui/material";
 import kebab from "../../../assets/images/kebab.svg";
 import { useBooleanState } from "../../../hooks/useBooleanState";
 import React from "react";
 import { Link } from "react-router-dom";
+import { useDeleteRepository } from "../../../api/queries/useDeleteRepository";
 interface RepositoryCardProps {
   title: string;
   description: string;
   access: string;
   user: string;
+  repoId: number;
 }
 
 function Private() {
@@ -38,8 +40,10 @@ export function RepositoryCard({
   description,
   access,
   user,
+  repoId,
 }: RepositoryCardProps) {
   const [isToggle, onToggle, offToggle] = useBooleanState(false);
+  const { mutate } = useDeleteRepository(repoId);
   const anchorRef = React.useRef<HTMLButtonElement>(null);
   const onHandler = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
@@ -47,8 +51,8 @@ export function RepositoryCard({
     onToggle();
   };
   return (
-    <Link to={"/pulls"}>
-      <div className=" bg-white rounded-xl p-7 flex justify-between hover:bg-gray-200 cursor-pointer">
+    <Link to={`/repos/${repoId}`}>
+      <div className=" bg-white rounded-xl p-7 flex justify-between hover:bg-gray-200 cursor-pointer items-top">
         <div>
           <div className="flex gap-[10px] items-center mb-[10px]">
             <span className="text-xl font-semibold">
@@ -61,7 +65,7 @@ export function RepositoryCard({
         <button
           onClick={(e) => onHandler(e)}
           ref={anchorRef}
-          className="w-[20px] h-[20px] hover:cursor-pointer flex justify-center items-center"
+          className="w-[5px] h-[5px] hover:cursor-pointer flex justify-center items-center"
         >
           <img src={kebab} alt="menu" />
         </button>
@@ -74,12 +78,11 @@ export function RepositoryCard({
           transition
           disablePortal
         >
-          {({ TransitionProps, placement }) => (
-            <Grow
+          {({ TransitionProps }) => (
+            <Zoom
               {...TransitionProps}
               style={{
-                transformOrigin:
-                  placement === "bottom-start" ? "left top" : "left bottom",
+                transformOrigin: "right top",
               }}
             >
               <Paper>
@@ -99,6 +102,7 @@ export function RepositoryCard({
                       onClick={(e) => {
                         e.stopPropagation();
                         e.preventDefault();
+                        mutate();
                         offToggle();
                       }}
                     >
@@ -107,7 +111,7 @@ export function RepositoryCard({
                   </MenuList>
                 </ClickAwayListener>
               </Paper>
-            </Grow>
+            </Zoom>
           )}
         </Popper>
       </div>

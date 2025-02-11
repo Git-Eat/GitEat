@@ -1,9 +1,6 @@
 package com.giteat.repo.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,18 +9,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class FileChangeEntity {
-    @Id
-    @Column(name = "file_id")
-    private String fileId;
-
-    @Column(name = "repo_id")
-    private int repoId;
-
-    @Column(name = "pr_id")
-    private int prId;
-
-    @Column(name = "commit_id")
-    private String commitId;
+    @EmbeddedId
+    private FileChangeId id;
 
     @Column(name = "file_name")
     private String fileName;

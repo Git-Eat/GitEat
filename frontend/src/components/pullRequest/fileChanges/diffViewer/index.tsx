@@ -3,28 +3,43 @@ import { generateDiffFile } from "@git-diff-view/file";
 import "@git-diff-view/react/styles/diff-view.css";
 import { useMemo } from "react";
 import { FileMarkDownEditor } from "../fileMarkDownEditor";
+import { CommentThread } from "../commentThread";
+import { Reply } from "../../../../api/types/Reply";
+
 type Comment = {
-  body: {
-    content: string;
-  };
+  commentId: number;
+  prId: number;
+  repoId: number;
+  userId: number;
+  userName: string;
+  avatarUrl: string;
+  disId: string;
+  content: string;
+  commentType: number;
+  createAt: string;
   position: {
-    base_sha: string;
-    start_sha: string;
-    head_sha: string;
-    old_path: string;
-    new_path: string;
-    position_type: string;
-    new_line?: number;
-    old_line?: number;
-    line_range: {
+    baseSha: null | string;
+    startSha: null | string;
+    headSha: null | string;
+    oldPath: string;
+    newPath: string;
+    positionType: string;
+    newLine: number;
+    oldLine: number;
+    newStartLine: number;
+    newEndLine: number;
+    oldStartLine: number;
+    oldEndLine: number;
+    lineRange: {
       start: {
-        line_code: string;
+        lineCode: string;
       };
       end: {
-        line_code: string;
+        lineCode: string;
       };
     };
-  };
+  } | null;
+  reCommentList: Reply[];
 };
 
 interface DiffViewerProps {
@@ -34,15 +49,19 @@ interface DiffViewerProps {
 }
 
 export function DiffViewer({ oldCode, newCode, comments }: DiffViewerProps) {
+  console.log("oldCode: " + oldCode);
+  console.log("newCode: " + newCode);
   const getDiffFile = () => {
+    console.log("code start");
     const instance = generateDiffFile(
       "oldFileName",
       oldCode,
       "newFileName",
       newCode,
-      "jsx",
-      "jsx"
+      "java",
+      "java"
     );
+    console.log(instance.getBundle());
     instance.init();
     instance.buildSplitDiffLines();
     instance.buildUnifiedDiffLines();
@@ -79,23 +98,35 @@ export function DiffViewer({ oldCode, newCode, comments }: DiffViewerProps) {
   };
 
   const parseComments = (comments: Comment[]) => {
-    const extendData = {
+    const extendData: {
+      oldFile: { [key: number]: { data: Comment[] } };
+      newFile: { [key: number]: { data: Comment[] } };
+    } = {
       oldFile: {},
       newFile: {},
     };
     comments.forEach((comment) => {
-      if (comment.position.new_line !== undefined) {
+      if (comment.position?.newLine !== undefined) {
+        const currentComments =
+          extendData.newFile[comment.position.newLine]?.data ?? [];
         extendData.newFile = {
           ...extendData.newFile,
-          [comment.position.new_line]: { data: comment.body.content },
+          [comment.position.newLine]: {
+            data: [...currentComments, comment],
+          },
         };
-      } else if (comment.position.old_line !== undefined) {
+      } else if (comment.position?.oldLine !== undefined) {
+        const currentComments =
+          extendData.oldFile[comment.position.oldLine]?.data ?? [];
         extendData.oldFile = {
           ...extendData.oldFile,
-          [comment.position.old_line]: { data: comment.body.content },
+          [comment.position.oldLine]: {
+            data: [...currentComments, comment],
+          },
         };
       }
     });
+    console.log(extendData);
     return extendData;
   };
 
@@ -108,7 +139,16 @@ export function DiffViewer({ oldCode, newCode, comments }: DiffViewerProps) {
         extendData={parseComments(comments)}
         diffViewAddWidget
         renderExtendLine={({ data }) => {
-          return <div className="w-full px-10 py-5">{data as string}</div>;
+          if (!data) {
+            return null;
+          }
+          return (
+            <div className="border p-2" onClick={() => console.log(data)}>
+              {data.map((comment: Comment) => (
+                <CommentThread key={comment.commentId} comment={comment} />
+              ))}
+            </div>
+          );
         }}
         renderWidgetLine={({ diffFile, side, lineNumber, onClose }) => {
           console.log("side:", side, lineNumber);
@@ -130,7 +170,7 @@ export function DiffViewer({ oldCode, newCode, comments }: DiffViewerProps) {
         }}
         diffViewTheme={"light"}
         diffViewHighlight={true}
-        diffViewMode={DiffModeEnum.SplitGitLab}
+        diffViewMode={DiffModeEnum.Split}
         diffViewWrap={true}
       />
     </div>

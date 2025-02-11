@@ -1,26 +1,55 @@
-import { Suspense } from "react";
 import { Comments } from "./comments";
 import { MarkdownEditor } from "../../common/markdownEditor";
-import { ErrorBoundary } from "../../common/errorBoundery";
 import { Reviewers } from "./reviewers";
 import spinner from "../../../assets/images/spinner.svg";
+import { useCreateComment } from "../../../api/queries/useCreateComment";
+import { Suspense } from "react";
+import { ErrorBoundary } from "../../common/errorBoundery";
+import { useParams } from "react-router-dom";
+import { PullRequestInfo } from "./pullRequestInfo";
 
 export function Conversation() {
+  const { baseRepoId, prId } = useParams();
+  const numericRepoId = Number(baseRepoId);
+  const numericPrId = Number(prId);
+  const { mutate: createComment } = useCreateComment(
+    numericRepoId,
+    numericPrId
+  );
+
+  function handleAddComment(content: string) {
+    if (!content.trim()) return;
+    createComment({ content });
+  }
+
   return (
     <section className="flex gap-5">
       <main className="w-3/4">
         <ErrorBoundary>
           <Suspense fallback={<img src={spinner} alt="Loading..." />}>
-            <Comments />
+            <PullRequestInfo repoId={numericRepoId} prId={numericPrId} />
+          </Suspense>
+        </ErrorBoundary>
+        <ErrorBoundary>
+          <Suspense fallback={<img src={spinner} alt="Loading..." />}>
+            <Comments repoId={numericRepoId} prId={numericPrId} />
           </Suspense>
         </ErrorBoundary>
         <MarkdownEditor
-          onAddSingleComment={() => {}}
+          onAddSingleComment={(content) => {
+            handleAddComment(content);
+          }}
           onStartReview={() => {}}
+          onUpdateComment={() => {}}
+          repoId={numericRepoId}
         />
       </main>
       <aside className="w-1/4">
-        <Reviewers />
+        <ErrorBoundary>
+          <Suspense fallback={<img src={spinner} alt="Loading..." />}>
+            <Reviewers repoId={numericRepoId} prId={numericPrId} />
+          </Suspense>
+        </ErrorBoundary>
       </aside>
     </section>
   );

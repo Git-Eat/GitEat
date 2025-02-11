@@ -16,6 +16,8 @@ import { useLoginStore } from "./store/loginStore";
 function App() {
   const queryClient = new QueryClient();
   const { isLogin, setLogin, setLogout } = useLoginStore();
+  console.log("build!");
+
   return (
     <>
       <div>
@@ -33,14 +35,15 @@ function App() {
             <Route path="/error" element={<Error />} />
             <Route element={<AuthLayout />}>
               <Route path="/repos" element={<RepositoryList />} />
+              <Route path="/pulls" element={<RepositoryList />} />
               <Route path="/dashboard" element={<DashBoard />} />
-              <Route path="/pulls" element={<PullRequestList />} />
-              <Route path="/pull/:id" element={<PullRequest />}>
+              <Route path="/repos/:repoId" element={<PullRequestList />} />
+              <Route path="/repos/:baseRepoId/:prId" element={<PullRequest />}>
                 <Route path="conversation" element={<Conversation />} />
                 <Route path="commits" element={<>commits</>} />
                 <Route path="file-changes" element={<FileChanges />} />
-                <Route path="wiki" element={<PullRequest />} />
               </Route>
+              <Route path="wiki" element={<>wiki</>} />
             </Route>
           </Routes>
         </BrowserRouter>

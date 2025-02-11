@@ -1,6 +1,6 @@
 import { useQuery } from "react-query";
-import { getComments } from "../getComments";
+import { getComments } from "../comment";
 
-export const useGetComments = () => {
-  return useQuery("getComments", getComments);
+export const useGetComments = (repoId: number, prId: number) => {
+  return useQuery(["comments", repoId, prId], () => getComments(repoId, prId));
 };

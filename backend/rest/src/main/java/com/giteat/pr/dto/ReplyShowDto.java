@@ -16,7 +16,7 @@ public class ReplyShowDto {
     private String avatarUrl;
     private String disId;
     private String content;
-    private int replyType;
+    private int reCommentType;
     private String imageName;
-    private LocalDateTime createAt;
+    private String createAt;
 }

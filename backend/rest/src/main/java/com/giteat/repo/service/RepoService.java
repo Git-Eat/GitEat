@@ -5,9 +5,9 @@ import com.giteat.repo.entity.RepositoryEntity;
 import java.util.List;
 
 public interface RepoService {
-    List<RepositoryEntity> getRepoList();
-    RepositoryEntity findByRepoId(int repoId);
-    RepositoryEntity insertRepo(int repoId);
-    int deleteRepo(int repoId);
-    int saveRepositoryData(String accessToken , String repositoryId);
+    List<RepositoryEntity> getRepoList(String accessToken);
+    RepositoryEntity findByRepoId(int repoId , String accessToken);
+    RepositoryEntity insertRepo(int repoId , String accessToken);
+    int deleteRepo(int repoId , String accessToken);
+    RepositoryEntity saveRepositoryData(String accessToken , String repositoryId);
 }

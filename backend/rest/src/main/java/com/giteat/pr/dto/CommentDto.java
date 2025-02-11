@@ -20,9 +20,9 @@ public class CommentDto {
     private String disId;
     private String content;
     private int commentType;
-    private LocalDateTime createAt;
+    private String createAt;
 
     private FileCommentDto.Position position; // 코드 위치 정보
 
-    private List<ReplyShowDto> replyList;  // 대댓글 리스트
+    private List<ReplyShowDto> reCommentList;  // 대댓글 리스트
 }

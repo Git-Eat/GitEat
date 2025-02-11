@@ -52,4 +52,3 @@ public class JsonTypeHandler<T> extends BaseTypeHandler<T> {
         }
     }
 }
-

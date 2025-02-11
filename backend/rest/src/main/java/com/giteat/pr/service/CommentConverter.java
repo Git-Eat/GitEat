@@ -5,6 +5,9 @@ import com.giteat.pr.dto.FileCommentDto;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 public class CommentConverter {
 
@@ -13,28 +16,44 @@ public class CommentConverter {
      * @param request
      * @return FileCommentDto
      */
-    public FileCommentDto converToGitLabFormat(CustomCommentDto request){
-        FileCommentDto.Position position = new FileCommentDto.Position();
-        position.setBaseSha(request.getBaseSha());
-        position.setStartSha(request.getStartSha());
-        position.setHeadSha(request.getHeadSha());
-        position.setOldPath(request.getOldPath());
-        position.setNewPath(request.getNewPath());
-        position.setPositionType("text");
+    public Map<String, Object> converToGitLabFormat(CustomCommentDto request){
+        Map<String, Object> requestBody = new HashMap<>();
+        Map<String, Object> position = new HashMap<>();
+        requestBody.put("position", position);
+        requestBody.put("body", request.getBody());
+
+        position.put("base_sha", request.getBaseSha());
+        position.put("start_sha", request.getStartSha());
+        position.put("head_sha", request.getHeadSha());
+        position.put("old_path", request.getOldPath());
+        position.put("new_path", request.getNewPath());
+        position.put("position_type", "text");
 
         // new_or_old 값에 따라 라인 설정
-        if(request.getNewOrOld()==1){ // Old 코드
-            position.setNewLine(null);
-            position.setOldLine(request.getOldStartLine());
-            position.setLineRange(createLineRange(request.getOldStartLine(), request.getOldEndLine(), request.getFileId(), 1));
-
-        } else { // New 코드
-            position.setOldLine(null);
-            position.setNewLine(request.getNewStartLine());
-            position.setLineRange(createLineRange(request.getNewStartLine(), request.getNewEndLine(), request.getFileId(), 2));
+        if(request.getNewOrOld()==1){
+            position.put("old_line", request.getOldStartLine()); // Old 코드
+        } else {
+            position.put("new_line", request.getNewStartLine()); // New 코드
         }
 
-        return new FileCommentDto(position, request.getBody());
+        Map<String, Map<String, Object>> lineRange = new HashMap<>();
+
+        // start 객체 생성
+        Map<String, Object> start = new HashMap<>();
+        String startLineCode = request.getFileId() + "_" + request.getOldStartLine() + "_" + request.getNewStartLine();
+        start.put("line_code", startLineCode);
+
+        // end 객체 생성
+        Map<String, Object> end = new HashMap<>();
+        String endLineCode = request.getFileId() + "_" + request.getOldEndLine() + "_" + request.getNewEndLine();
+        end.put("line_code",endLineCode);
+
+        lineRange.put("start", start);
+        lineRange.put("end", end);
+        position.put("line_range", lineRange);
+
+        System.out.println(requestBody);
+        return requestBody;
     }
 
     /**

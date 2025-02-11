@@ -3,25 +3,30 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { ErrorBoundary } from "../../../common/errorBoundery";
 import { DiffViewer } from "../diffViewer";
-import { file as dummy } from "../dummy";
+import { ChangedFile } from "../../../../api/types/ChangedFile";
+import { useGetRawFile } from "../../../../api/queries/useGetRawFile";
+import { useEffect } from "react";
+import { useBooleanState } from "../../../../hooks/useBooleanState";
+
 interface FileProps {
-  file: {
-    fileId: string;
-    commitId: string;
-    repoId: number;
-    prId: number;
-    fileName: string;
-    oldPath: string;
-    newPath: string;
-    // 1 - 추가, 2 - update, 3 - delete
-    fileStatus: number;
-    targetBranch: string;
-    sourceBranch: string;
-  };
+  repoId: number;
+  prId: number;
+  file: ChangedFile;
 }
-export function FileDiff({ file }: FileProps) {
+export function FileDiff({ repoId, prId, file }: FileProps) {
+  const { mutate: getFile, data: rawFile } = useGetRawFile(repoId, prId, file);
+  const [isExpand, , , setReverse] = useBooleanState(false);
+  useEffect(() => {
+    if (isExpand) {
+      getFile();
+    }
+  }, [isExpand]);
   return (
-    <Accordion key={file.fileId} defaultExpanded>
+    <Accordion
+      key={file.fileId}
+      expanded={isExpand}
+      onChange={() => setReverse()}
+    >
       <div className="flex justify-between items-center">
         <AccordionSummary
           expandIcon={<ArrowDropDownIcon />}
@@ -32,15 +37,17 @@ export function FileDiff({ file }: FileProps) {
         </AccordionSummary>
       </div>
       <div className="flex mt-4">
-        <AccordionDetails>
-          <ErrorBoundary>
-            <DiffViewer
-              oldCode={dummy.oldCode}
-              newCode={dummy.newCode}
-              comments={dummy.comments}
-            />
-          </ErrorBoundary>
-        </AccordionDetails>
+        {rawFile && (
+          <AccordionDetails>
+            <ErrorBoundary>
+              <DiffViewer
+                oldCode={rawFile.oldCode !== null ? rawFile.oldCode : ""}
+                newCode={rawFile.newCode !== null ? rawFile.newCode : ""}
+                comments={rawFile.comments}
+              />
+            </ErrorBoundary>
+          </AccordionDetails>
+        )}
       </div>
     </Accordion>
   );

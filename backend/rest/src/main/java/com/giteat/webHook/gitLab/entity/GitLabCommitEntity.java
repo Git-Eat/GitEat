@@ -4,10 +4,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
-@Table(name = "Commit")
-@Getter
-@Setter
+//@Entity
+//@Table(name = "Commit")
+//@Getter
+//@Setter
 public class GitLabCommitEntity {
     @Id
     @Column(name = "commit_id")

@@ -1,27 +1,21 @@
 package com.giteat.repo.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "comment")
 @Getter
 @Setter
 public class CommentEntity {
-    @Id
-    @Column(name = "comment_id")
-    private int commentId;
+    @EmbeddedId
+    private CommentId id;
 
-    @Column(name = "pr_id")
-    private int prId;
-
-    @Column(name = "repo_id")
-    private int repoId;
-
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     @Column(name = "comment_type")

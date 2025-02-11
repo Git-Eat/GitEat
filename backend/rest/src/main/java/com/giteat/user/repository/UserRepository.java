@@ -7,5 +7,6 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<com.giteat.user.entity.UserEntity, Integer> {
 
-    Optional<UserEntity> findByEmail(String email);
+    Optional<UserEntity> findByUserId(int userId);
+
 }
