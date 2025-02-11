@@ -18,7 +18,10 @@ authClient.interceptors.request.use((config) => {
 
 authClient.interceptors.response.use(
   (response) => {
-    console.log(response.headers);
+    console.log(response.headers["authorization"]);
+    if (response.headers["authorization"]) {
+      localStorage.setItem("access_token", response.headers["authorization"]);
+    }
     return response;
   },
   (error) => {
