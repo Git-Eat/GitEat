@@ -74,7 +74,7 @@ public class OauthInterceptorService {
         oAuthTokenDto.setTokenType(newTokenMap.get("token_type"));
         oAuthTokenDto.setExpiresIn(Integer.valueOf(newTokenMap.get("expires_in")));
         oAuthTokenDto.setRefreshToken(newTokenMap.get("refresh_token"));
-        oAuthTokenDto.setCreatedAt(LocalDateTime.parse(newTokenMap.get("create_at")));
+//        oAuthTokenDto.setCreatedAt(LocalDateTime.parse(newTokenMap.get("create_at")));
 
         return oAuthTokenDto;
     }
