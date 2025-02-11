@@ -18,6 +18,7 @@ authClient.interceptors.request.use((config) => {
 
 authClient.interceptors.response.use(
   (response) => {
+    console.log(response.headers);
     return response;
   },
   (error) => {
