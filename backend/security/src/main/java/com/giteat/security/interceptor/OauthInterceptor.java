@@ -76,22 +76,12 @@ public class OauthInterceptor implements HandlerInterceptor {
         String newRefreshToken = oAuthTokenDto.getRefreshToken();
         TokenContext.setAccessToken(newAccessToken);
         TokenContext.setRefreshToken(newRefreshToken);
-        return true;
-    }
 
-    @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
-        System.out.println("처음 진입 response : "   + response.toString());
-        String requestURI = request.getRequestURI();
-        System.out.println("종료 경로 : " + requestURI);
-        if(requestURI.startsWith("/api/oauth/gitlab/login")){
-            return;
-        }
+
+
         System.out.println("return 할때 cookie 생성");
 
         int maxAge = 10 * 365 * 24 * 60 * 60;
-        String accessToken = TokenContext.getAccessToken();
-        String refreshToken = TokenContext.getRefreshToken();
         System.out.println("새로 만들어서 반환 access : " + accessToken);
         System.out.println("새로 만들어서 반환 refresh : " + refreshToken);
         // cookie 설정
@@ -114,7 +104,46 @@ public class OauthInterceptor implements HandlerInterceptor {
             e.printStackTrace();
         }
 
+
+        return true;
     }
+
+//    @Override
+//    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
+//        System.out.println("처음 진입 response : "   + response.toString());
+//        String requestURI = request.getRequestURI();
+//        System.out.println("종료 경로 : " + requestURI);
+//        if(requestURI.startsWith("/api/oauth/gitlab/login")){
+//            return;
+//        }
+//        System.out.println("return 할때 cookie 생성");
+//
+//        int maxAge = 10 * 365 * 24 * 60 * 60;
+//        String accessToken = TokenContext.getAccessToken();
+//        String refreshToken = TokenContext.getRefreshToken();
+//        System.out.println("새로 만들어서 반환 access : " + accessToken);
+//        System.out.println("새로 만들어서 반환 refresh : " + refreshToken);
+//        // cookie 설정
+//
+//        try{
+//            Cookie cookie = new Cookie("refreshToken", refreshToken);
+//            cookie.setHttpOnly(true);
+//            cookie.setSecure(true);
+//            cookie.setPath("/");
+//            cookie.setMaxAge(maxAge);
+//
+//            response.addCookie(cookie);
+//            // accessToken을 HTTP 응답 헤더에 추가
+//            response.setHeader("Authorization", "Bearer " + accessToken);
+//            TokenContext.removeAccessToken();
+//            TokenContext.removeRefreshToken();
+//            System.out.println("resonse HEADER :  " + response.getHeader("Authorization"));
+//            System.out.println("모든 postHandle 실행완료");
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+//
+//    }
 
     public void responseSetting(HttpServletResponse response) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
