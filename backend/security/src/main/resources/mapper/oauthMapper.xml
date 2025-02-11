@@ -12,7 +12,7 @@
             token_type = #{tokenType},
             expires_in = #{expiresIn},
             created_at = now()
-        WHERE id = #{id}
+        WHERE user_id = #{userId}
     </update>
 
 
