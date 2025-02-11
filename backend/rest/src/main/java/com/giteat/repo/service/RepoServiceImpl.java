@@ -35,12 +35,12 @@ public class RepoServiceImpl implements RepoService{
     }
 
     @Override
-    public RepositoryEntity findByRepoId(int repoId) {
+    public RepositoryEntity findByRepoId(int repoId , String accessToken) {
         return repoRepository.findByRepoId(repoId);
     }
 
     @Override
-    public RepositoryEntity insertRepo(int repoId) {
+    public RepositoryEntity insertRepo(int repoId , String accessToken) {
         RepositoryEntity repo = new RepositoryEntity();
         repo.setRepoId(repoId);
         return repoRepository.save(repo);
