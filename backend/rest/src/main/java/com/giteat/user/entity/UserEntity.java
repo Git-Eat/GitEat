@@ -26,7 +26,7 @@ public class UserEntity {
 
     @Column(name = "avatar_url", nullable = true) // 프로필 이미지는 optional
     private String avatarUrl;
-    
+
     @Column(name = "user_name", nullable = false)
     private String userName;
 

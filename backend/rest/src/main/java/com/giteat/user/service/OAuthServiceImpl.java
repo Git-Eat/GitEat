@@ -6,6 +6,7 @@ import com.giteat.user.repository.UserRepository;
 import com.giteat.user.dto.OAuthTokenDto;
 import com.giteat.user.entity.OAuthEntity;
 import com.giteat.user.repository.OAuthRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ import java.util.Optional;
  * GitLab OAuth 토큰 관리 및 사용자 정보 관리 기능 제공
  */
 @Service
+@Transactional
 public class OAuthServiceImpl implements OAuthService {
 
     private final OAuthRepository oAuthRepository;
@@ -35,6 +37,7 @@ public class OAuthServiceImpl implements OAuthService {
      *
      * @param oAuthTokenDto 저장할 OAuth 토큰 및 사용자 정보를 담고 있는 DTO
      */
+    @Transactional
     public void saveToken(OAuthTokenDto oAuthTokenDto) {
         UserEntity userEntity;
 
@@ -48,7 +51,7 @@ public class OAuthServiceImpl implements OAuthService {
             // 신규 사용자면 새로 저장
             userEntity = new UserEntity();
             userEntity.setUserId(oAuthTokenDto.getUserId());
-//            userEntity.setUserName(oAuthTokenDto.getUserName());
+            userEntity.setUserName(oAuthTokenDto.getUserName());
             userEntity.setEmail(oAuthTokenDto.getEmail());
             userEntity.setName(oAuthTokenDto.getName());
             userEntity.setAvatarUrl(oAuthTokenDto.getAvatarUrl());
@@ -60,8 +63,8 @@ public class OAuthServiceImpl implements OAuthService {
 
         if (existOAuth.isPresent()) {
             OAuthEntity oAuthEntity = existOAuth.get();
-//            oAuthEntity.setId(oAuthTokenDto.getId());
             oAuthEntity.setUserId(oAuthTokenDto.getUserId());
+            oAuthEntity.setUserName(oAuthTokenDto.getUserName());
             oAuthEntity.setAccessToken(oAuthTokenDto.getAccessToken());
             oAuthEntity.setRefreshToken(oAuthTokenDto.getRefreshToken());
             oAuthEntity.setExpiresIn(oAuthTokenDto.getExpiresIn());
@@ -72,9 +75,8 @@ public class OAuthServiceImpl implements OAuthService {
             oAuthRepository.save(oAuthEntity);
         } else {
             OAuthEntity oAuthEntity = new OAuthEntity();
-//            oAuthEntity.setId(oAuthTokenDto.getId());
-            oAuthEntity.setUserName(oAuthTokenDto.getUserName());
             oAuthEntity.setUserId(oAuthTokenDto.getUserId());
+            oAuthEntity.setUserName(oAuthTokenDto.getUserName());
             oAuthEntity.setAccessToken(oAuthTokenDto.getAccessToken());
             oAuthEntity.setTokenType(oAuthTokenDto.getTokenType());
             oAuthEntity.setExpiresIn(oAuthTokenDto.getExpiresIn());
@@ -119,6 +121,7 @@ public class OAuthServiceImpl implements OAuthService {
      * @param tokenRequest 갱신할 토큰 정보를 담고 있는 DTO
      * @return 갱신된 토큰 정보 또는 유효한 현재 토큰 정보, 실패 시 null
      */
+    @Transactional
     public OAuthTokenDto refreshToken(OAuthTokenDto tokenRequest) {
         try {
             // refreshToken으로 기존 토큰 정보 조회
