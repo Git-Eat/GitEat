@@ -20,6 +20,9 @@ public class OAuthEntity {
 //    @Column(name = "Id")
 //    private Integer Id;
 
+    @Version
+    private Integer version;
+
     @Id
     @Column(name = "user_id")
     private Integer userId;

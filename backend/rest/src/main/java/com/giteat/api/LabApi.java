@@ -32,14 +32,6 @@ public class LabApi {
         this.gitLabTokenService = gitLabTokenService;
         this.objectMapper = objectMapper;
     }
-
-    @Value("${gpt.api.url}")
-    private String gptApiUrl; // GPT API URL을 설정 파일에서 주입받음
-
-    @Value("${gpt.api.key}")
-    private String apiKey; // API 키를 설정 파일에서 주입받음
-
-
     /**
      * 최근 정보를 가져오는 함수
      */
@@ -443,5 +435,4 @@ public class LabApi {
         }
         return resultMap;
     }
-
 }
