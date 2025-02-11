@@ -1394,6 +1394,50 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@svgdotjs/svg.draggable.js@npm:^3.0.4":
+  version: 3.0.6
+  resolution: "@svgdotjs/svg.draggable.js@npm:3.0.6"
+  peerDependencies:
+    "@svgdotjs/svg.js": ^3.2.4
+  checksum: 10c0/f70a857f776a244ab11cc7fa7f26c4d580f0236ee8fcbf02d882ed9057b37f2af57a69528a22f608495c5e191321d25a4bdc17ba33f16a562ff2f6fcd93b9c50
+  languageName: node
+  linkType: hard
+
+"@svgdotjs/svg.filter.js@npm:^3.0.8":
+  version: 3.0.8
+  resolution: "@svgdotjs/svg.filter.js@npm:3.0.8"
+  dependencies:
+    "@svgdotjs/svg.js": "npm:^3.1.1"
+  checksum: 10c0/cc0f737316aa4b71b3b6f32f0944d99c1a8d1b709a674f2a4a99c797c31838389fd4ed330485597be6f11a975327ae9a1e1283234bf43b103b2c7176e8e69db2
+  languageName: node
+  linkType: hard
+
+"@svgdotjs/svg.js@npm:^3.1.1, @svgdotjs/svg.js@npm:^3.2.4":
+  version: 3.2.4
+  resolution: "@svgdotjs/svg.js@npm:3.2.4"
+  checksum: 10c0/35563560998def7fd9b35c434214428f122d1fc11a5d6975fbc9b3c92b3e86700daba74f9106d7abd5dc979eb26c6e6429be71236dd226bc0f2d92e880e8fe2c
+  languageName: node
+  linkType: hard
+
+"@svgdotjs/svg.resize.js@npm:^2.0.2":
+  version: 2.0.5
+  resolution: "@svgdotjs/svg.resize.js@npm:2.0.5"
+  peerDependencies:
+    "@svgdotjs/svg.js": ^3.2.4
+    "@svgdotjs/svg.select.js": ^4.0.1
+  checksum: 10c0/ed15cec857ee900c04e044391efb7b927adab20dda056b664df8b4e6409c08a84f6f150119621a65ac835d6fd6da13770f6abcef76ae78ad9f7d60bbc0f9fa94
+  languageName: node
+  linkType: hard
+
+"@svgdotjs/svg.select.js@npm:^4.0.1":
+  version: 4.0.2
+  resolution: "@svgdotjs/svg.select.js@npm:4.0.2"
+  peerDependencies:
+    "@svgdotjs/svg.js": ^3.2.4
+  checksum: 10c0/fca8f7b32fa57013e6f33026c812d0e8b519fd8112db8a762089d8334db33934bb8bc9fbfb4785cdaa5fda6e732376773253b6babde6cfeea15836826d56e2f0
+  languageName: node
+  linkType: hard
+
 "@tailwindcss/typography@npm:^0.5.16":
   version: 0.5.16
   resolution: "@tailwindcss/typography@npm:0.5.16"
@@ -1839,6 +1883,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@yr/monotone-cubic-spline@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "@yr/monotone-cubic-spline@npm:1.0.3"
+  checksum: 10c0/6098d2138dcf8b722c80f2e9167d24a064184c37fb5b3276e34c717351b496735777b71f7e69c3fa6b94f8a81eba309c4a1e37349a26b8541113b1afa84d7bf8
+  languageName: node
+  linkType: hard
+
 "abbrev@npm:^2.0.0":
   version: 2.0.0
   resolution: "abbrev@npm:2.0.0"
@@ -1936,6 +1987,20 @@ __metadata:
     normalize-path: "npm:^3.0.0"
     picomatch: "npm:^2.0.4"
   checksum: 10c0/57b06ae984bc32a0d22592c87384cd88fe4511b1dd7581497831c56d41939c8a001b28e7b853e1450f2bf61992dfcaa8ae2d0d161a0a90c4fb631ef07098fbac
+  languageName: node
+  linkType: hard
+
+"apexcharts@npm:^4.4.0":
+  version: 4.4.0
+  resolution: "apexcharts@npm:4.4.0"
+  dependencies:
+    "@svgdotjs/svg.draggable.js": "npm:^3.0.4"
+    "@svgdotjs/svg.filter.js": "npm:^3.0.8"
+    "@svgdotjs/svg.js": "npm:^3.2.4"
+    "@svgdotjs/svg.resize.js": "npm:^2.0.2"
+    "@svgdotjs/svg.select.js": "npm:^4.0.1"
+    "@yr/monotone-cubic-spline": "npm:^1.0.3"
+  checksum: 10c0/e78b4e5359d9be0bb02741be9a6ee404f4eef1c9980841d18018cf61757499440e67b96d16b680e1ced3221acceb6c94f1355f50217e784a7c78894c4e0ebba2
   languageName: node
   linkType: hard
 
@@ -3654,6 +3719,7 @@ __metadata:
     "@typescript-eslint/parser": "npm:^8.21.0"
     "@uiw/react-md-editor": "npm:^4.0.5"
     "@vitejs/plugin-react": "npm:^4.3.4"
+    apexcharts: "npm:^4.4.0"
     autoprefixer: "npm:^10.4.20"
     axios: "npm:^1.7.9"
     date-fns: "npm:^4.1.0"
@@ -3673,6 +3739,7 @@ __metadata:
     prettier: "npm:^3.4.2"
     prismjs: "npm:^1.29.0"
     react: "npm:^18.3.1"
+    react-apexcharts: "npm:^1.7.0"
     react-diff-viewer: "npm:^3.1.1"
     react-dom: "npm:^18.3.1"
     react-markdown: "npm:^9.0.3"
@@ -6306,6 +6373,18 @@ __metadata:
   version: 1.2.3
   resolution: "queue-microtask@npm:1.2.3"
   checksum: 10c0/900a93d3cdae3acd7d16f642c29a642aea32c2026446151f0778c62ac089d4b8e6c986811076e1ae180a694cedf077d453a11b58ff0a865629a4f82ab558e102
+  languageName: node
+  linkType: hard
+
+"react-apexcharts@npm:^1.7.0":
+  version: 1.7.0
+  resolution: "react-apexcharts@npm:1.7.0"
+  dependencies:
+    prop-types: "npm:^15.8.1"
+  peerDependencies:
+    apexcharts: ">=4.0.0"
+    react: ">=0.13"
+  checksum: 10c0/0533cd8b44df4d6a0b157c8a8adbcddb33a0575420b3fa1b5c90fa8553a39884bcc1122cce912252e452c8bffd1c4eaf2d9f9cfa4e515e81e7067fa36fcffe52
   languageName: node
   linkType: hard
 
