@@ -43,17 +43,12 @@ public class OAuthEntity {
     @Column(name = "created_at", nullable = true)
     private LocalDateTime createdAt;
 
-//    @Column(nullable = false)
-//    private String email;
-//
-//    @Column(nullable = false)
-//    private String name;
-
     // GitHub만 제공하는 필드
     @Column(nullable = true)
     private String scope;
 
     @OneToOne(cascade = CascadeType.ALL)
+    @MapsId
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity userEntity;
 
