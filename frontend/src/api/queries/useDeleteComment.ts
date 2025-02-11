@@ -1,13 +1,16 @@
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation } from "react-query";
 import { deleteComment } from "../comment";
+import { usePRStore } from "../../store/pullRequestStore";
 
 export const useDeleteComment = (repoId: number, prId: number) => {
-  const queryClient = useQueryClient();
+  const { comments, setComments } = usePRStore();
 
   return useMutation({
     mutationFn: (commentId: number) => deleteComment(repoId, prId, commentId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["comments", repoId, prId] });
+    onSuccess: (_, commentId) => {
+      setComments(
+        comments.filter((comment) => comment.commentId !== commentId)
+      );
     },
   });
 };

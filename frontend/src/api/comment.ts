@@ -105,7 +105,7 @@ export async function updateReply(
   prId: number,
   reCommentId: number,
   content: string
-): Promise<Comment> {
+): Promise<Reply> {
   try {
     const response = await authClient.put(
       `/pr/${repoId}/${prId}/reply/${reCommentId}`,
