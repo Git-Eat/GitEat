@@ -7,7 +7,8 @@ import com.giteat.user.dto.OAuthTokenDto;
 import com.giteat.user.entity.OAuthEntity;
 import com.giteat.user.repository.OAuthRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
+//import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -39,7 +40,7 @@ public class OAuthServiceImpl implements OAuthService {
      * @param oAuthTokenDto 저장할 OAuth 토큰 및 사용자 정보를 담고 있는 DTO
      */
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void saveToken(OAuthTokenDto oAuthTokenDto) {
         UserEntity userEntity;
 
