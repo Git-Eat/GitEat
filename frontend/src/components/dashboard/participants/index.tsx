@@ -1,34 +1,25 @@
-import React from "react";
+import { useParams } from "react-router-dom";
+import { useGetParticipants } from "../../../api/queries/useGetParticipants";
 import HoverPopover from "../hoverPopover";
 
-const DUMMY = [
-  {
-    userId: 22158,
-    name: "이하영",
-    userName: "lhy23456",
-    avatarUrl:
-      "https://secure.gravatar.com/avatar/160d57d4c22cf54206e04621aa12d9be6798c9076eaccf4536a4b85fbaa644e0?s=80&d=identicon",
-  },
-  {
-    userId: 22219,
-    name: "이해루",
-    userName: "gofn080776",
-    avatarUrl:
-      "https://secure.gravatar.com/avatar/64d76aebe92226f9ea325dc5d35a44327d62594998d76d6905a47b6a0f61ae92?s=80&d=identicon",
-  },
-];
-
 export function Participants() {
+  const { baseRepoId } = useParams();
+  const { data } = useGetParticipants(baseRepoId as string);
   return (
     <section className="w-full flex-col justify-between px-10 py-5 bg-white rounded-lg">
-      <div className="font-bold mb-2">{DUMMY.length} Participants</div>
+      <div className="font-bold mb-2">
+        {data?.participants.length} Participants
+      </div>
       <ul className="text-xl font-bold text-green-600 px-5 flex gap-10 ">
-        {DUMMY.map((data) => (
-          <li key={data.userId} className="w-[27px] rounded-full">
-            <HoverPopover name={data.name} userName={data.userName}>
+        {data?.participants.map((participant) => (
+          <li key={participant.userId} className="w-[27px] rounded-full">
+            <HoverPopover
+              name={participant.name}
+              userName={participant.userName}
+            >
               <img
-                src={data.avatarUrl}
-                alt={`${data.name} avatar`}
+                src={participant.avatarUrl}
+                alt={`${participant.name} avatar`}
                 className="rounded-full"
               />
             </HoverPopover>

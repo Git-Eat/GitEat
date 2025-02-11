@@ -6,6 +6,7 @@ import { PieChart } from "../../components/dashboard/pieChart";
 import { MixedChartByLine } from "../../components/dashboard/mixedChartByLine";
 import { Suspense } from "react";
 import { ErrorBoundary } from "../../components/common/errorBoundery";
+import { Skeleton } from "@mui/material";
 
 export function DashBoard() {
   return (
@@ -22,20 +23,28 @@ export function DashBoard() {
         </span>
         <div className="w-[80%] m-auto flex flex-col gap-10">
           <div className="flex w-[90%] m-auto justify-between">
-            <div className="w-[48%]">
+            <div className="w-[48%] h-[100px]">
               <ErrorBoundary fallbackComponent={<>error occured</>}>
-                <Suspense fallback={<>loading</>}>
+                <Suspense fallback={<Skeleton width="100%" height="100%" />}>
                   <TotalCommits />
                 </Suspense>
               </ErrorBoundary>
             </div>
             <div className="w-[48%]">
-              <Participants />
+              <ErrorBoundary fallbackComponent={<>error occured</>}>
+                <Suspense fallback={<Skeleton width="100%" height="100%" />}>
+                  <Participants />
+                </Suspense>
+              </ErrorBoundary>
             </div>
           </div>
           <div className="flex w-[90%] m-auto justify-between">
             <div className="w-[48%]">
-              <BarChartExample />
+              <ErrorBoundary fallbackComponent={<>error occured</>}>
+                <Suspense fallback={<Skeleton width="100%" height="100%" />}>
+                  <BarChartExample />
+                </Suspense>
+              </ErrorBoundary>
             </div>
             <div className="w-[48%]">
               <PieChart />
