@@ -120,6 +120,7 @@ public class StatisticsRepoServiceImpl implements StatisticsRepoService{
             user.setTotalCommit(totalCommit);
             user.setTotalComment(totalComment);
             user.setWeeklyInfo(weeklyInfo);
+            contributors.add(user);
         }
         return contributors;
     }

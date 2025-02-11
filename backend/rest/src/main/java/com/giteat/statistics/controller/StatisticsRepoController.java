@@ -53,8 +53,8 @@ public class StatisticsRepoController {
         return ResponseEntity.ok(mergeRequestTotalDto);
     }
 
-    @GetMapping("/{repoId}/pr/comment")
-    @Operation(summary="PR 통계 (PR 댓글 수 조회)", description = "Repo에 등록된 댓글수 통계정보를 조회합니다.")
+    @GetMapping("/{repoId}/comment")
+    @Operation(summary="댓글 통계 (댓글 수 조회)", description = "Repo에 등록된 댓글수 통계정보를 조회합니다.")
     public ResponseEntity<CommentTotalDto> getTotalComment(@PathVariable String repoId){
          CommentTotalDto commentTotalDto = statisticsRepoService.getCommentTotal(repoId);
          return ResponseEntity.ok(commentTotalDto);
