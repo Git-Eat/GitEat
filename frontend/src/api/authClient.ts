@@ -29,7 +29,7 @@ authClient.interceptors.response.use(
     if (error.response.status === 401) {
       localStorage.removeItem("access_token");
       alert("기간만료!");
-      window.location.replace("/");
+      // window.location.replace("/");
     }
     return Promise.reject(error);
   }
