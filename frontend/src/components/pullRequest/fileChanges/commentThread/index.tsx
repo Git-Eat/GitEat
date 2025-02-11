@@ -1,13 +1,11 @@
 import { useState } from "react";
+// import { FileMarkDownEditor } from "../fileMarkDownEditor";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { getParsedDate } from "../../../../utils/getParsedDate";
 import { Reply } from "../../../../api/types/Reply";
 import { Replies } from "../../conversation/replies";
 import defaultprofile from "../../../../assets/images/user_profile.svg";
-import { MarkdownEditor } from "../../../common/markdownEditor";
-import { useParams } from "react-router-dom";
-import { useCreateReply } from "../../../../api/queries/useCreateReply";
 type Comment = {
   commentId: number;
   prId: number;
@@ -52,15 +50,6 @@ export function CommentThread({ comment }: CommentThreadProps) {
   const [isReplyEditorOpen, setIsReplyEditorOpen] = useState<
     Record<number, boolean>
   >({});
-  const { baseRepoId, prId } = useParams();
-  const { mutate: createReply } = useCreateReply(
-    Number(baseRepoId),
-    Number(prId)
-  );
-  function handleAddReply(content: string, discussionId: string) {
-    if (!content.trim()) return;
-    createReply({ content, discussionId });
-  }
   function toggleReplyEditor(commentId: number) {
     setIsReplyEditorOpen((prev) => ({
       ...prev,
@@ -106,15 +95,16 @@ export function CommentThread({ comment }: CommentThreadProps) {
           {isReplyEditorOpen[comment.commentId] ? "답글 접기" : "답글 추가"}
         </button>
       </footer>
-      {isReplyEditorOpen[comment.commentId] && (
-        <MarkdownEditor
-          onAddSingleComment={(content) => {
-            handleAddReply(content, comment.disId);
-          }}
-          onStartReview={() => {}}
-          onUpdateComment={() => {}}
+      {/* {isReplyEditorOpen[comment.commentId] && (
+        <FileMarkDownEditor
+          onClose={() => toggleReplyEditor(comment.commentId)}
+          newStartLine={comment.position?.newLine || 0}
+          oldStartLine={comment.position?.newLine || 0}
+          newEndLine={comment.position?.newLine || 0}
+          oldEndLine={comment.position?.newLine || 0}
+          fil
         />
-      )}
+      )} */}
     </div>
   );
 }
