@@ -44,7 +44,7 @@ public class OAuthController {
         String code = body.get("code");
         OAuthTokenDto oAuthTokenDto = oauthService.gitlabLogin(code , response);
         ResponseEntity<?> testResponse = apiUtil.postApi("/oauth/gitlab", oAuthTokenDto , oAuthTokenDto.getAccessToken());
-        oauthService.createCookieAndToken(oAuthTokenDto.getAccessToken() , response);
+        oauthService.createCookieAndToken(oAuthTokenDto.getAccessToken() ,oAuthTokenDto.getRefreshToken() , response);
         return ResponseEntity.ok(testResponse.getStatusCode());
     }
     /**

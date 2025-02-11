@@ -86,12 +86,12 @@ public class CustomOAuthService  {
         return userInfo;
     }
 
-    public void createCookieAndToken(String accessToken, HttpServletResponse response){
+    public void createCookieAndToken(String accessToken , String refreshToken, HttpServletResponse response){
         response.setHeader("Authorization", "Bearer " + accessToken);
 
         // 쿠키 설정 (accessToken을 쿠키에 추가)
         int maxAge = 10 * 365 * 24 * 60 * 60;
-        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
+        Cookie accessTokenCookie = new Cookie("refreshToken", refreshToken);
         accessTokenCookie.setHttpOnly(true);
         accessTokenCookie.setSecure(true);
         accessTokenCookie.setPath("/");
