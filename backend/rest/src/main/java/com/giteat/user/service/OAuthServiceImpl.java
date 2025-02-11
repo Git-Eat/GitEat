@@ -48,6 +48,7 @@ public class OAuthServiceImpl implements OAuthService {
             // 신규 사용자면 새로 저장
             userEntity = new UserEntity();
             userEntity.setUserId(oAuthTokenDto.getUserId());
+            userEntity.setUserName(oAuthTokenDto.getUserName());
             userEntity.setEmail(oAuthTokenDto.getEmail());
             userEntity.setName(oAuthTokenDto.getName());
             userEntity.setAvatarUrl(oAuthTokenDto.getAvatarUrl());
