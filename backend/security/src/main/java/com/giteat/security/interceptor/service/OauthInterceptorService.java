@@ -85,7 +85,7 @@ public class OauthInterceptorService {
      * @param oauthTokenDto
      */
     public void saveNewToken(String authenticationId , OAuthTokenDto oauthTokenDto) {
-        oauthTokenDto.setId(Integer.valueOf(authenticationId));
+        oauthTokenDto.setUserId(Integer.valueOf(authenticationId));
         oauthMapper.updateNewToken(oauthTokenDto);
 
     }

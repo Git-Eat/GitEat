@@ -17,10 +17,9 @@ public class NotiController {
 
     @PostMapping("/regi")
     @Operation(summary = "MM URL 등록", description = "알림에 필요한 MM URL 등록")
-    public ResponseEntity<?> saveNotiToken(@RequestHeader(value = "Authorization") String header ,
+    public ResponseEntity<?> saveNotiToken(
                                            @RequestBody NotiDto notiDto) {
-        String accessToken = header.split(" ")[1];
-        ResponseEntity<?> response = apiUtl.postApi("/noti/regi" , notiDto , accessToken);
+        ResponseEntity<?> response = apiUtl.postApi("/noti/regi" , notiDto);
 
         return ResponseEntity.ok(response.getBody());
     }

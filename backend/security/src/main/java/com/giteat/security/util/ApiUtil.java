@@ -35,9 +35,12 @@ public class ApiUtil {
     public ResponseEntity<?> getApi(String url) {
         String fullURL = restURL + url;
         log.info("FULL URL : " + fullURL);
-        HttpHeaders headers = new HttpHeaders();
+
         String accessToken = TokenContext.getAccessToken();
+        HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
         HttpEntity<String> entity = new HttpEntity<>(headers);
         return restTemplate.exchange(fullURL, HttpMethod.GET, entity, String.class);
     }
@@ -56,8 +59,6 @@ public class ApiUtil {
     }
 
 
-
-
     /**
      * restAPI 호출 POST
      * @param url
@@ -67,36 +68,17 @@ public class ApiUtil {
     public ResponseEntity<?> postApi(String url, Object requestBody) {
         String fullURL = restURL + url;
         log.info("POST 요청 URL: " + fullURL);
+
         String accessToken = TokenContext.getAccessToken();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", accessToken);
+        headers.set("Authorization", "Bearer " +accessToken);
+
         HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
 
         return restTemplate.postForEntity(fullURL, requestEntity, Object.class);
 
     }
-
-    /**
-     * restAPI 호출 POST
-     * @param url
-     * @param requestBody
-     * @return
-     */
-    public ResponseEntity<?> postApi(String url, Object requestBody , String token) {
-        String fullURL = restURL + url;
-        log.info("POST 요청 URL: " + fullURL);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", token);
-        HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
-
-//        restTemplate.postForEntity(fullURL, requestEntity, Object.class);
-//        return ResponseEntity.ok().build();
-
-        return restTemplate.postForEntity(fullURL, requestEntity, Object.class);
-    }
-
 
 
     public ResponseEntity<?> postApi(String url, Object requestBody , String accessToken) {
@@ -126,13 +108,14 @@ public class ApiUtil {
     public ResponseEntity<?> putApi(String url, Object requestBody) {
         String fullURL = restURL + url;
         log.info("PUT 요청 URL: " + fullURL);
+
         String accessToken = TokenContext.getAccessToken();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", accessToken);
+        headers.set("Authorization", "Bearer " + accessToken);
+
         HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
-        restTemplate.exchange(fullURL, HttpMethod.PUT, requestEntity, Void.class);
-        return ResponseEntity.ok().build();
+        return restTemplate.exchange(fullURL, HttpMethod.PUT, requestEntity, Object.class);
     }
 
     public ResponseEntity<?> putApi(String url, Object requestBody, String accessToken) {
@@ -158,10 +141,12 @@ public class ApiUtil {
     public ResponseEntity<?> deleteApi(String url, Object requestBody) {
         String fullURL = restURL + url;
         log.info("DELETE 요청 URL: " + fullURL);
+
         String accessToken = TokenContext.getAccessToken();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", accessToken);
+        headers.set("Authorization", "Bearer " + accessToken);
+
         HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
         restTemplate.exchange(fullURL, HttpMethod.DELETE, requestEntity, Void.class);
         return ResponseEntity.ok().build();
@@ -186,10 +171,12 @@ public class ApiUtil {
      * @return
      * @throws IOException
      */
-    public ResponseEntity<?> postApiWithFile(String url, MultipartFile file , String accessToken) throws IOException {
+    public ResponseEntity<?> postApiWithFile(String url, MultipartFile file) throws IOException {
         // 파일을 전달할 HttpEntity 생성
+        String accessToken = TokenContext.getAccessToken();
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " + accessToken);
 
         String fullURL = restURL + url;
 
