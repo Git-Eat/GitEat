@@ -52,7 +52,7 @@ public class OauthInterceptorService {
         }
         for(Cookie cookie : cookies){
             if("refreshToken".equals(cookie.getName())){
-                refreshToken = cookie.getName();
+                refreshToken = cookie.getValue();
             }
         }
         return refreshToken;
