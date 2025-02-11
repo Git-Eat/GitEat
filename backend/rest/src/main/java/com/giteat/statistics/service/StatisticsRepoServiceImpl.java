@@ -5,7 +5,10 @@ import com.giteat.statistics.mapper.StatisticsRepoMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service("StatisticsRepoServiceImpl")
 @RequiredArgsConstructor
@@ -84,8 +87,40 @@ public class StatisticsRepoServiceImpl implements StatisticsRepoService{
                 newUserDto.setName(participants.getName());
                 newUserDto.setAvatarUrl(participants.getAvatarUrl());
                 newUserDto.setCommentCount(0);
+                commentByUser.add(newUserDto);
             }
         }
+        commentTotalDto.setUserList(commentByUser);
         return commentTotalDto;
+    }
+
+    @Override
+    public List<ContributorsDto> getContributors(String repoId) {
+        List<ContributorsDto> contributors = new ArrayList<>();
+        List<ParticipantsDto> participantsList = statisticsRepoMapper.getParticipants(repoId); // 참여자 정보 조회
+
+        for(ParticipantsDto participants : participantsList){
+            ContributorsDto user = new ContributorsDto();
+            int userId = participants.getUserId();
+            user.setUserId(userId);
+            user.setUserName(participants.getUserName());
+            user.setName(participants.getName());
+            user.setAvatarUrl(participants.getAvatarUrl());
+
+            Map<String, Object> params = new HashMap<>();
+            params.put("repoId", repoId);
+            params.put("userId", userId);
+
+            // 주별 통계 조회
+            List<WeeklyContributorsInfo> weeklyInfo = statisticsRepoMapper.getWeeklyInfo(params);
+            int totalMergeRequest = statisticsRepoMapper.getPrCountByUser(params);
+            int totalCommit = statisticsRepoMapper.getCommitCountByUser(params);
+            int totalComment = statisticsRepoMapper.getCommentCountByUser(params);
+            user.setTotalMergeRequest(totalMergeRequest);
+            user.setTotalCommit(totalCommit);
+            user.setTotalComment(totalComment);
+            user.setWeeklyInfo(weeklyInfo);
+        }
+        return contributors;
     }
 }

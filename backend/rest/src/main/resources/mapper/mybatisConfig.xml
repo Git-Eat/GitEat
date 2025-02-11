@@ -22,7 +22,11 @@
         <typeAlias type="com.giteat.statistics.dto.MergeRequestByUserDto" alias="mergeRequestByUserDto"/>
         <typeAlias type="com.giteat.statistics.dto.MergeRequestTotalDto" alias="mergeRequestTotalDto"/>
         <typeAlias type="com.giteat.statistics.dto.CommentTotalDto" alias="commentTotalDto"/>
-        <typeAlias type="com.giteat.statistics.dto.CommentTotalByUserDto" alias="commentByUserDto"/>
+        <typeAlias type="com.giteat.statistics.dto.CommentByUserDto" alias="commentByUserDto"/>
+        <typeAlias type="com.giteat.statistics.dto.ContributorsDto" alias="contributorsDto"/>
+        <typeAlias type="com.giteat.statistics.dto.MergeRequestByWeekDto" alias="mergeRequestByWeekDto"/>
+        <typeAlias type="com.giteat.statistics.dto.CommitByWeekDto" alias="commitByWeekDto"/>
+        <typeAlias type="com.giteat.statistics.dto.CommentByWeekDto" alias="commentByWeekDto"/>
     </typeAliases>
 
     <!-- TypeHandler 등록 -->
