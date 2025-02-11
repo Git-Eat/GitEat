@@ -7,6 +7,9 @@ import com.giteat.user.dto.OAuthTokenDto;
 import com.giteat.user.entity.OAuthEntity;
 import com.giteat.user.repository.OAuthRepository;
 import org.springframework.stereotype.Service;
+//import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -17,13 +20,14 @@ import java.util.Optional;
  * GitLab OAuth 토큰 관리 및 사용자 정보 관리 기능 제공
  */
 @Service
+@Transactional
 public class OAuthServiceImpl implements OAuthService {
 
     private final OAuthRepository oAuthRepository;
     private final UserRepository userRepository;
     private final GitLabApi api;
 
-    public OAuthServiceImpl(OAuthRepository oAuthDao, OAuthRepository oAuthRepository, UserRepository userDao, UserRepository userRepository, GitLabApi api) {
+    public OAuthServiceImpl(OAuthRepository oAuthRepository, UserRepository userRepository, GitLabApi api) {
         this.oAuthRepository = oAuthRepository;
         this.userRepository = userRepository;
         this.api = api;
@@ -35,10 +39,12 @@ public class OAuthServiceImpl implements OAuthService {
      *
      * @param oAuthTokenDto 저장할 OAuth 토큰 및 사용자 정보를 담고 있는 DTO
      */
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void saveToken(OAuthTokenDto oAuthTokenDto) {
         UserEntity userEntity;
 
-        // 이메일로 기존 사용자 검색
+        // 기존 사용자 검색
         Optional<UserEntity> existUser = userRepository.findByUserId(oAuthTokenDto.getUserId());
 
         // 기존 사용자면 그대로 사용
@@ -48,35 +54,41 @@ public class OAuthServiceImpl implements OAuthService {
             // 신규 사용자면 새로 저장
             userEntity = new UserEntity();
             userEntity.setUserId(oAuthTokenDto.getUserId());
+            userEntity.setUserName(oAuthTokenDto.getUserName());
             userEntity.setEmail(oAuthTokenDto.getEmail());
             userEntity.setName(oAuthTokenDto.getName());
             userEntity.setAvatarUrl(oAuthTokenDto.getAvatarUrl());
             userEntity = userRepository.save(userEntity);
         }
 
-        // 이메일로 기존 사용자 확인
+        // 기존 사용자 확인
         Optional<OAuthEntity> existOAuth = oAuthRepository.findByUserId(oAuthTokenDto.getUserId());
+
         if (existOAuth.isPresent()) {
             OAuthEntity oAuthEntity = existOAuth.get();
             oAuthEntity.setUserId(oAuthTokenDto.getUserId());
+            oAuthEntity.setUserName(oAuthTokenDto.getUserName());
             oAuthEntity.setAccessToken(oAuthTokenDto.getAccessToken());
             oAuthEntity.setRefreshToken(oAuthTokenDto.getRefreshToken());
             oAuthEntity.setExpiresIn(oAuthTokenDto.getExpiresIn());
             oAuthEntity.setTokenType(oAuthTokenDto.getTokenType());
-            oAuthEntity.setCreateAt(LocalDateTime.now());
+            oAuthEntity.setCreatedAt(LocalDateTime.now());
             oAuthEntity.setUserEntity(userEntity);
 
             oAuthRepository.save(oAuthEntity);
         } else {
             OAuthEntity oAuthEntity = new OAuthEntity();
             oAuthEntity.setUserId(oAuthTokenDto.getUserId());
+            oAuthEntity.setUserName(oAuthTokenDto.getUserName());
             oAuthEntity.setAccessToken(oAuthTokenDto.getAccessToken());
             oAuthEntity.setTokenType(oAuthTokenDto.getTokenType());
             oAuthEntity.setExpiresIn(oAuthTokenDto.getExpiresIn());
             oAuthEntity.setRefreshToken(oAuthTokenDto.getRefreshToken());
-            oAuthEntity.setCreateAt(LocalDateTime.now());
+            oAuthEntity.setCreatedAt(LocalDateTime.now());
             oAuthEntity.setScope(oAuthTokenDto.getScope());
+            // email, name, avatarUrl 삭제
             oAuthEntity.setUserEntity(userEntity);
+            userEntity.setOAuthEntity(oAuthEntity);
 
             oAuthRepository.save(oAuthEntity);
         }
@@ -95,11 +107,11 @@ public class OAuthServiceImpl implements OAuthService {
         // 토큰이 존재한다면 만료 되었는지 확인
         if(oAuthEntity.isPresent()) {
             OAuthEntity oAuthEntity2 = oAuthEntity.get();
-            LocalDateTime createTime = oAuthEntity2.getCreateAt();
+            LocalDateTime createdTime = oAuthEntity2.getCreatedAt();
             int expiresIn = oAuthEntity2.getExpiresIn();
 
             // 현재 시간이 (토큰 생성 시간 + 유효기간)을 지났는지 확인
-            return LocalDateTime.now().isAfter(createTime.plusSeconds(expiresIn));
+            return LocalDateTime.now().isAfter(createdTime.plusSeconds(expiresIn));
         }
         // 토큰이 없으면 만료된 것으로 처리
         return true;
@@ -112,6 +124,7 @@ public class OAuthServiceImpl implements OAuthService {
      * @param tokenRequest 갱신할 토큰 정보를 담고 있는 DTO
      * @return 갱신된 토큰 정보 또는 유효한 현재 토큰 정보, 실패 시 null
      */
+    @Transactional
     public OAuthTokenDto refreshToken(OAuthTokenDto tokenRequest) {
         try {
             // refreshToken으로 기존 토큰 정보 조회
@@ -139,6 +152,7 @@ public class OAuthServiceImpl implements OAuthService {
 
                 // 3. DTO에 갱신된 토큰 정보 설정
                 OAuthTokenDto dto = new OAuthTokenDto();
+
                 dto.setUserId(entity.getUserId());
                 dto.setAccessToken(token.get("access_token"));
                 dto.setTokenType(token.get("token_type"));
@@ -153,7 +167,7 @@ public class OAuthServiceImpl implements OAuthService {
                 entity.setRefreshToken(dto.getRefreshToken());
                 entity.setExpiresIn(dto.getExpiresIn());
                 entity.setScope(dto.getScope());
-                entity.setCreateAt(LocalDateTime.now());
+                entity.setCreatedAt(LocalDateTime.now());
 
                 oAuthRepository.save(entity);
                 return dto;
@@ -164,20 +178,5 @@ public class OAuthServiceImpl implements OAuthService {
         }
     }
 
-//    @Override
-//    public void logout(OAuthTokenDto oAuthTokenDto) {
-//        try {
-//            Optional<OAuthEntity> existOAuth = oAuthRepository.findByEmail(oAuthTokenDto.getEmail());
-//            if(existOAuth.isPresent()) {
-//                OAuthEntity entity = existOAuth.get();
-//                // accessToken만 null로 설정하고 나머지 정보는 유지
-//                entity.setAccessToken(null);
-//                oAuthRepository.save(entity);
-//            }
-//        } catch (Exception e) {
-//            System.out.println(e.getMessage());
-//            throw new RuntimeException("Failed to logout user",e);
-//        }
-//    }
 }
 

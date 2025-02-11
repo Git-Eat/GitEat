@@ -24,7 +24,7 @@ public interface OAuthRepository extends JpaRepository<OAuthEntity, Long> {
             "   o.tokenType = :tokenType, " +
             "   o.refreshToken = :refreshToken, " +
             "   o.expiresIn = :expiresIn, " +
-            "   o.createAt = :createAt " +
+            "   o.createdAt = :createdAt " +
             "WHERE o.userId = :userId"
     )
     void updateTokens(@Param("userId") int userId,
@@ -32,6 +32,6 @@ public interface OAuthRepository extends JpaRepository<OAuthEntity, Long> {
                       @Param("tokenType") String tokenType,
                       @Param("refreshToken") String refreshToken,
                       @Param("expiresIn") Integer expiresIn,
-                      @Param("createAt") LocalDateTime createdAt
+                      @Param("createdAt") LocalDateTime createdAt
     );
 }

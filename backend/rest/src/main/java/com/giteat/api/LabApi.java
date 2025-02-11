@@ -331,7 +331,7 @@ public class LabApi {
     private List<Map<String ,Object>> callGetApiUseId(String url , String id){
         HttpHeaders headers = new HttpHeaders();
         String accessToken = gitLabTokenService.getAccessTokenById(id);
-        headers.set("Authorization", accessToken);
+        headers.set("Authorization", "Bearer" + accessToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, entity, List.class);

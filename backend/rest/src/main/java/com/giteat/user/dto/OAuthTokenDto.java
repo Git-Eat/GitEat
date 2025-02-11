@@ -12,17 +12,17 @@ import java.time.LocalDateTime;
 @ToString
 @NoArgsConstructor
 public class OAuthTokenDto {
+//    private Integer Id;
     private int userId;
     private String accessToken;
     private String tokenType;
     private int expiresIn;
     private String refreshToken;
     private String scope;
-    private String createAt;
+    private LocalDateTime createdAt;
     private String email;
     private String name;
     private String userName;
     private String avatarUrl;
-    private LocalDateTime createdAt;
 
 }
