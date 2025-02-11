@@ -11,6 +11,7 @@ public class UserDto {
     private int userId;
     private String email;
     private String name;
+    private String userName;
     private String avatarUrl;
     private String mmWebHook;
 
