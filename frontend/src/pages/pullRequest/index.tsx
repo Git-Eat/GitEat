@@ -10,11 +10,15 @@ import { usePRStore } from "../../store/pullRequestStore";
 
 function DataProvider() {
   const { baseRepoId, prId } = useParams();
-  const { setComments, setFiles } = usePRStore();
+  const { setComments, setFiles, setPR } = usePRStore();
   const { data: pullRequest } = useGetPullRequest(
     Number(baseRepoId),
     Number(prId)
   );
+  useEffect(() => {
+    if (pullRequest) setPR(pullRequest);
+  }, [pullRequest]);
+
   const { data: fileList, isLoading: isFileLoading } = useGetFileChanges(
     Number(baseRepoId),
     Number(prId)

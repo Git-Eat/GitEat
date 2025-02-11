@@ -28,7 +28,8 @@ authClient.interceptors.response.use(
   (error) => {
     if (error.response.status === 401) {
       localStorage.removeItem("token");
-      window.location.replace("/login");
+      alert("기간만료!");
+      window.location.replace("/");
     }
     return Promise.reject(error);
   }
