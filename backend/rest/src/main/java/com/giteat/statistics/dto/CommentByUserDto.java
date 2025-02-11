@@ -7,8 +7,9 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ParticipantsDto {
+public class CommentByUserDto {
     private int userId;
+    private int commentCount;
     private String name;
     private String userName;
     private String avatarUrl;

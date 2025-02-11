@@ -7,9 +7,11 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ParticipantsDto {
+public class MergeRequestByUserDto {
     private int userId;
+    private int mergeRequestCount;
     private String name;
     private String userName;
     private String avatarUrl;
+
 }

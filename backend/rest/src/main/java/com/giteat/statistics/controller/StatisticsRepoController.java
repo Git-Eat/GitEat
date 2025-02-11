@@ -1,5 +1,7 @@
 package com.giteat.statistics.controller;
 
+import com.giteat.statistics.dto.CommentTotalDto;
+import com.giteat.statistics.dto.MergeRequestTotalDto;
 import com.giteat.statistics.dto.ParticipantsDto;
 import com.giteat.statistics.service.StatisticsRepoServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,21 +37,33 @@ public class StatisticsRepoController {
 
     @GetMapping("/{repoId}/participants")
     @Operation(summary = "참여자 조회", description = "해당 Repo에서의 참여자 목록을 조회합니다.")
-    public ResponseEntity<List<ParticipantsDto>> getParticipants(@PathVariable String repoId){
+    public ResponseEntity<Map<String, Object>> getParticipants(@PathVariable String repoId){
         List<ParticipantsDto> participants = statisticsRepoService.getParticipants(repoId);
-        return ResponseEntity.ok(participants);
+        Map<String, Object> response = new HashMap<>();
+        response.put("participants", participants);
+        return ResponseEntity.ok(response);
     }
 
 
     @GetMapping("/{repoId}/pr")
     @Operation(summary="PR 통계 (PR 개수 조회)", description = "Repo에 등록된 PR개수의 통계정보를 조회합니다.")
-    public ResponseEntity<String> getTotalPR(@PathVariable String repoId){
-        return ResponseEntity.ok("gg");
+    public ResponseEntity<MergeRequestTotalDto> getTotalPR(@PathVariable String repoId){
+        MergeRequestTotalDto mergeRequestTotalDto = statisticsRepoService.getMergeReqeustTotal(repoId);
+        return ResponseEntity.ok(mergeRequestTotalDto);
     }
 
-    @GetMapping("{repoId}/pr/comment")
+    @GetMapping("/{repoId}/pr/comment")
     @Operation(summary="PR 통계 (PR 댓글 수 조회)", description = "Repo에 등록된 댓글수 통계정보를 조회합니다.")
-    public ResponseEntity<String> getTotalComment(@PathVariable String repoId){
-        return ResponseEntity.ok("gg");
+    public ResponseEntity<CommentTotalDto> getTotalComment(@PathVariable String repoId){
+         CommentTotalDto commentTotalDto = statisticsRepoService.getCommentTotal(repoId);
+         return ResponseEntity.ok(commentTotalDto);
+    }
+
+    @GetMapping("/{repoId}/contributors")
+    @Operation(summary = "Contributors 조회", description = "Repo내 Contributors 정보를 조회합니다.")
+    public ResponseEntity<Map<String ,Object>> getContributors(@PathVariable String repoId){
+        Map<String ,Object> response = new HashMap<>();
+        response.put("contributors","");
+        return ResponseEntity.ok(response);
     }
 }
