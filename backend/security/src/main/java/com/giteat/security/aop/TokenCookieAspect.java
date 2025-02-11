@@ -4,6 +4,7 @@ import com.giteat.security.util.TokenContext;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -16,32 +17,42 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Component
 public class TokenCookieAspect {
 
-    @Pointcut("execution(* com.giteat.security.*.*(..))")  // 컨트롤러의 모든 메서드
+    // @Pointcut 정의: 특정 패키지 또는 클래스에 있는 메서드에 AOP 적용
+    @Pointcut("execution(* com.giteat.security.*.*(..))") // 실제 경로에 맞게 수정
     public void controllerMethods() {}
 
-    @Around("controllerMethods()")
-    public Object aroundControllerMethods(org.aspectj.lang.ProceedingJoinPoint joinPoint) throws Throwable {
-        System.out.println("aop 실행!!!!");
+    // @Before을 사용하여 메서드가 실행되기 전에 처리
+    @Before(value = "controllerMethods()")
+    public void beforeAdvice(JoinPoint joinPoint) {
+        // JoinPoint를 통해 메서드 매개변수에 접근
+        Object[] args = joinPoint.getArgs();
+        HttpServletRequest request = null;
+        HttpServletResponse response = null;
 
+        // 매개변수에서 HttpServletRequest와 HttpServletResponse를 찾기
+        for (Object arg : args) {
+            if (arg instanceof HttpServletRequest) {
+                request = (HttpServletRequest) arg;
+            }
+            if (arg instanceof HttpServletResponse) {
+                response = (HttpServletResponse) arg;
+            }
+        }
 
-        HttpServletRequest request = (HttpServletRequest) joinPoint.getArgs()[0];  // 요청 인자
-        HttpServletResponse response = (HttpServletResponse) joinPoint.getArgs()[1]; // 응답 인자
+        if (request == null || response == null) {
+            // request나 response가 없으면 처리하지 않음
+            return;
+        }
 
         // 요청 경로 확인
         String requestURI = request.getRequestURI();
         if (requestURI.startsWith("/api/oauth/gitlab/login")) {
-            // 특정 URI에서는 쿠키 처리하지 않음
-            return joinPoint.proceed();
+            // 특정 URI에서는 쿠키를 처리하지 않음
+            return;
         }
 
-        // AOP에서 실행 전후 로직 추가 가능
+        // 쿠키 생성 및 설정
         try {
-            // 컨트롤러 메서드 실행 전
-            Object result = joinPoint.proceed();
-
-            // 실행 후 쿠키 추가
-            System.out.println("return 할때 cookie 생성");
-
             int maxAge = 10 * 365 * 24 * 60 * 60; // 10년
             String accessToken = TokenContext.getAccessToken();
             String refreshToken = TokenContext.getRefreshToken();
@@ -49,25 +60,26 @@ public class TokenCookieAspect {
             System.out.println("새로 만들어서 반환 access : " + accessToken);
             System.out.println("새로 만들어서 반환 refresh : " + refreshToken);
 
-            // 쿠키 설정
+            // refreshToken 쿠키 생성
             Cookie cookie = new Cookie("refreshToken", refreshToken);
             cookie.setHttpOnly(true);
-            cookie.setSecure(true);
-            cookie.setPath("/");
-            cookie.setMaxAge(maxAge);
+            cookie.setSecure(true); // 보안 연결에서만 쿠키 전송
+            cookie.setPath("/"); // 쿠키 경로 설정
+            cookie.setMaxAge(maxAge); // 쿠키 유효 기간 설정 (10년)
 
+            // 쿠키를 응답에 추가
             response.addCookie(cookie);
+
+            // Authorization 헤더 설정
             response.setHeader("Authorization", "Bearer " + accessToken);
 
-            // 토큰 삭제
+            // 토큰 제거
             TokenContext.removeAccessToken();
             TokenContext.removeRefreshToken();
 
-            System.out.println("resonse HEADER :  " + response.getHeader("Authorization"));
-            return result;
+            System.out.println("response HEADER : " + response.getHeader("Authorization"));
         } catch (Exception e) {
             e.printStackTrace();
-            throw e;
         }
     }
 }
