@@ -82,12 +82,12 @@ public class OauthInterceptor implements HandlerInterceptor {
         System.out.println("return 할때 cookie 생성");
 
         int maxAge = 10 * 365 * 24 * 60 * 60;
-        System.out.println("새로 만들어서 반환 access : " + accessToken);
-        System.out.println("새로 만들어서 반환 refresh : " + refreshToken);
+        System.out.println("새로 만들어서 반환 access : " + newAccessToken);
+        System.out.println("새로 만들어서 반환 refresh : " + newRefreshToken);
         // cookie 설정
 
         try{
-            Cookie cookie = new Cookie("refreshToken", refreshToken);
+            Cookie cookie = new Cookie("refreshToken", newRefreshToken);
             cookie.setHttpOnly(true);
             cookie.setSecure(true);
             cookie.setPath("/");
@@ -95,7 +95,7 @@ public class OauthInterceptor implements HandlerInterceptor {
 
             response.addCookie(cookie);
             // accessToken을 HTTP 응답 헤더에 추가
-            response.setHeader("Authorization", "Bearer " + accessToken);
+            response.setHeader("Authorization", "Bearer " + newAccessToken);
             TokenContext.removeAccessToken();
             TokenContext.removeRefreshToken();
             System.out.println("resonse HEADER :  " + response.getHeader("Authorization"));
