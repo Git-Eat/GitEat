@@ -9,7 +9,7 @@ export const useLogin = () => {
     onSuccess: (accessToken: string) => {
       console.log(accessToken);
       localStorage.setItem("access_token", accessToken);
-      navigation("/dashboard", { replace: true });
+      navigation("/repos", { replace: true });
     },
     retry: false,
   });

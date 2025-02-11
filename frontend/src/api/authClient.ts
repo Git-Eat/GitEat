@@ -10,6 +10,7 @@ const authClient = axios.create({
 
 authClient.interceptors.request.use((config) => {
   const token = localStorage.getItem("access_token");
+  config.withCredentials = true;
   if (token) {
     config.headers["authorization"] = `${token}`;
   }
