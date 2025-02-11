@@ -6,6 +6,7 @@ import { useCreateComment } from "../../../api/queries/useCreateComment";
 import { Suspense } from "react";
 import { ErrorBoundary } from "../../common/errorBoundery";
 import { useParams } from "react-router-dom";
+import { PullRequestInfo } from "./pullRequestInfo";
 
 export function Conversation() {
   const { baseRepoId, prId } = useParams();
@@ -24,6 +25,11 @@ export function Conversation() {
   return (
     <section className="flex gap-5">
       <main className="w-3/4">
+        <ErrorBoundary>
+          <Suspense fallback={<img src={spinner} alt="Loading..." />}>
+            <PullRequestInfo repoId={numericRepoId} prId={numericPrId} />
+          </Suspense>
+        </ErrorBoundary>
         <ErrorBoundary>
           <Suspense fallback={<img src={spinner} alt="Loading..." />}>
             <Comments repoId={numericRepoId} prId={numericPrId} />
