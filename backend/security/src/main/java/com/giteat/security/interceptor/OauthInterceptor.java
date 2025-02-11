@@ -43,6 +43,9 @@ public class OauthInterceptor implements HandlerInterceptor {
          accessToken = accessToken.split(" ")[1];
 
         String refreshToken = oauthInterceptorService.getRefreshTokenFromCookie(request);
+
+        System.out.println("받은 accessToken : "  + accessToken);
+        System.out.println("받은 refreshToken : " + refreshToken);
         User userDto = null;
         OAuthTokenDto oAuthTokenDto = null;
         if (refreshToken == null) {

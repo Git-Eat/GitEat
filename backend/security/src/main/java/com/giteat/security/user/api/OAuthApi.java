@@ -191,6 +191,7 @@ public class OAuthApi {
                     String.class);
 
             // JSON 파싱 및 토큰 갱신에 대한 응답
+            System.out.println("refresh로 재발급 받은 데이터 : " + response.getBody());
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonNode = mapper.readTree(response.getBody());
 
