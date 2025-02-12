@@ -22,11 +22,11 @@ public class AiReviewEntity {
     private int prId;
     private int arStatusId;
 
-    @Column(name = "before_code", columnDefinition = "text")
-    private String before_code;
+    @Column(name = "base_sha")
+    private String baseSha;
 
-    @Column(name = "after_code", columnDefinition = "text")
-    private String after_code;
+    @Column(name = "head_sha")
+    private String headSha;
 
     @Column(name = "content", columnDefinition = "text")
     private String content;

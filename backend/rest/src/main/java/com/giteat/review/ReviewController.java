@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -16,9 +17,9 @@ public class ReviewController {
 
     @GetMapping("/list/{repoId}/{prId}")
     @Operation(summary = "AI 리뷰 조회", description = "DB에 저장된 AI 리뷰 결과를 조회합니다.")
-    public ResponseEntity<Optional<AiReviewEntity>> getReview(@PathVariable int repoId, @PathVariable int prId) {
+    public ResponseEntity<List<AiReviewEntity>> getReview(@PathVariable int repoId, @PathVariable int prId) {
         System.out.println("rest controller - repoId: " + repoId + ", prId: " + prId);
-        Optional<AiReviewEntity> response = reviewService.getReview(repoId, prId);
+        List<AiReviewEntity> response = reviewService.getReview(repoId, prId);
         System.out.println("rest controller: "+response);
         return ResponseEntity.ok(response);
     }

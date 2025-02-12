@@ -3,6 +3,7 @@ package com.giteat.review;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -10,7 +11,7 @@ import java.util.Optional;
 public class ReviewService {
     private ReviewRepository reviewRepository;
 
-    public Optional<AiReviewEntity> getReview(int repoId, int prId) {
+    public List<AiReviewEntity> getReview(int repoId, int prId) {
 
         System.out.println("rest service - repoId: " + repoId + ", prId: " + prId);
         return reviewRepository.findByRepoIdAndPrId(repoId, prId);
