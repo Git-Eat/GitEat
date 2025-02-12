@@ -236,27 +236,35 @@ public class PrServiceImpl implements PrService{
 
                 base_sha = (String) shaInfo.get("base_sha");
                 head_sha = (String) shaInfo.get("head_sha");
+                System.out.println("값이 없어용");
+                System.out.println(head_sha);
+                System.out.println(base_sha);
             } else {
                 base_sha = existingMr.getBaseSha();
                 head_sha = existingMr.getHeadSha();
+                System.out.println("값이 있어용");
+                System.out.println(head_sha);
+                System.out.println(base_sha);
             }
             mergeRequestRepository.save(existingMr); // 업데이트
 
 
             if(status == 1){
                 // 파일이 추가 된 경우, fileStatus = 1
-                newRawFile = gitLabApi.getRawCode(repoId,encodedNewPath,head_sha);
+                newRawFile = gitLabApi.getRawCode(repoId,encodedNewPath,head_sha, accessToken);
             } else if(status ==2) {
                 // 파일 내용이 수정된 경우, fileStatus = 2
-                oldRawFile = gitLabApi.getRawCode(repoId, encodedOldPath, base_sha);
-                newRawFile = gitLabApi.getRawCode(repoId,encodedNewPath,head_sha);
+                oldRawFile = gitLabApi.getRawCode(repoId, encodedOldPath, base_sha, accessToken);
+                newRawFile = gitLabApi.getRawCode(repoId,encodedNewPath,head_sha, accessToken);
             } else if(status==3){
                 // 파일이 삭제 된 경우,  fileStatus = 3
-                oldRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, base_sha);
+                System.out.println("파일이 삭제");
+                oldRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, base_sha, accessToken);
+                System.out.println(oldRawFile);
             } else if(!oldPath.equals(newPath)){
                 // 파일 경로가 수정된 경우
-                oldRawFile = gitLabApi.getRawCode(repoId, encodedOldPath, base_sha);
-                newRawFile = gitLabApi.getRawCode(repoId,encodedNewPath,head_sha);
+                oldRawFile = gitLabApi.getRawCode(repoId, encodedOldPath, base_sha,accessToken);
+                newRawFile = gitLabApi.getRawCode(repoId,encodedNewPath,head_sha, accessToken);
             }
         }
 
