@@ -48,13 +48,15 @@ public class OAuthController {
         oauthService.createCookieAndToken(oAuthTokenDto.getAccessToken() ,oAuthTokenDto.getRefreshToken() , response);
         return ResponseEntity.ok(testResponse.getStatusCode());
     }
+
+
     /**
-     * GitLab OAuth 토큰 갱신 엔드포인트
-     *
-     * @param tokenRequest 갱신할 토큰 정보를 담은 DTO
-     * @return 갱신된 토큰 정보
+     *  refresh 재발급
+     * @param request
+     * @param response
+     * @return
      */
-    @PostMapping("/gitlab/refresh")
+    @GetMapping("/gitlab/refresh")
     @Operation(summary = "access 재발급", description = "refresh토큰으로 access토큰을 재발급 받을때 사용")
     public ResponseEntity<?> gitlabRefresh(HttpServletRequest request , HttpServletResponse response) {
         oauthService.createNewTokens(request, response);
