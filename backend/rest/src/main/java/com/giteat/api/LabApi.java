@@ -136,9 +136,9 @@ public class LabApi {
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         headers.set("Accept", "application/json");
 
-        // 파일 데이터를 InputStreamResource로 변환하여 추가
+        // ✅ InputStreamResource → ByteArrayResource로 변경
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("file", new InputStreamResource(file.getInputStream()) {
+        body.add("file", new ByteArrayResource(file.getBytes()) {
             @Override
             public String getFilename() {
                 return file.getOriginalFilename() != null ? file.getOriginalFilename() : "upload.tmp";
