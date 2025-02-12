@@ -328,16 +328,16 @@ public class LabApi {
      * @param id
      * @return
      */
-    private List<Map<String ,Object>> callGetApiUseId(String url , String id){
-
-        HttpHeaders headers = new HttpHeaders();
-        String accessToken = gitLabTokenService.getAccessTokenById(id);
-        headers.set("Authorization", "Bearer" + accessToken);
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-
-        ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, entity, List.class);
-        return response.getBody();
-    }
+//    private List<Map<String ,Object>> callGetApiUseId(String url , String id){
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        String accessToken = gitLabTokenService.getAccessTokenById();
+//        headers.set("Authorization", "Bearer" + accessToken);
+//        HttpEntity<String> entity = new HttpEntity<>(headers);
+//
+//        ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, entity, List.class);
+//        return response.getBody();
+//    }
 
     /**
      * restTemplate으로 POST 요청하는 함수

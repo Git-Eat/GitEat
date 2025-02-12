@@ -99,7 +99,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
 
             // id값으로 accessToken 가져오는 로직이 필요하다.
             // userId 를 사용해서 사용
-            String accessToken = gitLabTokenMapper.getAccessTokenById(userId);
+            String accessToken = gitLabTokenMapper.getAccessTokenById(Integer.parseInt(userId));
 
             for (int prPageNation = 1; prPageNation <= 20; prPageNation++) {
                 List<Map<String, Object>> fileChangeList = gitLabApi.getFilesByPr(projectId, Integer.parseInt(iid), prPageNation, accessToken);
@@ -158,11 +158,68 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
 
         //db에 값이 있는지 확인한다.
         int commentId = (int) commentMap.get("id");
-        int commentCnt = gitLabWebHookMapper.getCommitCnt(commentId);
+        int userId = (int) userMap.get("id");
+        int prId = (int) mergeRequestMap.get("id");
+        int repoId = (int) projectMap.get("id");
+        int prIid = (int) mergeRequestMap.get("iid");
+        int commentCnt = gitLabWebHookMapper.getReplyCnt(commentId);
+        String accessToken = gitLabTokenMapper.getAccessTokenById(userId);
+
         if(commentCnt==0){  // 0일경우 댓글임
+            CommentEntity commentEntity = new CommentEntity();
+            CommentId entityCommentId = new CommentId(commentId , prId , repoId);
+            commentEntity.setId(entityCommentId);
+            commentEntity.setContent((String) commentMap.get("note"));
+            commentEntity.setCommentType(0);
+            commentEntity.setUserId(userId);
 
-        }else{              // 대댓글임
+            List<Map<String, Object>> commentList = gitLabApi.getDiscussions(String.valueOf(repoId), prIid, accessToken);
+            Map<String , Object> disMap = commentList.get(0);
 
+            commentEntity.setDisId((String) disMap.get("id"));
+            commentEntity.setCreateAt((String) commentMap.get("created_at"));
+
+            if(disMap.get("position") != null){
+                Map<String, Object> position = (Map<String, Object>) disMap.get("position");
+                if(position.get("new_line") !=null) commentEntity.setNewLine((int) position.get("new_line"));
+                if(position.get("old_line") !=null) commentEntity.setOldLine((int) position.get("old_line"));
+
+                Optional<MergeRequestEntity> optionalMr = mergeRequestRepository.findById_PrId(prIid);
+
+                Map<String, Object> lineRange = (Map<String, Object>) position.get("line_range");
+                if(lineRange != null){
+                    Map<String, Object> start = (Map<String, Object>) lineRange.get("start");
+                    Map<String, Object> end = (Map<String, Object>) lineRange.get("end");
+                    if(start.get("new_line") !=null)  commentEntity.setNewStartLine((int) start.get("new_line"));
+                    if(end.get("new_line") !=null) commentEntity.setNewEndLine((int) end.get("new_line"));
+                    if(start.get("old_line") !=null) commentEntity.setOldStartLine((int) start.get("old_line"));
+                    if(end.get("old_line") !=null) commentEntity.setOldEndLine((int) end.get("old_line"));
+                }
+            }
+            commentRepository.save(commentEntity);
+
+        }else{// 대댓글임
+            ReplyEntity replyEntity = new ReplyEntity();
+
+            List<Map<String, Object>> commentList = gitLabApi.getDiscussions(String.valueOf(repoId), prIid, accessToken);
+            Map<String , Object> disMap = commentList.get(0);
+
+            Map<String , Object> mapperMap = new HashMap();
+            mapperMap.put("disId" , disMap.get("id"));
+            mapperMap.put("prId" , prId);
+            mapperMap.put("repoId" , repoId);
+
+            int replyCommentId = gitLabWebHookMapper.getCommentId(mapperMap);   //테이블 comment_id
+            int reCommentId = commentId;                                        //테이블 re_comment_id
+            ReplyId replyId = new ReplyId(reCommentId , replyCommentId , prId , repoId);
+            replyEntity.setId(replyId);
+            replyEntity.setUserId(userId);
+            replyEntity.setDisId((String) disMap.get("id"));
+            replyEntity.setContent((String) commentMap.get("note"));
+            replyEntity.setReCommentType(1);
+            replyEntity.setCreateAt((String) commentMap.get("created_at"));
+
+            replyRepository.save(replyEntity);
         }
     }
 }

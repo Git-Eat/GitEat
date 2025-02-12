@@ -4,7 +4,7 @@
 
 <mapper namespace="com.giteat.util.getLab.mapper.GitLabTokenMapper">
 
-    <select id="getAccessToken" parameterType="String" resultType="String">
+    <select id="getReplyCnt" parameterType="String" resultType="String">
         SELECT o.access_token
         FROM oauth_token as o
         JOIN tokens as t
@@ -12,10 +12,12 @@
         where t.access_token = #{jwtAccessToken};
     </select>
 
-    <select id="getAccessTokenById" parameterType="string" resultType="string">
-        SELECT access_token
-        FROM oauth_token
-        WHERE oauth_id = {id}
+    <select id="getCommentId" parameterType="map" resultType="string">
+        SELECT comment_id
+        FROM comment
+        WHERE repo_id = #{repoId}
+        AND dis_id = #{disId}
+        AND pr_id = #{prId}
     </select>
 
 </mapper>
