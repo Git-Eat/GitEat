@@ -180,7 +180,7 @@ public class ApiUtil {
         String accessToken = TokenContext.getAccessToken();
         System.out.println("FILE ACCESSTOKEN : " + accessToken);
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         headers.set("Authorization", "Bearer " + accessToken);
 
         String fullURL = restURL + url;
