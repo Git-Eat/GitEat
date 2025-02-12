@@ -108,7 +108,7 @@ public class LabApi {
         String url = gitlabApiUrl + "/projects/" +  projectId + "/uploads";
         HttpHeaders headers = new HttpHeaders();
         //String accessToken = gitLabTokenService.getAccessToken(jwtAccessToken);
-        headers.set("Private-Token", accessToken); // 필요하면 OAuth 토큰 사용
+        headers.set("Authorization", "Bearer " + accessToken);
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
