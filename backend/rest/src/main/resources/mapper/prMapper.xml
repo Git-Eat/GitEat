@@ -213,13 +213,27 @@
 
     <!-- 리뷰 참여자 정보 조회 -->
     <select id="getReviewer" parameterType="map" resultType="reviewerDto">
-        SELECT
-            cv.comment_user_id AS userId,
-            cv.comment_user_name AS userName,
-            cv.comment_avatar_url AS avatarUrl,
-            cv.comment_type AS commentType
-        FROM comment_view cv
-        WHERE cv.repo_id = #{repoId} AND cv.pr_id = #{prId}
+        SELECT DISTINCT
+            u.user_id AS userId,
+            u.name AS name,
+            u.user_name AS userName,
+            u.avatar_url AS avatarUrl,
+            reviewers.comment_type AS commentType
+        FROM (
+            -- comment 작성한 유저
+            SELECT user_id, comment_type, pr_id, repo_id
+            FROM comment
+            WHERE pr_id = #{prId} AND repo_id = #{repoId}
+
+            UNION ALL
+
+            -- reply 작성한 유저
+            SELECT user_id, recomment_type AS comment_type, pr_id, repo_id
+            FROM reply
+            WHERE pr_id = #{prId} AND repo_id = #{repoId}
+        ) AS reviewers
+        JOIN users u ON reviewers.user_id = u.user_id
+        ORDER BY userId;
     </select>
 
 </mapper>
