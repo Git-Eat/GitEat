@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import { getPrStatistics } from "../dashBoard";
+import { getPrStatistics } from "../DashBoard";
 
 export const useGetPrStatistics = (repoId: string) => {
   return useQuery(["getPrStatistics", repoId], () => getPrStatistics(repoId), {

@@ -61,6 +61,6 @@ export const getContributors = async (
     return res.data;
   } catch (e: unknown) {
     if (e instanceof Error) throw new Error(e.message);
-    else throw new Error("unknown Error");
+    else throw new Error("unknown Errorr");
   }
 };

@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import { getTotalCommits } from "../dashBoard";
+import { getTotalCommits } from "../DashBoard";
 
 export const useGetTotalCommit = (repoId: string) => {
   return useQuery(["getTotalCommit", repoId], () => getTotalCommits(repoId), {

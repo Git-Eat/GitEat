@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import { getCommentStatistics } from "../dashBoard";
+import { getCommentStatistics } from "../DashBoard";
 
 export const useGetCommentStatistics = (repoId: string) => {
   return useQuery(
