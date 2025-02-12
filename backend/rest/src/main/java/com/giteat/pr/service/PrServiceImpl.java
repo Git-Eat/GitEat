@@ -219,7 +219,7 @@ public class PrServiceImpl implements PrService{
         String oldRawFile = null;
 
         // 2. PR에서 sha값 있는지 확인 후 , 없으면 요청 후 DB에 저장
-        Optional<MergeRequestEntity> optionalMr = mergeRequestRepository.findById_PrId(fileDto.getPrId());
+        Optional<MergeRequestEntity> optionalMr = mergeRequestRepository.findByRepoIdAndPrId(Integer.parseInt(repoId), Integer.parseInt(prId));
 
         String base_sha = null;
         String head_sha= null;
