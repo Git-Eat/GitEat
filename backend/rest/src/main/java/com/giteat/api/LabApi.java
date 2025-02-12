@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.*;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
@@ -135,12 +136,12 @@ public class LabApi {
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         headers.set("Accept", "application/json");
 
-        // 파일 데이터를 ByteArrayResource로 변환하여 추가
+        // 파일 데이터를 InputStreamResource로 변환하여 추가
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("file", new ByteArrayResource(file.getBytes()) {
+        body.add("file", new InputStreamResource(file.getInputStream()) {
             @Override
             public String getFilename() {
-                return file.getOriginalFilename();
+                return file.getOriginalFilename() != null ? file.getOriginalFilename() : "upload.tmp";
             }
         });
 
