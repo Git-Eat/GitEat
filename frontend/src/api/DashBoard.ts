@@ -1,4 +1,5 @@
-import client from "./client";
+import authClient from "./authClient";
+
 import {
   CommentStatistics,
   Participants,
@@ -7,7 +8,7 @@ import {
 
 export const getTotalCommits = async (repoId: string) => {
   try {
-    const res = await client.get(`/statistics/repo/${repoId}/commit`);
+    const res = await authClient.get(`/statistics/repo/${repoId}/commit`);
     return res.data;
   } catch (e: unknown) {
     if (e instanceof Error) throw new Error(e.message);
@@ -19,7 +20,7 @@ export const getParticipants = async (
   repoId: string
 ): Promise<Participants> => {
   try {
-    const res = await client.get(`/statistics/repo/${repoId}/participants`);
+    const res = await authClient.get(`/statistics/repo/${repoId}/participants`);
     return res.data;
   } catch (e: unknown) {
     if (e instanceof Error) throw new Error(e.message);
@@ -31,7 +32,7 @@ export const getPrStatistics = async (
   repoId: string
 ): Promise<PRStatistics> => {
   try {
-    const res = await client.get(`/statistics/repo/${repoId}/pr`);
+    const res = await authClient.get(`/statistics/repo/${repoId}/pr`);
     return res.data;
   } catch (e: unknown) {
     if (e instanceof Error) throw new Error(e.message);
@@ -43,7 +44,7 @@ export const getCommentStatistics = async (
   repoId: string
 ): Promise<CommentStatistics> => {
   try {
-    const res = await client.get(`/statistics/repo/${repoId}/comment`);
+    const res = await authClient.get(`/statistics/repo/${repoId}/comment`);
     return res.data;
   } catch (e: unknown) {
     if (e instanceof Error) throw new Error(e.message);
