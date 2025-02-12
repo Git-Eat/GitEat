@@ -18,7 +18,6 @@ public class MergeRequestId implements Serializable {
     private String repoId;
     private int prId;
 
-    // equals와 hashCode 메서드도 구현하는 것이 좋습니다
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

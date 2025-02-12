@@ -10,6 +10,7 @@ import com.giteat.ai.review.daemon.repository.AiReviewEntityRepository;
 import com.giteat.ai.review.daemon.repository.AiReviewRepository;
 import com.giteat.ai.review.daemon.repository.MergeRequestRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
@@ -20,6 +21,7 @@ import java.util.*;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class AiReviewServiceImpl implements AiReviewService {
 
     private final AiReviewRepository aiReviewRepository;
@@ -31,16 +33,16 @@ public class AiReviewServiceImpl implements AiReviewService {
     @Override
     public List<AiReviewStatusEntity> findByStatus(int status) {
         try {
-            System.out.println("[findByStatus] 상태 " + status + "인 리뷰 조회 시작");
             List<AiReviewStatusEntity> result = aiReviewRepository.findByStatus(status);
+            log.info("[findByStatus] 상태 {}인 리뷰 조회 시작", status);
             if (result != null) {
-                System.out.println("[findByStatus] 조회 결과: " + result.size() + "개의 리뷰 발견");
+                log.info("[findByStatus] 조회 결과: {}개의 리뷰 발견", result.size());
             } else {
-                System.out.println("[findByStatus] 조회 결과 없음");
+                log.info("[findByStatus] 조회 결과 없음");
             }
             return result != null ? result : Collections.emptyList();
         } catch (Exception e) {
-            System.out.println("상태 조회 중 에러 발생: " + e.getMessage());
+            log.error("상태 조회 중 에러 발생", e);
             return Collections.emptyList();
         }
     }
@@ -56,7 +58,7 @@ public class AiReviewServiceImpl implements AiReviewService {
         String oldRawFile = null;
         String newRawFile = null;
 
-        Optional<MergeRequestEntity> optionalMr = mergeRequestRepository.findById_PrId(prId);
+        Optional<MergeRequestEntity> optionalMr = mergeRequestRepository.findById_RepoIdAndId_PrId(String.valueOf(repoId), prId);
         String base_sha = null;
         String head_sha = null;
 
@@ -68,7 +70,7 @@ public class AiReviewServiceImpl implements AiReviewService {
 
             if (existingMr.getBaseSha() == null || existingMr.getHeadSha() == null) {
                 System.out.println("[getChangedCode] SHA가 없어서 MR 정보를 가져옵니다.");
-                Map<String, Object> mrResponse = gitLabApi.getMergeRequestsById(repoId, prId, "");
+                Map<String, Object> mrResponse = gitLabApi.getMergeRequestsById(String.valueOf(repoId), prId, "");
                 System.out.println("- MR Response: " + mrResponse);  // API 응답 확인
                 existingMr.setBaseSha((String) mrResponse.get("base_commit_sha"));
                 existingMr.setHeadSha((String) mrResponse.get("head_commit_sha"));
@@ -87,24 +89,27 @@ public class AiReviewServiceImpl implements AiReviewService {
         // 파일 상태에 따라 코드 가져오기
         if (status == 1) {
             // 파일이 추가 된 경우, fileStatus = 1
-            newRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, head_sha);
+            newRawFile = gitLabApi.getRawCode(String.valueOf(repoId), encodedNewPath, head_sha);
         } else if (status == 2) {
             // 파일 내용이 수정된 경우, fileStatus = 2
-            oldRawFile = gitLabApi.getRawCode(repoId, encodedOldPath, base_sha);
-            newRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, head_sha);
+            oldRawFile = gitLabApi.getRawCode(String.valueOf(repoId), encodedOldPath, base_sha);
+            newRawFile = gitLabApi.getRawCode(String.valueOf(repoId), encodedNewPath, head_sha);
         } else if (status == 3) {
             // 파일이 삭제 된 경우,  fileStatus = 3
-            oldRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, base_sha);
+            oldRawFile = gitLabApi.getRawCode(String.valueOf(repoId), encodedNewPath, base_sha);
         } else if (!oldPath.equals(newPath)) {
             // 파일 경로가 수정된 경우
-            oldRawFile = gitLabApi.getRawCode(repoId, encodedOldPath, base_sha);
-            newRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, head_sha);
+            oldRawFile = gitLabApi.getRawCode(String.valueOf(repoId), encodedOldPath, base_sha);
+            newRawFile = gitLabApi.getRawCode(String.valueOf(repoId), encodedNewPath, head_sha);
         }
 
         Map<String, String> result = new HashMap<>();
         result.put("fileName", fileDto.getFileName());
         result.put("beforeCode", oldRawFile);
         result.put("afterCode", newRawFile);
+        result.put("baseSha", base_sha);
+        result.put("headSha", head_sha);
+
         System.out.println("AireviewServiceImpl result" + result);
         return result;
     }
@@ -144,10 +149,14 @@ public class AiReviewServiceImpl implements AiReviewService {
             }
 
             // AI 리뷰 생성
-//            String reviewContent = aiReviewApi.generateReview(
-//                    changedCode.get("beforeCode"),
-//                    changedCode.get("afterCode")
-//                    );
+            String reviewContent = aiReviewApi.generateReview(
+                    changedCode.get("beforeCode"),
+                    changedCode.get("afterCode")
+
+            );
+            System.out.println("변경된 코드 확인:");
+            System.out.println("beforeCode: " + changedCode.get("beforeCode"));
+            System.out.println("afterCode: " + changedCode.get("afterCode"));
 
             // AI 리뷰 엔티티 생성 및 저장
             System.out.println("[createAiReview] 리뷰 엔티티 생성 시작");
@@ -155,11 +164,12 @@ public class AiReviewServiceImpl implements AiReviewService {
             reviewEntity.setRepoId(statusEntity.getRepoId());
             reviewEntity.setPrId(statusEntity.getPrId());
             reviewEntity.setArStatusId(statusEntity.getArStatusId());
-            reviewEntity.setBefore_code(changedCode.get("beforeCode"));
-            reviewEntity.setAfter_code(changedCode.get("afterCode"));
-//            reviewEntity.setContent(reviewContent);
+            reviewEntity.setBaseSha(changedCode.get("baseSha"));
+            reviewEntity.setHeadSha(changedCode.get("headSha"));
+            reviewEntity.setContent(reviewContent);
             reviewEntity.setCreateTime(LocalDateTime.now());
 
+            System.out.println("serviceImpl reviewEntity"+reviewEntity);
             aiReviewEntityRepository.save(reviewEntity);
 
             // 리뷰 후 상태 업데이트

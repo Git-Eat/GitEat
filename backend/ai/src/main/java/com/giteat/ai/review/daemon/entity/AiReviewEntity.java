@@ -25,6 +25,12 @@ public class AiReviewEntity {
     @Column(name = "content", columnDefinition = "text")
     private String content;
 
+    @Column(name = "base_sha")
+    private String baseSha;
+
+    @Column(name = "head_sha")
+    private String headSha;
+
     private LocalDateTime createTime;
 
     // 종속관계라서 mappedBy 설정
