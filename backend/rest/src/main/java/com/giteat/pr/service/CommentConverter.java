@@ -32,8 +32,11 @@ public class CommentConverter {
         // new_or_old 값에 따라 라인 설정
         if(request.getNewOrOld()==1){
             position.put("old_line", request.getOldStartLine()); // Old 코드
-        } else {
+        } else if(request.getNewOrOld()==2) {
             position.put("new_line", request.getNewStartLine()); // New 코드
+        } else if(request.getNewOrOld() == 3){ // 변경사항 없는 코드
+            position.put("old_line", request.getOldStartLine());
+            position.put("new_line", request.getNewStartLine());
         }
 
         Map<String, Map<String, Object>> lineRange = new HashMap<>();
