@@ -36,7 +36,7 @@ function subscribeTokenRefresh(cb: (token: string) => void): void {
 
 // 실제 refresh token API 호출 (API 스펙에 맞게 엔드포인트 및 요청 데이터를 수정)
 function refreshToken(): Promise<AxiosResponse> {
-  return axios.get(`${API_BASE}/api/oauth/gitlab/refresh`, {
+  return axios.get(`${API_BASE}/oauth/gitlab/refresh`, {
     withCredentials: true,
   });
 }
