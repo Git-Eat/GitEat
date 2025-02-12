@@ -1,5 +1,6 @@
 package com.giteat.statistics.service;
 
+import com.giteat.api.LabApi;
 import com.giteat.statistics.dto.*;
 import com.giteat.statistics.mapper.StatisticsRepoMapper;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import java.util.Map;
 public class StatisticsRepoServiceImpl implements StatisticsRepoService{
 
     private final StatisticsRepoMapper statisticsRepoMapper;
+    private final LabApi labApi;
 
     @Override
     public int getTotalCommit(String repoId) {
@@ -123,5 +125,11 @@ public class StatisticsRepoServiceImpl implements StatisticsRepoService{
             contributors.add(user);
         }
         return contributors;
+    }
+
+    @Override
+    public Map<String, Object> getLanguages(String repoId, String accessToken) {
+        Map<String, Object> languages = labApi.getLanguages(repoId, accessToken);
+        return languages;
     }
 }
