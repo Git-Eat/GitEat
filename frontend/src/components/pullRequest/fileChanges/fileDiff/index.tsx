@@ -7,6 +7,7 @@ import { ChangedFile } from "../../../../api/types/ChangedFile";
 import { useGetRawFile } from "../../../../api/queries/useGetRawFile";
 import { useEffect } from "react";
 import { useBooleanState } from "../../../../hooks/useBooleanState";
+import { usePRStore } from "../../../../store/pullRequestStore";
 
 interface FileProps {
   repoId: number;
@@ -15,6 +16,8 @@ interface FileProps {
 }
 export function FileDiff({ repoId, prId, file }: FileProps) {
   const { mutate: getFile, data: rawFile } = useGetRawFile(repoId, prId, file);
+  const { comments } = usePRStore();
+  console.log(comments);
   const [isExpand, , , setReverse] = useBooleanState(false);
   useEffect(() => {
     if (isExpand) {
@@ -43,7 +46,7 @@ export function FileDiff({ repoId, prId, file }: FileProps) {
               <DiffViewer
                 oldCode={rawFile.oldCode !== null ? rawFile.oldCode : ""}
                 newCode={rawFile.newCode !== null ? rawFile.newCode : ""}
-                comments={rawFile.comments}
+                comments={comments.filter((comment) => comment.position)}
                 file={file}
               />
             </ErrorBoundary>

@@ -4,44 +4,8 @@ import "@git-diff-view/react/styles/diff-view.css";
 import { useMemo } from "react";
 import { FileMarkDownEditor } from "../fileMarkDownEditor";
 import { CommentThread } from "../commentThread";
-import { Reply } from "../../../../api/types/Reply";
 import { ChangedFile } from "../../../../api/types/ChangedFile";
-
-type Comment = {
-  commentId: number;
-  prId: number;
-  repoId: number;
-  userId: number;
-  userName: string;
-  avatarUrl: string;
-  disId: string;
-  content: string;
-  commentType: number;
-  createAt: string;
-  position: {
-    baseSha: null | string;
-    startSha: null | string;
-    headSha: null | string;
-    oldPath: string;
-    newPath: string;
-    positionType: string;
-    newLine: number;
-    oldLine: number;
-    newStartLine: number;
-    newEndLine: number;
-    oldStartLine: number;
-    oldEndLine: number;
-    lineRange: {
-      start: {
-        lineCode: string;
-      };
-      end: {
-        lineCode: string;
-      };
-    };
-  } | null;
-  reCommentList: Reply[];
-};
+import { Comment } from "../../../../api/types/Comment";
 
 interface DiffViewerProps {
   oldCode: string;
@@ -113,7 +77,10 @@ export function DiffViewer({
       newFile: {},
     };
     comments.forEach((comment) => {
-      if (comment.position?.newLine !== undefined) {
+      if (
+        comment.position?.newLine !== undefined &&
+        comment.position.newLine !== null
+      ) {
         const currentComments =
           extendData.newFile[comment.position.newLine]?.data ?? [];
         extendData.newFile = {
@@ -122,7 +89,10 @@ export function DiffViewer({
             data: [...currentComments, comment],
           },
         };
-      } else if (comment.position?.oldLine !== undefined) {
+      } else if (
+        comment.position?.oldLine !== undefined &&
+        comment.position.oldLine !== null
+      ) {
         const currentComments =
           extendData.oldFile[comment.position.oldLine]?.data ?? [];
         extendData.oldFile = {

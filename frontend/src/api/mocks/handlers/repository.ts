@@ -1,4 +1,5 @@
 import { http, HttpResponse } from "msw";
+import { Pullrequests } from "../dummies/repository";
 const MOCK_RESPONSE = {
   repoId: 3,
   userId: 1,
@@ -23,6 +24,9 @@ const repositoryHandler = [
         access: 1,
       },
     ]);
+  }),
+  http.get(`${API_BASE}/pr/:repoId`, () => {
+    return HttpResponse.json(Pullrequests);
   }),
   http.post(`${API_BASE}/repo`, async () => {
     // 3초(3000ms) 지연

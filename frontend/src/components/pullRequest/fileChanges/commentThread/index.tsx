@@ -1,52 +1,18 @@
 import { useState } from "react";
-// import { FileMarkDownEditor } from "../fileMarkDownEditor";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { getParsedDate } from "../../../../utils/getParsedDate";
-import { Reply } from "../../../../api/types/Reply";
+
 import { Replies } from "../../conversation/replies";
 import defaultprofile from "../../../../assets/images/user_profile.svg";
-type Comment = {
-  commentId: number;
-  prId: number;
-  repoId: number;
-  userId: number;
-  userName: string;
-  avatarUrl: string;
-  disId: string;
-  content: string;
-  commentType: number;
-  createAt: string;
-  position: {
-    baseSha: null | string;
-    startSha: null | string;
-    headSha: null | string;
-    oldPath: string;
-    newPath: string;
-    positionType: string;
-    newLine: number;
-    oldLine: number;
-    newStartLine: number;
-    newEndLine: number;
-    oldStartLine: number;
-    oldEndLine: number;
-    lineRange: {
-      start: {
-        lineCode: string;
-      };
-      end: {
-        lineCode: string;
-      };
-    };
-  } | null;
-  reCommentList: Reply[];
-};
+import { MarkdownEditor } from "../../../common/markdownEditor";
+import { Comment } from "../../../../api/types/Comment";
 interface CommentThreadProps {
   comment: Comment;
 }
 
 export function CommentThread({ comment }: CommentThreadProps) {
-  console.log(comment.reCommentList);
+  console.log(comment);
   const [isReplyEditorOpen, setIsReplyEditorOpen] = useState<
     Record<number, boolean>
   >({});
@@ -95,16 +61,14 @@ export function CommentThread({ comment }: CommentThreadProps) {
           {isReplyEditorOpen[comment.commentId] ? "답글 접기" : "답글 추가"}
         </button>
       </footer>
-      {/* {isReplyEditorOpen[comment.commentId] && (
-        <FileMarkDownEditor
-          onClose={() => toggleReplyEditor(comment.commentId)}
-          newStartLine={comment.position?.newLine || 0}
-          oldStartLine={comment.position?.newLine || 0}
-          newEndLine={comment.position?.newLine || 0}
-          oldEndLine={comment.position?.newLine || 0}
-          fil
+      {isReplyEditorOpen[comment.commentId] && (
+        <MarkdownEditor
+          onAddSingleComment={() => {}}
+          onStartReview={() => {}}
+          onUpdateComment={() => {}}
+          repoId={comment.repoId}
         />
-      )} */}
+      )}
     </div>
   );
 }
