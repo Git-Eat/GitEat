@@ -4,8 +4,8 @@ import { useGetPrStatistics } from "../../../api/queries/useGetPrStatistics";
 import { useParams } from "react-router-dom";
 
 export function BarChartExample() {
-  const { baseRepoId } = useParams();
-  const { data: statistic } = useGetPrStatistics(baseRepoId as string);
+  const { repoId } = useParams();
+  const { data: statistic } = useGetPrStatistics(repoId as string);
 
   const prCount = useMemo(() => {
     if (!statistic) return []; // null 대신 빈 배열 반환

@@ -3,8 +3,8 @@ import { useGetTotalCommit } from "../../../api/queries/useGetTotalCommits";
 import { useMemo } from "react";
 
 export function TotalCommits() {
-  const { baseRepoId } = useParams();
-  const { data } = useGetTotalCommit(baseRepoId as string);
+  const { repoId } = useParams();
+  const { data } = useGetTotalCommit(repoId as string);
   const totalCommit = useMemo(() => {
     return data.total_commit.toLocaleString();
   }, [data.totalCommits]);
