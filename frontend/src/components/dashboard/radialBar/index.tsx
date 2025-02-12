@@ -10,9 +10,7 @@ export function RadialBar({ series, labels }: RadialBarProps) {
   const gradientColors = {
     red: { start: "#FE3333", end: "#FEC2C1" },
     yellow: { start: "#FEAA33", end: "#FFE5C1" },
-    // yellow: { start: "#FFE5C1", end: "#FEAA33" },
     green: { start: "#00CC66", end: "#C1F9E0" },
-    // green: { start: "#C1F9E0", end: "#00CC66" },
   };
 
   const selectedColor =

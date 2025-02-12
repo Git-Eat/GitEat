@@ -12,6 +12,7 @@ import { QueryClientProvider, QueryClient } from "react-query";
 import { FileChanges } from "./components/pullRequest/fileChanges";
 import { PullRequestList } from "./pages/pullRequestList";
 import { useLoginStore } from "./store/loginStore";
+import { FrontendStatistics } from "./pages/frontendStatistics";
 
 function App() {
   const queryClient = new QueryClient();
@@ -37,6 +38,7 @@ function App() {
               <Route path="/repos" element={<RepositoryList />} />
               <Route path="/pulls" element={<RepositoryList />} />
               <Route path="/dashboard" element={<DashBoard />} />
+              <Route path="/statistics" element={<FrontendStatistics />} />
               <Route path="/repos/:repoId" element={<PullRequestList />} />
               <Route path="/repos/:baseRepoId/:prId" element={<PullRequest />}>
                 <Route path="conversation" element={<Conversation />} />
