@@ -36,8 +36,8 @@ function getMaxValues(data: ContributorsType | null) {
   return Math.max(maxCommit, maxComment, maxMergeRequest);
 }
 function Contributors() {
-  const { baseRepoId } = useParams();
-  const { data } = useGetContributors(baseRepoId as string);
+  const { repoId } = useParams();
+  const { data } = useGetContributors(repoId as string);
   const maxValue = useMemo(() => getMaxValues(data ? data : null), [data]);
   return (
     <>
