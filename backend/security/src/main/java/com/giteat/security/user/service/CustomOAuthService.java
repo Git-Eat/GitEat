@@ -107,9 +107,12 @@ public class CustomOAuthService {
     }
 
 
-    public void createNewTokens(HttpServletRequest req, HttpServletResponse res) {
+    public int createNewTokens(HttpServletRequest req, HttpServletResponse res) {
 
         String refreshToken = oauthInterceptorService.getRefreshTokenFromCookie(req);
+        if(refreshToken == null) {
+            return 0;
+        }
         OAuthTokenDto oAuthTokenDto = oauthInterceptorService.getNewToken(refreshToken);
         String authenticationId = oauthInterceptorService.getUserIdFromUserInfo(oAuthTokenDto.getAccessToken());
         oauthInterceptorService.saveNewToken(authenticationId, oAuthTokenDto);
@@ -125,7 +128,7 @@ public class CustomOAuthService {
         res.addCookie(cookie);
         // accessToken을 HTTP 응답 헤더에 추가
         res.setHeader("Authorization", "Bearer " + oAuthTokenDto.getAccessToken());
-
+        return 1;
     }
 }
 

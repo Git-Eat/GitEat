@@ -30,9 +30,10 @@ public class OauthInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String requestURI = request.getRequestURI();
         log.info("REQUEST URI : " + requestURI);
-        if (requestURI.startsWith("/api/oauth/gitlab/login") || requestURI.startsWith("/api/oauth/gitlab/oauth/refresh")) {
+        if (requestURI.startsWith("/api/oauth/gitlab/login") || requestURI.startsWith("/api/oauth/gitlab/login/refresh")) {
             return true;
         }
+
         // 1. 쿠키에서 accessToken으로 사용자 정보를 가져온다.
         String accessToken = request.getHeader("Authorization");
         if (accessToken == null || !accessToken.startsWith("Bearer ")) {

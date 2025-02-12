@@ -57,10 +57,15 @@ public class OAuthController {
      * @return
      */
     @GetMapping("/gitlab/refresh")
-    @Operation(summary = "access 재발급", description = "refresh토큰으로 access토큰을 재발급 받을때 사용")
+    @Operation(summary = "토큰 재발급", description = "refresh토큰으로 모든 토큰 재발급")
     public ResponseEntity<?> gitlabRefresh(HttpServletRequest request , HttpServletResponse response) {
-        oauthService.createNewTokens(request, response);
-        return ResponseEntity.ok("success");
+        log.info("refresh 재발급 도착");
+        int tokenResult = oauthService.createNewTokens(request, response);
+        if(tokenResult==0){
+            return ResponseEntity.ok("fail");
+        }else{
+            return ResponseEntity.ok("success");
+        }
     }
 
 
