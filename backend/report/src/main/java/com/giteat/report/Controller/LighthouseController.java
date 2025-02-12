@@ -59,8 +59,9 @@ public class LighthouseController {
     })
     @PostMapping("/lighthouse-pipeline")
     public ResponseEntity<String> handleReactRequest(@RequestBody Map<String, String> request,
-                                                     @RequestHeader("accessToken") String accessToken) {
+                                                     @RequestHeader(value="Authorization") String header) {
         try {
+
             // 필수 값 검증
             if (!request.containsKey("gitUrl") || !request.containsKey("branch") ||
                     !request.containsKey("repoId") || !request.containsKey("build") ||
@@ -70,12 +71,13 @@ public class LighthouseController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("❌ Missing required parameters: gitUrl, accessToken, branch, repoId, build");
             }
-
             String gitUrl = request.get("gitUrl");
             String frontendPath = URLEncoder.encode(request.get("frontendPath"), StandardCharsets.UTF_8.toString());
             String branch = request.get("branch");
             String repoId = request.get("repoId");
             String build = request.get("build"); // npm or yarn
+
+            String accessToken = header.split(" ")[1];
 
             log.info("▶ Lighthouse 테스트 요청 정보: gitUrl={}, frontendPath={}, accessToken={}, branch={}, repoId={}, build={}, jenkinsApiUrl={}",
                     gitUrl, frontendPath, accessToken, branch, repoId, build, jenkinsApiUrl);
