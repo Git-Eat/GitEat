@@ -12,8 +12,6 @@ import { QueryClientProvider, QueryClient } from "react-query";
 import { FileChanges } from "./components/pullRequest/fileChanges";
 import { PullRequestList } from "./pages/pullRequestList";
 import { useLoginStore } from "./store/loginStore";
-import { FrontendStatistics } from "./pages/frontendStatistics";
-
 function App() {
   const queryClient = new QueryClient();
   const { isLogin, setLogin, setLogout } = useLoginStore();
