@@ -26,17 +26,20 @@ export function FileDiff({ repoId, prId, file }: FileProps) {
   }, [isExpand]);
   return (
     <Accordion
+      id={file.fileId}
       key={file.fileId}
       expanded={isExpand}
+      className="w-full"
       onChange={() => setReverse()}
     >
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center w-full">
         <AccordionSummary
           expandIcon={<ArrowDropDownIcon />}
           aria-controls="panel1-content"
           id="panel1-header"
+          className="w-full"
         >
-          <h2 className="text-lg font-bold">{file.newPath}</h2>
+          <h2 className="text-lg font-bold truncate ">{file.newPath}</h2>
         </AccordionSummary>
       </div>
       <div className="flex mt-4">
