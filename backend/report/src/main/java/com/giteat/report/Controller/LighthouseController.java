@@ -46,6 +46,13 @@ public class LighthouseController {
         this.jenkinsApiToken = jenkinsApiToken;
         this.jenkinsUser = jenkinsUser;
         this.jenkinsApiUrl = jenkinsUrl + "/job/" + jenkinsJobName + "/buildWithParameters?token=report-trigger";
+
+
+        log.info("🌟 [환경변수 확인] Jenkins URL: {}", jenkinsUrl);
+        log.info("🌟 [환경변수 확인] Jenkins API Token: {}", jenkinsApiToken);
+        log.info("🌟 [환경변수 확인] Jenkins User: {}", jenkinsUser);
+        log.info("🌟 [환경변수 확인] Jenkins Job Name: {}", System.getenv("jenkins.job.name"));
+        log.info("🌟 [환경변수 확인] Jenkins API URL: {}", jenkinsApiUrl);
     }
 
     /**
