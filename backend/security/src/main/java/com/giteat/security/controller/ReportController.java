@@ -23,7 +23,8 @@ public class ReportController {
     @Operation(summary = "Lighthouse 요청", description = "Lighthouse 요청")
     public ResponseEntity<?> LighthouseSend(
             @RequestBody LighthouseDto lighthouseDto) {
-        ResponseEntity<?> response = apiUtl.postReportApi("/report/lighthouse-pipeline" , lighthouseDto);
+        log.info("🔹 POST /api/report/lighthouse-pipeline 요청 받음! lighthouseDto: {}", lighthouseDto);
+        ResponseEntity<?> response = apiUtl.postReportApi("/lighthouse-pipeline" , lighthouseDto);
 
         return ResponseEntity.ok(response.getBody());
     }
