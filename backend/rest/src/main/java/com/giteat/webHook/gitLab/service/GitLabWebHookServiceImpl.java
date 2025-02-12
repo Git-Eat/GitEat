@@ -65,7 +65,8 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         String iid = String.valueOf(mergeRequestMap.get("iid"));
 
 
-        Map<String, Object> diffMap = gitLabApi.getDiffRefs(projectId, prId, userId);
+        String accessToken = gitLabTokenMapper.getAccessTokenById(Integer.parseInt(userId));
+        Map<String, Object> diffMap = gitLabApi.getDiffRefs(projectId, prId,accessToken);
         Map<String, Object> diffRefsMap = (Map<String, Object>) diffMap.get("diff_refs");
 
         String baseSha = String.valueOf(diffRefsMap.get("base_sha"));
@@ -99,7 +100,6 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
 
             // id값으로 accessToken 가져오는 로직이 필요하다.
             // userId 를 사용해서 사용
-            String accessToken = gitLabTokenMapper.getAccessTokenById(Integer.parseInt(userId));
 
             for (int prPageNation = 1; prPageNation <= 20; prPageNation++) {
                 List<Map<String, Object>> fileChangeList = gitLabApi.getFilesByPr(projectId, Integer.parseInt(iid), prPageNation, accessToken);

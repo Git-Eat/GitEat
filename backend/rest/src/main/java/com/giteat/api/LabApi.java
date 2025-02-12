@@ -220,10 +220,10 @@ public class LabApi {
         return callGetApiList(url , accessToken);
     }
 
-    public Map<String , Object> getDiffRefs(String projectId , String iid , String id){
-        String accessToken = "glpat-4y8h33DZ2EvCjxfNk65Y";
+    public Map<String , Object> getDiffRefs(String projectId , String iid ,String accessToken){
+
 //        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + iid + "/diff";
-        String url = "http://192.168.31.42:81/api/v4" + "/projects/" + projectId + "/merge_requests/" + iid;
+        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + iid;
         //http://192.168.31.237/api/v4/projects/1/merge_requests/1
         return this.callGetApiMap(url , accessToken);
     }
@@ -263,6 +263,17 @@ public class LabApi {
         return response.getBody();
     }
 
+
+    public boolean createWebHook(String projectId , String webHookType , String accessToken){
+        try{
+
+
+            return true;
+        }catch(Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     /**
      * Map Type으로 get
