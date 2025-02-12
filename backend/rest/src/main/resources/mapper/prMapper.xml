@@ -236,4 +236,15 @@
         ORDER BY userId;
     </select>
 
+
+    <!-- SHA 값 업데이트 -->
+    <update id="updateShaInfo" parameterType="map">
+        UPDATE pr
+        SET
+        start_sha = #{startSha},
+        head_sha = #{headSha},
+        base_sha = #{baseSha}
+        WHERE repo_id = #{repoId} AND pr_id = #{prId};
+    </update>
+
 </mapper>
