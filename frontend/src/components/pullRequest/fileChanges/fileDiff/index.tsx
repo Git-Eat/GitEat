@@ -44,6 +44,7 @@ export function FileDiff({ repoId, prId, file }: FileProps) {
                 oldCode={rawFile.oldCode !== null ? rawFile.oldCode : ""}
                 newCode={rawFile.newCode !== null ? rawFile.newCode : ""}
                 comments={rawFile.comments}
+                file={file}
               />
             </ErrorBoundary>
           </AccordionDetails>

@@ -23,9 +23,8 @@ public class RepositoryController {
 
     @GetMapping("")
     @Operation(summary = "Repo 목록 조회", description = "외부 API를 호출하여 Repo 목록을 가져옵니다.")
-    public ResponseEntity<?> getRepoList(@RequestHeader(value = "Authorization") String header) {
-        String accessToken = header.split(" ")[1];
-        ResponseEntity<?> response = apiUtil.getApi("/repo" , accessToken);
+    public ResponseEntity<?> getRepoList() {
+        ResponseEntity<?> response = apiUtil.getApi("/repo");
 
         return ResponseEntity.ok(response.getBody());
     }
@@ -44,31 +43,28 @@ public class RepositoryController {
 
     @DeleteMapping("/{repoId}")
     @Operation(summary = "Repo 삭제", description = "외부 API를 호출하여 Repo를 삭제합니다.")
-    public ResponseEntity<?> deleteRepo(@RequestHeader(value = "Authorization") String header , @PathVariable int repoId) {
+    public ResponseEntity<?> deleteRepo(@PathVariable int repoId) {
         log.info("call deleteRepo Method");
-        String accessToken = header.split(" ")[1];
-        ResponseEntity<?> response = apiUtil.deleteApi("/repo/" + repoId , String.valueOf(repoId) , accessToken);
+        ResponseEntity<?> response = apiUtil.deleteApi("/repo/" + repoId, String.valueOf(repoId));
         return ResponseEntity.ok(response.getBody());
     }
 
     @GetMapping("/{repoId}")
     @Operation(summary = "Repo 상세 조회", description = "외부 API를 호출하여 Repo 상세정보를 가져옵니다.")
-    public ResponseEntity<?> findRepoById(@RequestHeader(value = "Authorization") String header , @PathVariable int repoId) {
+    public ResponseEntity<?> findRepoById(@PathVariable int repoId) {
         log.info("call findRepoById Method");
-        String accessToken = header.split(" ")[1];
-        ResponseEntity<?> response = apiUtil.getApi("/repo" , accessToken);
+
+        ResponseEntity<?> response = apiUtil.getApi("/repo");
 
         return ResponseEntity.ok(response.getBody());
     }
 
     @PostMapping("")
     @Operation(summary = "Repo 등록", description = "외부 API를 호출하여 Repo를 등록합니다.")
-    public ResponseEntity<?> saveRepositoryData(@RequestBody Map<String, String> repoBody,
-                                                @RequestHeader(value = "Authorization") String header) {
+    public ResponseEntity<?> saveRepositoryData(@RequestBody Map<String, String> repoBody
+    ) {
         log.info("call insertRepo Method");
-        String accessToken = header.split(" ")[1];
-        ResponseEntity<?> response = apiUtil.postApi("/repo",repoBody, accessToken);
-        System.out.println("@@@@@@@@@ DATA  :" + response.getBody());
+        ResponseEntity<?> response = apiUtil.postApi("/repo", repoBody);
         return ResponseEntity.ok(response.getBody());
     }
 

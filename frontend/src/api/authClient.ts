@@ -9,21 +9,27 @@ const authClient = axios.create({
 });
 
 authClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("access_token");
+  config.withCredentials = true;
   if (token) {
-    config.headers["Authorization"] = `Bearer ${token}`;
+    config.headers["authorization"] = `${token}`;
   }
   return config;
 });
 
 authClient.interceptors.response.use(
   (response) => {
+    console.log(response.headers["authorization"]);
+    if (response.headers["authorization"]) {
+      localStorage.setItem("access_token", response.headers["authorization"]);
+    }
     return response;
   },
   (error) => {
     if (error.response.status === 401) {
-      localStorage.removeItem("token");
-      window.location.replace("/login");
+      localStorage.removeItem("access_token");
+      alert("기간만료!");
+      // window.location.replace("/");
     }
     return Promise.reject(error);
   }

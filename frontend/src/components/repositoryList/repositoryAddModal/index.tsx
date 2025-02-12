@@ -57,7 +57,7 @@ function RepositoryAddModal({
 
   const handleSave = () => {
     if (repoId.current) {
-      addRepository(repoId.current.valueAsNumber);
+      addRepository(Number(repoId.current.value));
     }
   };
 
