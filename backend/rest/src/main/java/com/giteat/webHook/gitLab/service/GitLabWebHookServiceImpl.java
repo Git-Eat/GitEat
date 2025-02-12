@@ -6,6 +6,7 @@ import com.giteat.common.gitLab.mapper.GitLabTokenMapper;
 import com.giteat.common.util.SHA1Util;
 import com.giteat.repo.entity.*;
 import com.giteat.repo.repository.*;
+import com.giteat.webHook.gitLab.mapper.GitLabWebHookMapper;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,9 +27,9 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
     private final CommitRepository commitRepository;
     private final FileChangeRepository fileChangeRepository;
     private final CommentRepository commentRepository;
-    private final ReplyRepository   replyRepository;
+    private final ReplyRepository replyRepository;
     private final LabApi labApi;
-
+    private final GitLabWebHookMapper gitLabWebHookMapper;
     /**
      * pr 에 대한 event 처리하는 함수
      *
@@ -142,70 +143,26 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
     }
 
 
-    @Override
-    public void noteEvent(Map<String, Object> body) {
-
-    }
-
     /**
      * 댓글에 대한 event 처리 함수
      *
      * @param body
      */
-//    @Override
-//    @Transactional
-//    public void noteEvent(Map<String, Object> body) {
-//
-//        Map<String, Object> projectMap = (Map<String, Object>) body.get("project");
-//        Map<String, Object> userMap = (Map<String, Object>) body.get("user");
-//        Map<String, Object> mergeRequestMap = (Map<String, Object>) body.get("object");
-//        Map<String, Object> objectMap = (Map<String, Object>) body.get("object_attributes");
-//
-//        Integer parentId = (Integer) objectMap.get("parent_id");
-//
-//        if (parentId == null) { //부모글이 없으면 일반 댓글
-//            GitLabCommentEntity commentEntity = new GitLabCommentEntity();
-//            commentEntity.setCommentId((int) objectMap.get("id"));
-//            commentEntity.setPrId((int) mergeRequestMap.get("id"));
-//            commentEntity.setRepoId((int) projectMap.get("id"));
-//            commentEntity.setContent((String) objectMap.get("note"));
-//            commentEntity.setCommentType(0);
-//            commentEntity.setUserId((int) userMap.get("id"));
-//            commentEntity.setDisId((String) objectMap.get("discussion_id"));
-//            commentEntity.setCreateAt((String) objectMap.get("created_at"));
-//
-//            String imageName = null;
-//            if (objectMap.containsKey("attachement")) {
-//                Map<String, Object> attachment = (Map<String, Object>) objectMap.get("attachment");
-//                imageName = (String) attachment.get("image_name");
-//                //String imageUrl = (String) attachement.get("url");
-//            }
-//            commentEntity.setImageName(imageName);
-//            gitLabCommentRepository.save(commentEntity);
-//
-//        } else {  //대댓글
-//            GitLabReplyEntity replyEntity = new GitLabReplyEntity();
-//            replyEntity.setCommentId((int) objectMap.get("id"));
-//            replyEntity.setRepoId((int) projectMap.get("id"));
-//            replyEntity.setPrId((int) mergeRequestMap.get("id"));
-//            replyEntity.setCommentId((int) objectMap.get("parent_id"));
-//            replyEntity.setUserId((int) userMap.get("id"));
-//            replyEntity.setDisId((String) objectMap.get("discussion_id"));
-//            replyEntity.setContent((String) objectMap.get("note"));
-//            replyEntity.setReplyType(0);
-//            replyEntity.setCreateAt((Date) objectMap.get("created_at"));
-//
-//
-//            String imageName = null;
-//            if (objectMap.containsKey("attachement")) {
-//                Map<String, Object> attachment = (Map<String, Object>) objectMap.get("attachment");
-//                imageName = (String) attachment.get("image_name");
-//                //String imageUrl = (String) attachement.get("url");
-//            }
-//
-//            gitLabReplyRepository.save(replyEntity);
-//        }
-//
-//    }
-}
+    @Transactional
+    @Override
+    public void noteEvent(Map<String, Object> body) {
+        Map<String, Object> projectMap = (Map<String, Object>) body.get("project");
+        Map<String, Object> userMap = (Map<String, Object>) body.get("user");
+        Map<String, Object> commentMap = (Map<String, Object>) body.get("object_attributes");
+        Map<String, Object> mergeRequestMap = (Map<String, Object>) body.get("merge_request");
 
+        //db에 값이 있는지 확인한다.
+        int commentId = (int) commentMap.get("id");
+        int commentCnt = gitLabWebHookMapper.getCommitCnt(commentId);
+        if(commentCnt==0){  // 0일경우 댓글임
+
+        }else{              // 대댓글임
+
+        }
+    }
+}
