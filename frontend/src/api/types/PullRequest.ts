@@ -1,13 +1,13 @@
 export type PullRequest = {
-  baseSha: null | string;
+  baseSha: string;
   createAt: string;
-  description: null | string;
-  headSha: null | string;
+  description: string;
+  headSha: string;
   isOpened: 0 | 1 | 2 | 3;
   prId: number;
   repoId: number;
   sourceBranch: string;
-  startSha: null | string;
+  startSha: string;
   targetBranch: string;
   title: string;
   userId: number;

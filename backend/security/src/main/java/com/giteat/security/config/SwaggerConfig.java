@@ -45,4 +45,22 @@ public class SwaggerConfig {
                 .pathsToMatch("/oauth/**") // 엔드포인트 설정
                 .build();
     }
+
+    @Bean
+    public GroupedOpenApi NotiOpenApi() {
+        return GroupedOpenApi
+                .builder()
+                .group("noti") // 우측 상단 그룹화
+                .pathsToMatch("/noti/**") // 엔드포인트 설정
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi RepoStatisticsOpenApi() {
+        return GroupedOpenApi
+                .builder()
+                .group("repoStatistics") // 우측 상단 그룹화
+                .pathsToMatch("/statistics/repo/**") // 엔드포인트 설정
+                .build();
+    }
 }

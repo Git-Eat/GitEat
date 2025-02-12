@@ -1,6 +1,7 @@
 package com.giteat.security.user.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.giteat.security.user.dto.OAuthTokenDto;
@@ -156,7 +157,62 @@ public class OAuthApi {
         } catch(Exception e) {
             return new HashMap<>();
         }
+
+
+
     }
 
-}
+    /**
+     *
+     * @param refreshToken
+     * @return
+     */
+    public Map<String, String> getNewToken(String refreshToken) {
+        System.out.println("들어온 값 : " + refreshToken);
+        try {
+            // OAuth 토큰 갱신을 위한 파라미터 설정
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+            params.add("client_id", clientId);
+            params.add("client_secret", clientSecret);
+            params.add("refresh_token", refreshToken);
+            params.add("grant_type", "refresh_token");
+            params.add("redirect_uri", redirectUri);
 
+            // 헤더 설정
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Type", "application/x-www-form-urlencoded");
+
+            // 토큰 갱신
+            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+            ResponseEntity<String> response = restTemplate.exchange(
+                    tokenUri,
+                    HttpMethod.POST,
+                    request,
+                    String.class);
+
+            // JSON 파싱 및 토큰 갱신에 대한 응답
+            System.out.println("refresh로 재발급 받은 데이터 : " + response.getBody());
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonNode = mapper.readTree(response.getBody());
+
+            // 새로운 토큰 반환
+            Map<String, String> map = new HashMap<>();
+            map.put("access_token", jsonNode.get("access_token").asText());
+            map.put("token_type", jsonNode.get("token_type").asText());
+            map.put("expires_in", jsonNode.get("expires_in").asText());
+            map.put("refresh_token", jsonNode.get("refresh_token").asText());
+            map.put("created_at", jsonNode.get("created_at").asText());
+
+            return map;
+
+        } catch (HttpClientErrorException e) {
+            e.printStackTrace();
+            return null;
+
+        } catch (JsonMappingException e) {
+            throw new RuntimeException(e);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}

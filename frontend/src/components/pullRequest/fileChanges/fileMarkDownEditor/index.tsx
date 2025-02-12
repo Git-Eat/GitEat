@@ -2,27 +2,39 @@ import React, { useState } from "react";
 import MDEditor from "@uiw/react-md-editor";
 import { useFileUpload } from "../../../../hooks/useFileUpload"; // 경로는 실제 위치에 맞게 조정
 import { useParams } from "react-router-dom";
+import { ChangedFile } from "../../../../api/types/ChangedFile";
+import { useCreateFileComment } from "../../../../api/queries/useCreateFileComment";
+import { usePRStore } from "../../../../store/pullRequestStore";
 
 interface FileMarkdownEditorProps {
-  addReview: (value: string) => void;
-  submitComment: (value: string) => void;
   onClose: () => void;
-  startLine: number | undefined | null;
-  endLine: number | undefined | null;
+  newStartLine: number | null;
+  newEndLine: number | null;
+  oldStartLine: number | null;
+  oldEndLine: number | null;
+  file: ChangedFile;
+  lineType: number;
 }
 
 export function FileMarkDownEditor({
-  submitComment,
-  addReview,
   onClose,
-  startLine,
-  endLine,
+  newStartLine,
+  newEndLine,
+  oldEndLine,
+  oldStartLine,
+  file,
+  lineType,
 }: FileMarkdownEditorProps) {
   const [category, setCategory] = useState<"comment" | "suggest" | "review">(
     "comment"
   );
   const [comment, setComment] = useState("");
-  const { baseRepoId } = useParams();
+  const { baseRepoId, prId } = useParams();
+  const { prDetail } = usePRStore();
+  const { mutate: addComment } = useCreateFileComment(
+    Number(baseRepoId),
+    Number(prId)
+  );
   const { handleFileDrop, handleDragOver } = useFileUpload(
     Number(baseRepoId),
     setComment
@@ -34,12 +46,42 @@ export function FileMarkDownEditor({
 
   const handleSubmitComment = () => {
     if (!comment.trim()) return alert("내용을 입력해주세요");
-    submitComment(comment);
+    const commentData = {
+      fileId: file.fileId,
+      baseSha: prDetail.baseSha,
+      startSha: prDetail.startSha,
+      headSha: prDetail.headSha,
+      oldPath: file.oldPath,
+      newPath: file.newPath,
+      oldEndLine: oldEndLine,
+      newEndLine: newEndLine,
+      oldStartLine: oldStartLine,
+      newStartLine: newStartLine,
+      newOrOld: lineType === 1 ? 2 : 1,
+      positionType: "text",
+      body: comment,
+    };
+    addComment(commentData);
   };
 
   const handleAddReview = () => {
     if (!comment.trim()) return alert("내용을 입력해주세요");
-    addReview(comment);
+    const commentData = {
+      fileId: file.fileId,
+      baseSha: prDetail.baseSha,
+      startSha: prDetail.startSha,
+      headSha: prDetail.headSha,
+      oldPath: file.oldPath,
+      newPath: file.newPath,
+      oldEndLine: oldEndLine,
+      newEndLine: newEndLine,
+      oldStartLine: oldStartLine,
+      newStartLine: newStartLine,
+      newOrOld: lineType === 1 ? 2 : 1,
+      positionType: "text",
+      body: comment,
+    };
+    addComment(commentData);
   };
 
   return (
@@ -59,7 +101,7 @@ export function FileMarkDownEditor({
           <option value="review">review</option>
         </select>
         <span>
-          <span>from</span> {startLine} <span>to</span> {endLine}
+          <span>from</span> {newStartLine} <span>to</span> {newEndLine}
         </span>
       </div>
 

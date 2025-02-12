@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { FileMarkDownEditor } from "../fileMarkDownEditor";
 import { CommentThread } from "../commentThread";
 import { Reply } from "../../../../api/types/Reply";
+import { ChangedFile } from "../../../../api/types/ChangedFile";
 
 type Comment = {
   commentId: number;
@@ -46,9 +47,15 @@ interface DiffViewerProps {
   oldCode: string;
   newCode: string;
   comments: Comment[];
+  file: ChangedFile;
 }
 
-export function DiffViewer({ oldCode, newCode, comments }: DiffViewerProps) {
+export function DiffViewer({
+  oldCode,
+  newCode,
+  comments,
+  file,
+}: DiffViewerProps) {
   console.log("oldCode: " + oldCode);
   console.log("newCode: " + newCode);
   const getDiffFile = () => {
@@ -92,7 +99,7 @@ export function DiffViewer({ oldCode, newCode, comments }: DiffViewerProps) {
       const oldline =
         diffFile.getBundle().splitRightLines[idx].diff?.oldLineNumber;
       const linetype = diffFile.getBundle().splitRightLines[idx].diff?.type;
-      console.log(oldline, newline, linetype);
+
       return { oldline, newline, linetype };
     }
   };
@@ -139,9 +146,7 @@ export function DiffViewer({ oldCode, newCode, comments }: DiffViewerProps) {
         extendData={parseComments(comments)}
         diffViewAddWidget
         renderExtendLine={({ data }) => {
-          if (!data) {
-            return null;
-          }
+          console.log(data);
           return (
             <div className="border p-2" onClick={() => console.log(data)}>
               {data.map((comment: Comment) => (
@@ -160,11 +165,13 @@ export function DiffViewer({ oldCode, newCode, comments }: DiffViewerProps) {
           );
           return (
             <FileMarkDownEditor
-              startLine={linetype === 2 ? oldline : newline}
-              endLine={linetype === 2 ? oldline : newline}
-              submitComment={() => {}}
-              addReview={() => {}}
+              newStartLine={newline === undefined ? null : newline}
+              newEndLine={newline === undefined ? null : newline}
+              oldStartLine={oldline === undefined ? null : oldline}
+              oldEndLine={oldline === undefined ? null : oldline}
               onClose={onClose}
+              lineType={linetype === undefined ? 0 : linetype}
+              file={file}
             />
           );
         }}

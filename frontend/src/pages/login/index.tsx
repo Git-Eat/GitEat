@@ -2,6 +2,9 @@ import logo from "../../assets/images/logo.svg";
 import githubLogo from "../../assets/images/github_logo.svg";
 import gitlabLogo from "../../assets/images/gitlab_logo.svg";
 import side from "../../assets/images/main_side.png";
+// import { useGetMe } from "../../api/queries/useGetMe";
+// import { useNavigate } from "react-router-dom";
+// import { useEffect } from "react";
 
 export function Login() {
   const gitLabLogin = () => {
@@ -10,7 +13,14 @@ export function Login() {
     const gitLabAuthUrl = `https://lab.ssafy.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
     window.location.href = gitLabAuthUrl;
   };
-
+  // const { data, isLoading } = useGetMe();
+  // const navigation = useNavigate();
+  // useEffect(() => {
+  //   if (!isLoading && data) {
+  //     navigation("/repos");
+  //   }
+  // }, [data, isLoading]);
+  // if (isLoading) return <>loading</>;
   return (
     <div className="w-[75%] mx-auto flex items-center justify-center h-screen justify-between">
       <section>

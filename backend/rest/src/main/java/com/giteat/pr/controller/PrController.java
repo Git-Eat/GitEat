@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -221,11 +222,15 @@ public class PrController {
 
     @GetMapping("/{repoId}/{prId}/reviewer")
     @Operation(summary = "리뷰 참여자 조회", description = "PR에 참여한 리뷰어들을 조회합니다")
-    public ResponseEntity<List<ReviewerDto>> getReviewer(@RequestHeader(value = "Authorization") String header,
+    public ResponseEntity<Map<String, Object>> getReviewer(@RequestHeader(value = "Authorization") String header,
                                                          @PathVariable String repoId, @PathVariable String prId) {
         String accessToken = header.split(" ")[1];
         List<ReviewerDto> reviewer = prService.getReviewer(repoId, prId, accessToken);
-        if (reviewer != null) return ResponseEntity.ok(reviewer);
+        Map<String, Object> response = new HashMap<>();
+        if (reviewer != null) {
+            response.put("reviewer", reviewer);
+            return ResponseEntity.ok(response);
+        }
         return ResponseEntity.noContent().build();
     }
 }

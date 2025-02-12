@@ -33,7 +33,34 @@ public class PrServiceImpl implements PrService{
         Map<String, Object> params = new HashMap<>();
         params.put("repoId", repoId);
         params.put("prId", prId);
-        return prMapper.getPrById(params);
+
+        // pr정보 조회 후 sha값 있는지 확인
+        PrDto prInfo = prMapper.getPrById(params);
+
+        Map<String, Object> reponse = gitLabApi.getMergeRequestsById(String.valueOf(repoId), String.valueOf(prId), accessToken);
+        Map<String, Object> diff_refs = (Map<String, Object>) reponse.get("diff_refs");
+        String base_sha = (String) diff_refs.get("base_sha");
+        String head_sha = (String) diff_refs.get("head_sha");
+        String start_sha = (String) diff_refs.get("start_sha");
+        prInfo.setBaseSha(base_sha);
+        prInfo.setHeadSha(head_sha);
+        prInfo.setStartSha(start_sha);
+
+        System.out.println("base 출력" + base_sha);
+        System.out.println("head 출력" + head_sha);
+        System.out.println("start 출력" + start_sha);
+
+        // DB에도 업데이트
+        Map<String, Object> params2 = new HashMap<>();
+        params2.put("repoId", repoId);
+        params2.put("prId", prId);
+        params2.put("baseSha", base_sha);
+        params2.put("headSha", head_sha);
+        params2.put("startSha", start_sha);
+        int result = prMapper.updateShaInfo(params2);
+        if(result == 1) System.out.println("업데이트 완료");
+
+        return prInfo;
     }
 
     @Override
@@ -192,7 +219,7 @@ public class PrServiceImpl implements PrService{
         String oldRawFile = null;
 
         // 2. PR에서 sha값 있는지 확인 후 , 없으면 요청 후 DB에 저장
-        Optional<MergeRequestEntity> optionalMr = mergeRequestRepository.findById_PrId(fileDto.getPrId());
+        Optional<MergeRequestEntity> optionalMr = mergeRequestRepository.findByRepoIdAndPrId(Integer.parseInt(repoId), Integer.parseInt(prId));
 
         String base_sha = null;
         String head_sha= null;
@@ -262,8 +289,6 @@ public class PrServiceImpl implements PrService{
         params.put("prId", prId);
         return  prMapper.getReviewer(params);
     }
-
-
 
 
     // 파일 경로를 URL 인코딩하는 함수
