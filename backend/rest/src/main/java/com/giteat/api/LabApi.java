@@ -108,11 +108,34 @@ public class LabApi {
      */
     public Map<String, String> uploadFile(String projectId, MultipartFile file , String accessToken) throws IOException {
         String url = gitlabApiUrl + "/projects/" +  projectId + "/uploads";
+
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.set("Authorization", "Bearer " + accessToken);
+//        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+//
+//        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+//        body.add("file", new ByteArrayResource(file.getBytes()) {
+//            @Override
+//            public String getFilename() {
+//                return file.getOriginalFilename();
+//            }
+//        });
+//
+//        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+//        ResponseEntity<JsonNode> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, JsonNode.class);
+//
+//        Map<String, String> fileData = new HashMap<>();
+//        fileData.put("full_path", response.getBody().get("full_path").asText());
+//        fileData.put("markdown", response.getBody().get("markdown").asText());
+//        return fileData;
+
+        // 헤더 설정
         HttpHeaders headers = new HttpHeaders();
-        //String accessToken = gitLabTokenService.getAccessToken(jwtAccessToken);
         headers.set("Authorization", "Bearer " + accessToken);
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        headers.set("Accept", "application/json");
 
+        // 파일 데이터를 ByteArrayResource로 변환하여 추가
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add("file", new ByteArrayResource(file.getBytes()) {
             @Override
@@ -121,12 +144,23 @@ public class LabApi {
             }
         });
 
+        // 요청 엔티티 생성
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+        // GitLab API 호출
         ResponseEntity<JsonNode> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, JsonNode.class);
 
+        // 응답 본문 확인
+        JsonNode responseBody = response.getBody();
+        if (responseBody == null || !responseBody.has("full_path") || !responseBody.has("markdown")) {
+            throw new IOException("GitLab API 응답이 올바르지 않습니다: " + response);
+        }
+
+        // 결과 매핑
         Map<String, String> fileData = new HashMap<>();
-        fileData.put("full_path", response.getBody().get("full_path").asText());
-        fileData.put("markdown", response.getBody().get("markdown").asText());
+        fileData.put("full_path", responseBody.get("full_path").asText());
+        fileData.put("markdown", responseBody.get("markdown").asText());
+
         return fileData;
     }
 
