@@ -38,12 +38,12 @@ function getMaxValues(data: ContributorsType | null) {
 function Contributors() {
   const { repoId } = useParams();
   const { data } = useGetContributors(repoId as string);
-  // const maxValue = useMemo(() => getMaxValues(data ? data : null), [data]);
+  const maxValue = useMemo(() => getMaxValues(data ? data : null), [data]);
   return (
     <>
       {data?.contributors.map((contributor) => (
         <div className="w-[48%]" key={contributor.userId}>
-          <MixedChartByLine data={contributor} maxValue={0} />
+          <MixedChartByLine data={contributor} maxValue={maxValue} />
         </div>
       ))}
       ;
