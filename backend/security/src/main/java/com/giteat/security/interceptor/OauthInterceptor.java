@@ -30,7 +30,8 @@ public class OauthInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String requestURI = request.getRequestURI();
         log.info("REQUEST URI : " + requestURI);
-        if (requestURI.startsWith("/api/oauth/gitlab/login") || requestURI.startsWith("/api/oauth/gitlab/login/refresh")) {
+
+        if (requestURI.startsWith("/api/oauth/gitlab/login") || requestURI.startsWith("/api/oauth/gitlab/refresh")) {
             return true;
         }
 
