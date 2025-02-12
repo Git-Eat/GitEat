@@ -74,7 +74,7 @@ export function PieChart() {
     <div className="w-full justify-between px-10 py-5 bg-white rounded-lg h-full items-center">
       <div className="mb-10">
         <h2 className="text-xl font-bold flex justify-between">
-          <span>총 PR 개수</span>
+          <span>총 코멘트 개수</span>
           <span>{commentStatistics?.totalComment}개</span>
         </h2>
       </div>
