@@ -37,7 +37,7 @@ public class PrServiceImpl implements PrService{
         // pr정보 조회 후 sha값 있는지 확인
         PrDto prInfo = prMapper.getPrById(params);
         if(prInfo.getBaseSha()== null || prInfo.getHeadSha() == null){
-            Map<String, Object> reponse = gitLabApi.getMergeRequestsById(String.valueOf(repoId), String.valueOf(prId), "");
+            Map<String, Object> reponse = gitLabApi.getMergeRequestsById(String.valueOf(repoId), String.valueOf(prId), accessToken);
             Map<String, Object> diff_refs = (Map<String, Object>) reponse.get("diff_refs");
             String base_sha = (String) diff_refs.get("base_sha");
             String head_sha = (String) diff_refs.get("head_sha");
