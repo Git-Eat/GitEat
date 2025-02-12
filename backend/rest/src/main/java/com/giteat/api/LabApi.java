@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.giteat.common.util.GitLabTokenService;
 import com.giteat.pr.dto.FileCommentDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
@@ -22,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Component
+@Slf4j
 public class LabApi {
     private final RestTemplate restTemplate;
     private final String gitlabApiUrl = "https://lab.ssafy.com/api/v4";
@@ -250,6 +252,8 @@ public class LabApi {
      * @return
      */
     private List<Map<String, Object>> callGetApi(String url , String accessToken) {
+        log.info("CALL URL : " + url);
+        log.info("ACCESS_TOKEN : " + accessToken);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         //headers.set("Private-Token", accessToken);
@@ -267,6 +271,8 @@ public class LabApi {
      * @return
      */
     private Map<String, Object> callGetApiMap(String url , String accessToken) {
+        log.info("CALL URL : " + url);
+        log.info("ACCESS_TOKEN : " + accessToken);
         HttpHeaders headers = new HttpHeaders();
         //headers.set("PRIVATE-TOKEN", accessToken);
         System.out.println("callGetApiMap : " + accessToken);
@@ -286,6 +292,8 @@ public class LabApi {
      * @return
      */
     private List<Map<String, Object>> callGetApiList(String url , String accessToken) {
+        log.info("CALL URL : " + url);
+        log.info("ACCESS_TOKEN : " + accessToken);
         HttpHeaders headers = new HttpHeaders();
         System.out.println("getApiList : " + accessToken);
         headers.set("Authorization", "Bearer " + accessToken);
@@ -321,6 +329,7 @@ public class LabApi {
      * @return
      */
     private List<Map<String ,Object>> callGetApiUseId(String url , String id){
+
         HttpHeaders headers = new HttpHeaders();
         String accessToken = gitLabTokenService.getAccessTokenById(id);
         headers.set("Authorization", "Bearer" + accessToken);
@@ -338,8 +347,8 @@ public class LabApi {
      * @return API 응답 데이터 (등록된 댓글 정보)
      */
     private Map<String, Object> callPostApi(String url, String accessToken, Map<String, String> requestBody) {
-        System.out.println("ACCESS TOKEN : " + accessToken);
-        System.out.println("BODY : " +requestBody);
+        log.info("CALL URL : " + url);
+        log.info("ACCESS_TOKEN : " + accessToken);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -351,8 +360,8 @@ public class LabApi {
     }
 
     private Map<String, Object> callPostApiObject(String url, String accessToken, Map<String, Object> requestBody) {
-        System.out.println("ACCESS TOKEN : " + accessToken);
-        System.out.println("BODY : " +requestBody);
+        log.info("CALL URL : " + url);
+        log.info("ACCESS_TOKEN : " + accessToken);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -373,6 +382,8 @@ public class LabApi {
      * @return API 응답 데이터 (등록된 댓글 정보)
      */
     private Map<String, Object> callPutApi(String url, String accessToken, Map<String, String> requestBody) {
+        log.info("CALL URL : " + url);
+        log.info("ACCESS_TOKEN : " + accessToken);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -390,6 +401,8 @@ public class LabApi {
      * @return 성공 여부 (true: 성공, false: 실패)
      */
     private boolean callDeleteApi(String url, String accessToken) {
+        log.info("CALL URL : " + url);
+        log.info("ACCESS_TOKEN : " + accessToken);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
