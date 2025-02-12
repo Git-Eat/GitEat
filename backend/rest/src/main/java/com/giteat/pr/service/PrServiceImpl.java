@@ -36,22 +36,22 @@ public class PrServiceImpl implements PrService{
 
         // pr정보 조회 후 sha값 있는지 확인
         PrDto prInfo = prMapper.getPrById(params);
-        if(prInfo.getBaseSha()== null || prInfo.getHeadSha() == null){
-            Map<String, Object> reponse = gitLabApi.getMergeRequestsById(String.valueOf(repoId), String.valueOf(prId), accessToken);
-            Map<String, Object> diff_refs = (Map<String, Object>) reponse.get("diff_refs");
-            String base_sha = (String) diff_refs.get("base_sha");
-            String head_sha = (String) diff_refs.get("head_sha");
-            String start_sha = (String) diff_refs.get("start_sha");
-            prInfo.setBaseSha(base_sha);
-            prInfo.setHeadSha(head_sha);
-            prInfo.setStartSha(start_sha);
 
-            // DB에도 업데이트
-            params.put("baseSha", base_sha);
-            params.put("headSha", head_sha);
-            params.put("startSha", start_sha);
-            prMapper.updateShaInfo(params);
-        }
+        Map<String, Object> reponse = gitLabApi.getMergeRequestsById(String.valueOf(repoId), String.valueOf(prId), accessToken);
+        Map<String, Object> diff_refs = (Map<String, Object>) reponse.get("diff_refs");
+        String base_sha = (String) diff_refs.get("base_sha");
+        String head_sha = (String) diff_refs.get("head_sha");
+        String start_sha = (String) diff_refs.get("start_sha");
+        prInfo.setBaseSha(base_sha);
+        prInfo.setHeadSha(head_sha);
+        prInfo.setStartSha(start_sha);
+
+        // DB에도 업데이트
+        params.put("baseSha", base_sha);
+        params.put("headSha", head_sha);
+        params.put("startSha", start_sha);
+        prMapper.updateShaInfo(params);
+
         return prInfo;
     }
 

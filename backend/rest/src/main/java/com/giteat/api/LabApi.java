@@ -110,26 +110,6 @@ public class LabApi {
     public Map<String, String> uploadFile(String projectId, MultipartFile file , String accessToken) throws IOException {
         String url = gitlabApiUrl + "/projects/" +  projectId + "/uploads";
 
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.set("Authorization", "Bearer " + accessToken);
-//        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-//
-//        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-//        body.add("file", new ByteArrayResource(file.getBytes()) {
-//            @Override
-//            public String getFilename() {
-//                return file.getOriginalFilename();
-//            }
-//        });
-//
-//        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-//        ResponseEntity<JsonNode> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, JsonNode.class);
-//
-//        Map<String, String> fileData = new HashMap<>();
-//        fileData.put("full_path", response.getBody().get("full_path").asText());
-//        fileData.put("markdown", response.getBody().get("markdown").asText());
-//        return fileData;
-
         // 헤더 설정
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
