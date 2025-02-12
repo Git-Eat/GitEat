@@ -1,10 +1,10 @@
 import { useQuery } from "react-query";
-import { getCommentStatistics } from "../dashBoard";
+import { getContributors } from "../dashBoard";
 
-export const useGetCommentStatistics = (repoId: string) => {
+export const useGetContributors = (repoId: string) => {
   return useQuery(
     ["getCommentStatistics", repoId],
-    () => getCommentStatistics(repoId),
+    () => getContributors(repoId),
     {
       useErrorBoundary: true,
       suspense: true,
