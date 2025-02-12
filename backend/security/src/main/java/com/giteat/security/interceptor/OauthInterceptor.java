@@ -30,7 +30,7 @@ public class OauthInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String requestURI = request.getRequestURI();
         log.info("REQUEST URI : " + requestURI);
-        if(requestURI.startsWith("/api/oauth/gitlab/login")){
+        if (requestURI.startsWith("/api/oauth/gitlab/login") || requestURI.startsWith("/api/oauth/gitlab/oauth/refresh")) {
             return true;
         }
         // 1. 쿠키에서 accessToken으로 사용자 정보를 가져온다.
@@ -40,70 +40,15 @@ public class OauthInterceptor implements HandlerInterceptor {
             log.error("accessToken is empty or null");
             return false;
         }
-         accessToken = accessToken.split(" ")[1];
-
-        String refreshToken = oauthInterceptorService.getRefreshTokenFromCookie(request);
-
-        System.out.println("받은 accessToken : "  + accessToken);
-        System.out.println("받은 refreshToken : " + refreshToken);
-        User userDto = null;
-        OAuthTokenDto oAuthTokenDto = null;
-        if (refreshToken == null) {
+        accessToken = accessToken.split(" ")[1];
+        String authenticationId = oauthInterceptorService.getUserIdFromUserInfo(accessToken);
+        if (authenticationId == null) {
             responseSetting(response);
-            log.error("refreshToken is Empty");
             return false;
         }
-        String authenticationId = oauthInterceptorService.getUserIdFromUserInfo(accessToken); // 인증받은 사용자 id
-        System.out.println("사용자 id 값 : " + authenticationId);
-        if (authenticationId == null) {        //null일 경우 accessToken이 만료되었음으로 refresh 토큰을 검사한다.
-            log.info("if문 안에서 호출");
-            oAuthTokenDto = oauthInterceptorService.getNewToken(refreshToken);
-            System.out.println("if문 dto :" + oAuthTokenDto);
-            if (oAuthTokenDto == null) {          //null 일 경우 refreshToken이 만료된 값임으로 실패
-                responseSetting(response);
-                log.error("refreshToken is invalid");
-                return false;
-            }
-            authenticationId = oauthInterceptorService.getUserIdFromUserInfo(oAuthTokenDto.getAccessToken());
-        } else {
-            log.info("else문 안에서 호출");
-            oAuthTokenDto = oauthInterceptorService.getNewToken(refreshToken);
-            System.out.println("else dto : " + oAuthTokenDto);
-
-        }
-        oauthInterceptorService.saveNewToken(authenticationId, oAuthTokenDto);
-        String newAccessToken = oAuthTokenDto.getAccessToken();
-        String newRefreshToken = oAuthTokenDto.getRefreshToken();
-        TokenContext.setAccessToken(newAccessToken);
-        TokenContext.setRefreshToken(newRefreshToken);
-
-
-
-        System.out.println("return 할때 cookie 생성");
-
-        int maxAge = 10 * 365 * 24 * 60 * 60;
-        System.out.println("새로 만들어서 반환 access : " + newAccessToken);
-        System.out.println("새로 만들어서 반환 refresh : " + newRefreshToken);
-        // cookie 설정
-
-        try{
-            Cookie cookie = new Cookie("refreshToken", newRefreshToken);
-            cookie.setHttpOnly(true);
-            cookie.setSecure(true);
-            cookie.setPath("/");
-            cookie.setMaxAge(maxAge);
-
-            response.addCookie(cookie);
-            // accessToken을 HTTP 응답 헤더에 추가
-            response.setHeader("Authorization", "Bearer " + newAccessToken);
-            System.out.println("resonse HEADER :  " + response.getHeader("Authorization"));
-            System.out.println("모든 postHandle 실행완료");
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-
+        TokenContext.setAccessToken(accessToken);
         return true;
+
     }
 
     @Override

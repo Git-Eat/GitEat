@@ -5,6 +5,7 @@ import com.giteat.security.user.dto.OAuthTokenDto;
 import com.giteat.security.user.service.CustomOAuthService;
 import com.giteat.security.util.ApiUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -55,9 +56,11 @@ public class OAuthController {
      */
     @PostMapping("/gitlab/refresh")
     @Operation(summary = "access 재발급", description = "refresh토큰으로 access토큰을 재발급 받을때 사용")
-    public ResponseEntity<?> gitlabRefresh(@RequestBody OAuthTokenDto tokenRequest){
-       return apiUtil.postApi("/oauth/refresh", tokenRequest);
+    public ResponseEntity<?> gitlabRefresh(HttpServletRequest request , HttpServletResponse response) {
+        oauthService.createNewTokens(request, response);
+        return ResponseEntity.ok("success");
     }
+
 
     /**
      * GitLab OAuth 일반 로그아웃 처리

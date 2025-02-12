@@ -1,5 +1,6 @@
 package com.giteat.security.user.service;
 
+import com.giteat.security.interceptor.service.OauthInterceptorService;
 import com.giteat.security.user.api.OAuthApi;
 import com.giteat.security.user.dto.OAuthTokenDto;
 
@@ -19,11 +20,14 @@ import java.util.Map;
  * GitLab OAuth 로그인 및 사용자 정보 매핑 기능 제공
  */
 @Service
-public class CustomOAuthService  {
+public class CustomOAuthService {
 
     private final OAuthApi oauthApi;
-    public CustomOAuthService(OAuthApi oauthApi) {
+    private final OauthInterceptorService oauthInterceptorService;
+
+    public CustomOAuthService(OAuthApi oauthApi, OauthInterceptorService oauthInterceptorService) {
         this.oauthApi = oauthApi;
+        this.oauthInterceptorService = oauthInterceptorService;
     }
 
 
@@ -34,13 +38,13 @@ public class CustomOAuthService  {
      *
      * @param code GitLab에서 받은 Authorization Code
      * @return OAuth 토큰 및 사용자 정보가 매핑된 DTO
-     *         실패 시 null 반환
+     * 실패 시 null 반환
      */
-    public OAuthTokenDto gitlabLogin(String code , HttpServletResponse response ){
+    public OAuthTokenDto gitlabLogin(String code, HttpServletResponse response) {
         // CSRF 공격 방지를 위한 상태 토큰 생성
         // String state = UUID.randomUUID().toString();
         try {
-            Map<String, String> token =  oauthApi.getAccessToken(code);
+            Map<String, String> token = oauthApi.getAccessToken(code);
             System.out.println("받아온 토큰 정보: " + token);
 
             // 토큰이 비어있는지 확인
@@ -72,7 +76,7 @@ public class CustomOAuthService  {
             dto.setName(userInfo.get("name"));
             dto.setAvatarUrl(userInfo.get("avatar_url"));
 
-            System.out.println("service: "+ dto);
+            System.out.println("service: " + dto);
             return dto;
         } catch (Exception e) {
             e.printStackTrace();
@@ -80,13 +84,14 @@ public class CustomOAuthService  {
             return null;
         }
     }
-    public Map<String , String> getMyInfo(){
+
+    public Map<String, String> getMyInfo() {
         String accessToken = TokenContext.getAccessToken();
-        Map<String , String> userInfo = oauthApi.getUserInfo(accessToken);
+        Map<String, String> userInfo = oauthApi.getUserInfo(accessToken);
         return userInfo;
     }
 
-    public void createCookieAndToken(String accessToken , String refreshToken, HttpServletResponse response){
+    public void createCookieAndToken(String accessToken, String refreshToken, HttpServletResponse response) {
         response.setHeader("Authorization", "Bearer " + accessToken);
 
         // 쿠키 설정 (accessToken을 쿠키에 추가)
@@ -99,6 +104,28 @@ public class CustomOAuthService  {
 
         // 쿠키를 응답에 추가
         response.addCookie(accessTokenCookie);
+    }
+
+
+    public void createNewTokens(HttpServletRequest req, HttpServletResponse res) {
+
+        String refreshToken = oauthInterceptorService.getRefreshTokenFromCookie(req);
+        OAuthTokenDto oAuthTokenDto = oauthInterceptorService.getNewToken(refreshToken);
+        String authenticationId = oauthInterceptorService.getUserIdFromUserInfo(oAuthTokenDto.getAccessToken());
+        oauthInterceptorService.saveNewToken(authenticationId, oAuthTokenDto);
+
+        int maxAge = 10 * 365 * 24 * 60 * 60;
+
+        Cookie cookie = new Cookie("refreshToken", oAuthTokenDto.getRefreshToken());
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(maxAge);
+
+        res.addCookie(cookie);
+        // accessToken을 HTTP 응답 헤더에 추가
+        res.setHeader("Authorization", "Bearer " + oAuthTokenDto.getAccessToken());
+
     }
 }
 
