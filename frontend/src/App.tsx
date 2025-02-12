@@ -17,7 +17,6 @@ import { FrontendStatistics } from "./pages/frontendStatistics";
 function App() {
   const queryClient = new QueryClient();
   const { isLogin, setLogin, setLogout } = useLoginStore();
-  console.log("build!");
 
   return (
     <>
@@ -37,8 +36,7 @@ function App() {
             <Route element={<AuthLayout />}>
               <Route path="/repos" element={<RepositoryList />} />
               <Route path="/pulls" element={<RepositoryList />} />
-              <Route path="/dashboard" element={<DashBoard />} />
-              <Route path="/statistics" element={<FrontendStatistics />} />
+              <Route path="/repos/:repoId/dashboard" element={<DashBoard />} />
               <Route path="/repos/:repoId" element={<PullRequestList />} />
               <Route path="/repos/:baseRepoId/:prId" element={<PullRequest />}>
                 <Route path="conversation" element={<Conversation />} />

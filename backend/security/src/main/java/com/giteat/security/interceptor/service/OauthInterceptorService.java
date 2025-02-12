@@ -36,6 +36,7 @@ public class OauthInterceptorService {
         if(userInfo == null){
             return null;
         }
+        System.out.println("userInfo : " + userInfo);
         return userInfo.get("id");
     }
 
@@ -52,7 +53,7 @@ public class OauthInterceptorService {
         }
         for(Cookie cookie : cookies){
             if("refreshToken".equals(cookie.getName())){
-                refreshToken = cookie.getName();
+                refreshToken = cookie.getValue();
             }
         }
         return refreshToken;
@@ -73,7 +74,7 @@ public class OauthInterceptorService {
         oAuthTokenDto.setTokenType(newTokenMap.get("token_type"));
         oAuthTokenDto.setExpiresIn(Integer.valueOf(newTokenMap.get("expires_in")));
         oAuthTokenDto.setRefreshToken(newTokenMap.get("refresh_token"));
-        oAuthTokenDto.setCreatedAt(LocalDateTime.parse(newTokenMap.get("create_at")));
+//        oAuthTokenDto.setCreatedAt(LocalDateTime.parse(newTokenMap.get("create_at")));
 
         return oAuthTokenDto;
     }

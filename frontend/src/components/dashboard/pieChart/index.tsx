@@ -15,10 +15,8 @@ interface FormatterOptions {
 }
 
 export function PieChart() {
-  const { baseRepoId } = useParams();
-  const { data: commentStatistics } = useGetCommentStatistics(
-    baseRepoId as string
-  );
+  const { repoId } = useParams();
+  const { data: commentStatistics } = useGetCommentStatistics(repoId as string);
 
   // commentStatistics가 준비되었으므로 각 배열 생성
   const commentCounts = useMemo(() => {

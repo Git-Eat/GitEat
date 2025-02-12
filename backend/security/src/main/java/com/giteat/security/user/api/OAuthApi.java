@@ -168,7 +168,7 @@ public class OAuthApi {
      * @return
      */
     public Map<String, String> getNewToken(String refreshToken) {
-
+        System.out.println("들어온 값 : " + refreshToken);
         try {
             // OAuth 토큰 갱신을 위한 파라미터 설정
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -191,6 +191,7 @@ public class OAuthApi {
                     String.class);
 
             // JSON 파싱 및 토큰 갱신에 대한 응답
+            System.out.println("refresh로 재발급 받은 데이터 : " + response.getBody());
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonNode = mapper.readTree(response.getBody());
 
@@ -205,6 +206,7 @@ public class OAuthApi {
             return map;
 
         } catch (HttpClientErrorException e) {
+            e.printStackTrace();
             return null;
 
         } catch (JsonMappingException e) {
@@ -214,4 +216,3 @@ public class OAuthApi {
         }
     }
 }
-

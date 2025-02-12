@@ -1,6 +1,13 @@
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { deleteRepository } from "../pullRequest";
 
 export const useDeleteRepository = (repoId: number) => {
-  return useMutation("deleteRepository", () => deleteRepository(repoId), {});
+  const queryClient = useQueryClient();
+  return useMutation("deleteRepository", () => deleteRepository(repoId), {
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: "getRepos",
+      });
+    },
+  });
 };

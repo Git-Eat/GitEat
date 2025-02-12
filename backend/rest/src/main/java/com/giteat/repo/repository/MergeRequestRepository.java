@@ -7,4 +7,7 @@ import java.util.Optional;
 
 public interface MergeRequestRepository  extends JpaRepository<MergeRequestEntity, Long> {
     Optional<MergeRequestEntity> findById_PrId(int prId);
+
+    // repoId와 prId를 함께 조회
+    Optional<MergeRequestEntity> findByRepoIdAndPrId(int repoId, int prId);
 }

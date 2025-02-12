@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FileMarkDownEditor } from "../fileMarkDownEditor";
+// import { FileMarkDownEditor } from "../fileMarkDownEditor";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { getParsedDate } from "../../../../utils/getParsedDate";
@@ -95,15 +95,16 @@ export function CommentThread({ comment }: CommentThreadProps) {
           {isReplyEditorOpen[comment.commentId] ? "답글 접기" : "답글 추가"}
         </button>
       </footer>
-      {isReplyEditorOpen[comment.commentId] && (
+      {/* {isReplyEditorOpen[comment.commentId] && (
         <FileMarkDownEditor
-          addReview={() => {}}
-          submitComment={() => {}}
           onClose={() => toggleReplyEditor(comment.commentId)}
-          startLine={comment.position?.newLine || 0}
-          endLine={comment.position?.newLine || 0}
+          newStartLine={comment.position?.newLine || 0}
+          oldStartLine={comment.position?.newLine || 0}
+          newEndLine={comment.position?.newLine || 0}
+          oldEndLine={comment.position?.newLine || 0}
+          fil
         />
-      )}
+      )} */}
     </div>
   );
 }
