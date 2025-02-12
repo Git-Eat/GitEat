@@ -26,6 +26,5 @@ public interface PrMapper {
 
     FileDto getFileInfo(int fileId); // 변경 된 코드 확인
     List<ReviewerDto> getReviewer(Map<String, Object> params);
-
-    // 브랜치 이름 조회
+    int updateShaInfo(Map<String, Object> params);
 }
