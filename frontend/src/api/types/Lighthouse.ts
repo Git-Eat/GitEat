@@ -6,10 +6,10 @@ export type Lighthouse = {
   AB: number;
   BP: number;
   SEO: number;
-  FCP: string;
-  LCP: string;
-  TBT: string;
-  CLS: string;
-  SI: string;
+  FCP: number;
+  LCP: number;
+  TBT: number;
+  CLS: number;
+  SI: number;
   create_at: string | null;
 };
