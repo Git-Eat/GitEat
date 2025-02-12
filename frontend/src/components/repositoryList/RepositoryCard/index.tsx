@@ -15,7 +15,7 @@ interface RepositoryCardProps {
   title: string;
   description: string;
   access: string;
-  user: string;
+  ownerName: string;
   repoId: number;
 }
 
@@ -39,7 +39,7 @@ export function RepositoryCard({
   title,
   description,
   access,
-  user,
+  ownerName,
   repoId,
 }: RepositoryCardProps) {
   const [isToggle, onToggle, offToggle] = useBooleanState(false);
@@ -56,7 +56,7 @@ export function RepositoryCard({
         <div>
           <div className="flex gap-[10px] items-center mb-[10px]">
             <span className="text-xl font-semibold">
-              {user} / {title}
+              {ownerName} / {title}
             </span>
             {access === "public" ? <Public /> : <Private />}
           </div>

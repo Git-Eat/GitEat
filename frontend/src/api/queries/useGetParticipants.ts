@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import { getParticipants } from "../DashBoard";
+import { getParticipants } from "../dashBoard";
 
 export const useGetParticipants = (repoId: string) => {
   return useQuery(["getParticipants", repoId], () => getParticipants(repoId), {

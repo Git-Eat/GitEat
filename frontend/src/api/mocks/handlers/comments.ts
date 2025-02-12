@@ -78,16 +78,83 @@ const comments: Comment[] = [
     position: null,
     reCommentList: [],
   },
+  {
+    commentId: 3,
+    prId: 101,
+    repoId: 1,
+    userId: 303,
+    userName: "commentUser",
+    avatarUrl: "https://example.com/avatar1.jpg",
+    disId: "dis123",
+    content: "example1.txt 파일에서 코드 수정이 필요합니다.",
+    commentType: 1,
+    createAt: "2025-02-10T15:30:00Z",
+    position: {
+      baseSha: "commit1_baseSha_dummy",
+      startSha: "commit1_startSha_dummy",
+      headSha: "commit1_headSha_dummy",
+      oldPath: "/src/old/example1.txt",
+      newPath: "/src/new/example1.txt",
+      positionType: "text",
+      newLine: 1,
+      oldLine: null,
+      newStartLine: 10,
+      newEndLine: 20,
+      oldStartLine: 9,
+      oldEndLine: 19,
+      lineRange: {
+        start: {
+          lineCode: "lineCode_start_dummy",
+        },
+        end: {
+          lineCode: "lineCode_end_dummy",
+        },
+      },
+    },
+    reCommentList: [
+      {
+        reCommentId: 1,
+        userId: 2,
+        userName: "조창훈",
+        avatarUrl: null,
+        disId: "1",
+        content: "답장입니다",
+        replyType: 0,
+        imageName: null,
+        createAt: null,
+      },
+      {
+        reCommentId: 1,
+        userId: 2,
+        userName: "조창훈",
+        avatarUrl: null,
+        disId: "1",
+        content: "답장입니다",
+        replyType: 0,
+        imageName: null,
+        createAt: null,
+      },
+    ],
+  },
+  {
+    commentId: 4,
+    prId: 101,
+    repoId: 1,
+    userId: 305,
+    userName: "anotherCommentUser",
+    avatarUrl: "https://example.com/avatar2.jpg",
+    disId: "dis456",
+    content: "변경된 코드가 성능에 영향을 줄 수 있습니다.",
+    commentType: 2,
+    createAt: "2025-02-10T17:00:00Z",
+    position: null,
+    reCommentList: [],
+  },
 ];
 
 const commentsHandlers = [
-  http.get("*/pr/:repoId/:prId/comment", (req) => {
-    const repoId = Number(req.params.repoId);
-    const prId = Number(req.params.prId);
-    const filteredComments = comments.filter(
-      (comment) => comment.repoId === repoId && comment.prId === prId
-    );
-    return HttpResponse.json(filteredComments, { status: 200 });
+  http.get("*/pr/:repoId/:prId/comment", () => {
+    return HttpResponse.json(comments, { status: 200 });
   }),
 
   http.delete("*/pr/:repoId/:prId/comment/:commentId", (req) => {
@@ -320,6 +387,9 @@ const commentsHandlers = [
         { status: 400 }
       );
     }
+  }),
+  http.post("https://i12b108.p.ssafy.io/api/pr/888788/129/file/comment", () => {
+    return HttpResponse.json(200);
   }),
 ];
 

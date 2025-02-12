@@ -7,6 +7,7 @@ import { ChangedFile } from "../../../../api/types/ChangedFile";
 import { useGetRawFile } from "../../../../api/queries/useGetRawFile";
 import { useEffect } from "react";
 import { useBooleanState } from "../../../../hooks/useBooleanState";
+import { usePRStore } from "../../../../store/pullRequestStore";
 
 interface FileProps {
   repoId: number;
@@ -15,6 +16,8 @@ interface FileProps {
 }
 export function FileDiff({ repoId, prId, file }: FileProps) {
   const { mutate: getFile, data: rawFile } = useGetRawFile(repoId, prId, file);
+  const { comments } = usePRStore();
+  console.log(comments);
   const [isExpand, , , setReverse] = useBooleanState(false);
   useEffect(() => {
     if (isExpand) {
@@ -23,17 +26,20 @@ export function FileDiff({ repoId, prId, file }: FileProps) {
   }, [isExpand]);
   return (
     <Accordion
+      id={file.fileId}
       key={file.fileId}
       expanded={isExpand}
+      className="w-full"
       onChange={() => setReverse()}
     >
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center w-full">
         <AccordionSummary
           expandIcon={<ArrowDropDownIcon />}
           aria-controls="panel1-content"
           id="panel1-header"
+          className="w-full"
         >
-          <h2 className="text-lg font-bold">{file.newPath}</h2>
+          <h2 className="text-lg font-bold truncate ">{file.newPath}</h2>
         </AccordionSummary>
       </div>
       <div className="flex mt-4">
@@ -43,7 +49,7 @@ export function FileDiff({ repoId, prId, file }: FileProps) {
               <DiffViewer
                 oldCode={rawFile.oldCode !== null ? rawFile.oldCode : ""}
                 newCode={rawFile.newCode !== null ? rawFile.newCode : ""}
-                comments={rawFile.comments}
+                comments={comments.filter((comment) => comment.position)}
                 file={file}
               />
             </ErrorBoundary>

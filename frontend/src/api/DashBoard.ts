@@ -2,6 +2,7 @@ import authClient from "./authClient";
 
 import {
   CommentStatistics,
+  Contributors,
   Participants,
   PRStatistics,
 } from "./types/DashBoard";
@@ -45,6 +46,18 @@ export const getCommentStatistics = async (
 ): Promise<CommentStatistics> => {
   try {
     const res = await authClient.get(`/statistics/repo/${repoId}/comment`);
+    return res.data;
+  } catch (e: unknown) {
+    if (e instanceof Error) throw new Error(e.message);
+    else throw new Error("unknown Error");
+  }
+};
+
+export const getContributors = async (
+  repoId: string
+): Promise<Contributors> => {
+  try {
+    const res = await authClient.get(`/statistics/repo/${repoId}/contributors`);
     return res.data;
   } catch (e: unknown) {
     if (e instanceof Error) throw new Error(e.message);
