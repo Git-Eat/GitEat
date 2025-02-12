@@ -6,6 +6,7 @@ import com.giteat.statistics.dto.MergeRequestTotalDto;
 import com.giteat.statistics.dto.ParticipantsDto;
 
 import java.util.List;
+import java.util.Map;
 
 public interface StatisticsRepoService {
     int getTotalCommit(String repoId);
@@ -13,4 +14,5 @@ public interface StatisticsRepoService {
     MergeRequestTotalDto getMergeReqeustTotal(String repoId);
     CommentTotalDto getCommentTotal(String repoId);
     List<ContributorsDto> getContributors(String repoId);
+    Map<String, Object> getLanguages(String repoId, String accessToken);
 }

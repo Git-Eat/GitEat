@@ -5,10 +5,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -59,6 +56,13 @@ public class RepositoryStatisticsController {
     public ResponseEntity<?> getContributors(@PathVariable String repoId){
         log.info("call Contributors 조회");
         ResponseEntity<?> request = apiUtil.getApi("/statistics/repo/"+repoId+"/contributors");
+        return ResponseEntity.ok(request.getBody());
+    }
+
+    @GetMapping("/{repoId}/languages")
+    @Operation(summary = "사용언어 비율 조회", description = "Repo내 사용 된 언어 비율 정보를 조회합니다.")
+    public ResponseEntity<?> getLanguages(@PathVariable String repoId){
+        ResponseEntity<?> request = apiUtil.getApi("/statistics/repo/"+repoId+"/languages");
         return ResponseEntity.ok(request.getBody());
     }
 }

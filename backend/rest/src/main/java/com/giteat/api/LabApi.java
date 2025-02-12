@@ -145,6 +145,11 @@ public class LabApi {
         return fileData;
     }
 
+    public Map<String, Object> getLanguages(String repoId, String accessToken){
+        String url = gitlabApiUrl + "/projects/" + repoId + "/languages";
+        return callGetApiMap(url, accessToken);
+    }
+
     public Map<String, Object> getUser(String accessToken){
         String url = gitlabApiUrl + "/user";
         return callGetApiMap(url, accessToken);
