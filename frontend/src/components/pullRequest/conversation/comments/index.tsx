@@ -2,7 +2,6 @@ import { useState } from "react";
 import { MarkdownEditor } from "../../../common/markdownEditor";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { useGetComments } from "../../../../api/queries/useGetComments";
 import { formatDistanceToNowStrict, parseISO } from "date-fns";
 import { ko } from "date-fns/locale";
 import { Comment } from "../../../../api/types/Comment";
@@ -14,6 +13,7 @@ import review from "../../../../assets/images/review.svg";
 import { Replies } from "../replies";
 import { useCreateReply } from "../../../../api/queries/useCreateReply";
 import { useUpdateComment } from "../../../../api/queries/useUpdateComment";
+import { usePRStore } from "../../../../store/pullRequestStore";
 
 interface CommentsProps {
   repoId: number;
@@ -21,7 +21,7 @@ interface CommentsProps {
 }
 
 export function Comments({ repoId, prId }: CommentsProps) {
-  const { data } = useGetComments(repoId, prId);
+  const { comments } = usePRStore();
   const [isReplyEditorOpen, setIsReplyEditorOpen] = useState<
     Record<number, boolean>
   >({});
@@ -84,7 +84,7 @@ export function Comments({ repoId, prId }: CommentsProps) {
   return (
     <section>
       <ul>
-        {data?.map((comment: Comment) => (
+        {comments?.map((comment: Comment) => (
           <li
             key={comment.commentId}
             className="mb-8 bg-white my-5 p-5 rounded-xl"
