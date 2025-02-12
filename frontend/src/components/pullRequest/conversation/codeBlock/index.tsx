@@ -5,6 +5,7 @@ import "@git-diff-view/react/styles/diff-view.css";
 import { useParams } from "react-router-dom";
 import { usePRStore } from "../../../../store/pullRequestStore";
 import { useGetRawFile } from "../../../../api/queries/useGetRawFile";
+import { getFileType } from "../../../../utils/getFileType";
 
 interface PartialDiffViewerProps {
   minLine: number; // 예: 4
@@ -39,8 +40,8 @@ export const CodeBlock: React.FC<PartialDiffViewerProps> = ({
         code.oldCode,
         "newFileName",
         code.newCode,
-        "jsx",
-        "jsx"
+        getFileType(code.fileName),
+        getFileType(code.fileName)
       );
       instance.init();
       instance.buildSplitDiffLines();

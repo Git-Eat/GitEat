@@ -6,6 +6,7 @@ import { FileMarkDownEditor } from "../fileMarkDownEditor";
 import { CommentThread } from "../commentThread";
 import { ChangedFile } from "../../../../api/types/ChangedFile";
 import { Comment } from "../../../../api/types/Comment";
+import { getFileType } from "../../../../utils/getFileType";
 
 interface DiffViewerProps {
   oldCode: string;
@@ -29,8 +30,8 @@ export function DiffViewer({
       oldCode,
       "newFileName",
       newCode,
-      "java",
-      "java"
+      getFileType(file.oldPath),
+      getFileType(file.newPath)
     );
     console.log(instance.getBundle());
     instance.init();
