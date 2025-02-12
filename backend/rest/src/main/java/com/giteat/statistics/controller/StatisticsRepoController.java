@@ -1,6 +1,7 @@
 package com.giteat.statistics.controller;
 
 import com.giteat.statistics.dto.CommentTotalDto;
+import com.giteat.statistics.dto.ContributorsDto;
 import com.giteat.statistics.dto.MergeRequestTotalDto;
 import com.giteat.statistics.dto.ParticipantsDto;
 import com.giteat.statistics.service.StatisticsRepoServiceImpl;
@@ -52,8 +53,8 @@ public class StatisticsRepoController {
         return ResponseEntity.ok(mergeRequestTotalDto);
     }
 
-    @GetMapping("/{repoId}/pr/comment")
-    @Operation(summary="PR 통계 (PR 댓글 수 조회)", description = "Repo에 등록된 댓글수 통계정보를 조회합니다.")
+    @GetMapping("/{repoId}/comment")
+    @Operation(summary="댓글 통계 (댓글 수 조회)", description = "Repo에 등록된 댓글수 통계정보를 조회합니다.")
     public ResponseEntity<CommentTotalDto> getTotalComment(@PathVariable String repoId){
          CommentTotalDto commentTotalDto = statisticsRepoService.getCommentTotal(repoId);
          return ResponseEntity.ok(commentTotalDto);
@@ -62,8 +63,9 @@ public class StatisticsRepoController {
     @GetMapping("/{repoId}/contributors")
     @Operation(summary = "Contributors 조회", description = "Repo내 Contributors 정보를 조회합니다.")
     public ResponseEntity<Map<String ,Object>> getContributors(@PathVariable String repoId){
+        List<ContributorsDto> contributors = statisticsRepoService.getContributors(repoId);
         Map<String ,Object> response = new HashMap<>();
-        response.put("contributors","");
+        response.put("contributors",contributors);
         return ResponseEntity.ok(response);
     }
 }
