@@ -14,6 +14,7 @@ import review from "../../../../assets/images/review.svg";
 import { Replies } from "../replies";
 import { useCreateReply } from "../../../../api/queries/useCreateReply";
 import { useUpdateComment } from "../../../../api/queries/useUpdateComment";
+import { CodeBlock } from "../codeBlock";
 
 interface CommentsProps {
   repoId: number;
@@ -89,6 +90,22 @@ export function Comments({ repoId, prId }: CommentsProps) {
             key={comment.commentId}
             className="mb-8 bg-white my-5 p-5 rounded-xl"
           >
+            {comment.position && (
+              <CodeBlock
+                minLine={Number(
+                  comment.position.newStartLine
+                    ? comment.position.newStartLine
+                    : comment.position.oldStartLine
+                )}
+                maxLine={Number(
+                  comment.position.newEndLine
+                    ? comment.position.newEndLine
+                    : comment.position.oldEndLine
+                )}
+                newPath={comment.position.newPath}
+                oldPath={comment.position.oldPath}
+              />
+            )}
             <header>
               <section className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
@@ -109,6 +126,7 @@ export function Comments({ repoId, prId }: CommentsProps) {
                     <></>
                   )}
                 </div>
+
                 <div>
                   <button
                     className="mr-2"
