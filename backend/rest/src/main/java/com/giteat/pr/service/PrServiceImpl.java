@@ -46,11 +46,19 @@ public class PrServiceImpl implements PrService{
         prInfo.setHeadSha(head_sha);
         prInfo.setStartSha(start_sha);
 
+        System.out.println("base 출력" + base_sha);
+        System.out.println("head 출력" + head_sha);
+        System.out.println("start 출력" + start_sha);
+
         // DB에도 업데이트
-        params.put("baseSha", base_sha);
-        params.put("headSha", head_sha);
-        params.put("startSha", start_sha);
-        prMapper.updateShaInfo(params);
+        Map<String, Object> params2 = new HashMap<>();
+        params2.put("repoId", repoId);
+        params2.put("prId", prId);
+        params2.put("baseSha", base_sha);
+        params2.put("headSha", head_sha);
+        params2.put("startSha", start_sha);
+        int result = prMapper.updateShaInfo(params2);
+        if(result == 1) System.out.println("업데이트 완료");
 
         return prInfo;
     }
