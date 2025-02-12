@@ -6,7 +6,6 @@ import com.giteat.common.gitLab.mapper.GitLabTokenMapper;
 import com.giteat.common.util.SHA1Util;
 import com.giteat.repo.entity.*;
 import com.giteat.repo.repository.*;
-import com.giteat.webHook.gitLab.mapper.GitLabWebHookMapper;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
