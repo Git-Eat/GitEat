@@ -41,9 +41,11 @@
             p.pr_id,
             p.user_id,
             p.temp_status
-        FROM pr_temp as p
-                JOIN oauth_token as o
-                USING(user_id)
+        FROM pr_temp AS p
+                 JOIN repository_member AS re
+                      ON p.repo_id = re.repo_id
+                 JOIN oauth_token AS o
+                      ON re.user_id = o.user_id
         WHERE o.access_token = #{accessToken}
           AND p.temp_status = 0;
     </select>
