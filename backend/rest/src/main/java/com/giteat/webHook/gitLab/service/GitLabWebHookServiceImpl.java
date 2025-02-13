@@ -1,7 +1,6 @@
 package com.giteat.webHook.gitLab.service;
 
 import com.giteat.api.LabApi;
-import com.giteat.common.gitLab.mapper.GitLabTokenMapper;
 import com.giteat.common.util.SHA1Util;
 import com.giteat.pr.dto.PrDto;
 import com.giteat.repo.entity.*;
@@ -23,7 +22,6 @@ import java.util.*;
 public class GitLabWebHookServiceImpl implements GitLabWebHookService {
 
     private final LabApi gitLabApi;
-    private final GitLabTokenMapper gitLabTokenMapper;
     private final MergeRequestRepository mergeRequestRepository;
     private final CommitRepository commitRepository;
     private final FileChangeRepository fileChangeRepository;

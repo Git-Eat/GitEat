@@ -3,7 +3,6 @@ package com.giteat.api;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.giteat.common.util.GitLabTokenService;
 import com.giteat.pr.dto.FileCommentDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +27,10 @@ import java.util.*;
 public class LabApi {
     private final RestTemplate restTemplate;
     private final String gitlabApiUrl = "https://lab.ssafy.com/api/v4";
-    private final GitLabTokenService gitLabTokenService;
+
     private final ObjectMapper objectMapper;
-    public LabApi(RestTemplate restTemplate , GitLabTokenService gitLabTokenService , ObjectMapper objectMapper) {
+    public LabApi(RestTemplate restTemplate , ObjectMapper objectMapper) {
         this.restTemplate = restTemplate;
-        this.gitLabTokenService = gitLabTokenService;
         this.objectMapper = objectMapper;
     }
     /**
