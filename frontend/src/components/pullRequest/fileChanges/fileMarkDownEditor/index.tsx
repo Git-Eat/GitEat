@@ -114,10 +114,13 @@ export function FileMarkDownEditor({
       newEndLine: newEndLine,
       oldStartLine: oldStartLine,
       newStartLine: newStartLine,
-      newOrOld: lineType === 1 ? 2 : 1,
+      newOrOld: 0,
       positionType: "text",
       body: comment,
     };
+    if (lineType === 1) commentData.newOrOld = 2;
+    else if (lineType === 2) commentData.newOrOld = 1;
+    else commentData.newOrOld = 3;
     addComment(commentData);
     onClose();
   };
