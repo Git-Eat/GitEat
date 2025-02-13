@@ -1,3 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+.apexcharts-tooltip-series-group {
+  gap: 10px; /* 기본 간격보다 넓은 값으로 조정 */
+}

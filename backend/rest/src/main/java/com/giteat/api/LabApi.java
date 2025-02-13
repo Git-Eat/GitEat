@@ -145,6 +145,11 @@ public class LabApi {
         return fileData;
     }
 
+    public Map<String, Object> getLanguages(String repoId, String accessToken){
+        String url = gitlabApiUrl + "/projects/" + repoId + "/languages";
+        return callGetApiMap(url, accessToken);
+    }
+
     public Map<String, Object> getUser(String accessToken){
         String url = gitlabApiUrl + "/user";
         return callGetApiMap(url, accessToken);
@@ -244,12 +249,11 @@ public class LabApi {
     }
 
     // 변경된 Raw 코드 가져오는 함수
-    public String getRawCode(String projectId, String filePath, String ref)  {
+    public String getRawCode(String projectId, String filePath, String ref, String accessToken)  {
         try {
             URI url = new URI(gitlabApiUrl + "/projects/" + projectId + "/repository/files/" + filePath + "/raw?ref=" + ref);
             HttpHeaders headers = new HttpHeaders();
-            //String accessToken = gitLabTokenService.getAccessToken(jwtAccessToken);
-            headers.set("Private-Token", "UATEgVcVTSsLn7PWao6c"); // 필요하면 OAuth 토큰 사용
+            headers.set("Authorization", "Bearer " + accessToken);
             HttpEntity<String> entity = new HttpEntity<>(headers);
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
             return response.getBody();
@@ -271,7 +275,6 @@ public class LabApi {
         log.info("ACCESS_TOKEN : " + accessToken);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
-        //headers.set("Private-Token", accessToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, entity, List.class);

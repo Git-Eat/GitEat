@@ -4,9 +4,52 @@ import { Participants } from "../../components/dashboard/participants";
 import { BarChartExample } from "../../components/dashboard/pRStatistics";
 import { PieChart } from "../../components/dashboard/pieChart";
 import { MixedChartByLine } from "../../components/dashboard/mixedChartByLine";
-import { Suspense } from "react";
+import { Suspense, useMemo } from "react";
 import { ErrorBoundary } from "../../components/common/errorBoundery";
 import { Skeleton } from "@mui/material";
+import { useGetContributors } from "../../api/queries/useGetContributors";
+import { useParams } from "react-router-dom";
+import { Contributors as ContributorsType } from "../../api/types/DashBoard";
+
+function getMaxValues(data: ContributorsType | null) {
+  if (data === null) return;
+  let maxCommit = 0;
+  let maxComment = 0;
+  let maxMergeRequest = 0;
+
+  // 모든 기여자(contributors)를 순회하면서
+  data.contributors.forEach((contributor) => {
+    // 각 기여자의 weeklyInfo 배열을 순회합니다.
+    contributor.weeklyInfo.forEach((info) => {
+      if (info.commitCount > maxCommit) {
+        maxCommit = info.commitCount;
+      }
+      if (info.commentCount > maxComment) {
+        maxComment = info.commentCount;
+      }
+      if (info.mergeRequestCount > maxMergeRequest) {
+        maxMergeRequest = info.mergeRequestCount;
+      }
+    });
+  });
+
+  return Math.max(maxCommit, maxComment, maxMergeRequest);
+}
+function Contributors() {
+  const { repoId } = useParams();
+  const { data } = useGetContributors(repoId as string);
+  const maxValue = useMemo(() => getMaxValues(data ? data : null), [data]);
+  return (
+    <>
+      {data?.contributors.map((contributor) => (
+        <div className="w-[48%]" key={contributor.userId}>
+          <MixedChartByLine data={contributor} maxValue={maxValue} />
+        </div>
+      ))}
+      ;
+    </>
+  );
+}
 
 export function DashBoard() {
   return (
@@ -60,17 +103,12 @@ export function DashBoard() {
               Commit, PR, Comment 통계를 통해 기여도를 확인하세요!
             </span>
             <div className="w-full flex flex-wrap justify-between ">
-              <div className="w-[48%]">
-                <MixedChartByLine />
-              </div>
-              <div className="w-[48%]">
-                <MixedChartByLine />
-              </div>
-              <div className="w-[48%]">
-                <MixedChartByLine />
-              </div>
-              <div className="w-[48%]">
-                <MixedChartByLine />
+              <div className="w-[98%] flex flex-wrap justify-between">
+                <ErrorBoundary fallbackComponent={<>error occured</>}>
+                  <Suspense fallback={<Skeleton width="100%" height={500} />}>
+                    <Contributors />
+                  </Suspense>
+                </ErrorBoundary>
               </div>
             </div>
           </div>

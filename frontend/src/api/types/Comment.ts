@@ -1,5 +1,21 @@
 import { Reply } from "./Reply";
 
+export type Position = {
+  baseSha: string;
+  startSha: string;
+  headSha: string;
+  oldPath: string;
+  newPath: string;
+  positionType: null | string;
+  newLine: null | number;
+  oldLine: null | number;
+  newStartLine: null | number;
+  newEndLine: null | number;
+  oldStartLine: null | number;
+  oldEndLine: null | number;
+  lineRange: null | number;
+};
+
 export type Comment = {
   commentId: number;
   prId: number;
@@ -11,7 +27,7 @@ export type Comment = {
   content: string;
   commentType: number;
   createAt: string;
-  position: object;
+  position: Position | null;
   reCommentList: Reply[];
 };
 

@@ -12,5 +12,5 @@ public class LighthouseDto {
     private String branch;
     private int repoId;
     private String build;
-    private String frontPath;
+    private String frontendPath;
 }

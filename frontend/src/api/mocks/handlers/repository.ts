@@ -1,4 +1,5 @@
 import { http, HttpResponse } from "msw";
+import { Pullrequests } from "../dummies/repository";
 const MOCK_RESPONSE = {
   repoId: 3,
   userId: 1,
@@ -10,9 +11,23 @@ const MOCK_RESPONSE = {
 };
 const API_BASE = import.meta.env.VITE_API_BASE;
 const repositoryHandler = [
-  //   http.post(`${API_BASE}/repo`, () => {
-  //     return HttpResponse.json(MOCK_RESPONSE);
-  //   }),
+  http.get(`${API_BASE}/repo`, () => {
+    return HttpResponse.json([
+      {
+        repoId: 888788,
+        name: "S12P11B108",
+        description: "",
+        githubUrl: null,
+        gitlabUrl: "https://lab.ssafy.com/s12-webmobile2-sub1/S12P11B108",
+        createAt: "2025-01-13T15:12:17.095+09:00",
+        ownerName: "s12-webmobile2-sub1",
+        access: 1,
+      },
+    ]);
+  }),
+  http.get(`${API_BASE}/pr/:repoId`, () => {
+    return HttpResponse.json(Pullrequests);
+  }),
   http.post(`${API_BASE}/repo`, async () => {
     // 3초(3000ms) 지연
     console.log("add");
