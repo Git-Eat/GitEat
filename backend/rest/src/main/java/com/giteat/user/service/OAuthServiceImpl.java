@@ -50,6 +50,9 @@ public class OAuthServiceImpl implements OAuthService {
         // 기존 사용자면 그대로 사용
         if (existUser.isPresent()) {
             userEntity = existUser.get();
+            userEntity.setEmail(oAuthTokenDto.getEmail());
+            userEntity.setAvatarUrl(oAuthTokenDto.getAvatarUrl());
+            userEntity = userRepository.save(userEntity);
         } else {
             // 신규 사용자면 새로 저장
             userEntity = new UserEntity();

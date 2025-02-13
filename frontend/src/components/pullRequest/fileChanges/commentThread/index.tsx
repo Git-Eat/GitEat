@@ -64,7 +64,6 @@ export function CommentThread({ comment }: CommentThreadProps) {
       {isReplyEditorOpen[comment.commentId] && (
         <MarkdownEditor
           onAddSingleComment={() => {}}
-          onStartReview={() => {}}
           onUpdateComment={() => {}}
           repoId={comment.repoId}
         />

@@ -31,3 +31,4 @@ public class NotiController {
         return ResponseEntity.ok(result);
     }
 }
+

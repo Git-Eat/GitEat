@@ -24,4 +24,5 @@ public class PrDto {
     private String baseSha;
     private String headSha;
     private String startSha;
+    private int prType;
 }

@@ -7,5 +7,5 @@ public interface GitLabTokenMapper {
 
     String getAccessToken(String jwtAccessToken);
 
-    String getAccessTokenById(String userId);
+    String getAccessTokenById(int userId);
 }
