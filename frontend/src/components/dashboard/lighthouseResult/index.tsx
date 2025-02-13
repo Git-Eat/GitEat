@@ -8,7 +8,7 @@ interface LightHouseResultProps {
 }
 
 export function LightHouseResult({ repoId }: LightHouseResultProps) {
-  const { data } = useGetLighthouseResult(repoId);
+  const { data, refetch } = useGetLighthouseResult(repoId);
   const [isModalOpen, openModal, closeModal] = useBooleanState(false);
 
   return (
@@ -52,21 +52,21 @@ export function LightHouseResult({ repoId }: LightHouseResultProps) {
               </section>
               <section className="flex justify-center items-center space-x-4">
                 <article className="flex items-center space-x-1">
-                  <div className="w-4 h-4 rounded-full bg-stats-green"></div>
+                  <div className="w-4 h-4 rounded-full bg-stats-red"></div>
                   <span className="text-neutral-400 text-sm">
-                    우수함 (0 - 49%)
+                    부족함 (0 - 49)
                   </span>
                 </article>
                 <article className="flex items-center space-x-1">
                   <div className="w-4 h-4 rounded-full bg-stats-yellow"></div>
                   <span className="text-neutral-400 text-sm">
-                    개선이 필요함 (50 - 89%)
+                    개선이 필요함 (50 - 89)
                   </span>
                 </article>
                 <article className="flex items-center space-x-1">
-                  <div className="w-4 h-4 rounded-full bg-stats-red"></div>
+                  <div className="w-4 h-4 rounded-full bg-stats-green"></div>
                   <span className="text-neutral-400 text-sm">
-                    부족함 (90 - 100%)
+                    우수함 (90 - 100)
                   </span>
                 </article>
               </section>
@@ -192,6 +192,7 @@ export function LightHouseResult({ repoId }: LightHouseResultProps) {
       <LighthouseResultModal
         closeModal={closeModal}
         isModalOpen={isModalOpen}
+        refetch={refetch}
       />
     </>
   );
