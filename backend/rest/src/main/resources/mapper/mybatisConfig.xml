@@ -29,6 +29,7 @@
         <typeAlias type="com.giteat.statistics.dto.CommentByWeekDto" alias="commentByWeekDto"/>
         <typeAlias type="com.giteat.noti.dto.NotiDto" alias="notiDto"/>
         <typeAlias type="com.giteat.webHook.gitLab.dto.MergeRequestTempDto" alias="prTempDto"/>
+        <typeAlias type="com.giteat.webHook.gitLab.dto.CommentTempDto" alias="commentTempDto"/>
     </typeAliases>
 
     <!-- TypeHandler 등록 -->
