@@ -9,6 +9,7 @@ import review from "../../../../assets/images/review.svg";
 import defaultprofile from "../../../../assets/images/user_profile.svg";
 import { MarkdownEditor } from "../../../common/markdownEditor";
 import { useUpdateReply } from "../../../../api/queries/useUpdateReply";
+import { useLoginStore } from "../../../../store/loginStore";
 
 interface ReCommentProps extends Reply {
   replyCreateAt: string;
@@ -52,6 +53,7 @@ export function Replies({
   const [editReplyId, setEditReplyId] = useState<number | null>(null);
   const [editContent, setEditContent] = useState<string>("");
   const [editCategory, setEditCategory] = useState<number>(0);
+  const { user } = useLoginStore();
 
   function handleEditReply(reply: Reply) {
     setIsEditing(true);
@@ -94,24 +96,28 @@ export function Replies({
           <time className="mr-2">{replyCreateAt}</time>
         </div>
         <div>
-          <button
-            onClick={() => {
-              if (isEditing) {
-                setIsEditing(false);
-                setEditReplyId(null);
-                setEditContent("");
-                setEditCategory(0);
-              } else {
-                handleEditReply(reply);
-              }
-            }}
-            className="mr-2"
-          >
-            {isEditing ? "수정 취소" : "답글 수정"}
-          </button>
-          <button onClick={() => deleteReComment(reCommentId)}>
-            답글 삭제
-          </button>
+          {Number(user.id) === reply.userId && (
+            <>
+              <button
+                onClick={() => {
+                  if (isEditing) {
+                    setIsEditing(false);
+                    setEditReplyId(null);
+                    setEditContent("");
+                    setEditCategory(0);
+                  } else {
+                    handleEditReply(reply);
+                  }
+                }}
+                className="mr-2"
+              >
+                {isEditing ? "수정 취소" : "답글 수정"}
+              </button>
+              <button onClick={() => deleteReComment(reCommentId)}>
+                답글 삭제
+              </button>
+            </>
+          )}
         </div>
       </header>
       <section className="prose px-10 py-3">

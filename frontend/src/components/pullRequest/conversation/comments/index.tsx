@@ -15,6 +15,7 @@ import { useCreateReply } from "../../../../api/queries/useCreateReply";
 import { useUpdateComment } from "../../../../api/queries/useUpdateComment";
 import { usePRStore } from "../../../../store/pullRequestStore";
 import { CodeBlock } from "../codeBlock";
+import { useLoginStore } from "../../../../store/loginStore";
 
 interface CommentsProps {
   repoId: number;
@@ -23,6 +24,7 @@ interface CommentsProps {
 
 export function Comments({ repoId, prId }: CommentsProps) {
   const { comments } = usePRStore();
+  const { user } = useLoginStore();
   const [isReplyEditorOpen, setIsReplyEditorOpen] = useState<
     Record<number, boolean>
   >({});
@@ -128,24 +130,28 @@ export function Comments({ repoId, prId }: CommentsProps) {
                 </div>
 
                 <div>
-                  <button
-                    className="mr-2"
-                    onClick={() => {
-                      if (isEditing) {
-                        setIsEditing(false);
-                        setEditCommentId(null);
-                        setEditContent("");
-                        setEditCategory(0);
-                      } else {
-                        handleEditComment(comment);
-                      }
-                    }}
-                  >
-                    {isEditing ? "수정 취소" : "댓글 수정"}
-                  </button>
-                  <button onClick={() => deleteComment(comment.commentId)}>
-                    댓글 삭제
-                  </button>
+                  {Number(user.id) === comment.userId && (
+                    <>
+                      <button
+                        className="mr-2"
+                        onClick={() => {
+                          if (isEditing) {
+                            setIsEditing(false);
+                            setEditCommentId(null);
+                            setEditContent("");
+                            setEditCategory(0);
+                          } else {
+                            handleEditComment(comment);
+                          }
+                        }}
+                      >
+                        {isEditing ? "수정 취소" : "댓글 수정"}
+                      </button>
+                      <button onClick={() => deleteComment(comment.commentId)}>
+                        댓글 삭제
+                      </button>
+                    </>
+                  )}
                 </div>
               </section>
               <time className="block px-11">
