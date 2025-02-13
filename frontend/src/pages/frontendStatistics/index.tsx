@@ -1,7 +1,13 @@
+import { Suspense } from "react";
+import { ErrorBoundary } from "../../components/common/errorBoundery";
 import { LightHouseResult } from "../../components/dashboard/lighthouseResult";
 import { Header } from "../../components/pullRequest/header";
+import { Skeleton } from "@mui/material";
+import { useParams } from "react-router-dom";
 
 export function FrontendStatistics() {
+  const { repoId } = useParams();
+  const numericRepoId = Number(repoId);
   return (
     <>
       <Header title={"asdf"} owner={"asdfasdf"} />
@@ -15,8 +21,11 @@ export function FrontendStatistics() {
           확인해보세요!
         </span>
         <section className="my-5">
-          {/* 임시 */}
-          <LightHouseResult repoId={761731} />
+          <ErrorBoundary fallbackComponent={<>error occured</>}>
+            <Suspense fallback={<Skeleton width="100%" height={500} />}>
+              <LightHouseResult repoId={numericRepoId} />
+            </Suspense>
+          </ErrorBoundary>
         </section>
       </main>
     </>

@@ -63,12 +63,12 @@ function LighthouseResultModal({
   );
 
   const handleSave = () => {
-    const gitUrl = gitUrlRef.current?.value;
-    const frontendPath = frontendPathRef.current?.value;
-    const branch = branchRef.current?.value;
+    const gitUrl = gitUrlRef.current?.value.trim();
+    const frontendPath = frontendPathRef.current?.value.trim();
+    const branch = branchRef.current?.value.trim();
 
     if (!repoId) {
-      console.log("repoId가 없없습니다.");
+      console.log("repoId가 없습니다.");
       return;
     }
     if (!gitUrl || !frontendPath || !branch) {
@@ -90,6 +90,7 @@ function LighthouseResultModal({
       setSnackbarMessage("저장에 실패했습니다.");
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
+      stopPolling();
     } else if (isUpdated) {
       setSnackbarMessage("성능 측정 완료");
       setSnackbarSeverity("info");

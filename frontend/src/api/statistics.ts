@@ -19,7 +19,7 @@ export async function addLighthouseResult(
   build: string
 ): Promise<Statistics> {
   try {
-    const res = await authClient.post(`/rest/report/lighthouse-pipeline`, {
+    const res = await authClient.post(`/report/lighthouse-pipeline`, {
       gitUrl: gitUrl,
       frontendPath: frontendPath,
       branch: branch,

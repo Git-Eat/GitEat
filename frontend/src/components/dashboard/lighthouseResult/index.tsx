@@ -9,7 +9,10 @@ interface LightHouseResultProps {
 
 export function LightHouseResult({ repoId }: LightHouseResultProps) {
   const { data } = useGetLighthouseResult(repoId);
-  const latestResult = data?.length ? data[data.length - 1] : null;
+  const latestResult =
+    data && Object.keys(data).length > 0 && Array.isArray(data)
+      ? data[data.length - 1]
+      : null;
   const [isModalOpen, openModal, closeModal] = useBooleanState(false);
 
   return (
