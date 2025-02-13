@@ -103,7 +103,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
             // sha 관련 데이터 넣기
             PrDto prDto = new PrDto();
 
-            Map<String, Object> diffMap = gitLabApi.getDiffRefs(projectId, prId, accessToken);
+            Map<String, Object> diffMap = gitLabApi.getDiffRefs(projectId, iid, accessToken);
             Map<String, Object> diffRefsMap = (Map<String, Object>) diffMap.get("diff_refs");
 
             String baseSha = String.valueOf(diffRefsMap.get("base_sha"));
