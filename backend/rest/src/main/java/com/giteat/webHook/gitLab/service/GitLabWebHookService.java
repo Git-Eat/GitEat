@@ -7,4 +7,8 @@ public interface GitLabWebHookService {
     void mergeRequestEvent(Map<String , Object> body);
 
     void noteEvent(Map<String , Object> body);
+
+    void addMergeRequestData(String accessToken);
+
+    void addNoteData(String accessToken);
 }

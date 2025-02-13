@@ -1,19 +1,18 @@
 package com.giteat.webHook.gitLab.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.giteat.api.LabApi;
 import com.giteat.common.gitLab.mapper.GitLabTokenMapper;
 import com.giteat.common.util.SHA1Util;
+import com.giteat.pr.dto.PrDto;
 import com.giteat.repo.entity.*;
 import com.giteat.repo.repository.*;
+import com.giteat.webHook.gitLab.dto.MergeRequestTempDto;
 import com.giteat.webHook.gitLab.mapper.GitLabWebHookMapper;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import com.fasterxml.jackson.core.type.TypeReference;
 
 
-import java.io.IOException;
 import java.util.*;
 
 
@@ -28,7 +27,6 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
     private final FileChangeRepository fileChangeRepository;
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
-    private final LabApi labApi;
     private final GitLabWebHookMapper gitLabWebHookMapper;
     /**
      * pr 에 대한 event 처리하는 함수
@@ -57,90 +55,113 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         mergeRequestEntity.setTargetBranch((String) mergeRequestMap.get("target_branch"));
         mergeRequestEntity.setSourceBranch((String) mergeRequestMap.get("source_branch"));
         mergeRequestEntity.setIsOpened("opened".equals(mergeRequestMap.get("state")) ? 1 : 0);
-
-
-        String projectId = String.valueOf(projectMap.get("id"));
-        String prId = String.valueOf(mergeRequestMap.get("id"));
-        String userId = String.valueOf(userMap.get("id"));
-        String iid = String.valueOf(mergeRequestMap.get("iid"));
-
-
-        String accessToken = gitLabTokenMapper.getAccessTokenById(Integer.parseInt(userId));
-        Map<String, Object> diffMap = gitLabApi.getDiffRefs(projectId, prId,accessToken);
-        Map<String, Object> diffRefsMap = (Map<String, Object>) diffMap.get("diff_refs");
-
-        String baseSha = String.valueOf(diffRefsMap.get("base_sha"));
-        String headSha = String.valueOf(diffRefsMap.get("head_sha"));
-        String startSha = String.valueOf(diffRefsMap.get("start_sha"));
-        mergeRequestEntity.setBaseSha(baseSha);
-        mergeRequestEntity.setHeadSha(headSha);
-        mergeRequestEntity.setStartSha(startSha);
         mergeRequestEntity.setPrType(1);
 
         mergeRequestRepository.save(mergeRequestEntity);
 
+        //pr temp 테이블에 데이터 넣기
+        MergeRequestTempDto mrTempDto = new MergeRequestTempDto();
+        mrTempDto.setRepoId((int) projectMap.get("id"));
+        mrTempDto.setPrId((int) mergeRequestMap.get("id"));
+        mrTempDto.setPrIid((int) mergeRequestMap.get("iid"));
+        mrTempDto.setTempStatus(0);
 
-        // ---------- commit Date 저장 -----------
-//        String accessToken = gitLabTokenMapper.getAccessTokenById(userId);
-        //accessToken이 유효한지 검사하는 로직 필요
-
-        List<Map<String, Object>> gitCommitList = gitLabApi.getWebHookCommit(projectId, prId, userId);
-        for (Map<String, Object> commit : gitCommitList) {
-
-            CommitEntity commitEntity = new CommitEntity();
-            CommitId commitId = new CommitId((String) commit.get("id"), (int) projectMap.get("id"), (int) mergeRequestMap.get("id"));
-            commitEntity.setId(commitId);
-            commitEntity.setContent((String) commit.get("message"));
-            commitEntity.setCommitedAt((String) commit.get("committed_date"));
-            commitRepository.save(commitEntity);
+        gitLabWebHookMapper.insertMergeRequestTemp(mrTempDto);
+    }
 
 
-            //----------- diff 저장 ------------
-            String commitId2 = (String) commit.get("id");
+    /**
+     * webHook 이 후 사용자 요청마다 데이터를 추가하거나 검사하는 함수
+     * @param accessToken
+     */
+    @Override
+    @Transactional
+    public void addMergeRequestData(String accessToken) {
+        List<MergeRequestTempDto> prTempList = gitLabWebHookMapper.getPrTemp(accessToken);
+        for (MergeRequestTempDto prTempDto : prTempList) {
+            String projectId = String.valueOf(prTempDto.getRepoId());
+            String prId = String.valueOf(prTempDto.getPrId());
+            String userId = String.valueOf(prTempDto.getUserId());
+            String iid = String.valueOf(prTempDto.getPrIid());
 
-            // id값으로 accessToken 가져오는 로직이 필요하다.
-            // userId 를 사용해서 사용
+            // sha 관련 데이터 넣기
+            PrDto prDto = new PrDto();
 
-            for (int prPageNation = 1; prPageNation <= 20; prPageNation++) {
-                List<Map<String, Object>> fileChangeList = gitLabApi.getFilesByPr(projectId, Integer.parseInt(iid), prPageNation, accessToken);
-                if (fileChangeList.isEmpty()) break; // 배열이 비어있다면(받아온 값이 없다면) for문 탈출
+            Map<String, Object> diffMap = gitLabApi.getDiffRefs(projectId, prId, accessToken);
+            Map<String, Object> diffRefsMap = (Map<String, Object>) diffMap.get("diff_refs");
 
-                for (Map<String, Object> fileChange : fileChangeList) {
-                    FileChangeEntity fileChangeEntity = new FileChangeEntity();
-                    FileChangeId fileChangeId = new FileChangeId(SHA1Util.encryptSHA1((String) fileChange.get("new_path")),
-                            Integer.parseInt(projectId), Integer.parseInt(iid));
+            String baseSha = String.valueOf(diffRefsMap.get("base_sha"));
+            String headSha = String.valueOf(diffRefsMap.get("head_sha"));
+            String startSha = String.valueOf(diffRefsMap.get("start_sha"));
+            prDto.setBaseSha(baseSha);
+            prDto.setHeadSha(headSha);
+            prDto.setStartSha(startSha);
+            prDto.setPrType(1);
 
-                    fileChangeEntity.setId(fileChangeId);
-                    String fileName = (String) fileChange.get("new_path");
-                    int slashIndex = ((String) fileChange.get("new_path")).lastIndexOf("/");
-                    if (slashIndex != -1) {
-                        fileChangeEntity.setFileName(fileName.substring(slashIndex + 1));
-                    } else {
-                        fileChangeEntity.setFileName((String) fileChange.get("new_path"));
+            // pr의 값을 update하는 구문 작성
+            gitLabWebHookMapper.updateMergeRequestData(prDto);
+            // pr의 status를 update하는 구문
+            gitLabWebHookMapper.updateMergeRequestStatus(prDto);
+
+            // ------------ commit 저장하는 함수 -----------------
+            List<Map<String, Object>> gitCommitList = gitLabApi.getWebHookCommit(projectId, prId, accessToken);
+            for (Map<String, Object> commit : gitCommitList) {
+
+                CommitEntity commitEntity = new CommitEntity();
+                CommitId commitId = new CommitId((String) commit.get("id"), Integer.valueOf(projectId), Integer.valueOf(prId));
+                commitEntity.setId(commitId);
+                commitEntity.setContent((String) commit.get("message"));
+                commitEntity.setCommitedAt((String) commit.get("committed_date"));
+                commitRepository.save(commitEntity);
+
+
+
+                // id값으로 accessToken 가져오는 로직이 필요하다.
+                // userId 를 사용해서 사용
+
+                for (int prPageNation = 1; prPageNation <= 20; prPageNation++) {
+                    List<Map<String, Object>> fileChangeList = gitLabApi.getFilesByPr(projectId, Integer.parseInt(iid), prPageNation, accessToken);
+                    if (fileChangeList.isEmpty()) break; // 배열이 비어있다면(받아온 값이 없다면) for문 탈출
+
+                    for (Map<String, Object> fileChange : fileChangeList) {
+                        FileChangeEntity fileChangeEntity = new FileChangeEntity();
+                        FileChangeId fileChangeId = new FileChangeId(SHA1Util.encryptSHA1((String) fileChange.get("new_path")),
+                                Integer.parseInt(projectId), Integer.parseInt(iid));
+
+                        fileChangeEntity.setId(fileChangeId);
+                        String fileName = (String) fileChange.get("new_path");
+                        int slashIndex = ((String) fileChange.get("new_path")).lastIndexOf("/");
+                        if (slashIndex != -1) {
+                            fileChangeEntity.setFileName(fileName.substring(slashIndex + 1));
+                        } else {
+                            fileChangeEntity.setFileName((String) fileChange.get("new_path"));
+                        }
+
+                        fileChangeEntity.setOldPath((String) fileChange.get("old_path"));
+                        fileChangeEntity.setNewPath((String) fileChange.get("new_path"));
+
+                        int fileStatus = 0;  // 기본값 설정
+
+                        // 1. add , 2. update, 3. delete
+                        if ((boolean) fileChange.get("new_file")) {
+                            fileStatus = 1;
+                        } else if ((boolean) fileChange.get("renamed_file")) {
+                            fileStatus = 2;
+                        } else if ((boolean) fileChange.get("deleted_file")) {
+                            fileStatus = 3;
+                        } else if ((!(boolean) fileChange.get("new_file") && !(boolean) fileChange.get("renamed_file") && !(boolean) fileChange.get("deleted_file"))) {
+                            fileStatus = 2;
+                        }
+                        fileChangeEntity.setFileStatus(fileStatus);
+
+                        fileChangeRepository.save(fileChangeEntity);
                     }
-
-                    fileChangeEntity.setOldPath((String) fileChange.get("old_path"));
-                    fileChangeEntity.setNewPath((String) fileChange.get("new_path"));
-
-                    int fileStatus = 0;  // 기본값 설정
-
-                    // 1. add , 2. update, 3. delete
-                    if ((boolean) fileChange.get("new_file")) {
-                        fileStatus = 1;
-                    } else if ((boolean) fileChange.get("renamed_file")) {
-                        fileStatus = 2;
-                    } else if ((boolean) fileChange.get("deleted_file")) {
-                        fileStatus = 3;
-                    } else if ((!(boolean) fileChange.get("new_file") && !(boolean) fileChange.get("renamed_file") && !(boolean) fileChange.get("deleted_file"))) {
-                        fileStatus = 2;
-                    }
-                    fileChangeEntity.setFileStatus(fileStatus);
-
-                    fileChangeRepository.save(fileChangeEntity);
                 }
             }
         }
     }
+
+
 
 
     /**
@@ -222,5 +243,12 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
             replyRepository.save(replyEntity);
             System.out.println("대댓글 저장완료");
         }
+    }
+
+
+
+    @Override
+    public void addNoteData(String accessToken) {
+
     }
 }

@@ -3,6 +3,19 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.giteat.webHook.gitLab.mapper.GitLabWebHookMapper">
+    <resultMap id="prTempResultMap" type="prTempDto">
+        <result column="repo_id" property="repoId"/>
+        <result column="pr_id" property="prId"/>
+        <result column="pr_iid" property="prIid"/>
+        <result column="user_id" property="userId"/>
+        <result column="temp_status" property="tempStatus"/>
+    </resultMap>
+
+    <select id="getPrTemp" resultMap="prTempResultMap">
+        SELECT *
+        FROM pr_temp
+        WHERE temp_status = 0;
+    </select>
 
     <select id="getCommentCnt" parameterType="String" resultType="int">
         SELECT count(comment_id)
@@ -10,4 +23,64 @@
         WHERE comment_id = #{commentId};
     </select>
 
+    <select id="getReplyCnt" parameterType="String" resultType="String">
+        SELECT o.access_token
+        FROM oauth_token as o
+                 JOIN tokens as t
+                      USING (oauth_id)
+        where t.access_token = #{jwtAccessToken};
+    </select>
+
+    <select id="getCommentId" parameterType="map" resultType="string">
+        SELECT comment_id
+        FROM comment
+        WHERE repo_id = #{repoId}
+          AND dis_id = #{disId}
+          AND pr_id = #{prId}
+    </select>
+
+    <!-- prTempList 가져오기   -->
+    <select id="getPrTemp" parameterType="string" resultType="prTempResultMap">
+        SELECT
+            p.repo_id,
+            p.pr_id,
+            p.pr_iid,
+            p.user_id,
+            p.temp_status
+        FROM pr_temp as p
+                JOIN oauth_token as o
+                USING(user_id)
+        WHERE o.access_token = #{accessToken}
+          AND p.temp_status = 0;
+    </select>
+
+
+    <!-- pr_temp 테이블에 데이터 추가하기  -->
+    <insert id="insertMergeRequestTemp" parameterType="prTempDto">
+        INSERT INTO pr_temp (repo_id,
+                             pr_id,
+                             pr_iid,
+                             userId,
+                             temp_status)
+        VALUES (#{repo_id},
+                #{pr_id},
+                #{pr_iid},
+                #{userId},
+                #{temp_status});
+    </insert>
+
+    <!-- mergeRequest에 데이터 추가하기-->
+    <update id="updateMergeRequestData" parameterType="prDto">
+
+    </update>
+
+    <!-- prTemp 테이블 status 변경   -->
+    <update id="updateMergeRequestStatus" parameterType="int">
+        UPDATE
+            SET temp_status = 1
+        WHERE
+            repo_id = #{repoId}
+          AND
+            pr_id = #{pr_id}
+    </update>
 </mapper>
