@@ -22,7 +22,7 @@ interface Reply {
   avatarUrl: string | null;
   disId: string;
   content: string;
-  replyType: 0 | 1 | 2;
+  reCommentType: 0 | 1 | 2;
   imageName: string | null;
   createAt: string | null;
 }
@@ -34,121 +34,70 @@ interface CommentBody {
 
 interface ReplyBody {
   content: string;
-  replyType: 0 | 1 | 2;
+  reCommentType: 0 | 1 | 2;
 }
 
 const comments: Comment[] = [
   {
-    commentId: 1,
-    prId: 1,
-    repoId: 101,
-    userId: 1,
-    userName: "송용인",
-    avatarUrl: null,
-    disId: "1",
-    content: "이게 어떤 용도죠?",
-    commentType: 1,
-    createAt: "2025-02-07T12:34:56.789Z",
-    position: null,
-    reCommentList: [
-      {
-        reCommentId: 1,
-        userId: 2,
-        userName: "조창훈",
-        avatarUrl: null,
-        disId: "1",
-        content: "답장입니다",
-        replyType: 0,
-        imageName: null,
-        createAt: null,
-      },
-    ],
-  },
-  {
-    commentId: 2,
-    prId: 1,
-    repoId: 101,
-    userId: 1,
-    userName: "송용인",
-    avatarUrl: null,
-    disId: "2",
-    content: "오 수고하셨습니다 ㅎㅎ",
-    commentType: 1,
-    createAt: null,
-    position: null,
-    reCommentList: [],
-  },
-  {
-    commentId: 3,
-    prId: 101,
-    repoId: 1,
-    userId: 303,
-    userName: "commentUser",
-    avatarUrl: "https://example.com/avatar1.jpg",
-    disId: "dis123",
-    content: "example1.txt 파일에서 코드 수정이 필요합니다.",
-    commentType: 1,
-    createAt: "2025-02-10T15:30:00Z",
+    commentId: 1874761,
+    prId: 17,
+    repoId: 888788,
+    userId: 22219,
+    userName: "이해루",
+    avatarUrl:
+      "https://secure.gravatar.com/avatar/64d76aebe92226f9ea325dc5d35a44327d62594998d76d6905a47b6a0f61ae92?s=80&d=identicon",
+    disId: "a0124e9547dcd285a942adf3a8986d1006e6279a",
+    content: "사용하지 않는 코드라면 지워도 될 것 같습니다. 수정하지마",
+    commentType: 0,
+    createAt: "2025-02-10T21:17:27.361+09:00",
     position: {
-      baseSha: "commit1_baseSha_dummy",
-      startSha: "commit1_startSha_dummy",
-      headSha: "commit1_headSha_dummy",
-      oldPath: "/src/old/example1.txt",
-      newPath: "/src/new/example1.txt",
-      positionType: "text",
-      newLine: 1,
-      oldLine: null,
-      newStartLine: 10,
-      newEndLine: 20,
-      oldStartLine: 9,
-      oldEndLine: 19,
-      lineRange: {
-        start: {
-          lineCode: "lineCode_start_dummy",
-        },
-        end: {
-          lineCode: "lineCode_end_dummy",
-        },
-      },
+      baseSha: "46edebc6b129916f4e0f2b485add074ccb8f385a",
+      startSha: "46edebc6b129916f4e0f2b485add074ccb8f385a",
+      headSha: "3d40bc144d918d1eb890c7a373c6072cb812cdd4",
+      oldPath:
+        "backend/rest/src/main/java/com/giteat/pr/entity/RepositoryEntity.java",
+      newPath:
+        "backend/rest/src/main/java/com/giteat/pr/entity/RepositoryEntity.java",
+      positionType: null,
+      newLine: 39,
+      oldLine: 0,
+      newStartLine: 39,
+      newEndLine: 39,
+      oldStartLine: 0,
+      oldEndLine: 0,
+      lineRange: null,
     },
-    reCommentList: [
-      {
-        reCommentId: 1,
-        userId: 2,
-        userName: "조창훈",
-        avatarUrl: null,
-        disId: "1",
-        content: "답장입니다",
-        replyType: 0,
-        imageName: null,
-        createAt: null,
-      },
-      {
-        reCommentId: 1,
-        userId: 2,
-        userName: "조창훈",
-        avatarUrl: null,
-        disId: "1",
-        content: "답장입니다",
-        replyType: 0,
-        imageName: null,
-        createAt: null,
-      },
-    ],
+    reCommentList: [],
   },
   {
-    commentId: 4,
-    prId: 101,
-    repoId: 1,
-    userId: 305,
-    userName: "anotherCommentUser",
-    avatarUrl: "https://example.com/avatar2.jpg",
-    disId: "dis456",
-    content: "변경된 코드가 성능에 영향을 줄 수 있습니다.",
-    commentType: 2,
-    createAt: "2025-02-10T17:00:00Z",
+    commentId: 1874763,
+    prId: 17,
+    repoId: 888788,
+    userId: 22219,
+    userName: "이해루",
+    avatarUrl:
+      "https://secure.gravatar.com/avatar/64d76aebe92226f9ea325dc5d35a44327d62594998d76d6905a47b6a0f61ae92?s=80&d=identicon",
+    disId: "6b9fcf9fcfaf00d67cb10020dbd1dbe4ddea4330",
+    content:
+      "수고하셨습니다. 문득 든 생각인데 pr이라는 명칭에 대해서는 어떻게 생각하시나요? 그렇게 명시적인 이름은 아닌거 같아서 이후 여유가 된다면 pullrequest로 수정하는 것도 나쁘지 않겠다는 생각입니다. 코멘트 남긴 부분만 조금 수정하시면 좋을 것 같습니다!",
+    commentType: 0,
+    createAt: "2025-01-31T09:50:55.882+09:00",
     position: null,
-    reCommentList: [],
+    reCommentList: [
+      {
+        reCommentId: 1874817,
+        userId: 22147,
+        userName: "신지혜",
+        avatarUrl:
+          "https://secure.gravatar.com/avatar/5a7047c33f01f87edfef9789e87cc5e3604ac367b6589f9e8a43bf7465ab8e24?s=80&d=identicon",
+        disId: "6b9fcf9fcfaf00d67cb10020dbd1dbe4ddea4330",
+        content:
+          "네 ~~ 깃랩에서 Mergerequest라는 명칭으로 쓰고 있어서 이걸로 바꾸려고 합니다 !",
+        reCommentType: 0,
+        imageName: null,
+        createAt: "2025-01-31T09:50:55.829+09:00",
+      },
+    ],
   },
 ];
 
@@ -254,7 +203,7 @@ const commentsHandlers = [
       try {
         const { repoId, prId, discussionId } = params;
         const body = (await request.json()) as ReplyBody;
-        const { content, replyType } = body;
+        const { content, reCommentType } = body;
 
         if (!content.trim()) {
           return HttpResponse.json(
@@ -284,7 +233,7 @@ const commentsHandlers = [
           avatarUrl: null,
           disId: String(discussionId),
           content,
-          replyType,
+          reCommentType,
           imageName: null,
           createAt: new Date().toISOString(),
         };
@@ -343,7 +292,7 @@ const commentsHandlers = [
     try {
       const { repoId, prId, replyId } = params;
       const body = (await request.json()) as ReplyBody;
-      const { content, replyType } = body;
+      const { content, reCommentType } = body;
 
       const comment = comments.find(
         (comment) =>
@@ -375,7 +324,7 @@ const commentsHandlers = [
       const updatedReply = {
         ...comment.reCommentList[replyIndex],
         content,
-        replyType,
+        reCommentType,
       };
 
       comment.reCommentList[replyIndex] = updatedReply;

@@ -171,7 +171,7 @@ public class MergeRequestController {
     public ResponseEntity<?> insertReply(
             @PathVariable int repoId,
             @PathVariable int prId,
-            @PathVariable int discussionId,
+            @PathVariable String discussionId,
             @RequestBody Map<String, Object> replyDto) {
 
         ResponseEntity<?> request = apiUtil.postApi("/pr/" + repoId + "/" + prId + "/reply/" + discussionId, replyDto);

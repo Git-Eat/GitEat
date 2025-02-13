@@ -9,7 +9,7 @@ import {
 import kebab from "../../../assets/images/kebab.svg";
 import { useBooleanState } from "../../../hooks/useBooleanState";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDeleteRepository } from "../../../api/queries/useDeleteRepository";
 interface RepositoryCardProps {
   title: string;
@@ -44,6 +44,7 @@ export function RepositoryCard({
 }: RepositoryCardProps) {
   const [isToggle, onToggle, offToggle] = useBooleanState(false);
   const { mutate } = useDeleteRepository(repoId);
+  const navigation = useNavigate();
   const anchorRef = React.useRef<HTMLButtonElement>(null);
   const onHandler = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
@@ -65,9 +66,9 @@ export function RepositoryCard({
         <button
           onClick={(e) => onHandler(e)}
           ref={anchorRef}
-          className="w-[5px] h-[5px] hover:cursor-pointer flex justify-center items-center"
+          className="w-[15px] h-[15px] hover:cursor-pointer flex justify-center items-center"
         >
-          <img src={kebab} alt="menu" />
+          <img className="w-[18px] h-[18px]" src={kebab} alt="menu" />
         </button>
 
         <Popper
@@ -82,7 +83,7 @@ export function RepositoryCard({
             <Zoom
               {...TransitionProps}
               style={{
-                transformOrigin: "right top",
+                transformOrigin: "left top",
               }}
             >
               <Paper>
@@ -107,6 +108,24 @@ export function RepositoryCard({
                       }}
                     >
                       레포지토리 등록 해제
+                    </MenuItem>
+                    <MenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        navigation(`${repoId}/dashboard`);
+                      }}
+                    >
+                      성능측정
+                    </MenuItem>
+                    <MenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        navigation(`${repoId}/performance`);
+                      }}
+                    >
+                      대시보드
                     </MenuItem>
                   </MenuList>
                 </ClickAwayListener>
