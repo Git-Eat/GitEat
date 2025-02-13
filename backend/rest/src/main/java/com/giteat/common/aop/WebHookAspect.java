@@ -42,7 +42,7 @@ public class WebHookAspect {
             String accessToken = headerValue.split("Bearer ")[1];
 
             // pr_temp 검사
-//            webHookService.addMergeRequestData(accessToken);
+            webHookService.addMergeRequestData(accessToken);
 
             // noti_table 검사
 //            webHookService.addNoteData(accessToken);
