@@ -66,12 +66,17 @@
 
     <!-- mergeRequest에 데이터 추가하기-->
     <update id="updateMergeRequestData" parameterType="prDto">
-
+        UPDATE pr
+        SET base_sha  = #{baseSha},
+            head_sha  = #{headSha},
+            start_sha = #{startSha}
+        WHERE repo_id = #{repoId}
+          AND pr_id = #{prId}
     </update>
 
     <!-- prTemp 테이블 status 변경   -->
     <update id="updateMergeRequestStatus" parameterType="int">
-        UPDATE
+        UPDATE pr_temp
             SET temp_status = 1
         WHERE
             repo_id = #{repoId}
