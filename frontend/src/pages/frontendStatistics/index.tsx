@@ -3,7 +3,7 @@ import { Header } from "../../components/pullRequest/header";
 
 export function FrontendStatistics() {
   return (
-    <div>
+    <>
       <Header title={"asdf"} owner={"asdfasdf"} />
 
       <main className="w-[98%] m-auto px-8 py-4 bg-gray-100 rounded-2xl min-h-[calc(100vh-100px)]">
@@ -19,6 +19,6 @@ export function FrontendStatistics() {
           <LightHouseResult repoId={761731} />
         </section>
       </main>
-    </div>
+    </>
   );
 }
