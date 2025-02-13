@@ -399,7 +399,7 @@ public class LabApi {
         body.put("name" , WebHookConstants.COMMENT_NAME);
         body.put("description" , WebHookConstants.COMMENT_DESCRIPTION);
         body.put("enable_ssl_verification" , "false");
-        body.put("note_events" , "false");
+        body.put("note_events" , "true");
         body.put("custom_webhook_template" , WebHookConstants.COMMENT_CUSTOM_TEMPLATE);
         body.put("push_events" , "false");
 
