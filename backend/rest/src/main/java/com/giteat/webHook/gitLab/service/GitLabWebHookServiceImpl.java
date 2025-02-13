@@ -35,7 +35,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
      * @param body
      */
     @Override
-    @Transactional
+//    @Transactional
     public void mergeRequestEvent(Map<String, Object> body) {
 
         // ----------------- pr 정보 저장 ------------
@@ -62,6 +62,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
 
         mergeRequestRepository.save(mergeRequestEntity);
         System.out.println("entity : " + mergeRequestEntity);
+
         //pr temp 테이블에 데이터 넣기
         MergeRequestTempDto mrTempDto = new MergeRequestTempDto();
         mrTempDto.setRepoId((int) projectMap.get("id"));
