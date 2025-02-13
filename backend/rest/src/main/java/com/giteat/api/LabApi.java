@@ -222,8 +222,8 @@ public class LabApi {
     }
 
     // webHook에서 commit 데이터 읽어오는 함수
-    public List<Map<String, Object>> getWebHookCommit(String projectId, String prId, String accessToken) {
-        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests" + prId +"/commits";
+    public List<Map<String, Object>> getWebHookCommit(String projectId, String prIid, String accessToken) {
+        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + prIid +"/commits";
 //        String url = "http://192.168.31.42:81/api/v4" + "/projects/" + projectId + "/merge_requests/" + prId + "/commits";
         return callGetApiList(url , accessToken);
     }
@@ -240,7 +240,7 @@ public class LabApi {
 
     public Map<String , Object> getDiffRefs(String projectId , String iid ,String accessToken){
 //        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + iid + "/diff";
-        String url = "gitlabApiUrl" + "/projects/" + projectId + "/merge_requests/" + iid;
+        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + iid;
         return this.callGetApiMap(url , accessToken);
     }
 
