@@ -82,7 +82,7 @@
     <!-- prTemp 테이블 status 변경   -->
     <update id="updateMergeRequestStatus" parameterType="prTempDto">
         UPDATE pr_temp
-            SET temp_status = 1
+        SET temp_status = 1
         WHERE
             repo_id = #{repoId}
           AND

@@ -45,7 +45,7 @@ public class WebHookAspect {
             webHookService.addMergeRequestData(accessToken);
 
             // noti_table 검사
-//            webHookService.addNoteData(accessToken);
+            webHookService.addNoteData(accessToken);
         }catch(Exception e){
             log.info("AOP ERROR");
             e.printStackTrace();
