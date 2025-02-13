@@ -25,7 +25,7 @@ public class WebHookAspect {
 
 
     //모든 메소드에서 로그인 관련 user는 제외
-    @Pointcut("execution(* com.giteat.*.controller.*.*(..)) && !execution(* com.giteat.user.controller.*.*(..))")
+    @Pointcut("execution(* com.giteat.*.controller.*.*(..)) && !execution(* com.giteat.user.controller.*.*(..)) && !execution(* com.giteat.webHook.gitLab.controller.*.*(..))")
     public void allExceptUserControllerMethods() {}
 
     /**
