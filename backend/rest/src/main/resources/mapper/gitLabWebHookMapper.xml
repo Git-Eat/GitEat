@@ -82,13 +82,13 @@
     <!-- prTemp 테이블 status 변경   -->
     <update id="updateMergeRequestStatus" parameterType="prTempDto">
         UPDATE pr_temp
-            SET temp_status = 1
+        SET temp_status = 1
         WHERE
             repo_id = #{repoId}
           AND
             pr_id = #{prId}
     </update>
-    commentTempDto
+
     <select id="getCommentList" parameterType="string" resultMap="commentTempResultMap">
         SELECT c.repo_id,
                c.pr_id,
