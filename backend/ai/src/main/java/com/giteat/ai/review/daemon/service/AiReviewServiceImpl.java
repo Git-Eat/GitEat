@@ -63,7 +63,7 @@ public class AiReviewServiceImpl implements AiReviewService {
         String head_sha = null;
 
         // 토큰 조회 로직 추가
-        Optional<AiReviewStatusEntity> statusEntity = aiReviewRepository.findByRepoIdPrId(repoId, prId);
+        Optional<AiReviewStatusEntity> statusEntity = aiReviewRepository.findByRepoIdAndPrId(Integer.parseInt(repoId), prId);
         String accessToken = statusEntity.map(entity -> entity.getAccessToken()).orElse(null);
 
         if (optionalMr.isPresent()) {
@@ -128,11 +128,11 @@ public class AiReviewServiceImpl implements AiReviewService {
                 System.out.println("[createAiReview] 오류: statusEntity가 null입니다");
                 return false;
             }
-            if (diffs  == null) {
+            if (diffs == null) {
                 System.out.println("[createAiReview] 오류: diffs 가 null입니다");
                 return false;
             }
-            if(diffs.isEmpty()) {
+            if (diffs.isEmpty()) {
                 System.out.println("[createAiReview] 오류: diffs 가 비어있습니다");
                 return false;
             }
@@ -143,108 +143,145 @@ public class AiReviewServiceImpl implements AiReviewService {
             System.out.println("- Status ID: " + statusEntity.getArStatusId());
             System.out.println("- 변경된 파일 수: " + diffs.size());
 
-            // 모든 파일의 변경사항을 한번에 수집
-            StringBuilder combinedBeforeCode  = new StringBuilder();
-            StringBuilder combinedAfterCode = new StringBuilder();
+            // 파일들을 3개씩 그룹으로 나누기
+            List<List<Map<String, Object>>> fileGroups = new ArrayList<>();
+            int groupSize = 3;
+            for (int i = 0; i < diffs.size(); i += groupSize) {
+                fileGroups.add(diffs.subList(i, Math.min(i + groupSize, diffs.size())));
+            }
+
+//         모든 파일의 변경사항을 한번에 수집
+//         StringBuilder combinedBeforeCode  = new StringBuilder();
+//         StringBuilder combinedAfterCode = new StringBuilder();
+
+            StringBuilder finalReview = new StringBuilder();
+            List<String> previousReviews = new ArrayList<>();
             String baseSha = null;
             String headSha = null;
 
+            // 각 그룹별로 처리
+            for (List<Map<String, Object>> group : fileGroups) {
+                StringBuilder beforeCode = new StringBuilder();
+                StringBuilder afterCode = new StringBuilder();
 
-            // 각 파일의 변경사항을 수집
-            for (Map<String, Object> diff : diffs) {
-                String oldPath = (String) diff.get("old_path");
-                String newPath = (String) diff.get("new_path");
+                for (Map<String, Object> diff : group) {
+                    // 각 파일의 변경사항을 수집
+//              for (Map<String, Object> diff : diffs) {
+                    String oldPath = (String) diff.get("old_path");
+                    String newPath = (String) diff.get("new_path");
 
-                // 파일 상태 확인
-                int fileStatus;
-                if (Boolean.TRUE.equals(diff.get("new_file"))) {
-                    fileStatus = 1;  // 추가
-                } else if (Boolean.TRUE.equals(diff.get("deleted_file"))) {
-                    fileStatus = 3;  // 삭제
-                } else if (Boolean.TRUE.equals(diff.get("renamed_file"))) {
-                    fileStatus = 4;  // 이름 변경
-                } else {
-                    fileStatus = 2;  // 수정
+                    // 파일 상태 확인
+                    int fileStatus;
+                    if (Boolean.TRUE.equals(diff.get("new_file"))) {
+                        fileStatus = 1;  // 추가
+                    } else if (Boolean.TRUE.equals(diff.get("deleted_file"))) {
+                        fileStatus = 3;  // 삭제
+                    } else if (Boolean.TRUE.equals(diff.get("renamed_file"))) {
+                        fileStatus = 4;  // 이름 변경
+                    } else {
+                        fileStatus = 2;  // 수정
+                    }
+
+                    FileDto fileDto = FileDto.builder()
+                            .repoId(statusEntity.getRepoId())
+                            .prId(statusEntity.getPrId())
+                            .oldPath(oldPath)
+                            .newPath(newPath)
+                            .fileName(newPath.substring(newPath.lastIndexOf('/') + 1))
+                            .fileStatus(fileStatus)
+                            .build();
+
+                    // GitLab에서 변경된 코드 가져오기
+                    Map<String, String> changedCode = getChangedCode(
+                            String.valueOf(statusEntity.getRepoId()),
+                            statusEntity.getPrId(),
+                            fileDto
+                    );
+
+                    if (changedCode != null) {
+                        // SHA 정보 저장 (처음 한 번만)
+                        if (baseSha == null) {
+                            baseSha = changedCode.get("baseSha");
+                            headSha = changedCode.get("headSha");
+                        }
+
+                        // 파일별 코드 내용 합치기
+//                    combinedBeforeCode.append("\n=== ").append(fileDto.getFileName()).append(" (변경 전) ===\n")
+//                            .append(changedCode.get("beforeCode") != null ? changedCode.get("beforeCode") : "")
+//                            .append("\n");
+//
+//                    combinedAfterCode.append("\n=== ").append(fileDto.getFileName()).append(" (변경 후) ===\n")
+//                            .append(changedCode.get("afterCode") != null ? changedCode.get("afterCode") : "")
+//                            .append("\n");
+
+                        // 변경된 코드 수집
+                        beforeCode.append("\n=== ").append(fileDto.getFileName()).append(" ===\n")
+                                .append(changedCode.get("beforeCode") != null ? changedCode.get("beforeCode") : "")
+                                .append("\n");
+
+                        afterCode.append("\n=== ").append(fileDto.getFileName()).append(" ===\n")
+                                .append(changedCode.get("afterCode") != null ? changedCode.get("afterCode") : "")
+                                .append("\n");
+                    }
                 }
 
-                FileDto fileDto = FileDto.builder()
-                        .repoId(statusEntity.getRepoId())
-                        .prId(statusEntity.getPrId())
-                        .oldPath(oldPath)
-                        .newPath(newPath)
-                        .fileName(newPath.substring(newPath.lastIndexOf('/') + 1))
-                        .fileStatus(fileStatus)
-                        .build();
-
-                // GitLab에서 변경된 코드 가져오기
-                Map<String, String> changedCode = getChangedCode(
-                        String.valueOf(statusEntity.getRepoId()),
-                        statusEntity.getPrId(),
-                        fileDto
+                // 현재 그룹의 코드에 대한 리뷰 생성
+                String groupReview = aiReviewApi.generateReview(
+                        beforeCode.toString(),
+                        afterCode.toString(),
+                        previousReviews
                 );
 
-                if (changedCode != null) {
-                    // SHA 정보 저장 (처음 한 번만)
-                    if (baseSha == null) {
-                        baseSha = changedCode.get("baseSha");
-                    }
-                    if (headSha == null) {
-                        headSha = changedCode.get("headSha");
-                    }
-
-                    // 파일별 코드 내용 합치기
-                    combinedBeforeCode.append("\n=== ").append(fileDto.getFileName()).append(" (변경 전) ===\n")
-                            .append(changedCode.get("beforeCode") != null ? changedCode.get("beforeCode") : "")
-                            .append("\n");
-
-                    combinedAfterCode.append("\n=== ").append(fileDto.getFileName()).append(" (변경 후) ===\n")
-                            .append(changedCode.get("afterCode") != null ? changedCode.get("afterCode") : "")
-                            .append("\n");
+                // 리뷰 결과가 유효한 경우에만 추가
+                if (groupReview != null && !groupReview.startsWith("GPT call failed")) {
+                    finalReview.append(groupReview).append("\n\n");
                 }
-            }
 
 //            if (changedCode == null || changedCode.isEmpty()) {
 //                System.out.println("[createAiReview] 오류: GitLab에서 코드를 가져오지 못했습니다");
 //                return false;
 //            }
 
-            // AI 리뷰 생성
-            String reviewContent = aiReviewApi.generateReview(
-                    combinedBeforeCode.toString(),
-                    combinedAfterCode.toString()
-            );
+                // AI 리뷰 생성
+//            String reviewContent = aiReviewApi.generateReview(
+//                    combinedBeforeCode.toString(),
+//                    combinedAfterCode.toString()
+//            );
+//
+//            System.out.println("변경된 코드 확인:");
+//            System.out.println("beforeCode: " + combinedBeforeCode);
+//            System.out.println("afterCode: " + combinedAfterCode);
+            }
 
-            System.out.println("변경된 코드 확인:");
-            System.out.println("beforeCode: " + combinedBeforeCode);
-            System.out.println("afterCode: " + combinedAfterCode);
+            // 최종 리뷰가 있는 경우에만 저장
+            if (finalReview.length() > 0) {
+                // AI 리뷰 엔티티 생성 및 저장
+                System.out.println("[createAiReview] 리뷰 엔티티 생성 시작");
+                AiReviewEntity reviewEntity = new AiReviewEntity();
+                reviewEntity.setRepoId(statusEntity.getRepoId());
+                reviewEntity.setPrId(statusEntity.getPrId());
+                reviewEntity.setArStatusId(statusEntity.getArStatusId());
+                reviewEntity.setBaseSha(baseSha);
+                reviewEntity.setHeadSha(headSha);
+                reviewEntity.setContent(finalReview.toString());
+                reviewEntity.setCreateTime(LocalDateTime.now());
 
-            // AI 리뷰 엔티티 생성 및 저장
-            System.out.println("[createAiReview] 리뷰 엔티티 생성 시작");
-            AiReviewEntity reviewEntity = new AiReviewEntity();
-            reviewEntity.setRepoId(statusEntity.getRepoId());
-            reviewEntity.setPrId(statusEntity.getPrId());
-            reviewEntity.setArStatusId(statusEntity.getArStatusId());
-            reviewEntity.setBaseSha(baseSha);
-            reviewEntity.setHeadSha(headSha);
-            reviewEntity.setContent(reviewContent);
-            reviewEntity.setCreateTime(LocalDateTime.now());
+                System.out.println("serviceImpl reviewEntity" + reviewEntity);
+                aiReviewEntityRepository.save(reviewEntity);
 
-            System.out.println("serviceImpl reviewEntity"+reviewEntity);
-            aiReviewEntityRepository.save(reviewEntity);
+                // 리뷰 후 상태 업데이트
+                statusEntity.setStatus(1);
+                aiReviewRepository.save(statusEntity);
+                return true;
+            }
 
-            // 리뷰 후 상태 업데이트
-            statusEntity.setStatus(1);
-            aiReviewRepository.save(statusEntity);
-            return true;
-
-        }
-        catch (Exception e) {
-            System.out.println("[createAiReview] 심각한 오류 발생 ===========================");
-            System.out.println("오류 메시지: " + e.getMessage());
-            System.out.println("오류 위치: "+e.getCause());
             return false;
 
+        } catch (Exception e) {
+            System.out.println("[createAiReview] 심각한 오류 발생 ===========================");
+            System.out.println("오류 메시지: " + e.getMessage());
+            System.out.println("오류 위치: " + e.getCause());
+            return false;
         }
-
     }
 }
