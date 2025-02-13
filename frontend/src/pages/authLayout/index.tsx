@@ -1,4 +1,4 @@
-import { Navigate, Outlet, useNavigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { Header } from "../../components/common/header";
 import { Suspense, useEffect } from "react";
 import { ErrorBoundary } from "../../components/common/errorBoundery";
