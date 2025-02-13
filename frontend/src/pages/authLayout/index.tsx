@@ -1,12 +1,22 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import { Header } from "../../components/common/header";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { ErrorBoundary } from "../../components/common/errorBoundery";
 import { useLoginStore } from "../../store/loginStore";
+import { useGetMe } from "../../api/queries/useGetMe";
 
 export function AuthLayout() {
   const { isLogin } = useLoginStore();
-
+  const { setUser } = useLoginStore();
+  const { data, isLoading } = useGetMe();
+  const navigation = useNavigate();
+  useEffect(() => {
+    if (!isLoading && data) {
+      navigation("/repos");
+      setUser(data);
+    }
+  }, [data, isLoading]);
+  if (isLoading) return <>loading</>;
   return isLogin ? (
     <div>
       <Header />
