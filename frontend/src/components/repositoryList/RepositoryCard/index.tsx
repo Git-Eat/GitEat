@@ -116,7 +116,7 @@ export function RepositoryCard({
                         navigation(`${repoId}/dashboard`);
                       }}
                     >
-                      성능측정
+                      대시보드
                     </MenuItem>
                     <MenuItem
                       onClick={(e) => {
@@ -125,7 +125,7 @@ export function RepositoryCard({
                         navigation(`${repoId}/performance`);
                       }}
                     >
-                      대시보드
+                      성능측정
                     </MenuItem>
                   </MenuList>
                 </ClickAwayListener>
