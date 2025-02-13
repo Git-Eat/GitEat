@@ -39,7 +39,6 @@ export function Conversation() {
           onAddSingleComment={(content) => {
             handleAddComment(content);
           }}
-          onStartReview={() => {}}
           onUpdateComment={() => {}}
           repoId={numericRepoId}
         />

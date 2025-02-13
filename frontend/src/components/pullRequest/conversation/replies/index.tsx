@@ -114,13 +114,12 @@ export function Replies({
           </button>
         </div>
       </header>
-      <section className="px-10 py-3">
+      <section className="prose px-10 py-3">
         <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
       </section>
       {editReplyId === reCommentId && (
         <MarkdownEditor
           onAddSingleComment={() => {}}
-          onStartReview={() => {}}
           onUpdateComment={handleSaveEdit}
           initialValue={editContent}
           initialCategory={editCategory}
