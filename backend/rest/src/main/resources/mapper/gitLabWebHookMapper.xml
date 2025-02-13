@@ -11,11 +11,6 @@
         <result column="temp_status" property="tempStatus"/>
     </resultMap>
 
-    <select id="getPrTemp" resultMap="prTempResultMap">
-        SELECT *
-        FROM pr_temp
-        WHERE temp_status = 0;
-    </select>
 
     <select id="getCommentCnt" parameterType="String" resultType="int">
         SELECT count(comment_id)
