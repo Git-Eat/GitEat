@@ -15,8 +15,8 @@ public interface PrService {
 
     /* 댓글 관련 함수 */
     List<CommentDto> getCommentList(int repoId, int prId , String accessToken); // 댓글 조회
-    int insertComment (String repoId, String prId, CommentDto commentDto , String accessToken); // 댓글 등록
-    int updateComment(int repoId, int prId, CommentDto commentDto , String accessToken); // 댓글 수정
+    CommentDto insertComment (String repoId, String prId, CommentDto commentDto , String accessToken); // 댓글 등록
+    CommentDto updateComment(String repoId, String prId, CommentDto commentDto , String accessToken); // 댓글 수정
     int deleteComment(String repoId, String prId, String commentId , String accessToken); // 댓글 및 대댓글 삭제
 
     /* 깃랩에 파일 업로드 */
@@ -27,8 +27,8 @@ public interface PrService {
 
     /* 대댓글 관련 함수 */
     List<ReplyDto> showReply(int repoId, int prId, int commentId , String accessToken); // 대댓글 조회
-    int insertReply(String repoId, String prId, String discussionId, ReplyDto replyDto , String accessToken); // 대댓글 등록
-    int updateReply(String repoId, String prId, String reCommentId, ReplyDto replyDto , String accessToken); // 대댓글 수정
+    ReplyReturnDto insertReply(String repoId, String prId, String discussionId, ReplyDto replyDto , String accessToken); // 대댓글 등록
+    ReplyReturnDto updateReply(String repoId, String prId, String reCommentId, ReplyDto replyDto , String accessToken); // 대댓글 수정
     int deleteReply(String repoId, String prId, String reCommentId , String accessToken);
 
     /* 파일 변경 관련 함수 */

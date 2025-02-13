@@ -182,11 +182,27 @@ public class LighthouseController {
             log.info("CLS: {}", lighthouseResult.getCls());
             log.info("SI: {}", lighthouseResult.getSi());
             // 변환 적용 후 반올림
-            double fcp = roundToTwoDecimalPlaces(convertToSeconds(lighthouseResult.getFcp()));
-            double lcp = roundToTwoDecimalPlaces(convertToSeconds(lighthouseResult.getLcp()));
-            double tbt = roundToTwoDecimalPlaces(convertToSeconds(lighthouseResult.getTbt()));
-            double cls = roundToTwoDecimalPlaces(convertToSeconds(lighthouseResult.getCls()));
-            double si = roundToTwoDecimalPlaces(convertToSeconds(lighthouseResult.getSi()));
+            double fcp = (lighthouseResult.getFcp() != 0)
+                    ? Math.round(lighthouseResult.getFcp() * 1000.0) / 1.0  // ms 변환 후 바로 반올림
+                    : 0.0;
+
+            double lcp = (lighthouseResult.getLcp() != 0)
+                    ? Math.round(lighthouseResult.getLcp() * 1000.0) / 1.0  // ms 변환 후 바로 반올림
+                    : 0.0;
+
+            double tbt = (lighthouseResult.getTbt() != 0)
+                    ? Math.round(lighthouseResult.getTbt() * 100) / 100.0  // ms 값은 그대로 유지
+                    : 0.0;
+
+            double cls = (lighthouseResult.getCls() != 0)
+                    ? Math.round(lighthouseResult.getCls() * 100) / 100.0  // CLS 원래 소수 값
+                    : 0.0;
+
+            double si = (lighthouseResult.getSi() != 0)
+                    ? Math.round(lighthouseResult.getSi() * 1000.0) / 1.0  // ms 변환 후 바로 반올림
+                    : 0.0;
+
+
 
 //            // 변환 적용
 //            double fcp = convertToSeconds(lighthouseResult.getFcp());
@@ -195,7 +211,7 @@ public class LighthouseController {
 //            double cls = convertToSeconds(lighthouseResult.getCls());
 //            double si = convertToSeconds(lighthouseResult.getSi());
 
-            log.info("String -> Double 변환 후");
+            log.info("반올림 후");
             log.info("FCP: {}", fcp);
             log.info("LCP: {}", lcp);
             log.info("TBT: {}", tbt);
@@ -210,11 +226,11 @@ public class LighthouseController {
                     .accessibility(lighthouseResult.getAccessibility() * 100)
                     .bestPractices(lighthouseResult.getBestPractices() * 100)
                     .seo(lighthouseResult.getSeo() * 100)
-                    .fcp(fcp)
-                    .lcp(lcp)
-                    .tbt(tbt)
-                    .cls(cls)
-                    .si(si)
+                    .fcp((fcp != 0) ? Math.round((lighthouseResult.getFcp() * 1000.0) / 1.0) : 0.0)  // 소수 둘째 자리 반올림
+                    .lcp((lcp != 0) ? Math.round(lighthouseResult.getLcp() * 1000.0) / 1.0 : 0.0)  // 소수 둘째 자리 반올림
+                    .tbt(tbt)  // TBT는 그대로 유지
+                    .cls(cls)  // CLS는 그대로 유지
+                    .si((si != 0) ? Math.round(lighthouseResult.getSi() * 1000.0) / 1.0 : 0.0)  // 소수 둘째 자리 반올림
                     .build();
 
             // DB 저장

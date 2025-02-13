@@ -13,11 +13,11 @@ public class LighthouseResult {
     private double seo;
 
     // Metrics (displayValue - String)
-    private String fcp;  // First Contentful Paint
-    private String lcp;  // Largest Contentful Paint
-    private String tbt;  // Total Blocking Time
-    private String cls;  // Cumulative Layout Shift
-    private String si;   // Speed Index
+    private double fcp;  // First Contentful Paint
+    private double lcp;  // Largest Contentful Paint
+    private double tbt;  // Total Blocking Time
+    private double cls;  // Cumulative Layout Shift
+    private double si;   // Speed Index
 
 
 
