@@ -182,11 +182,11 @@ public class LighthouseController {
             log.info("CLS: {}", lighthouseResult.getCls());
             log.info("SI: {}", lighthouseResult.getSi());
             // 변환 적용 후 반올림
-            double fcp = roundToTwoDecimalPlaces(convertToSeconds(lighthouseResult.getFcp()));
-            double lcp = roundToTwoDecimalPlaces(convertToSeconds(lighthouseResult.getLcp()));
-            double tbt = roundToTwoDecimalPlaces(convertToSeconds(lighthouseResult.getTbt()));
-            double cls = roundToTwoDecimalPlaces(convertToSeconds(lighthouseResult.getCls()));
-            double si = roundToTwoDecimalPlaces(convertToSeconds(lighthouseResult.getSi()));
+            double fcp = Math.round(lighthouseResult.getFcp() * 100) / 100.0;
+            double lcp = Math.round(lighthouseResult.getLcp() * 100) / 100.0;
+            double tbt = Math.round(lighthouseResult.getTbt() * 100) / 100.0;
+            double cls = Math.round(lighthouseResult.getCls() * 100) / 100.0;
+            double si = Math.round(lighthouseResult.getSi() * 100) / 100.0;
 
 //            // 변환 적용
 //            double fcp = convertToSeconds(lighthouseResult.getFcp());
@@ -195,7 +195,7 @@ public class LighthouseController {
 //            double cls = convertToSeconds(lighthouseResult.getCls());
 //            double si = convertToSeconds(lighthouseResult.getSi());
 
-            log.info("String -> Double 변환 후");
+            log.info("반올림 후");
             log.info("FCP: {}", fcp);
             log.info("LCP: {}", lcp);
             log.info("TBT: {}", tbt);
