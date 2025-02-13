@@ -165,8 +165,6 @@ export function CommentThread({ comment }: CommentThreadProps) {
               {comment.reCommentList?.map((reply) => (
                 <Replies
                   key={reply.reCommentId}
-                  repoId={Number(baseRepoId)}
-                  prId={Number(prId)}
                   {...reply}
                   replyCreateAt={displayDate(reply.createAt)}
                 />

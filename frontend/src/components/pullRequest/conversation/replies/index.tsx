@@ -22,24 +22,26 @@ export function Replies({
   userId,
   userName,
   avatarUrl,
-  disId,
+  commentId,
   content,
-  replyType,
-  imageName,
+  reCommentType,
   createAt,
   replyCreateAt,
   repoId,
   prId,
+  discussionId,
 }: ReCommentProps) {
   const reply: Reply = {
     reCommentId,
     userId,
     userName,
+    repoId,
+    prId,
+    discussionId,
     avatarUrl,
-    disId,
+    commentId,
     content,
-    replyType,
-    imageName,
+    reCommentType,
     createAt,
   };
   const replyTypeImages = {
@@ -58,7 +60,7 @@ export function Replies({
   function handleEditReply(reply: Reply) {
     setIsEditing(true);
     setEditReplyId(reply.reCommentId);
-    setEditCategory(reply.replyType);
+    setEditCategory(reply.reCommentType);
     setEditContent(reply.content);
   }
 
@@ -85,10 +87,10 @@ export function Replies({
             className="w-9 h-9 rounded-full"
           />
           <h1 className="text-[16px] font-semibold">{userName}</h1>
-          {isValidReplyType(replyType) ? (
+          {isValidReplyType(reCommentType) ? (
             <img
-              src={replyTypeImages[replyType].src}
-              alt={replyTypeImages[replyType].alt}
+              src={replyTypeImages[reCommentType].src}
+              alt={replyTypeImages[reCommentType].alt}
             />
           ) : (
             <></>
