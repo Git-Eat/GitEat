@@ -226,11 +226,11 @@ public class LighthouseController {
                     .accessibility(lighthouseResult.getAccessibility() * 100)
                     .bestPractices(lighthouseResult.getBestPractices() * 100)
                     .seo(lighthouseResult.getSeo() * 100)
-                    .fcp(fcp)
-                    .lcp(lcp)
-                    .tbt(tbt)
-                    .cls(cls)
-                    .si(si)
+                    .fcp((fcp != 0) ? Math.round((fcp / 1000.0) * 100) / 100.0 : 0.0)  // 소수 둘째 자리 반올림
+                    .lcp((lcp != 0) ? Math.round((lcp / 1000.0) * 100) / 100.0 : 0.0)  // 소수 둘째 자리 반올림
+                    .tbt(tbt)  // TBT는 그대로 유지
+                    .cls(cls)  // CLS는 그대로 유지
+                    .si((si != 0) ? Math.round((si / 1000.0) * 100) / 100.0 : 0.0)  // 소수 둘째 자리 반올림
                     .build();
 
             // DB 저장
