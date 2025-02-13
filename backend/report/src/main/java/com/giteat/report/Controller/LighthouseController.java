@@ -112,6 +112,8 @@ public class LighthouseController {
             String crumbUrl = jenkinsUrl + "/crumbIssuer/api/json";
             HttpEntity<String> crumbEntity = new HttpEntity<>(headers);
             ResponseEntity<Map> crumbResponse = restTemplate.exchange(crumbUrl, HttpMethod.GET, crumbEntity, Map.class);
+            log.info("▶ Jenkins Crumb Request URL: {}", crumbUrl);
+            log.info("▶ Jenkins Crumb Response: {}", crumbResponse);
 
             if (crumbResponse.getStatusCode() != HttpStatus.OK) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -136,6 +138,7 @@ public class LighthouseController {
             if (jenkinsResponse.getStatusCode() == HttpStatus.OK || jenkinsResponse.getStatusCode() == HttpStatus.CREATED) {
                 log.info("✅ Lighthouse Pipeline 실행 성공");
                 return ResponseEntity.ok("Pipeline started successfully");
+
             } else {
                 log.error("❌ Jenkins에서 에러 발생: {}", jenkinsResponse.getStatusCode());
                 return ResponseEntity.status(jenkinsResponse.getStatusCode()).body("jenkins error");
@@ -178,13 +181,19 @@ public class LighthouseController {
             log.info("TBT: {}", lighthouseResult.getTbt());
             log.info("CLS: {}", lighthouseResult.getCls());
             log.info("SI: {}", lighthouseResult.getSi());
+            // 변환 적용 후 반올림
+            double fcp = roundToTwoDecimalPlaces(convertToSeconds(lighthouseResult.getFcp()));
+            double lcp = roundToTwoDecimalPlaces(convertToSeconds(lighthouseResult.getLcp()));
+            double tbt = roundToTwoDecimalPlaces(convertToSeconds(lighthouseResult.getTbt()));
+            double cls = roundToTwoDecimalPlaces(convertToSeconds(lighthouseResult.getCls()));
+            double si = roundToTwoDecimalPlaces(convertToSeconds(lighthouseResult.getSi()));
 
-            // 변환 적용
-            double fcp = convertToSeconds(lighthouseResult.getFcp());
-            double lcp = convertToSeconds(lighthouseResult.getLcp());
-            double tbt = convertToSeconds(lighthouseResult.getTbt());
-            double cls = convertToSeconds(lighthouseResult.getCls());
-            double si = convertToSeconds(lighthouseResult.getSi());
+//            // 변환 적용
+//            double fcp = convertToSeconds(lighthouseResult.getFcp());
+//            double lcp = convertToSeconds(lighthouseResult.getLcp());
+//            double tbt = convertToSeconds(lighthouseResult.getTbt());
+//            double cls = convertToSeconds(lighthouseResult.getCls());
+//            double si = convertToSeconds(lighthouseResult.getSi());
 
             log.info("String -> Double 변환 후");
             log.info("FCP: {}", fcp);
@@ -239,5 +248,8 @@ public class LighthouseController {
         return 0.0; // 변환 실패 시 기본값 반환
     }
 
+    public static double roundToTwoDecimalPlaces(double value) {
+        return Math.round(value * 100.0) / 100.0;
+    }
 
 }
