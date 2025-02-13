@@ -1,10 +1,10 @@
 import client from "./client";
 
-const API_BASE = import.meta.env.VITE_API_BASE;
 export const login = async (code: string) => {
   try {
-    const response = await client.post(API_BASE + "/user/login", code);
-    return response.data;
+    const response = await client.post("/oauth/gitlab/login", { code: code });
+    console.log(response.headers);
+    return response.headers["authorization"];
   } catch (error) {
     throw new Error("로그인에 실패했습니다." + error);
   }

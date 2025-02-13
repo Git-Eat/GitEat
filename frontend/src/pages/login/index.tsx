@@ -2,20 +2,25 @@ import logo from "../../assets/images/logo.svg";
 import githubLogo from "../../assets/images/github_logo.svg";
 import gitlabLogo from "../../assets/images/gitlab_logo.svg";
 import side from "../../assets/images/main_side.png";
+// import { useGetMe } from "../../api/queries/useGetMe";
+// import { useNavigate } from "react-router-dom";
+// import { useEffect } from "react";
 
 export function Login() {
-  // 백엔드에서 처리할 리디렉션 URI 추가해야댐
-
   const gitLabLogin = () => {
-    const REDIRECT_URI = "http://127.0.0.1:5173/loading";
+    const REDIRECT_URI = import.meta.env.VITE_OAUTH_REDIRECT;
     const CLIENT_ID = import.meta.env.VITE_GITLAB_CLIENT_ID;
-    //state 값은 랜덤값으로 변경 필요함
-    const STATE = "1234";
-    // 깃랩 인증 URL 생성
-    const gitLabAuthUrl = `https://lab.ssafy.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&state=${STATE}&scope=read_user`;
-    // 인증 페이지로 리다이렉트
+    const gitLabAuthUrl = `https://lab.ssafy.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
     window.location.href = gitLabAuthUrl;
   };
+  // const { data, isLoading } = useGetMe();
+  // const navigation = useNavigate();
+  // useEffect(() => {
+  //   if (!isLoading && data) {
+  //     navigation("/repos");
+  //   }
+  // }, [data, isLoading]);
+  // if (isLoading) return <>loading</>;
   return (
     <div className="w-[75%] mx-auto flex items-center justify-center h-screen justify-between">
       <section>
@@ -54,6 +59,7 @@ export function Login() {
           </div>
         </div>
       </section>
+
       <img src={side} alt="side" />
     </div>
   );

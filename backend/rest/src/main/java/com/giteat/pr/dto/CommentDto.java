@@ -15,13 +15,14 @@ public class CommentDto {
     private int prId;
     private int repoId;
     private int userId;
+    private String userName;
+    private String avatarUrl;
     private String disId;
     private String content;
     private int commentType;
-    private String imageName;
-    private LocalDateTime createAt;
+    private String createAt;
 
     private FileCommentDto.Position position; // 코드 위치 정보
 
-    private List<ReplyShowDto> replyList;  // 대댓글 리스트
+    private List<ReplyShowDto> reCommentList;  // 대댓글 리스트
 }

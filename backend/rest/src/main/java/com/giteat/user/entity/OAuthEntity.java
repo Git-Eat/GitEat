@@ -16,19 +16,19 @@ import java.time.LocalDateTime;
 @AllArgsConstructor // 모든 필드를 파라미터로 받는 생성자 자동 생성
 public class OAuthEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "oauth_id")
-    private Integer oauthId;
+//    @Id
+//    @Column(name = "Id")
+//    private Integer Id;
 
-    @Column(name = "id")
-    private Integer id;
+    @Version
+    private Integer version;
+
+    @Id
+    @Column(name = "user_id")
+    private Integer userId;
 
     @Column(name = "user_name")
     private String userName;
-
-    @Column(name = "provider_type", nullable = true) // false
-    private String providerType;
 
     @Column(name = "access_token", nullable = false)
     private String accessToken;
@@ -50,22 +50,13 @@ public class OAuthEntity {
     @Column(nullable = true)
     private String scope;
 
-    @Column(nullable = false)
-    private String email;
-
-    @Column(nullable = false)
-    private String name;
-
-    @Column(name = "avatar_url", nullable = true)
-    private String avatarUrl;
-
-    @OneToOne
-    @JoinColumn(name = "user_id", nullable = false) // false
+    @OneToOne(cascade = CascadeType.ALL)
+    @MapsId
+    @JoinColumn(name = "user_id", nullable = false)
     private UserEntity userEntity;
 
 //    @OneToOne(mappedBy = "oauthToken", cascade = CascadeType.ALL)
 //    private TokenEntity token;
-
 
 
 }

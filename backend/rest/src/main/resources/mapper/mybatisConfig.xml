@@ -16,10 +16,32 @@
         <typeAlias type="com.giteat.pr.dto.ReplyDto" alias="replyDto"/>
         <typeAlias type="com.giteat.pr.dto.ReplyShowDto" alias="replyShowDto"/>
         <typeAlias type="com.giteat.pr.dto.FileDto" alias="fileDto"/>
+        <typeAlias type="com.giteat.pr.dto.FileCommentDto" alias="fileCommentDto"/>
+        <typeAlias type="com.giteat.pr.dto.ReviewerDto" alias="reviewerDto"/>
+        <typeAlias type="com.giteat.statistics.dto.ParticipantsDto" alias="participantsDto"/>
+        <typeAlias type="com.giteat.statistics.dto.MergeRequestByUserDto" alias="mergeRequestByUserDto"/>
+        <typeAlias type="com.giteat.statistics.dto.MergeRequestTotalDto" alias="mergeRequestTotalDto"/>
+        <typeAlias type="com.giteat.statistics.dto.CommentTotalDto" alias="commentTotalDto"/>
+        <typeAlias type="com.giteat.statistics.dto.CommentByUserDto" alias="commentByUserDto"/>
+        <typeAlias type="com.giteat.statistics.dto.ContributorsDto" alias="contributorsDto"/>
+        <typeAlias type="com.giteat.statistics.dto.MergeRequestByWeekDto" alias="mergeRequestByWeekDto"/>
+        <typeAlias type="com.giteat.statistics.dto.CommitByWeekDto" alias="commitByWeekDto"/>
+        <typeAlias type="com.giteat.statistics.dto.CommentByWeekDto" alias="commentByWeekDto"/>
+        <typeAlias type="com.giteat.noti.dto.NotiDto" alias="notiDto"/>
+        <typeAlias type="com.giteat.webHook.gitLab.dto.MergeRequestTempDto" alias="prTempDto"/>
     </typeAliases>
+
+    <!-- TypeHandler 등록 -->
+    <typeHandlers>
+        <typeHandler handler="com.giteat.common.util.JsonTypeHandler"
+                     javaType="com.giteat.pr.dto.FileCommentDto$Position$LineRange"/>
+    </typeHandlers>
 
     <mappers>
         <mapper resource="mapper/UserMapper.xml"/>
         <mapper resource="mapper/prMapper.xml"/>
+        <mapper resource="mapper/StatisticsRepoMapper.xml"/>
+        <mapper resource="mapper/gitLabWebHookMapper.xml"/>
+        <mapper resource="mapper/NotiMapper.xml"/>
     </mappers>
 </configuration>

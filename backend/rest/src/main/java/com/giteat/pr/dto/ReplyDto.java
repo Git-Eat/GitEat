@@ -17,7 +17,6 @@ public class ReplyDto {
     private int userId;
     private String disId;
     private String content;
-    private int replyType;
-    private String imageName;
-    private LocalDateTime createAt;
+    private int reCommentType;
+    private String createAt;
 }

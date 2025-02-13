@@ -4,29 +4,52 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.giteat.pr.mapper.PrMapper">
 
+
     <!-- 결과를 처리할 resultMap 정의 -->
     <resultMap id="commentReplyResultMap" type="commentDto">
         <id property="commentId" column="comment_id"/>
         <result property="prId" column="pr_id"/>
         <result property="repoId" column="repo_id"/>
+        <result property="userId" column="comment_user_id"/>
+        <result property="userName" column="comment_user_name"/>
+        <result property="avatarUrl" column="comment_avatar_url"/>
+        <result property="disId" column="comment_dis_id"/>
         <result property="content" column="comment_content"/>
         <result property="commentType" column="comment_type"/>
-        <result property="imageName" column="comment_imge_name"/>
         <result property="createAt" column="comment_create_at"/>
-        <result property="userId" column="comment_user_id"/>
-        <result property="disId" column="comment_dis_id"/>
 
-        <!-- 댓글에 대한 Reply 리스트 -->
-        <collection property="replyList" ofType="replyShowDto">
+        <!-- FileCommentDto.Position 매핑 -->
+        <association property="position" javaType="com.giteat.pr.dto.FileCommentDto$Position">
+            <result property="baseSha" column="base_sha"/>
+            <result property="startSha" column="start_sha"/>
+            <result property="headSha" column="head_sha"/>
+            <result property="oldPath" column="old_path"/>
+            <result property="newPath" column="new_path"/>
+            <result property="positionType" column="position_type"/>
+            <result property="newLine" column="new_line"/>
+            <result property="oldLine" column="old_line"/>
+            <result property="newStartLine" column="new_start_line"/>
+            <result property="newEndLine" column="new_end_line"/>
+            <result property="oldStartLine" column="old_start_line"/>
+            <result property="oldEndLine" column="old_end_line"/>
+
+            <!-- LineRange 매핑 -->
+            <result property="lineRange" column="line_range" typeHandler="com.giteat.common.util.JsonTypeHandler"/>
+        </association>
+
+        <!-- 대댓글 리스트 (ReplyShowDto 매핑) -->
+        <collection property="reCommentList" ofType="replyShowDto">
             <id property="reCommentId" column="re_comment_id"/>
             <result property="userId" column="reply_user_id"/>
+            <result property="userName" column="reply_user_name"/>
+            <result property="avatarUrl" column="reply_avatar_url"/>
             <result property="disId" column="reply_dis_id"/>
             <result property="content" column="reply_content"/>
-            <result property="replyType" column="reply_type"/>
-            <result property="imageName" column="reply_image_name"/>
+            <result property="reCommentType" column="reply_type"/>
             <result property="createAt" column="reply_create_at"/>
         </collection>
     </resultMap>
+
 
     <!-- PR 목록 조회 -->
     <select id="getPrList" parameterType="int" resultType="prDto">
@@ -36,12 +59,18 @@
             title AS title,
             description AS description,
             user_id AS userId,
+            user_name AS userName,
+            user_profile AS userProfile,
             create_at AS createAt,
-            is_opened AS isOpened,
             source_branch AS sourceBranch,
-            target_branch AS targetBranch
+            target_branch AS targetBranch,
+            is_opened AS isOpened,
+            base_sha AS baseSha,
+            head_sha AS headSha,
+            start_sha AS startSha
         FROM pr
         WHERE repo_id = #{repoId}
+        ORDER BY pr_id DESC
     </select>
 
     <!-- 특정 PR 상세 정보 조회 -->
@@ -52,15 +81,20 @@
             title AS title,
             description AS description,
             user_id AS userId,
+            user_name AS userName,
+            user_profile AS userProfile,
             create_at AS createAt,
-            is_opened AS isOpened,
             source_branch AS sourceBranch,
-            target_branch AS targetBranch
+            target_branch AS targetBranch,
+            is_opened AS isOpened,
+            base_sha AS baseSha,
+            head_sha AS headSha,
+            start_sha AS startSha
         FROM pr
         WHERE repo_id = #{repoId} AND pr_id = #{prId}
     </select>
 
-    <!-- PR내 Commit 목록 조회  -->
+    <!-- PR내 Commit 목록 조회 -->
     <select id="getCommitList" parameterType="map" resultType="commitDto">
         SELECT
             commit_id AS commitId,
@@ -87,23 +121,28 @@
 
     <!-- 댓글 및 대댓글 조회-->
     <select id="getCommentList" resultMap="commentReplyResultMap">
-        select * from comment_reply_view
+        SELECT * FROM comment_view
+        WHERE repo_id = #{repoId} AND pr_id = #{prId}
+    </select>
+
+    <!-- 댓글 및 대댓글 조회 (파일에서) -->
+    <select id="getCommentListByCode" resultMap="commentReplyResultMap">
+        SELECT * FROM comment_view
+        WHERE repo_id = #{repoId} AND pr_id = #{prId} AND file_id = #{fileId}
     </select>
 
 
     <!-- 댓글 등록 -->
     <insert id="insertComment" parameterType="commentDto">
-        INSERT INTO comment (pr_id, content, comment_type, depth, image_name, created_at)
-        VALUES (#{prId}, #{content}, #{commentType}, #{depth}, #{imageName}, NOW())
+        INSERT INTO comment (pr_id, content, comment_type, created_at)
+        VALUES (#{prId}, #{content}, #{commentType}, NOW())
     </insert>
 
     <!-- 댓글 수정 -->
     <update id="updateComment" parameterType="commentDto">
         UPDATE comment
         SET content = #{content},
-            comment_type = #{commentType},
-            depth = #{depth},
-            image_name = #{imageName}
+            comment_type = #{commentType}
         WHERE comment_id = #{commentId}
     </update>
 
@@ -123,7 +162,6 @@
     <select id="showFileListByPr" parameterType="map" resultType="fileDto">
         SELECT
             cf.file_id AS fileId,
-            cf.commit_id AS commitId,
             cf.repo_id AS repoId,
             cf.pr_id AS prId,
             cf.file_name AS fileName,
@@ -173,5 +211,40 @@
         WHERE cf.file_id = #{fileId}
     </select>
 
+    <!-- 리뷰 참여자 정보 조회 -->
+    <select id="getReviewer" parameterType="map" resultType="reviewerDto">
+        SELECT DISTINCT
+            u.user_id AS userId,
+            u.name AS name,
+            u.user_name AS userName,
+            u.avatar_url AS avatarUrl,
+            reviewers.comment_type AS commentType
+        FROM (
+            -- comment 작성한 유저
+            SELECT user_id, comment_type, pr_id, repo_id
+            FROM comment
+            WHERE pr_id = #{prId} AND repo_id = #{repoId}
+
+            UNION ALL
+
+            -- reply 작성한 유저
+            SELECT user_id, recomment_type AS comment_type, pr_id, repo_id
+            FROM reply
+            WHERE pr_id = #{prId} AND repo_id = #{repoId}
+        ) AS reviewers
+        JOIN users u ON reviewers.user_id = u.user_id
+        ORDER BY userId;
+    </select>
+
+
+    <!-- SHA 값 업데이트 -->
+    <update id="updateShaInfo" parameterType="map">
+        UPDATE pr
+        SET
+        start_sha = #{startSha},
+        head_sha = #{headSha},
+        base_sha = #{baseSha}
+        WHERE repo_id = #{repoId} AND pr_id = #{prId};
+    </update>
 
 </mapper>

@@ -1,6 +1,6 @@
 import { useQuery } from "react-query";
-import { getReviewer } from "../getReviewer";
+import { getReviewer } from "../reviewer";
 
-export const useGetReviewer = () => {
-  return useQuery("getReviewers", getReviewer);
+export const useGetReviewer = (repoId: number, prId: number) => {
+  return useQuery("getReviewers", () => getReviewer(repoId, prId));
 };

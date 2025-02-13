@@ -19,9 +19,10 @@ public class RepositoryEntity {
     @Column(name="repo_id")
     private int repoId;
 
-    @Column(name="user_id")
-    private int userId;
+    @Column(name="name")
     private String name;
+
+    @Column(name="description")
     private String description;
 
     @Column(name="github_url")
@@ -31,6 +32,11 @@ public class RepositoryEntity {
     private String gitlabUrl;
 
     @Column(name="create_at")
-    private LocalDateTime createAt;
+    private String createAt;
 
+    @Column(name="owner_name")
+    private String ownerName;
+
+    @Column(name ="access")
+    private int access;
 }

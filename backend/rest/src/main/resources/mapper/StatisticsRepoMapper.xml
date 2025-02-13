@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.giteat.statistics.mapper.StatisticsRepoMapper">
+
+
+
+    <!-- 총 Commit 수 조회 -->
+    <select id="getTotalCommit" parameterType="String" resultType="int">
+        select COUNT(commit_id) AS TotalCommit from commit where repo_id = #{repoId};
+    </select>
+
+    <select id="getParticipants" parameterType="String" resultType="participantsDto">
+        SELECT DISTINCT u.user_id AS userId, u.name AS name, u.user_name AS userName, u.avatar_url AS avatarUrl
+        FROM (
+            SELECT user_id FROM pr WHERE repo_id = #{repoId}
+
+            UNION
+
+            SELECT pr.user_id
+            FROM commit
+            JOIN pr ON commit.pr_id = pr.pr_id AND commit.repo_id = pr.repo_id
+            WHERE commit.repo_id = #{repoId}
+
+            UNION
+
+            SELECT user_id FROM comment WHERE repo_id = #{repoId} AND user_id IS NOT NULL
+
+            UNION
+
+            SELECT user_id FROM reply WHERE repo_id = #{repoId} AND user_id IS NOT NULL
+        ) AS participants
+        JOIN users u ON participants.user_id = u.user_id;
+    </select>
+
+    <!-- Repo내 총 PR 개수 조회-->
+    <select id="getTotalMergeRequest" parameterType="String" resultType="int">
+        SELECT COUNT(pr.pr_id) AS totalMergeRequest
+        FROM pr
+        WHERE pr.repo_id = #{repoId}
+    </select>
+
+    <!-- 각 사용자의 PR 개수 조회 -->
+    <select id="getMergeRequestByUser" parameterType="String" resultType="mergeRequestByUserDto">
+        SELECT
+            u.user_id AS userId,
+            u.name AS name,
+            u.user_name AS userName,
+            u.avatar_url AS avatarUrl,
+            COUNT(pr.pr_id) AS mergeRequestCount
+        FROM pr
+        JOIN users u ON pr.user_id = u.user_id
+        WHERE pr.repo_id = #{repoId}
+        GROUP BY u.user_id, u.name, u.user_name, u.avatar_url
+        ORDER BY mergeRequestCount DESC
+    </select>
+
+    <!-- 총 댓글 및 대댓글 개수 -->
+    <select id="getTotalComment" parameterType="String" resultType="int">
+        SELECT
+            (SELECT COUNT(*) FROM comment WHERE repo_id = #{repoId}) +
+            (SELECT COUNT(*) FROM reply WHERE repo_id = #{repoId}) AS totalCommentsAndReplies
+    </select>
+
+    <!-- 각 사용자의 댓글 개수 조회-->
+    <select id="getCommentByUser" parameterType="String" resultType="commentByUserDto">
+        SELECT
+            u.user_id AS userId,
+            u.user_name AS userName,
+            u.name AS name,
+            u.avatar_url AS avatarUrl,
+            IFNULL(SUM(c.comment_count), 0) + IFNULL(SUM(r.reply_count), 0) AS commentCount
+        FROM
+            users u
+                LEFT JOIN (
+                SELECT user_id, COUNT(*) AS comment_count
+                FROM comment
+                WHERE repo_id = #{repoId}
+                GROUP BY user_id
+                ) c ON u.user_id = c.user_id
+                LEFT JOIN (
+                SELECT user_id, COUNT(*) AS reply_count
+                FROM reply
+                WHERE repo_id = #{repoId}
+                GROUP BY user_id
+                ) r ON u.user_id = r.user_id
+        WHERE u.user_id IN (
+            SELECT DISTINCT user_id FROM comment WHERE repo_id = #{repoId}
+            UNION
+            SELECT DISTINCT user_id FROM reply WHERE repo_id = #{repoId}
+        )
+        GROUP BY u.user_id, u.user_name, u.name, u.avatar_url
+        ORDER BY commentCount DESC;
+    </select>
+
+    <select id="getPrByWeek" parameterType="map" resultType="mergeRequestByWeekDto">
+        SELECT
+            YEARWEEK(STR_TO_DATE(pr.create_at, '%Y-%m-%dT%H:%i:%s.%f+09:00'), 1) AS week,
+            COUNT(pr.pr_id) AS mergeRequestCount
+        FROM
+            pr
+        WHERE
+            pr.repo_id =#{repoId}
+            AND pr.user_id = #{userId}
+            AND pr.create_at >= DATE_FORMAT(NOW() - INTERVAL 6 WEEK, '%Y-%m-%dT%H:%i:%s.%f+09:00')
+        GROUP BY week
+        ORDER BY week DESC
+        LIMIT 6;
+    </select>
+
+    <select id="getCommitByWeek" parameterType="map" resultType="commitByWeekDto">
+        SELECT
+            YEARWEEK(STR_TO_DATE(commit.commited_at, '%Y-%m-%dT%H:%i:%s.%f+09:00'), 1) AS week,  -- 주별 그룹화
+            COUNT(commit.commit_id) AS commitCount
+        FROM commit
+        WHERE
+            commit.repo_id = #{repoId}
+            AND commit.pr_id IN (SELECT pr_id FROM pr WHERE user_id = #{userId})  -- 해당 유저가 PR을 생성한 커밋만 포함
+            AND commit.commited_at >= DATE_FORMAT(NOW() - INTERVAL 6 WEEK, '%Y-%m-%dT%H:%i:%s.%f+09:00')  -- 최근 6주 동안
+        GROUP BY week
+        ORDER BY week DESC
+        LIMIT 6;
+    </select>
+
+    <select id="getCommentByWeek" parameterType="map" resultType="commentByWeekDto">
+
+    </select>
+
+
+    <select id="getWeeklyInfo" parameterType="map" resultType="WeeklyContributorsInfo">
+        WITH weeks AS (
+            SELECT YEARWEEK(DATE_SUB(NOW(), INTERVAL n WEEK), 1) AS week
+            FROM (SELECT 0 AS n UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5) AS numbers
+        )
+        SELECT
+            w.week,
+            COALESCE(prStats.mergeRequestCount, 0) AS mergeRequestCount,
+            COALESCE(commitStats.commitCount, 0) AS commitCount,
+            COALESCE(commentStats.commentCount, 0) AS commentCount
+        FROM weeks w
+            LEFT JOIN (
+                SELECT
+                YEARWEEK(STR_TO_DATE(pr.create_at, '%Y-%m-%dT%H:%i:%s.%f+09:00'), 1) AS week,
+                COUNT(pr.pr_id) AS mergeRequestCount
+                FROM pr
+                WHERE pr.repo_id = #{repoId} AND pr.user_id = #{userId}
+                GROUP BY week
+            ) prStats ON w.week = prStats.week
+            LEFT JOIN (
+                SELECT
+                YEARWEEK(STR_TO_DATE(commit.commited_at, '%Y-%m-%dT%H:%i:%s.%f+09:00'), 1) AS week,
+                COUNT(commit.commit_id) AS commitCount
+                FROM commit
+                WHERE commit.repo_id = #{repoId}
+                AND commit.pr_id IN (SELECT pr_id FROM pr WHERE user_id = #{userId})
+                GROUP BY week
+            ) commitStats ON w.week = commitStats.week
+            LEFT JOIN (
+                SELECT
+                YEARWEEK(STR_TO_DATE(c.create_at, '%Y-%m-%dT%H:%i:%s.%f+09:00'), 1) AS week,
+                COUNT(c.comment_id) + COUNT(r.re_comment_id) AS commentCount
+                FROM comment c
+                LEFT JOIN reply r ON c.comment_id = r.comment_id AND c.pr_id = r.pr_id AND c.repo_id = r.repo_id
+                WHERE c.repo_id = #{repoId} AND c.user_id = #{userId}
+                GROUP BY week
+            ) commentStats ON w.week = commentStats.week
+        ORDER BY w.week DESC
+        LIMIT 6;
+    </select>
+
+    <!-- 최근 6주간의 사용자의 pr 개수를 조회-->
+    <select id="getPrCountByUser" parameterType="map" resultType="int">
+        SELECT
+            COUNT(pr.pr_id) AS prCount
+        FROM pr
+        WHERE pr.repo_id = #{repoId}
+            AND pr.user_id = #{userId}
+            AND pr.create_at >= DATE_FORMAT(NOW() - INTERVAL 6 WEEK, '%Y-%m-%dT%H:%i:%s.%f+09:00');
+    </select>
+
+    <!-- 최근 6주간의 사용자의 commit 개수를 조회-->
+    <select id="getCommitCountByUser" parameterType="map" resultType="int">
+        SELECT
+            COUNT(commit.commit_id) AS commitCount
+        FROM commit
+        JOIN pr ON commit.pr_id = pr.pr_id AND commit.repo_id = pr.repo_id
+        WHERE commit.repo_id = #{repoId}
+            AND pr.user_id = #{userId}
+            AND commit.commited_at >= DATE_FORMAT(NOW() - INTERVAL 6 WEEK, '%Y-%m-%dT%H:%i:%s.%f+09:00');
+    </select>
+
+    <!-- 최근 6주간의 사용자의 댓글 개수를 조회-->
+    <select id="getCommentCountByUser" parameterType="map" resultType="int">
+        SELECT
+            COUNT(DISTINCT c.comment_id) + COUNT(DISTINCT r.re_comment_id) AS commentCount
+        FROM comment c
+        LEFT JOIN reply r ON c.comment_id = r.comment_id AND c.pr_id = r.pr_id AND c.repo_id = r.repo_id
+        WHERE c.repo_id = #{repoId}
+            AND c.user_id = #{userId}
+            AND c.create_at >= DATE_FORMAT(NOW() - INTERVAL 6 WEEK, '%Y-%m-%dT%H:%i:%s.%f+09:00');
+    </select>
+
+
+</mapper>
