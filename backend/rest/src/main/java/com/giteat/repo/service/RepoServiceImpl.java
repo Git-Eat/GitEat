@@ -3,15 +3,13 @@ package com.giteat.repo.service;
 import com.giteat.api.LabApi;
 import com.giteat.common.util.SHA1Util;
 import com.giteat.repo.entity.*;
+import com.giteat.repo.mapper.AiReviewStatusMapper;
 import com.giteat.repo.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service("RepoServiceImpl")
 @RequiredArgsConstructor
@@ -25,6 +23,7 @@ public class RepoServiceImpl implements RepoService{
     private final ReplyRepository replyRepository;
     private final UsersRepository usersRepository;
     private final RepositoryMemberRepository repositoryMemberRepository;
+    private final AiReviewStatusMapper aiReviewStatusMapper;
     private final LabApi gitLabApi;
 
     @Override
