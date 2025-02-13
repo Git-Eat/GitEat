@@ -53,12 +53,10 @@
     <insert id="insertMergeRequestTemp" parameterType="prTempDto">
         INSERT INTO pr_temp (repo_id,
                              pr_id,
-                             pr_iid,
                              user_id,
                              temp_status)
         VALUES (#{repoId},
                 #{prId},
-                #{prIid},
                 #{userId},
                 #{tempStatus});
     </insert>
