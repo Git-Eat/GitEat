@@ -283,7 +283,7 @@ public class RepoServiceImpl implements RepoService{
             }
 
         }
-
+        System.out.println("생성합니다!! repoId : " + repoId);
         // api를 통해서 프로젝트에 webHook 등록하는 함수
         gitLabApi.createMergeRequestWebHook(String.valueOf(repoId),accessToken);
         gitLabApi.createCommentWebHook(String.valueOf(repoId), accessToken);
