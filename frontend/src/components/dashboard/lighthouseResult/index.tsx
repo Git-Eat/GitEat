@@ -9,10 +9,6 @@ interface LightHouseResultProps {
 
 export function LightHouseResult({ repoId }: LightHouseResultProps) {
   const { data } = useGetLighthouseResult(repoId);
-  const latestResult =
-    data && Object.keys(data).length > 0 && Array.isArray(data)
-      ? data[data.length - 1]
-      : null;
   const [isModalOpen, openModal, closeModal] = useBooleanState(false);
 
   return (
@@ -43,16 +39,13 @@ export function LightHouseResult({ repoId }: LightHouseResultProps) {
               본 성능 측정은 LightHouse 기준으로 측정되었습니다.
             </p>
           </header>
-          {latestResult ? (
+          {data ? (
             <>
               <section className="my-10 flex justify-center">
-                <RadialBar series={[latestResult.PF]} labels={["성능"]} />
-                <RadialBar series={[latestResult.AB]} labels={["접근성"]} />
-                <RadialBar series={[latestResult.BP]} labels={["권장사항"]} />
-                <RadialBar
-                  series={[latestResult.SEO]}
-                  labels={["검색엔진 최적화"]}
-                />
+                <RadialBar series={[data.PF]} labels={["성능"]} />
+                <RadialBar series={[data.AB]} labels={["접근성"]} />
+                <RadialBar series={[data.BP]} labels={["권장사항"]} />
+                <RadialBar series={[data.SEO]} labels={["검색엔진 최적화"]} />
               </section>
               <section className="flex justify-center items-center space-x-4">
                 <article className="flex items-center space-x-1">
@@ -92,14 +85,14 @@ export function LightHouseResult({ repoId }: LightHouseResultProps) {
                     </div>
                     <p
                       className={`text-2xl font-bold ${
-                        latestResult.FCP <= 1.8
+                        data.FCP <= 1.8
                           ? "text-stats-green"
-                          : latestResult.FCP <= 3.0
+                          : data.FCP <= 3.0
                             ? "text-stats-yellow"
                             : "text-stats-red"
                       }`}
                     >
-                      {latestResult.FCP}s
+                      {data.FCP}s
                     </p>
                   </article>
                   <article className="bg-gray-100 px-5 py-8 rounded-xl flex items-center justify-between col-span-1">
@@ -112,14 +105,14 @@ export function LightHouseResult({ repoId }: LightHouseResultProps) {
                     </div>
                     <p
                       className={`text-2xl font-bold ${
-                        latestResult.LCP <= 2.5
+                        data.LCP <= 2.5
                           ? "text-stats-green"
-                          : latestResult.LCP <= 4.0
+                          : data.LCP <= 4.0
                             ? "text-stats-yellow"
                             : "text-stats-red"
                       }`}
                     >
-                      {latestResult.LCP}s
+                      {data.LCP}s
                     </p>
                   </article>
                   <article className="bg-gray-100 px-5 py-8 rounded-xl flex items-center justify-between col-span-1">
@@ -132,14 +125,14 @@ export function LightHouseResult({ repoId }: LightHouseResultProps) {
                     </div>
                     <p
                       className={`text-2xl font-bold ${
-                        latestResult.TBT <= 200
+                        data.TBT <= 200
                           ? "text-stats-green"
-                          : latestResult.TBT <= 600
+                          : data.TBT <= 600
                             ? "text-stats-yellow"
                             : "text-stats-red"
                       }`}
                     >
-                      {latestResult.TBT}ms
+                      {data.TBT}ms
                     </p>
                   </article>
                   <article className="bg-gray-100 px-5 py-8 rounded-xl flex items-center justify-between col-span-1">
@@ -152,14 +145,14 @@ export function LightHouseResult({ repoId }: LightHouseResultProps) {
                     </div>
                     <p
                       className={`text-2xl font-bold ${
-                        latestResult.CLS <= 0.1
+                        data.CLS <= 0.1
                           ? "text-stats-green"
-                          : latestResult.CLS <= 0.25
+                          : data.CLS <= 0.25
                             ? "text-stats-yellow"
                             : "text-stats-red"
                       }`}
                     >
-                      {latestResult.CLS}s
+                      {data.CLS}s
                     </p>
                   </article>
                   <article className="bg-gray-100 px-5 py-8 rounded-xl flex items-center justify-between col-span-1">
@@ -172,14 +165,14 @@ export function LightHouseResult({ repoId }: LightHouseResultProps) {
                     </div>
                     <p
                       className={`text-2xl font-bold ${
-                        latestResult.SI <= 3.4
+                        data.SI <= 3.4
                           ? "text-stats-green"
-                          : latestResult.SI <= 5.8
+                          : data.SI <= 5.8
                             ? "text-stats-yellow"
                             : "text-stats-red"
                       }`}
                     >
-                      {latestResult.SI}s
+                      {data.SI}s
                     </p>
                   </article>
                 </section>
