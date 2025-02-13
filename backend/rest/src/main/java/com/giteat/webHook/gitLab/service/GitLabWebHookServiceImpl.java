@@ -197,7 +197,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
                 }
             }
             commentRepository.save(commentEntity);
-
+            System.out.println("댓글 저장 완료");
         }else{// 대댓글임
             ReplyEntity replyEntity = new ReplyEntity();
 
@@ -220,6 +220,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
             replyEntity.setCreateAt((String) commentMap.get("created_at"));
 
             replyRepository.save(replyEntity);
+            System.out.println("대댓글 저장완료");
         }
     }
 }
