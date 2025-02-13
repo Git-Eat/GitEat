@@ -22,6 +22,7 @@ export const CodeBlock: React.FC<PartialDiffViewerProps> = ({
 }) => {
   const { baseRepoId, prId } = useParams();
   const { files } = usePRStore();
+  console.log(newPath);
   const { mutate, data: code } = useGetRawFile(
     Number(baseRepoId),
     Number(prId),
@@ -37,9 +38,9 @@ export const CodeBlock: React.FC<PartialDiffViewerProps> = ({
     if (code) {
       const instance = generateDiffFile(
         "oldFileName",
-        code.oldCode,
+        code.oldCode === null ? "" : code.oldCode,
         "newFileName",
-        code.newCode,
+        code.newCode === null ? "" : code.newCode,
         getFileType(code.fileName),
         getFileType(code.fileName)
       );

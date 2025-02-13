@@ -19,7 +19,7 @@ public class GitLabTokenService {
     public String getAccessToken(String jwtAccessToken){
         return gitLabTokenMapper.getAccessToken(jwtAccessToken);
     }
-    public String getAccessTokenById(String userId){
+    public String getAccessTokenById(int userId){
         return gitLabTokenMapper.getAccessTokenById(userId);
     }
 }

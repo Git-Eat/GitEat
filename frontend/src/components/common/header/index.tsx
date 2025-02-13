@@ -50,9 +50,9 @@ export function Header() {
       <img src={defaulProfile} alt="user profile" className="w-[51px]" />
       <div className="flex flex-col gap-[50px] items-center">
         <LinkIcon to="/repos" src="home" alt="repository_page" />
-        <LinkIcon to="/pulls" src="file" alt="pr_page" />
+        {/* <LinkIcon to="/pulls" src="file" alt="pr_page" />
         <LinkIcon to="/wiki" src="wiki" alt="dashboard_page" />
-        <LinkIcon to="/dashboard" src="report" alt="dashboard_page" />
+        <LinkIcon to="/dashboard" src="report" alt="dashboard_page" /> */}
       </div>
       <img src={whiteLogo} alt="logout" />
     </header>

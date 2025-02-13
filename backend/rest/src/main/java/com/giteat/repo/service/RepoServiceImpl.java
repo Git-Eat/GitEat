@@ -3,15 +3,13 @@ package com.giteat.repo.service;
 import com.giteat.api.LabApi;
 import com.giteat.common.util.SHA1Util;
 import com.giteat.repo.entity.*;
+import com.giteat.repo.mapper.AiReviewStatusMapper;
 import com.giteat.repo.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service("RepoServiceImpl")
 @RequiredArgsConstructor
@@ -25,6 +23,7 @@ public class RepoServiceImpl implements RepoService{
     private final ReplyRepository replyRepository;
     private final UsersRepository usersRepository;
     private final RepositoryMemberRepository repositoryMemberRepository;
+    private final AiReviewStatusMapper aiReviewStatusMapper;
     private final LabApi gitLabApi;
 
     @Override
@@ -148,7 +147,7 @@ public class RepoServiceImpl implements RepoService{
                 mr.setTitle((String) mrResponse.get("title"));
                 mr.setDescription((String) mrResponse.get("description"));
                 mr.setCreateAt((String) mrResponse.get("created_at"));
-
+                mr.setPrType(0);
                 if(mrResponse.get("state").equals("merged"))  mr.setIsOpened(1); // 병합
                 else if(mrResponse.get("state").equals("closed")) mr.setIsOpened(3); // 닫힘
                 else mr.setIsOpened(2); // 열려있음
@@ -181,7 +180,7 @@ public class RepoServiceImpl implements RepoService{
                     for (Map<String, Object> fileChange : fileChangeList) {
                         FileChangeEntity fileChangeEntity = new FileChangeEntity();
                         FileChangeId fileChangeId = new FileChangeId(SHA1Util.encryptSHA1((String) fileChange.get("new_path")),
-                                (int) repositoryResponse.get("id"), (int) mrResponse.get("iid"));
+                                (int) repositoryResponse.get("id"), (int) mrResponse.get("iid") );
 
                         fileChangeEntity.setId(fileChangeId);
                         String fileName = (String) fileChange.get("new_path");
@@ -220,6 +219,7 @@ public class RepoServiceImpl implements RepoService{
 
                     // 첫번째 note는 Comment로 저장
                     Map<String, Object> firstNote = notes.get(0);
+                    if((boolean) notes.get(0).get("system")) continue; // system이 쓴 댓글이면 continue
                     CommentEntity comment = new CommentEntity();
                     CommentId commentId = new CommentId((int) firstNote.get("id"), (int) mrResponse.get("iid"), (int) repositoryResponse.get("id"));
                     Map<String, Object> commentAuthor = (Map<String, Object>) notes.get(0).get("author");
@@ -230,7 +230,6 @@ public class RepoServiceImpl implements RepoService{
                     comment.setUserId((int) commentAuthor.get("id"));
                     comment.setDisId((String) commentResponse.get("id"));
                     comment.setCreateAt((String) firstNote.get("updated_at"));
-                    if((boolean) notes.get(0).get("system")) continue; // system이 쓴 댓글이면 continue
 
                     if(firstNote.get("position") != null){
                         Map<String, Object> position = (Map<String, Object>) firstNote.get("position");
@@ -264,6 +263,7 @@ public class RepoServiceImpl implements RepoService{
                     // 2번째 note부터는 ReplyEntity로 저장
                     for (int i = 1; i < notes.size(); i++) {
                         Map<String, Object> note = notes.get(i);
+                        if((boolean) notes.get(i).get("system")) continue;;
                         Map<String, Object> replyAuthor = (Map<String, Object>) notes.get(i).get("author");
                         ReplyEntity reply = new ReplyEntity();
                         ReplyId replyId = new ReplyId((int) note.get("id"), (int) firstNote.get("id"), (int) mrResponse.get("iid"), (int) repositoryResponse.get("id"));
