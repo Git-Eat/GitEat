@@ -41,5 +41,6 @@
         <mapper resource="mapper/UserMapper.xml"/>
         <mapper resource="mapper/prMapper.xml"/>
         <mapper resource="mapper/StatisticsRepoMapper.xml"/>
+        <mapper resource="mapper/gitLabWebHookMapper.xml"/>
     </mappers>
 </configuration>
