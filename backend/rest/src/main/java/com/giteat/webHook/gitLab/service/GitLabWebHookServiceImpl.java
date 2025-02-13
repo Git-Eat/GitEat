@@ -208,6 +208,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         commentTempDto.setPrId(prId);
         commentTempDto.setRepoId(repoId);
         commentTempDto.setTempStatus(0);
+        gitLabWebHookMapper.insertCommentTemp(commentTempDto);
     }
 
 

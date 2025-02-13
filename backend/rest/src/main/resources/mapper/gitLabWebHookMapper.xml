@@ -103,4 +103,13 @@
           AND c.temp_status = 0;
     </select>
 
+
+    <insert id="insertCommentTemp" parameterType="commentTempDto">
+        INSERT INTO comment_temp (repo_id,
+                                  pr_id,
+                                  temp_status)
+        VALUES (#{repoId},
+                #{prId},
+                #{tempStatus});
+    </insert>
 </mapper>
