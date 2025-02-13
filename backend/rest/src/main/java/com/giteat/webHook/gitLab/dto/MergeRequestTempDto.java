@@ -10,7 +10,6 @@ import lombok.*;
 public class MergeRequestTempDto {
     private int repoId;
     private int prId;
-    private int prIid;
     private int userId;
     private int tempStatus;
 }

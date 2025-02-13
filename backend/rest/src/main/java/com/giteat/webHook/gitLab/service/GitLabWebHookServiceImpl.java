@@ -47,7 +47,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         Map<String, Object> userMap = (Map<String, Object>) body.get("user");
         Map<String, Object> mergeRequestMap = (Map<String, Object>) body.get("object_attributes");
 
-        MergeRequestId mrId = new MergeRequestId((int) mergeRequestMap.get("id"), (int) projectMap.get("id"));
+        MergeRequestId mrId = new MergeRequestId((int) mergeRequestMap.get("iid"), (int) projectMap.get("id"));
 
         mergeRequestEntity.setId(mrId);
         mergeRequestEntity.setTitle((String) mergeRequestMap.get("title"));
@@ -77,8 +77,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         //pr temp 테이블에 데이터 넣기
         MergeRequestTempDto mrTempDto = new MergeRequestTempDto();
         mrTempDto.setRepoId((int) projectMap.get("id"));
-        mrTempDto.setPrId((int) mergeRequestMap.get("id"));
-        mrTempDto.setPrIid((int) mergeRequestMap.get("iid"));
+        mrTempDto.setPrId((int) mergeRequestMap.get("iid"));
         mrTempDto.setUserId((int) userMap.get("id"));
         mrTempDto.setTempStatus(0);
         System.out.println("tempDto : " + mrTempDto);
