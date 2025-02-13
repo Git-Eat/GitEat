@@ -8,6 +8,7 @@ import com.giteat.repo.entity.*;
 import com.giteat.repo.repository.*;
 import com.giteat.webHook.gitLab.dto.MergeRequestTempDto;
 import com.giteat.webHook.gitLab.mapper.GitLabWebHookMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ import java.util.*;
 
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class GitLabWebHookServiceImpl implements GitLabWebHookService {
 
     private final LabApi gitLabApi;

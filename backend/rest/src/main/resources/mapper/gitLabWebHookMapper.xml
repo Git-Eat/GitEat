@@ -35,7 +35,7 @@
     </select>
 
     <!-- prTempList 가져오기   -->
-    <select id="getPrTemp" parameterType="string" resultType="prTempResultMap">
+    <select id="getPrTemp" parameterType="string" resultType="resultMap">
         SELECT
             p.repo_id,
             p.pr_id,
