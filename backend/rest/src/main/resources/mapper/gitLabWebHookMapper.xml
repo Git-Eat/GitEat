@@ -39,7 +39,6 @@
         SELECT
             p.repo_id,
             p.pr_id,
-            p.pr_iid,
             p.user_id,
             p.temp_status
         FROM pr_temp as p
@@ -54,12 +53,10 @@
     <insert id="insertMergeRequestTemp" parameterType="prTempDto">
         INSERT INTO pr_temp (repo_id,
                              pr_id,
-                             pr_iid,
                              user_id,
                              temp_status)
         VALUES (#{repoId},
                 #{prId},
-                #{prIid},
                 #{userId},
                 #{tempStatus});
     </insert>
@@ -75,7 +72,7 @@
     </update>
 
     <!-- prTemp 테이블 status 변경   -->
-    <update id="updateMergeRequestStatus" parameterType="int">
+    <update id="updateMergeRequestStatus" parameterType="prDto">
         UPDATE pr_temp
             SET temp_status = 1
         WHERE
