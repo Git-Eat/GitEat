@@ -55,13 +55,13 @@
         INSERT INTO pr_temp (repo_id,
                              pr_id,
                              pr_iid,
-                             userId,
+                             user_id,
                              temp_status)
-        VALUES (#{repo_id},
-                #{pr_id},
-                #{pr_iid},
+        VALUES (#{repoId},
+                #{prId},
+                #{prIid},
                 #{userId},
-                #{temp_status});
+                #{tempStatus});
     </insert>
 
     <!-- mergeRequest에 데이터 추가하기-->
@@ -75,12 +75,12 @@
     </update>
 
     <!-- prTemp 테이블 status 변경   -->
-    <update id="updateMergeRequestStatus" parameterType="int">
+    <update id="updateMergeRequestStatus" parameterType="prDto">
         UPDATE pr_temp
             SET temp_status = 1
         WHERE
             repo_id = #{repoId}
           AND
-            pr_id = #{pr_id}
+            pr_id = #{prId}
     </update>
 </mapper>
