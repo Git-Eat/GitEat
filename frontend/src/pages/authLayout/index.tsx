@@ -6,6 +6,7 @@ import { useLoginStore } from "../../store/loginStore";
 
 export function AuthLayout() {
   const { isLogin } = useLoginStore();
+
   return isLogin ? (
     <div>
       <Header />
