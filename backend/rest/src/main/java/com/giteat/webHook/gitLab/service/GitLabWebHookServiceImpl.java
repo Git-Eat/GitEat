@@ -35,7 +35,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
      * @param body
      */
     @Override
-//    @Transactional
+    @Transactional
     public void mergeRequestEvent(Map<String, Object> body) {
 
         // ----------------- pr 정보 저장 ------------
@@ -51,6 +51,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
 
         mergeRequestEntity.setId(mrId);
         mergeRequestEntity.setTitle((String) mergeRequestMap.get("title"));
+        mergeRequestEntity.setUserId((int) userMap.get("id"));
         mergeRequestEntity.setDescription((String) mergeRequestMap.get("description"));
         mergeRequestEntity.setCreateAt((String) mergeRequestMap.get("created_at"));
         mergeRequestEntity.setTargetBranch((String) mergeRequestMap.get("target_branch"));
