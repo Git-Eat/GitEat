@@ -115,8 +115,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
 
             // pr의 값을 update하는 구문 작성
             gitLabWebHookMapper.updateMergeRequestData(prDto);
-            // pr의 status를 update하는 구문
-            gitLabWebHookMapper.updateMergeRequestStatus(prDto);
+
 
             // ------------ commit 저장하는 함수 -----------------
             List<Map<String, Object>> gitCommitList = gitLabApi.getCommits(projectId, Integer.parseInt(prId), accessToken);
@@ -173,6 +172,8 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
                     }
                 }
             }
+            // pr의 status를 update하는 구문
+            gitLabWebHookMapper.updateMergeRequestStatus(prDto);
         }
     }
 
