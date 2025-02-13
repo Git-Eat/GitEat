@@ -68,6 +68,7 @@ public class LighthouseController {
     @PostMapping("/lighthouse-pipeline")
     public ResponseEntity<String> handleReactRequest(@RequestBody Map<String, String> request,
                                                      @RequestHeader(value="Authorization") String header) {
+        String responseJson;
         try {
 
             // 필수 값 검증
@@ -76,8 +77,10 @@ public class LighthouseController {
                     request.get("gitUrl").isBlank() || request.get("branch").isBlank() ||
                     request.get("repoId").toString().isBlank() || request.get("build").isBlank()) {
 
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("❌ Missing required parameters: gitUrl, accessToken, branch, repoId, build");
+                responseJson = new ObjectMapper().writeValueAsString(
+                        Map.of("error", "❌ Missing required parameters: gitUrl, branch, repoId, build"));
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseJson);
+
             }
             String gitUrl = request.get("gitUrl");
             String frontendPath = URLEncoder.encode(request.get("frontendPath"), StandardCharsets.UTF_8.toString());
@@ -96,7 +99,10 @@ public class LighthouseController {
                 String remainingUrl = gitUrl.substring(8); // "https://" 이후의 URL 추출
                 modifiedGitUrl = "https://" + accessToken + ":" + accessToken + "@" + remainingUrl;
             } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("❌ Invalid Git URL format. Must start with 'https://'");
+                responseJson = new ObjectMapper().writeValueAsString(
+                        Map.of("error", "❌ Invalid Git URL format. Must start with 'https://'"));
+
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseJson);
             }
 
             // Jenkins 요청을 위한 HTTP 헤더 설정
@@ -117,8 +123,11 @@ public class LighthouseController {
             log.info("▶ Jenkins Crumb Response: {}", crumbResponse);
 
             if (crumbResponse.getStatusCode() != HttpStatus.OK) {
+                responseJson = new ObjectMapper().writeValueAsString(
+                        Map.of("error", "❌ Failed to get Jenkins Crumb Token. Response: " + crumbResponse.getStatusCode()));
+
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body("❌ Failed to get Jenkins Crumb Token. Response: " + crumbResponse.getStatusCode());
+                        .body(responseJson);
             }
 
             String crumb = crumbResponse.getBody().get("crumb").toString();
@@ -138,12 +147,11 @@ public class LighthouseController {
 
             if (jenkinsResponse.getStatusCode() == HttpStatus.OK || jenkinsResponse.getStatusCode() == HttpStatus.CREATED) {
                 log.info("✅ Lighthouse Pipeline 실행 성공");
-//                return ResponseEntity.ok("Pipeline started successfully");
-                String responseJson = new ObjectMapper().writeValueAsString(Map.of("message", "Pipeline started successfully"));
+                responseJson = new ObjectMapper().writeValueAsString(Map.of("message", "Pipeline started successfully"));
                 return ResponseEntity.ok(responseJson);
             } else {
                 log.error("❌ Jenkins에서 에러 발생: {}", jenkinsResponse.getStatusCode());
-                return ResponseEntity.status(jenkinsResponse.getStatusCode()).body("jenkins error");
+                throw new Exception("Jenkins Pipeline 실행 실패! 응답 코드: " + jenkinsResponse.getStatusCode());
             }
         } catch (Exception e) {
             log.error("❌ Failed to start pipeline", e);
@@ -164,6 +172,7 @@ public class LighthouseController {
     public ResponseEntity<String> receiveLighthouseResults(@RequestBody LighthouseResult lighthouseResult,
                                                            @RequestHeader("repoId") int repoId,
                                                            @RequestHeader("branch") String branch) {
+        String responseJson;
         try {
             // 받은 결과를 로깅
             log.info("✅ Lighthouse Results Received:");
@@ -185,11 +194,11 @@ public class LighthouseController {
             log.info("SI: {}", lighthouseResult.getSi());
             // 변환 적용 후 반올림
             double fcp = (lighthouseResult.getFcp() != 0)
-                    ? Math.round(lighthouseResult.getFcp() * 1000.0) / 1.0  // ms 변환 후 바로 반올림
+                    ? Math.round(lighthouseResult.getFcp() / 10.0) / 100.0  // ms → s 변환 후 소수점 1자리 반올림
                     : 0.0;
 
             double lcp = (lighthouseResult.getLcp() != 0)
-                    ? Math.round(lighthouseResult.getLcp() * 1000.0) / 1.0  // ms 변환 후 바로 반올림
+                    ? Math.round(lighthouseResult.getLcp() / 10.0) / 100.0  // ms → s 변환 후 소수점 1자리 반올림
                     : 0.0;
 
             double tbt = (lighthouseResult.getTbt() != 0)
@@ -201,17 +210,8 @@ public class LighthouseController {
                     : 0.0;
 
             double si = (lighthouseResult.getSi() != 0)
-                    ? Math.round(lighthouseResult.getSi() * 1000.0) / 1.0  // ms 변환 후 바로 반올림
+                    ? Math.round(lighthouseResult.getSi() / 10.0) / 100.0  // ms → s 변환 후 소수점 1자리 반올림
                     : 0.0;
-
-
-
-//            // 변환 적용
-//            double fcp = convertToSeconds(lighthouseResult.getFcp());
-//            double lcp = convertToSeconds(lighthouseResult.getLcp());
-//            double tbt = convertToSeconds(lighthouseResult.getTbt());
-//            double cls = convertToSeconds(lighthouseResult.getCls());
-//            double si = convertToSeconds(lighthouseResult.getSi());
 
             log.info("반올림 후");
             log.info("FCP: {}", fcp);
@@ -228,46 +228,28 @@ public class LighthouseController {
                     .accessibility(lighthouseResult.getAccessibility() * 100)
                     .bestPractices(lighthouseResult.getBestPractices() * 100)
                     .seo(lighthouseResult.getSeo() * 100)
-                    .fcp((fcp != 0) ? Math.round(fcp * 100) / 100.0 : 0.0)  // ✅ 이미 변환된 fcp 사용
-                    .lcp((lcp != 0) ? Math.round(lcp * 100) / 100.0 : 0.0)  // ✅ 이미 변환된 lcp 사용
-                    .tbt(tbt)  // TBT는 그대로 유지
-                    .cls(cls)  // CLS는 그대로 유지
-                    .si((si != 0) ? Math.round(si * 100) / 100.0 : 0.0)  // ✅ 이미 변환된 si 사용
+                    .fcp(fcp)
+                    .lcp(lcp)
+                    .tbt(tbt)
+                    .cls(cls)
+                    .si(si)
                     .build();
 
             // DB 저장
             service.saveLighthouseResult(entity);
-
-            return ResponseEntity.ok("✅ Lighthouse results received successfully.");
+            responseJson = new ObjectMapper().writeValueAsString(
+                    Map.of("message", "✅ Lighthouse results received successfully.")
+            );
+            return ResponseEntity.ok(responseJson);
         } catch (Exception e) {
-            log.error("❌ Failed to process Lighthouse results: {}", e.getMessage(), e);
-            return ResponseEntity.status(500).body("❌ Failed to process Lighthouse results: " + e.getMessage());
-        }
-    }
-
-    private double convertToSeconds(String value) {
-        if (value == null || value.isBlank()) {
-            return 0.0; // 빈 값이면 0.0 반환
-        }
-
-        // 🔥 모든 공백(일반 공백 + 특수 공백 포함) 제거
-        value = value.replace("\u00A0", "").replaceAll("\\s+", "").toLowerCase();
-
-        try {
-            if (value.endsWith("ms")) {
-                return Double.parseDouble(value.replace("ms", "").trim()) / 1000.0;
-            } else if (value.endsWith("s")) {
-                return Double.parseDouble(value.replace("s", "").trim());
+            log.error("❌ Failed to process Lighthouse results", e);
+            try {
+                responseJson = new ObjectMapper().writeValueAsString(
+                        Map.of("error", "❌ Failed to process Lighthouse results: " + e.getMessage()));
+            } catch (Exception jsonException) {
+                responseJson = "{\"error\": \"❌ Failed to serialize error message\"}";
             }
-        } catch (NumberFormatException e) {
-            log.error("❌ NumberFormatException 발생: 입력값 `{}`을 double로 변환할 수 없음", value);
+            return ResponseEntity.status(500).body(responseJson);
         }
-
-        return 0.0; // 변환 실패 시 기본값 반환
     }
-
-    public static double roundToTwoDecimalPlaces(double value) {
-        return Math.round(value * 100.0) / 100.0;
-    }
-
 }
