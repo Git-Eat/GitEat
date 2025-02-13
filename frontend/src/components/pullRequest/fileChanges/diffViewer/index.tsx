@@ -146,7 +146,7 @@ export function DiffViewer({
               oldStartLine={oldline === undefined ? null : oldline}
               oldEndLine={oldline === undefined ? null : oldline}
               onClose={onClose}
-              lineType={linetype === 0 ? 3 : linetype}
+              lineType={linetype === undefined ? 0 : linetype}
               file={file}
             />
           );
