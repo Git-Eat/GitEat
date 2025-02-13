@@ -11,6 +11,12 @@
         <result column="temp_status" property="tempStatus"/>
     </resultMap>
 
+    <resultMap id="commentTempResultMap" type="commentTempDto">
+        <id column="pr_id" property="prId" />
+        <id column="repo_id" property="repoId"/>
+        <result column="temp_status" property="tempStatus"/>
+    </resultMap>
+
 
     <select id="getCommentCnt" parameterType="String" resultType="int">
         SELECT count(comment_id)
@@ -82,4 +88,20 @@
           AND
             pr_id = #{prId}
     </update>
+    commentTempDto
+    <select id="getCommentList" parameterType="string" resultMap="commentTempResultMap">
+        SELECT c.repo_id,
+               c.pr_id,
+               c.temp_status
+        FROM comment_temp AS c
+                 JOIN repository_member AS re
+                      ON c.repo_id = re.repo_id
+                 JOIN oauth_token AS o
+                      ON re.user_id = o.user_id
+        WHERE o.access_token = #{accessToken}
+          AND c.temp_status = 0;
+    </select>
+
+
+
 </mapper>
