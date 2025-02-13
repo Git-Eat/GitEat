@@ -98,12 +98,12 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
             String projectId = String.valueOf(prTempDto.getRepoId());
             String prId = String.valueOf(prTempDto.getPrId());
             String userId = String.valueOf(prTempDto.getUserId());
-            String iid = String.valueOf(prTempDto.getPrIid());
+
 
             // sha 관련 데이터 넣기
             PrDto prDto = new PrDto();
 
-            Map<String, Object> diffMap = gitLabApi.getDiffRefs(projectId, iid, accessToken);
+            Map<String, Object> diffMap = gitLabApi.getDiffRefs(projectId, prId, accessToken);
             Map<String, Object> diffRefsMap = (Map<String, Object>) diffMap.get("diff_refs");
 
             String baseSha = String.valueOf(diffRefsMap.get("base_sha"));
@@ -120,7 +120,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
             gitLabWebHookMapper.updateMergeRequestStatus(prDto);
 
             // ------------ commit 저장하는 함수 -----------------
-            List<Map<String, Object>> gitCommitList = gitLabApi.getCommits(projectId, Integer.parseInt(iid), accessToken);
+            List<Map<String, Object>> gitCommitList = gitLabApi.getCommits(projectId, Integer.parseInt(prId), accessToken);
             for (Map<String, Object> commit : gitCommitList) {
                 System.out.println("COMMIT DATA : " + commit);
                 CommitEntity commitEntity = new CommitEntity();
@@ -136,13 +136,13 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
                 // userId 를 사용해서 사용
 
                 for (int prPageNation = 1; prPageNation <= 20; prPageNation++) {
-                    List<Map<String, Object>> fileChangeList = gitLabApi.getFilesByPr(projectId, Integer.parseInt(iid), prPageNation, accessToken);
+                    List<Map<String, Object>> fileChangeList = gitLabApi.getFilesByPr(projectId, Integer.parseInt(prId), prPageNation, accessToken);
                     if (fileChangeList.isEmpty()) break; // 배열이 비어있다면(받아온 값이 없다면) for문 탈출
 
                     for (Map<String, Object> fileChange : fileChangeList) {
                         FileChangeEntity fileChangeEntity = new FileChangeEntity();
                         FileChangeId fileChangeId = new FileChangeId(SHA1Util.encryptSHA1((String) fileChange.get("new_path")),
-                                Integer.parseInt(projectId), Integer.parseInt(iid));
+                                Integer.parseInt(projectId), Integer.parseInt(prId));
 
                         fileChangeEntity.setId(fileChangeId);
                         String fileName = (String) fileChange.get("new_path");
