@@ -26,12 +26,16 @@ public class GitLabApi {
         this.restTemplate = restTemplate;
     }
 
-    // Raw 파일 내용 가져오기
-    public String getRawCode(String projectId, String filePath, String ref) {
+    /**
+     * Raw 파일 내용 가져오기
+     * 파일 경로와 커밋 참조를 사용하여 특정 시점의 파일 내용을 조회
+     */
+    public String getRawCode(String projectId, String filePath, String ref, String accessToken) {
         try {
             System.out.println("projectId: " + projectId);
             System.out.println("filePath: " + filePath);
             System.out.println("ref: " + ref);
+            System.out.println("accessToken: " + accessToken);
 
             // 1. URL 인코딩 (파일 경로에 특수문자가 있을 수 있으므로)
             String encodedFilePath = filePath;
@@ -51,7 +55,7 @@ public class GitLabApi {
 
             // 3. 헤더 설정
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Private-Token", "UATEgVcVTSsLn7PWao6c");
+            headers.set("Private-Token", accessToken);
 
             System.out.println("gitlabApi 3. 헤더 설정: " + headers);
 
@@ -71,7 +75,7 @@ public class GitLabApi {
     }
 
     // MR 변경된 파일 목록 조회
-    public List<Map<String, Object>> getMergeRequestDiffs(String projectId, String mergeRequestId) {
+    public List<Map<String, Object>> getMergeRequestDiffs(String projectId, String mergeRequestId, String accessToken) {
         try {
             System.out.println("[GitLabApi] MR 변경 파일 조회 시작");
             // URL 구성
@@ -80,7 +84,7 @@ public class GitLabApi {
 
             // 헤더 설정
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Private-Token", "UATEgVcVTSsLn7PWao6c");
+            headers.set("Private-Token", accessToken);
 
             // API 요청
             HttpEntity<String> entity = new HttpEntity<>(headers);
@@ -103,7 +107,7 @@ public class GitLabApi {
             String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + prId;
 
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Private-Token", "UATEgVcVTSsLn7PWao6c");
+            headers.set("Private-Token", accessToken);
 
             HttpEntity<String> entity = new HttpEntity<>(headers);
 

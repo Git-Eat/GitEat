@@ -50,6 +50,9 @@ public class OAuthServiceImpl implements OAuthService {
         // 기존 사용자면 그대로 사용
         if (existUser.isPresent()) {
             userEntity = existUser.get();
+            userEntity.setEmail(oAuthTokenDto.getEmail());
+            userEntity.setAvatarUrl(oAuthTokenDto.getAvatarUrl());
+            userEntity = userRepository.save(userEntity);
         } else {
             // 신규 사용자면 새로 저장
             userEntity = new UserEntity();
@@ -133,11 +136,12 @@ public class OAuthServiceImpl implements OAuthService {
             // DB에 토큰이 있는지 확인
             if(existingToken.isPresent()) {
                 OAuthEntity entity = existingToken.get();
+                // UserEntity 참조 가져오기
 
-                // refresh 토큰 만료 체크 (30일)
-                if(LocalDateTime.now().isAfter(entity.getCreatedAt().plusSeconds(30 * 24 * 60 * 60))) {
-                    return null; // 리프레시 토큰 만료시 null 반환하여 재로그인 유도
-                }
+//                // refresh 토큰 만료 체크 (30일)
+//                if(LocalDateTime.now().isAfter(entity.getCreatedAt().plusSeconds(30 * 24 * 60 * 60))) {
+//                    return null; // 리프레시 토큰 만료시 null 반환하여 재로그인 유도
+//                }
                 
                 // 1. 토큰이 만료되지 않고 아직 유효하다면 현재 토큰 반환
                 if(!tokenExpired(tokenRequest.getEmail())) {
@@ -148,6 +152,7 @@ public class OAuthServiceImpl implements OAuthService {
                     dto.setTokenType(entity.getTokenType());
                     dto.setExpiresIn(entity.getExpiresIn());
                     dto.setScope(entity.getScope());
+
                     return dto;
                 }
 
