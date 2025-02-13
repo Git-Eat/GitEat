@@ -59,14 +59,14 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         mergeRequestEntity.setPrType(1);
 
         mergeRequestRepository.save(mergeRequestEntity);
-
+        System.out.println("entity : " + mergeRequestEntity);
         //pr temp 테이블에 데이터 넣기
         MergeRequestTempDto mrTempDto = new MergeRequestTempDto();
         mrTempDto.setRepoId((int) projectMap.get("id"));
         mrTempDto.setPrId((int) mergeRequestMap.get("id"));
         mrTempDto.setPrIid((int) mergeRequestMap.get("iid"));
         mrTempDto.setTempStatus(0);
-
+        System.out.println("tempDto : " + mrTempDto);
         gitLabWebHookMapper.insertMergeRequestTemp(mrTempDto);
     }
 
