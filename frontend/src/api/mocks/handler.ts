@@ -4,6 +4,7 @@ import reviewersHandlers from "./handlers/reviewers";
 import repositoryHandler from "./handlers/repository";
 import dashBoardHandler from "./handlers/dashboard";
 import lighthouseHandlers from "./handlers/lighthouse";
+import { userHandler } from "./handlers/user";
 
 const MOCK_REGION = [
   {
@@ -29,6 +30,7 @@ const handler = [
   ...repositoryHandler,
   ...dashBoardHandler,
   ...lighthouseHandlers,
+  ...userHandler,
 ];
 
 export default handler;

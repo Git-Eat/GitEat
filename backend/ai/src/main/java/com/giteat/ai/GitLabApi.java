@@ -31,6 +31,11 @@ public class GitLabApi {
      * 파일 경로와 커밋 참조를 사용하여 특정 시점의 파일 내용을 조회
      */
     public String getRawCode(String projectId, String filePath, String ref, String accessToken) {
+        if (accessToken == null || accessToken.trim().isEmpty()) {
+            System.out.println("[GitLabApi] Access Token이 없습니다.");
+            return null;
+        }
+
         try {
             System.out.println("projectId: " + projectId);
             System.out.println("filePath: " + filePath);
@@ -55,7 +60,7 @@ public class GitLabApi {
 
             // 3. 헤더 설정
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Private-Token", accessToken);
+            headers.set("Authorization", "Bearer " + accessToken);
 
             System.out.println("gitlabApi 3. 헤더 설정: " + headers);
 
@@ -64,7 +69,7 @@ public class GitLabApi {
             System.out.println("gitlabApi 4. API 요청" + entity);
 
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-            System.out.println("gitlabApi 4-1. API 요청" + response.getBody());
+            System.out.println("gitlabApi 4-1. API 요청 response 성공");
             // 5. 응답 반환
             return response.getBody();
 
@@ -76,7 +81,12 @@ public class GitLabApi {
 
     // MR 변경된 파일 목록 조회
     public List<Map<String, Object>> getMergeRequestDiffs(String projectId, String mergeRequestId, String accessToken) {
+        if (accessToken == null || accessToken.trim().isEmpty()) {
+            System.out.println("[GitLabApi] Access Token이 없습니다.");
+            return null;
+        }
         try {
+            System.out.println("Using Access Token: " + accessToken);
             System.out.println("[GitLabApi] MR 변경 파일 조회 시작");
             // URL 구성
             String url = String.format("%s/projects/%s/merge_requests/%s/diffs",
@@ -84,7 +94,7 @@ public class GitLabApi {
 
             // 헤더 설정
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Private-Token", accessToken);
+            headers.set("Authorization", "Bearer " + accessToken);
 
             // API 요청
             HttpEntity<String> entity = new HttpEntity<>(headers);
@@ -103,11 +113,16 @@ public class GitLabApi {
 
     // 특정 Merge Request 조회 함수 (MR id로 조회)
     public Map<String, Object> getMergeRequestsById(String projectId, int prId, String accessToken) {
+        if (accessToken == null || accessToken.trim().isEmpty()) {
+            System.out.println("[GitLabApi] Access Token이 없습니다.");
+            return null;
+        }
+
         try {
             String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + prId;
 
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Private-Token", accessToken);
+            headers.set("Authorization", "Bearer " + accessToken);
 
             HttpEntity<String> entity = new HttpEntity<>(headers);
 
