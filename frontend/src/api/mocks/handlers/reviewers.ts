@@ -1,55 +1,33 @@
 import { http, HttpResponse } from "msw";
 
-const reviewers = [
-  {
-    userId: 1,
-    userName: "송용인",
-    avatarUrl: null,
-    commentType: 1,
-  },
-  {
-    userId: 2,
-    userName: "조창훈",
-    avatarUrl: null,
-    commentType: 0,
-  },
-  {
-    userId: 3,
-    userName: "신지혜",
-    avatarUrl: null,
-    commentType: 0,
-  },
-  {
-    userId: 5,
-    userName: "이다영",
-    avatarUrl: null,
-    commentType: 2,
-  },
-  {
-    userId: 6,
-    userName: "이해루",
-    avatarUrl: null,
-    commentType: 2,
-  },
-  {
-    userId: 4,
-    userName: "최이화",
-    avatarUrl: null,
-    commentType: 1,
-  },
-  {
-    userId: 4,
-    userName: "최이화",
-    avatarUrl: null,
-    commentType: 0,
-  },
-  {
-    userId: 4,
-    userName: "최이화",
-    avatarUrl: null,
-    commentType: 2,
-  },
-];
+const reviewers = {
+  reviewer: [
+    {
+      userId: 22147,
+      userName: "0903jihyie",
+      name: "신지혜",
+      avatarUrl:
+        "https://secure.gravatar.com/avatar/5a7047c33f01f87edfef9789e87cc5e3604ac367b6589f9e8a43bf7465ab8e24?s=80&d=identicon",
+      commentType: 0,
+    },
+    {
+      userId: 22147,
+      userName: "0903jihyie",
+      name: "신지혜",
+      avatarUrl:
+        "https://secure.gravatar.com/avatar/5a7047c33f01f87edfef9789e87cc5e3604ac367b6589f9e8a43bf7465ab8e24?s=80&d=identicon",
+      commentType: 0,
+    },
+    {
+      userId: 22219,
+      userName: "gofn080776",
+      name: "이해루",
+      avatarUrl:
+        "https://secure.gravatar.com/avatar/64d76aebe92226f9ea325dc5d35a44327d62594998d76d6905a47b6a0f61ae92?s=80&d=identicon",
+      commentType: 0,
+    },
+  ],
+};
 
 const reviewersHandlers = [
   http.get("*/pr/:repoId/:prId/reviewer", () => {
