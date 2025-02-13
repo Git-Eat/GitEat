@@ -53,6 +53,9 @@ export function DiffViewer({
       const newline =
         diffFile.getBundle().splitLeftLines[idx].diff?.newLineNumber;
       const linetype = diffFile.getBundle().splitLeftLines[idx].diff?.type;
+      console.log(
+        "type:" + diffFile.getBundle().splitLeftLines[idx].diff?.type
+      );
       console.log(oldline, newline, linetype);
       return { oldline, newline, linetype };
     } else {
@@ -64,7 +67,9 @@ export function DiffViewer({
       const oldline =
         diffFile.getBundle().splitRightLines[idx].diff?.oldLineNumber;
       const linetype = diffFile.getBundle().splitRightLines[idx].diff?.type;
-
+      console.log(
+        "type:" + diffFile.getBundle().splitLeftLines[idx].diff?.type
+      );
       return { oldline, newline, linetype };
     }
   };

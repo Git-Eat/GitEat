@@ -89,6 +89,7 @@
             pr_id = #{prId}
     </update>
 
+
     <select id="getCommentList" parameterType="string" resultMap="commentTempResultMap">
         SELECT c.repo_id,
                c.pr_id,
@@ -101,7 +102,5 @@
         WHERE o.access_token = #{accessToken}
           AND c.temp_status = 0;
     </select>
-
-
 
 </mapper>
