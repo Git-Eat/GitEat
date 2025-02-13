@@ -1,5 +1,6 @@
 package com.giteat.report.Controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.giteat.report.Dto.LighthouseResult;
 import com.giteat.report.Entity.LighthouseEntity;
 import com.giteat.report.Service.LighthouseService;
@@ -137,8 +138,9 @@ public class LighthouseController {
 
             if (jenkinsResponse.getStatusCode() == HttpStatus.OK || jenkinsResponse.getStatusCode() == HttpStatus.CREATED) {
                 log.info("✅ Lighthouse Pipeline 실행 성공");
-                return ResponseEntity.ok("Pipeline started successfully");
-
+//                return ResponseEntity.ok("Pipeline started successfully");
+                String responseJson = new ObjectMapper().writeValueAsString(Map.of("message", "Pipeline started successfully"));
+                return ResponseEntity.ok(responseJson);
             } else {
                 log.error("❌ Jenkins에서 에러 발생: {}", jenkinsResponse.getStatusCode());
                 return ResponseEntity.status(jenkinsResponse.getStatusCode()).body("jenkins error");
