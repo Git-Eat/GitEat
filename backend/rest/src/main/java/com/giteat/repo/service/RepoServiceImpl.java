@@ -180,7 +180,7 @@ public class RepoServiceImpl implements RepoService{
                     for (Map<String, Object> fileChange : fileChangeList) {
                         FileChangeEntity fileChangeEntity = new FileChangeEntity();
                         FileChangeId fileChangeId = new FileChangeId(SHA1Util.encryptSHA1((String) fileChange.get("new_path")),
-                                (int) repositoryResponse.get("id"), (int) mrResponse.get("iid"));
+                                (int) repositoryResponse.get("id"), (int) mrResponse.get("iid") );
 
                         fileChangeEntity.setId(fileChangeId);
                         String fileName = (String) fileChange.get("new_path");

@@ -142,7 +142,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
                     for (Map<String, Object> fileChange : fileChangeList) {
                         FileChangeEntity fileChangeEntity = new FileChangeEntity();
                         FileChangeId fileChangeId = new FileChangeId(SHA1Util.encryptSHA1((String) fileChange.get("new_path")),
-                                Integer.parseInt(projectId), Integer.parseInt(prId));
+                                Integer.parseInt(projectId), Integer.parseInt(iid));
 
                         fileChangeEntity.setId(fileChangeId);
                         String fileName = (String) fileChange.get("new_path");
@@ -196,9 +196,8 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         //db에 값이 있는지 확인한다.
         int commentId = (int) commentMap.get("id");
         int userId = (int) userMap.get("id");
-        int prId = (int) mergeRequestMap.get("id");
+        int prId = (int) mergeRequestMap.get("iid");
         int repoId = (int) projectMap.get("id");
-        int prIid = (int) mergeRequestMap.get("iid");
         int commentCnt = gitLabWebHookMapper.getReplyCnt(commentId);
         String accessToken = gitLabTokenMapper.getAccessTokenById(userId);
 
@@ -210,7 +209,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
             commentEntity.setCommentType(0);
             commentEntity.setUserId(userId);
 
-            List<Map<String, Object>> commentList = gitLabApi.getDiscussions(String.valueOf(repoId), prIid, accessToken);
+            List<Map<String, Object>> commentList = gitLabApi.getDiscussions(String.valueOf(repoId), prId, accessToken);
             Map<String , Object> disMap = commentList.get(0);
 
             commentEntity.setDisId((String) disMap.get("id"));
@@ -221,7 +220,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
                 if(position.get("new_line") !=null) commentEntity.setNewLine((int) position.get("new_line"));
                 if(position.get("old_line") !=null) commentEntity.setOldLine((int) position.get("old_line"));
 
-                Optional<MergeRequestEntity> optionalMr = mergeRequestRepository.findById_PrId(prIid);
+                Optional<MergeRequestEntity> optionalMr = mergeRequestRepository.findById_PrId(prId);
 
                 Map<String, Object> lineRange = (Map<String, Object>) position.get("line_range");
                 if(lineRange != null){
@@ -238,7 +237,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         }else{// 대댓글임
             ReplyEntity replyEntity = new ReplyEntity();
 
-            List<Map<String, Object>> commentList = gitLabApi.getDiscussions(String.valueOf(repoId), prIid, accessToken);
+            List<Map<String, Object>> commentList = gitLabApi.getDiscussions(String.valueOf(repoId), prId, accessToken);
             Map<String , Object> disMap = commentList.get(0);
 
             Map<String , Object> mapperMap = new HashMap();
