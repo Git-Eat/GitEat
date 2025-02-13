@@ -228,6 +228,7 @@ public class RepoServiceImpl implements RepoService{
                     comment.setContent((String) firstNote.get("body"));
                     comment.setCommentType(0); // type 알아본 후 재설정하기
                     comment.setUserId((int) commentAuthor.get("id"));
+                    comment.setCommentValue(0);
                     comment.setDisId((String) commentResponse.get("id"));
                     comment.setCreateAt((String) firstNote.get("updated_at"));
 
@@ -272,6 +273,7 @@ public class RepoServiceImpl implements RepoService{
                         reply.setDisId((String) commentResponse.get("id"));
                         reply.setContent((String) note.get("body"));
                         reply.setReCommentType(1);
+                        reply.setReplyValue(0);
                         reply.setCreateAt((String) note.get("updated_at"));
                         replyRepository.save(reply);
                     }
@@ -281,6 +283,10 @@ public class RepoServiceImpl implements RepoService{
             }
 
         }
+
+        // api를 통해서 프로젝트에 webHook 등록하는 함수
+        gitLabApi.createMergeRequestWebHook(String.valueOf(repoId),accessToken);
+        gitLabApi.createCommentWebHook(String.valueOf(repoId), accessToken);
         return repository;
     }
 }

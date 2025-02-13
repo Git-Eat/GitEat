@@ -47,4 +47,7 @@ public class CommentEntity {
 
     @Column(name = "old_end_line")
     private int oldEndLine;
+
+    @Column(name ="comment_value")
+    private int commentValue;
 }
