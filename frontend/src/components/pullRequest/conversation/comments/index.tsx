@@ -184,8 +184,6 @@ export function Comments({ repoId, prId }: CommentsProps) {
                   {comment.reCommentList?.map((reply) => (
                     <Replies
                       key={reply.reCommentId}
-                      repoId={repoId}
-                      prId={prId}
                       {...reply}
                       replyCreateAt={displayDate(reply.createAt)}
                     />
