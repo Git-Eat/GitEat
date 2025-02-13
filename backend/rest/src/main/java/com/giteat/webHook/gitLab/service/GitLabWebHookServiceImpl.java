@@ -94,6 +94,8 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
     public void addMergeRequestData(String accessToken) {
         List<MergeRequestTempDto> prTempList = gitLabWebHookMapper.getPrTemp(accessToken);
         for (MergeRequestTempDto prTempDto : prTempList) {
+            System.out.println("@@@@@@@@@@@@@@@@@@@@@@가져온 데이터 : " + prTempDto);
+
             String projectId = String.valueOf(prTempDto.getRepoId());
             String prId = String.valueOf(prTempDto.getPrId());
             String userId = String.valueOf(prTempDto.getUserId());
@@ -108,6 +110,8 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
             String baseSha = String.valueOf(diffRefsMap.get("base_sha"));
             String headSha = String.valueOf(diffRefsMap.get("head_sha"));
             String startSha = String.valueOf(diffRefsMap.get("start_sha"));
+            prDto.setRepoId(Integer.parseInt(projectId));
+            prDto.setPrId(Integer.parseInt(prId));
             prDto.setBaseSha(baseSha);
             prDto.setHeadSha(headSha);
             prDto.setStartSha(startSha);
@@ -173,7 +177,9 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
                 }
             }
             // pr의 status를 update하는 구문
-            gitLabWebHookMapper.updateMergeRequestStatus(prDto);
+            System.out.println("prId : " + prTempDto.getPrId());
+            System.out.println("repoId : " + prTempDto.getRepoId());
+            gitLabWebHookMapper.updateMergeRequestStatus(prTempDto);
         }
     }
 
@@ -188,6 +194,18 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
     @Transactional
     @Override
     public void noteEvent(Map<String, Object> body) {
+        /**
+         * 댓글 , 대댓글 , 수정 구분을 해야한다.
+         *
+         * comment , reply 테이블에 commitId가 있을 경우
+         * dis_id를 가져온다 .
+         * dis_id로 comment 테이블에서 commit_id가 있는지 가져온다.
+         * comment 테이블에서 있을 경우 reply
+         * 없을 경우 댓글
+         *
+         * 수정은 어떻게 구분하는가?
+         */
+
         Map<String, Object> projectMap = (Map<String, Object>) body.get("project");
         Map<String, Object> userMap = (Map<String, Object>) body.get("user");
         Map<String, Object> commentMap = (Map<String, Object>) body.get("object_attributes");
@@ -200,6 +218,8 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         int repoId = (int) projectMap.get("id");
         int commentCnt = gitLabWebHookMapper.getReplyCnt(commentId);
         String accessToken = gitLabTokenMapper.getAccessTokenById(userId);
+
+
 
         if(commentCnt==0){  // 0일경우 댓글임
             CommentEntity commentEntity = new CommentEntity();

@@ -6,7 +6,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@ToString
 public class MergeRequestTempDto {
     private int repoId;
     private int prId;
