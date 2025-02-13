@@ -16,6 +16,7 @@ import { useParams } from "react-router-dom";
 import { useAddLighthouseResult } from "../../../../api/queries/useAddLighthouseResult";
 import yarnLogo from "../../../../assets/images/yarn_logo.svg";
 import npmLogo from "../../../../assets/images/npm_logo.svg";
+import { usePollingResult } from "../../../../api/queries/usePollingResult";
 
 const style = {
   position: "absolute" as const,
@@ -47,10 +48,13 @@ function LighthouseResultModal({
   const [build, setBuild] = useState("");
   const {
     mutate: addLighthouseResult,
-    data,
     isLoading,
     isError,
   } = useAddLighthouseResult();
+  const { isUpdated, startPolling, stopPolling } = usePollingResult(
+    repoId || "",
+    5000
+  );
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -74,7 +78,7 @@ function LighthouseResultModal({
       return;
     }
     addLighthouseResult({ gitUrl, frontendPath, branch, repoId, build });
-    console.log(gitUrl, frontendPath, branch, repoId, build);
+    startPolling();
   };
 
   useEffect(() => {
@@ -86,11 +90,13 @@ function LighthouseResultModal({
       setSnackbarMessage("저장에 실패했습니다.");
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
-    } else {
-      setSnackbarOpen(false);
-      console.log(data);
+    } else if (isUpdated) {
+      setSnackbarMessage("성능 측정 완료");
+      setSnackbarSeverity("info");
+      setSnackbarOpen(true);
+      stopPolling();
     }
-  }, [isLoading, isError]);
+  }, [isLoading, isError, isUpdated]);
 
   const handleSnackbarClose = (
     _event?: React.SyntheticEvent | Event,
