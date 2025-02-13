@@ -65,6 +65,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         mrTempDto.setRepoId((int) projectMap.get("id"));
         mrTempDto.setPrId((int) mergeRequestMap.get("id"));
         mrTempDto.setPrIid((int) mergeRequestMap.get("iid"));
+        mrTempDto.setUserId((int) userMap.get("id"));
         mrTempDto.setTempStatus(0);
         System.out.println("tempDto : " + mrTempDto);
         gitLabWebHookMapper.insertMergeRequestTemp(mrTempDto);
