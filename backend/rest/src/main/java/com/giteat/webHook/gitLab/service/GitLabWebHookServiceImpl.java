@@ -214,7 +214,9 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
 
     @Override
     public void addNoteData(String accessToken) {
+        System.out.println("addNoteData 실행 !!!!");
         List<CommentTempDto> commentTempList = gitLabWebHookMapper.getCommentList(accessToken);
+        System.out.println("list 사이즈 : " + commentTempList.size());
         for (CommentTempDto comments : commentTempList) {
             int repoId = comments.getRepoId();
             int prId = comments.getPrId();
