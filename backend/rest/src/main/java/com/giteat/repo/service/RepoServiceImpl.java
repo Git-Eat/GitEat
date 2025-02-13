@@ -148,7 +148,7 @@ public class RepoServiceImpl implements RepoService{
                 mr.setTitle((String) mrResponse.get("title"));
                 mr.setDescription((String) mrResponse.get("description"));
                 mr.setCreateAt((String) mrResponse.get("created_at"));
-
+                mr.setPrType(0);
                 if(mrResponse.get("state").equals("merged"))  mr.setIsOpened(1); // 병합
                 else if(mrResponse.get("state").equals("closed")) mr.setIsOpened(3); // 닫힘
                 else mr.setIsOpened(2); // 열려있음
