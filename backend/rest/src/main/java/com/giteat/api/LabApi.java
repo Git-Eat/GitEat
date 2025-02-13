@@ -222,11 +222,9 @@ public class LabApi {
     }
 
     // webHook에서 commit 데이터 읽어오는 함수
-    public List<Map<String, Object>> getWebHookCommit(String projectId, String prId, String id) {
-//        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests" + prId +"/commits";
-        String accessToken = "glpat-4y8h33DZ2EvCjxfNk65Y";
-//
-        String url = "http://192.168.31.42:81/api/v4" + "/projects/" + projectId + "/merge_requests/" + prId + "/commits";
+    public List<Map<String, Object>> getWebHookCommit(String projectId, String prId, String accessToken) {
+        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests" + prId +"/commits";
+//        String url = "http://192.168.31.42:81/api/v4" + "/projects/" + projectId + "/merge_requests/" + prId + "/commits";
         return callGetApiList(url , accessToken);
     }
 
@@ -240,11 +238,9 @@ public class LabApi {
         return callGetApiList(url , accessToken);
     }
 
-    public Map<String , Object> getDiffRefs(String projectId , String iid , String id){
-        String accessToken = "glpat-4y8h33DZ2EvCjxfNk65Y";
-//        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + iid + "/diff";
-        String url = "http://192.168.31.42:81/api/v4" + "/projects/" + projectId + "/merge_requests/" + iid;
-        //http://192.168.31.237/api/v4/projects/1/merge_requests/1
+    public Map<String , Object> getDiffRefs(String projectId , String iid ,String accessToken){
+        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + iid + "/diff";
+//        String url = "http://192.168.31.237/api/v4" + "/projects/" + projectId + "/merge_requests/" + iid;
         return this.callGetApiMap(url , accessToken);
     }
 
@@ -281,6 +277,17 @@ public class LabApi {
         return response.getBody();
     }
 
+
+    public boolean createWebHook(String projectId , String webHookType , String accessToken){
+        try{
+
+
+            return true;
+        }catch(Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     /**
      * Map Type으로 get
@@ -346,16 +353,16 @@ public class LabApi {
      * @param id
      * @return
      */
-    private List<Map<String ,Object>> callGetApiUseId(String url , String id){
-
-        HttpHeaders headers = new HttpHeaders();
-        String accessToken = gitLabTokenService.getAccessTokenById(id);
-        headers.set("Authorization", "Bearer" + accessToken);
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-
-        ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, entity, List.class);
-        return response.getBody();
-    }
+//    private List<Map<String ,Object>> callGetApiUseId(String url , String id){
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        String accessToken = gitLabTokenService.getAccessTokenById();
+//        headers.set("Authorization", "Bearer" + accessToken);
+//        HttpEntity<String> entity = new HttpEntity<>(headers);
+//
+//        ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, entity, List.class);
+//        return response.getBody();
+//    }
 
     /**
      * restTemplate으로 POST 요청하는 함수
