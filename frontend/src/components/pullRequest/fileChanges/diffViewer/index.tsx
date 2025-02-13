@@ -27,9 +27,9 @@ export function DiffViewer({
     console.log("code start");
     const instance = generateDiffFile(
       "oldFileName",
-      oldCode,
+      oldCode === null ? "" : oldCode,
       "newFileName",
-      newCode,
+      newCode === null ? "" : newCode,
       getFileType(file.oldPath),
       getFileType(file.newPath)
     );
