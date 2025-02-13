@@ -159,12 +159,6 @@ public class RepoServiceImpl implements RepoService{
                 mr.setUserProfile((String) author.get("avatar_url"));
                 mergeRequestRepository.save(mr);
 
-                // --------- aiReview Status 테이블에 상태 업데이트 ----------- //
-                Map<String,Object> params = new HashMap<>();
-                params.put("repoId",repoId);
-                params.put("prId", mrResponse.get("iid"));
-                aiReviewStatusMapper.updateStatus(params);
-
                 // ---------- Commit 정보 가져오기 ---------- //
                 List<Map<String, Object>> CommitList = gitLabApi.getCommits(projectId,(Integer) mrResponse.get("iid"), accessToken);
                 for(Map<String, Object> commitResponse : CommitList){
