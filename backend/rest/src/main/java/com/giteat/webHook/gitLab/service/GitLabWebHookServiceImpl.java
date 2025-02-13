@@ -120,9 +120,9 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
             gitLabWebHookMapper.updateMergeRequestStatus(prDto);
 
             // ------------ commit 저장하는 함수 -----------------
-            List<Map<String, Object>> gitCommitList = gitLabApi.getWebHookCommit(projectId, iid, accessToken);
+            List<Map<String, Object>> gitCommitList = gitLabApi.getCommits(projectId, Integer.parseInt(iid), accessToken);
             for (Map<String, Object> commit : gitCommitList) {
-
+                System.out.println("COMMIT DATA : " + commit);
                 CommitEntity commitEntity = new CommitEntity();
                 CommitId commitId = new CommitId((String) commit.get("id"), Integer.valueOf(projectId), Integer.valueOf(prId));
                 commitEntity.setId(commitId);

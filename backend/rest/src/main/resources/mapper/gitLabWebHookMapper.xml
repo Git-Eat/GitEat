@@ -39,7 +39,6 @@
         SELECT
             p.repo_id,
             p.pr_id,
-            p.pr_iid,
             p.user_id,
             p.temp_status
         FROM pr_temp as p
