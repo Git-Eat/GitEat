@@ -10,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -67,5 +64,14 @@ public class StatisticsRepoController {
         Map<String ,Object> response = new HashMap<>();
         response.put("contributors",contributors);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{repoId}/languages")
+    @Operation(summary = "사용언어 비율 조회", description = "Repo내 사용 된 언어 비율 정보를 조회합니다.")
+    public ResponseEntity<Map<String, Object>> getLanguages(@RequestHeader(value = "Authorization") String header,
+                                                            @PathVariable String repoId){
+        String accessToken = header.split(" ")[1];
+        Map<String, Object> languages = statisticsRepoService.getLanguages(repoId, accessToken);
+        return ResponseEntity.ok(languages);
     }
 }

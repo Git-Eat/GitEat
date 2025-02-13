@@ -26,6 +26,9 @@ public class ApiUtil {
     @Value("${api.base-url}")
     private String restURL;
 
+    @Value("${api.report-url}")
+    private String reportUrl;
+
     public ApiUtil() {
         this.restTemplate = new RestTemplate();
     }
@@ -84,7 +87,6 @@ public class ApiUtil {
         return restTemplate.postForEntity(fullURL, requestEntity, Object.class);
 
     }
-
 
     public ResponseEntity<?> postApi(String url, Object requestBody , String accessToken) {
         String fullURL = restURL + url;
@@ -201,5 +203,28 @@ public class ApiUtil {
 
         // 외부 API 호출
         return restTemplate.exchange(fullURL, HttpMethod.POST, entity, Map.class);
+    }
+
+    /**
+     * report 관련
+     * restAPI 호출 POST
+     * @param url
+     * @param requestBody
+     * @return
+     */
+    public ResponseEntity<?> postReportApi(String url, Object requestBody) {
+        String fullURL = reportUrl + url;
+        log.info("POST 요청 URL: " + fullURL);
+
+        String accessToken = TokenContext.getAccessToken();
+        System.out.println("POST ACCESSTOKEN : " + accessToken);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " +accessToken);
+
+        HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
+
+        return restTemplate.postForEntity(fullURL, requestEntity, Object.class);
+
     }
 }

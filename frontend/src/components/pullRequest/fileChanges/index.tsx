@@ -28,8 +28,8 @@ export function FileChanges() {
         <FileTree />
       </div>
       <div className="w-4/5">
-        <div className="mt-4">
-          <div className="border border-gray-200 p-4 my-4 rounded-md">
+        <div className="mt-4 w-full">
+          <div className="border border-gray-200 p-4 my-4 rounded-md w-full">
             {files.map((file) => (
               <ErrorBoundary key={file.fileId} fallbackComponent={<>ERROR!!</>}>
                 <Suspense fallback={<>loading...</>}>

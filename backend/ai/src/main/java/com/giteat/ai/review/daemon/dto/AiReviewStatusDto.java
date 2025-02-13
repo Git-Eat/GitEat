@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class AiReviewStatusDto {
     private int arStatusId;
     private int prId;
-    private int repo_id;
-    private String createAt;
+    private int repoId;
     private int status;  // 0: 미생성, 1: 생성완료
+    private LocalDateTime sendAt;
 }

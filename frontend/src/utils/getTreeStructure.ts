@@ -25,3 +25,20 @@ export const getFileTree = (files: string[]): Node => {
 
   return root;
 };
+
+export const compressFileTree = (node: Node): Node => {
+  node.next.forEach((child, key) => {
+    const compressedChild = compressFileTree(child);
+    node.next.set(key, compressedChild);
+  });
+
+  if (node.file !== null) {
+    while (node.next.size === 1) {
+      const [childKey, childNode] = Array.from(node.next.entries())[0];
+      node.file = node.file + "/" + childKey;
+
+      node.next = childNode.next;
+    }
+  }
+  return node;
+};

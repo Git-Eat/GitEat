@@ -6,8 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AiReviewRepository extends JpaRepository<AiReviewStatusEntity, Long> {
    List<AiReviewStatusEntity> findByStatus(int status);
+   // access_token을 조회하기 위한 메서드
+   Optional<AiReviewStatusEntity> findByRepoIdPrId(String repoId, int prId);
 }

@@ -46,6 +46,13 @@ public class LighthouseController {
         this.jenkinsApiToken = jenkinsApiToken;
         this.jenkinsUser = jenkinsUser;
         this.jenkinsApiUrl = jenkinsUrl + "/job/" + jenkinsJobName + "/buildWithParameters?token=report-trigger";
+
+
+        log.info("🌟 [환경변수 확인] Jenkins URL: {}", jenkinsUrl);
+        log.info("🌟 [환경변수 확인] Jenkins API Token: {}", jenkinsApiToken);
+        log.info("🌟 [환경변수 확인] Jenkins User: {}", jenkinsUser);
+        log.info("🌟 [환경변수 확인] Jenkins Job Name: {}", System.getenv("jenkins.job.name"));
+        log.info("🌟 [환경변수 확인] Jenkins API URL: {}", jenkinsApiUrl);
     }
 
     /**
@@ -59,8 +66,9 @@ public class LighthouseController {
     })
     @PostMapping("/lighthouse-pipeline")
     public ResponseEntity<String> handleReactRequest(@RequestBody Map<String, String> request,
-                                                     @RequestHeader("accessToken") String accessToken) {
+                                                     @RequestHeader(value="Authorization") String header) {
         try {
+
             // 필수 값 검증
             if (!request.containsKey("gitUrl") || !request.containsKey("branch") ||
                     !request.containsKey("repoId") || !request.containsKey("build") ||
@@ -70,12 +78,13 @@ public class LighthouseController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("❌ Missing required parameters: gitUrl, accessToken, branch, repoId, build");
             }
-
             String gitUrl = request.get("gitUrl");
             String frontendPath = URLEncoder.encode(request.get("frontendPath"), StandardCharsets.UTF_8.toString());
             String branch = request.get("branch");
             String repoId = request.get("repoId");
             String build = request.get("build"); // npm or yarn
+
+            String accessToken = header.split(" ")[1];
 
             log.info("▶ Lighthouse 테스트 요청 정보: gitUrl={}, frontendPath={}, accessToken={}, branch={}, repoId={}, build={}, jenkinsApiUrl={}",
                     gitUrl, frontendPath, accessToken, branch, repoId, build, jenkinsApiUrl);
