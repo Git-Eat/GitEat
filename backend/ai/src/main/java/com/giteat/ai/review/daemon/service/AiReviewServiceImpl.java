@@ -155,6 +155,7 @@ public class AiReviewServiceImpl implements AiReviewService {
 //         StringBuilder combinedAfterCode = new StringBuilder();
 
             StringBuilder finalReview = new StringBuilder();
+            List<String> previousReviews = new ArrayList<>();
             String baseSha = null;
             String headSha = null;
 
@@ -227,7 +228,8 @@ public class AiReviewServiceImpl implements AiReviewService {
                 // 현재 그룹의 코드에 대한 리뷰 생성
                 String groupReview = aiReviewApi.generateReview(
                         beforeCode.toString(),
-                        afterCode.toString()
+                        afterCode.toString(),
+                        previousReviews
                 );
 
                 // 리뷰 결과가 유효한 경우에만 추가

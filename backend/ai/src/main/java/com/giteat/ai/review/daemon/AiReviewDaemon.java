@@ -21,7 +21,7 @@ public class AiReviewDaemon {
     private final AiReviewServiceImpl aiReviewService;
     private final GitLabApi gitLabApi;
 
-    @Scheduled(fixedRate = 60000) // 3분마다 실행
+    @Scheduled(fixedRate = 180000) // 3분마다 실행
     public void aiReviewDaemon() {
         System.out.println("\n[AiReviewDaemon] 데몬 실행 시작 ===========================");
 
