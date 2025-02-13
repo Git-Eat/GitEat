@@ -239,8 +239,8 @@ public class LabApi {
     }
 
     public Map<String , Object> getDiffRefs(String projectId , String iid ,String accessToken){
-        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + iid + "/diff";
-//        String url = "http://192.168.31.237/api/v4" + "/projects/" + projectId + "/merge_requests/" + iid;
+//        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + iid + "/diff";
+        String url = "gitlabApiUrl" + "/projects/" + projectId + "/merge_requests/" + iid;
         return this.callGetApiMap(url , accessToken);
     }
 
