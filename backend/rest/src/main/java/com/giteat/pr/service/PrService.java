@@ -15,7 +15,7 @@ public interface PrService {
 
     /* 댓글 관련 함수 */
     List<CommentDto> getCommentList(int repoId, int prId , String accessToken); // 댓글 조회
-    int insertComment (String repoId, String prId, CommentDto commentDto , String accessToken); // 댓글 등록
+    CommentDto insertComment (String repoId, String prId, CommentDto commentDto , String accessToken); // 댓글 등록
     int updateComment(int repoId, int prId, CommentDto commentDto , String accessToken); // 댓글 수정
     int deleteComment(String repoId, String prId, String commentId , String accessToken); // 댓글 및 대댓글 삭제
 

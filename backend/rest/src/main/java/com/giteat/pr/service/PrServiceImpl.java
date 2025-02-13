@@ -88,11 +88,19 @@ public class PrServiceImpl implements PrService{
 
 
     @Override
-    public int insertComment(String repoId, String prId, CommentDto commentDto , String accessToken) {
+    public CommentDto insertComment(String repoId, String prId, CommentDto commentDto , String accessToken) {
         // GitLab API에 댓글 등록 요청
         Map<String,Object> response = gitLabApi.insertComment(repoId, prId, commentDto.getContent(), accessToken);
-        if(response != null) return 200;
-        return 404;
+        if(response != null) {
+            commentDto.setContent((String) response.get("body"));
+            commentDto.setCreateAt((String) response.get("created_at"));
+            Map<String, Object> author = (Map<String, Object>) response.get("author");
+            commentDto.setUserId((int) author.get("id"));
+            commentDto.setUserName((String) author.get("name"));
+            commentDto.setAvatarUrl((String) author.get("avatar_url"));
+            return commentDto;
+        }
+        return null;
     }
 
     @Override
