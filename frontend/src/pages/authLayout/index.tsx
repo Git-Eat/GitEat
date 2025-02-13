@@ -9,10 +9,8 @@ export function AuthLayout() {
   const { isLogin } = useLoginStore();
   const { setUser } = useLoginStore();
   const { data, isLoading } = useGetMe();
-  const navigation = useNavigate();
   useEffect(() => {
     if (!isLoading && data) {
-      navigation("/repos");
       setUser(data);
     }
   }, [data, isLoading]);
