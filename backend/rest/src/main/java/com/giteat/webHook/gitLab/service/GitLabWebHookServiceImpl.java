@@ -57,6 +57,8 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         mergeRequestEntity.setSourceBranch((String) mergeRequestMap.get("source_branch"));
         mergeRequestEntity.setIsOpened("opened".equals(mergeRequestMap.get("state")) ? 1 : 0);
         mergeRequestEntity.setPrType(1);
+        mergeRequestEntity.setUserName((String)userMap.get("name"));
+        mergeRequestEntity.setUserProfile((String)userMap.get("avatar_url"));
 
         mergeRequestRepository.save(mergeRequestEntity);
         System.out.println("entity : " + mergeRequestEntity);
