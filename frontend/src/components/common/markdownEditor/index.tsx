@@ -5,7 +5,6 @@ import { useFileUpload } from "../../../hooks/useFileUpload";
 
 interface MarkdownEditorProps {
   onAddSingleComment: (value: string, category: number) => void;
-  onStartReview: (value: string) => void;
   onUpdateComment: (value: string, category: number) => void;
   initialValue?: string;
   initialCategory?: number;
@@ -15,7 +14,6 @@ interface MarkdownEditorProps {
 
 export function MarkdownEditor({
   onAddSingleComment,
-  onStartReview,
   onUpdateComment,
   initialValue = "",
   initialCategory = 0,
@@ -38,12 +36,6 @@ export function MarkdownEditor({
   function handleAddSingleComment() {
     if (!value.trim()) return alert("내용을 입력해주세요.");
     onAddSingleComment(value, category);
-    setValue("");
-  }
-
-  function handleStartReview() {
-    if (!value.trim()) return alert("내용을 입력해주세요.");
-    onStartReview(value);
     setValue("");
   }
 
@@ -83,28 +75,22 @@ export function MarkdownEditor({
           onClick={handleReset}
           className="px-2 border mr-2 border-gray-300 p-1 rounded-md"
         >
-          초기화
+          Reset
         </button>
         {isEditing ? (
           <button
             onClick={handleUpdateComment}
             className="px-2 text-white border border-sky-400 bg-sky-400 p-1 rounded-md"
           >
-            저장
+            Save
           </button>
         ) : (
           <>
             <button
               onClick={handleAddSingleComment}
-              className="px-2 border mr-2 border-gray-300 p-1 rounded-md"
-            >
-              제출
-            </button>
-            <button
-              onClick={handleStartReview}
               className="px-2 text-white border border-sky-400 bg-sky-400 p-1 rounded-md"
             >
-              리뷰 시작
+              Save
             </button>
           </>
         )}

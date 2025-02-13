@@ -143,7 +143,6 @@ export function Comments({ repoId, prId }: CommentsProps) {
                 {editCommentId === comment.commentId && (
                   <MarkdownEditor
                     onAddSingleComment={() => {}}
-                    onStartReview={() => {}}
                     onUpdateComment={handleSaveEdit}
                     initialValue={editContent}
                     initialCategory={editCategory}
@@ -182,7 +181,6 @@ export function Comments({ repoId, prId }: CommentsProps) {
                 onAddSingleComment={(content) => {
                   handleAddReply(content, comment.disId);
                 }}
-                onStartReview={() => {}}
                 onUpdateComment={() => {}}
                 repoId={repoId}
               />

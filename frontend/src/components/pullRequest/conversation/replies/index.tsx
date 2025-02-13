@@ -120,7 +120,6 @@ export function Replies({
       {editReplyId === reCommentId && (
         <MarkdownEditor
           onAddSingleComment={() => {}}
-          onStartReview={() => {}}
           onUpdateComment={handleSaveEdit}
           initialValue={editContent}
           initialCategory={editCategory}
