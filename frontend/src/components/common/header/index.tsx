@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
-import defaulProfile from "../../../assets/images/default_user.png";
 import whiteLogo from "../../../assets/images/logo_white.svg";
 import home from "../../../assets/images/home.svg";
 import darkHome from "../../../assets/images/home_dark.svg";
