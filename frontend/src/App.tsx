@@ -27,7 +27,7 @@ function App() {
               <Route path="/pulls" element={<RepositoryList />} />
               <Route path="/repos/:repoId/dashboard" element={<DashBoard />} />
               <Route
-                path="/repos/:repoId/statistics"
+                path="/repos/:repoId/performance"
                 element={<FrontendStatistics />}
               />
               <Route path="/repos/:repoId" element={<PullRequestList />} />

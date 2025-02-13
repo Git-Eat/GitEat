@@ -58,6 +58,12 @@ public class UserController {
 //    public ResponseEntity<?> logout(@RequestHeader("Authorization") String accessToken) {
 //        return ResponseEntity.ok().build();
 //    }
+
+    @PostMapping("/test")
+    public ResponseEntity<?> test(@RequestHeader(value = "Authorization") String header
+    ) {
+        return ResponseEntity.ok("ok");
+    }
 }
 
 

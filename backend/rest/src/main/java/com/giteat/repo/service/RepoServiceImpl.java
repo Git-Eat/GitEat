@@ -220,6 +220,7 @@ public class RepoServiceImpl implements RepoService{
 
                     // 첫번째 note는 Comment로 저장
                     Map<String, Object> firstNote = notes.get(0);
+                    if((boolean) notes.get(0).get("system")) continue; // system이 쓴 댓글이면 continue
                     CommentEntity comment = new CommentEntity();
                     CommentId commentId = new CommentId((int) firstNote.get("id"), (int) mrResponse.get("iid"), (int) repositoryResponse.get("id"));
                     Map<String, Object> commentAuthor = (Map<String, Object>) notes.get(0).get("author");
@@ -230,7 +231,6 @@ public class RepoServiceImpl implements RepoService{
                     comment.setUserId((int) commentAuthor.get("id"));
                     comment.setDisId((String) commentResponse.get("id"));
                     comment.setCreateAt((String) firstNote.get("updated_at"));
-                    if((boolean) notes.get(0).get("system")) continue; // system이 쓴 댓글이면 continue
 
                     if(firstNote.get("position") != null){
                         Map<String, Object> position = (Map<String, Object>) firstNote.get("position");
@@ -264,6 +264,7 @@ public class RepoServiceImpl implements RepoService{
                     // 2번째 note부터는 ReplyEntity로 저장
                     for (int i = 1; i < notes.size(); i++) {
                         Map<String, Object> note = notes.get(i);
+                        if((boolean) notes.get(i).get("system")) continue;;
                         Map<String, Object> replyAuthor = (Map<String, Object>) notes.get(i).get("author");
                         ReplyEntity reply = new ReplyEntity();
                         ReplyId replyId = new ReplyId((int) note.get("id"), (int) firstNote.get("id"), (int) mrResponse.get("iid"), (int) repositoryResponse.get("id"));

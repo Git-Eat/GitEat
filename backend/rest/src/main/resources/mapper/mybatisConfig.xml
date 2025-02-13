@@ -28,6 +28,7 @@
         <typeAlias type="com.giteat.statistics.dto.CommitByWeekDto" alias="commitByWeekDto"/>
         <typeAlias type="com.giteat.statistics.dto.CommentByWeekDto" alias="commentByWeekDto"/>
         <typeAlias type="com.giteat.noti.dto.NotiDto" alias="notiDto"/>
+        <typeAlias type="com.giteat.webHook.gitLab.dto.MergeRequestTempDto" alias="prTempDto"/>
     </typeAliases>
 
     <!-- TypeHandler 등록 -->
@@ -40,5 +41,7 @@
         <mapper resource="mapper/UserMapper.xml"/>
         <mapper resource="mapper/prMapper.xml"/>
         <mapper resource="mapper/StatisticsRepoMapper.xml"/>
+        <mapper resource="mapper/gitLabWebHookMapper.xml"/>
+        <mapper resource="mapper/NotiMapper.xml"/>
     </mappers>
 </configuration>

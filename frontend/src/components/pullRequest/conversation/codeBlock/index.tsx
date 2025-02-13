@@ -22,6 +22,7 @@ export const CodeBlock: React.FC<PartialDiffViewerProps> = ({
 }) => {
   const { baseRepoId, prId } = useParams();
   const { files } = usePRStore();
+  console.log(newPath);
   const { mutate, data: code } = useGetRawFile(
     Number(baseRepoId),
     Number(prId),

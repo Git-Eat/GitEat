@@ -70,30 +70,7 @@ public class PrController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{repoId}/{prId}/comment")
-    @Operation(summary = "댓글 조회", description = "PR에 생성된 댓글을 조회합니다(댓글, 대댓글, 코드댓글 포함)")
-    public ResponseEntity<List<CommentDto>> getCommentList(@RequestHeader(value = "Authorization") String header,
-                                                           @PathVariable int repoId, @PathVariable int prId) {
-        String accessToken = header.split(" ")[1];
-        List<CommentDto> comments = prService.getCommentList(repoId, prId, accessToken);
-        if (comments != null) {
-            return ResponseEntity.ok(comments);
-        }
-        return ResponseEntity.noContent().build();
-    }
 
-    @PostMapping("/{repoId}/{prId}/comment")
-    @Operation(summary = "댓글 등록", description = "PR에 댓글을 등록합니다")
-    public ResponseEntity<Integer> insertComment(@RequestHeader(value = "Authorization") String header,
-                                                 @PathVariable String repoId, @PathVariable String prId,
-                                                 @RequestBody CommentDto commentDto) {
-        String accessToken = header.split(" ")[1];
-        int result = prService.insertComment(repoId, prId, commentDto, accessToken);
-        if (result == 200) {
-            return ResponseEntity.ok(result);
-        }
-        return ResponseEntity.noContent().build();
-    }
 
     @PostMapping("/{repoId}/uploads")
     @Operation(summary = "파일 업로드", description = "파일 업로드 하면 markdown을 return합니다")
@@ -118,16 +95,41 @@ public class PrController {
         return ResponseEntity.ok("success");
     }
 
+    @GetMapping("/{repoId}/{prId}/comment")
+    @Operation(summary = "댓글 조회", description = "PR에 생성된 댓글을 조회합니다(댓글, 대댓글, 코드댓글 포함)")
+    public ResponseEntity<List<CommentDto>> getCommentList(@RequestHeader(value = "Authorization") String header,
+                                                           @PathVariable int repoId, @PathVariable int prId) {
+        String accessToken = header.split(" ")[1];
+        List<CommentDto> comments = prService.getCommentList(repoId, prId, accessToken);
+        if (comments != null) {
+            return ResponseEntity.ok(comments);
+        }
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{repoId}/{prId}/comment")
+    @Operation(summary = "댓글 등록", description = "PR에 댓글을 등록합니다")
+    public ResponseEntity<CommentDto> insertComment(@RequestHeader(value = "Authorization") String header,
+                                                    @PathVariable String repoId, @PathVariable String prId,
+                                                    @RequestBody CommentDto commentDto) {
+        String accessToken = header.split(" ")[1];
+        CommentDto response = prService.insertComment(repoId, prId, commentDto, accessToken);
+        if (response!= null) {
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.noContent().build();
+    }
+
     @PutMapping("/{repoId}/{prId}/comment/{commentId}")
     @Operation(summary = "댓글 수정", description = "PR에 작성한 댓글을 수정합니다")
-    public ResponseEntity<Integer> updateComment(@RequestHeader("Authorization") String header,
-                                                 @PathVariable int repoId, @PathVariable int prId,
+    public ResponseEntity<CommentDto> updateComment(@RequestHeader("Authorization") String header,
+                                                 @PathVariable String repoId, @PathVariable String prId,
                                                  @PathVariable int commentId, @RequestBody CommentDto commentDto) {
         String accessToken = header.split(" ")[1];
         commentDto.setCommentId(commentId);
-        int result = prService.updateComment(repoId, prId, commentDto, accessToken);
-        if (result == 200) {
-            return ResponseEntity.ok(result);
+        CommentDto response = prService.updateComment(repoId, prId, commentDto, accessToken);
+        if (response != null) {
+            return ResponseEntity.ok(response);
         }
         return ResponseEntity.noContent().build();
     }
@@ -140,7 +142,7 @@ public class PrController {
         String accessToken = header.split(" ")[1];
         int result = prService.deleteComment(repoId, prId, commentId, accessToken);
         if (result != 0) {
-            return ResponseEntity.ok(result);
+            return ResponseEntity.ok(200);
         }
         return ResponseEntity.noContent().build();
     }
@@ -158,26 +160,26 @@ public class PrController {
 
     @PostMapping("/{repoId}/{prId}/reply/{discussionId}")
     @Operation(summary = "대댓글 등록", description = "대댓글을 등록합니다")
-    public ResponseEntity<Integer> insertReply(@RequestHeader(value = "Authorization") String header,
+    public ResponseEntity<ReplyReturnDto> insertReply(@RequestHeader(value = "Authorization") String header,
                                                @PathVariable String repoId, @PathVariable String prId,
                                                @PathVariable String discussionId, @RequestBody ReplyDto replyDto) {
         String accessToken = header.split(" ")[1];
-        int result = prService.insertReply(repoId, prId, discussionId, replyDto, accessToken);
-        if (result == 200) {
-            return ResponseEntity.ok(result);
+        ReplyReturnDto response = prService.insertReply(repoId, prId, discussionId, replyDto, accessToken);
+        if (response != null) {
+            return ResponseEntity.ok(response);
         }
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{repoId}/{prId}/reply/{replyId}")
     @Operation(summary = "대댓글 수정", description = "대댓글을 수정합니다")
-    public ResponseEntity<Integer> updateReply(@RequestHeader(value = "Authorization") String header,
+    public ResponseEntity<ReplyReturnDto> updateReply(@RequestHeader(value = "Authorization") String header,
                                                @PathVariable String repoId, @PathVariable String prId,
                                                @PathVariable String replyId, @RequestBody ReplyDto replyDto) {
         String accessToken = header.split(" ")[1];
-        int result = prService.updateReply(repoId, prId, replyId, replyDto, accessToken);
-        if (result == 200) {
-            return ResponseEntity.ok(result);
+        ReplyReturnDto response = prService.updateReply(repoId, prId, replyId, replyDto, accessToken);
+        if (response != null) {
+            return ResponseEntity.ok(response);
         }
         return ResponseEntity.noContent().build();
     }
@@ -190,7 +192,7 @@ public class PrController {
         String accessToken = header.split(" ")[1];
         int result = prService.deleteComment(repoId, prId, reCommentId, accessToken);
         if (result != 0) {
-            return ResponseEntity.ok(result);
+            return ResponseEntity.ok(200);
         }
         return ResponseEntity.noContent().build();
     }
