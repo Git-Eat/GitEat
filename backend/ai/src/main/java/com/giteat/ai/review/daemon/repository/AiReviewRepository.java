@@ -12,5 +12,5 @@ import java.util.Optional;
 public interface AiReviewRepository extends JpaRepository<AiReviewStatusEntity, Long> {
    List<AiReviewStatusEntity> findByStatus(int status);
    // access_token을 조회하기 위한 메서드
-   Optional<AiReviewStatusEntity> findByRepoIdPrId(String repoId, int prId);
+   Optional<AiReviewStatusEntity> findByRepoIdAndPrId(int repoId, int prId);
 }

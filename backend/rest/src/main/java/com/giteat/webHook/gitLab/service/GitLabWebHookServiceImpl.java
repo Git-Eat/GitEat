@@ -47,7 +47,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         Map<String, Object> userMap = (Map<String, Object>) body.get("user");
         Map<String, Object> mergeRequestMap = (Map<String, Object>) body.get("object_attributes");
 
-        MergeRequestId mrId = new MergeRequestId((int) mergeRequestMap.get("id"), (int) projectMap.get("id"));
+        MergeRequestId mrId = new MergeRequestId((int) mergeRequestMap.get("iid"), (int) projectMap.get("id"));
 
         mergeRequestEntity.setId(mrId);
         mergeRequestEntity.setTitle((String) mergeRequestMap.get("title"));
@@ -77,8 +77,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         //pr temp 테이블에 데이터 넣기
         MergeRequestTempDto mrTempDto = new MergeRequestTempDto();
         mrTempDto.setRepoId((int) projectMap.get("id"));
-        mrTempDto.setPrId((int) mergeRequestMap.get("id"));
-        mrTempDto.setPrIid((int) mergeRequestMap.get("iid"));
+        mrTempDto.setPrId((int) mergeRequestMap.get("iid"));
         mrTempDto.setUserId((int) userMap.get("id"));
         mrTempDto.setTempStatus(0);
         System.out.println("tempDto : " + mrTempDto);
@@ -95,10 +94,12 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
     public void addMergeRequestData(String accessToken) {
         List<MergeRequestTempDto> prTempList = gitLabWebHookMapper.getPrTemp(accessToken);
         for (MergeRequestTempDto prTempDto : prTempList) {
+            System.out.println("@@@@@@@@@@@@@@@@@@@@@@가져온 데이터 : " + prTempDto);
+
             String projectId = String.valueOf(prTempDto.getRepoId());
             String prId = String.valueOf(prTempDto.getPrId());
             String userId = String.valueOf(prTempDto.getUserId());
-            String iid = String.valueOf(prTempDto.getPrIid());
+
 
             // sha 관련 데이터 넣기
             PrDto prDto = new PrDto();
@@ -109,6 +110,8 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
             String baseSha = String.valueOf(diffRefsMap.get("base_sha"));
             String headSha = String.valueOf(diffRefsMap.get("head_sha"));
             String startSha = String.valueOf(diffRefsMap.get("start_sha"));
+            prDto.setRepoId(Integer.parseInt(projectId));
+            prDto.setPrId(Integer.parseInt(prId));
             prDto.setBaseSha(baseSha);
             prDto.setHeadSha(headSha);
             prDto.setStartSha(startSha);
@@ -116,13 +119,12 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
 
             // pr의 값을 update하는 구문 작성
             gitLabWebHookMapper.updateMergeRequestData(prDto);
-            // pr의 status를 update하는 구문
-            gitLabWebHookMapper.updateMergeRequestStatus(prDto);
+
 
             // ------------ commit 저장하는 함수 -----------------
-            List<Map<String, Object>> gitCommitList = gitLabApi.getWebHookCommit(projectId, iid, accessToken);
+            List<Map<String, Object>> gitCommitList = gitLabApi.getCommits(projectId, Integer.parseInt(prId), accessToken);
             for (Map<String, Object> commit : gitCommitList) {
-
+                System.out.println("COMMIT DATA : " + commit);
                 CommitEntity commitEntity = new CommitEntity();
                 CommitId commitId = new CommitId((String) commit.get("id"), Integer.valueOf(projectId), Integer.valueOf(prId));
                 commitEntity.setId(commitId);
@@ -136,13 +138,13 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
                 // userId 를 사용해서 사용
 
                 for (int prPageNation = 1; prPageNation <= 20; prPageNation++) {
-                    List<Map<String, Object>> fileChangeList = gitLabApi.getFilesByPr(projectId, Integer.parseInt(iid), prPageNation, accessToken);
+                    List<Map<String, Object>> fileChangeList = gitLabApi.getFilesByPr(projectId, Integer.parseInt(prId), prPageNation, accessToken);
                     if (fileChangeList.isEmpty()) break; // 배열이 비어있다면(받아온 값이 없다면) for문 탈출
 
                     for (Map<String, Object> fileChange : fileChangeList) {
                         FileChangeEntity fileChangeEntity = new FileChangeEntity();
                         FileChangeId fileChangeId = new FileChangeId(SHA1Util.encryptSHA1((String) fileChange.get("new_path")),
-                                Integer.parseInt(projectId), Integer.parseInt(iid));
+                                Integer.parseInt(projectId), Integer.parseInt(prId));
 
                         fileChangeEntity.setId(fileChangeId);
                         String fileName = (String) fileChange.get("new_path");
@@ -174,6 +176,10 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
                     }
                 }
             }
+            // pr의 status를 update하는 구문
+            System.out.println("prId : " + prTempDto.getPrId());
+            System.out.println("repoId : " + prTempDto.getRepoId());
+            gitLabWebHookMapper.updateMergeRequestStatus(prTempDto);
         }
     }
 
@@ -188,6 +194,18 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
     @Transactional
     @Override
     public void noteEvent(Map<String, Object> body) {
+        /**
+         * 댓글 , 대댓글 , 수정 구분을 해야한다.
+         *
+         * comment , reply 테이블에 commitId가 있을 경우
+         * dis_id를 가져온다 .
+         * dis_id로 comment 테이블에서 commit_id가 있는지 가져온다.
+         * comment 테이블에서 있을 경우 reply
+         * 없을 경우 댓글
+         *
+         * 수정은 어떻게 구분하는가?
+         */
+
         Map<String, Object> projectMap = (Map<String, Object>) body.get("project");
         Map<String, Object> userMap = (Map<String, Object>) body.get("user");
         Map<String, Object> commentMap = (Map<String, Object>) body.get("object_attributes");
@@ -196,11 +214,12 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         //db에 값이 있는지 확인한다.
         int commentId = (int) commentMap.get("id");
         int userId = (int) userMap.get("id");
-        int prId = (int) mergeRequestMap.get("id");
+        int prId = (int) mergeRequestMap.get("iid");
         int repoId = (int) projectMap.get("id");
-        int prIid = (int) mergeRequestMap.get("iid");
         int commentCnt = gitLabWebHookMapper.getReplyCnt(commentId);
         String accessToken = gitLabTokenMapper.getAccessTokenById(userId);
+
+
 
         if(commentCnt==0){  // 0일경우 댓글임
             CommentEntity commentEntity = new CommentEntity();
@@ -210,7 +229,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
             commentEntity.setCommentType(0);
             commentEntity.setUserId(userId);
 
-            List<Map<String, Object>> commentList = gitLabApi.getDiscussions(String.valueOf(repoId), prIid, accessToken);
+            List<Map<String, Object>> commentList = gitLabApi.getDiscussions(String.valueOf(repoId), prId, accessToken);
             Map<String , Object> disMap = commentList.get(0);
 
             commentEntity.setDisId((String) disMap.get("id"));
@@ -221,7 +240,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
                 if(position.get("new_line") !=null) commentEntity.setNewLine((int) position.get("new_line"));
                 if(position.get("old_line") !=null) commentEntity.setOldLine((int) position.get("old_line"));
 
-                Optional<MergeRequestEntity> optionalMr = mergeRequestRepository.findById_PrId(prIid);
+                Optional<MergeRequestEntity> optionalMr = mergeRequestRepository.findById_PrId(prId);
 
                 Map<String, Object> lineRange = (Map<String, Object>) position.get("line_range");
                 if(lineRange != null){
@@ -238,7 +257,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         }else{// 대댓글임
             ReplyEntity replyEntity = new ReplyEntity();
 
-            List<Map<String, Object>> commentList = gitLabApi.getDiscussions(String.valueOf(repoId), prIid, accessToken);
+            List<Map<String, Object>> commentList = gitLabApi.getDiscussions(String.valueOf(repoId), prId, accessToken);
             Map<String , Object> disMap = commentList.get(0);
 
             Map<String , Object> mapperMap = new HashMap();

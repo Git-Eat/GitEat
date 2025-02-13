@@ -17,7 +17,7 @@ public interface GitLabWebHookMapper {
 
     int updateMergeRequestData(PrDto prDto);
 
-    int updateMergeRequestStatus(PrDto prDto);
+    int updateMergeRequestStatus(MergeRequestTempDto prTempDto);
 
     List<MergeRequestTempDto> getPrTemp(String accessToken);
 }

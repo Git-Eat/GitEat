@@ -39,12 +39,13 @@
         SELECT
             p.repo_id,
             p.pr_id,
-            p.pr_iid,
             p.user_id,
             p.temp_status
-        FROM pr_temp as p
-                JOIN oauth_token as o
-                USING(user_id)
+        FROM pr_temp AS p
+                 JOIN repository_member AS re
+                      ON p.repo_id = re.repo_id
+                 JOIN oauth_token AS o
+                      ON re.user_id = o.user_id
         WHERE o.access_token = #{accessToken}
           AND p.temp_status = 0;
     </select>
@@ -54,12 +55,10 @@
     <insert id="insertMergeRequestTemp" parameterType="prTempDto">
         INSERT INTO pr_temp (repo_id,
                              pr_id,
-                             pr_iid,
                              user_id,
                              temp_status)
         VALUES (#{repoId},
                 #{prId},
-                #{prIid},
                 #{userId},
                 #{tempStatus});
     </insert>
@@ -75,7 +74,7 @@
     </update>
 
     <!-- prTemp 테이블 status 변경   -->
-    <update id="updateMergeRequestStatus" parameterType="int">
+    <update id="updateMergeRequestStatus" parameterType="prTempDto">
         UPDATE pr_temp
             SET temp_status = 1
         WHERE

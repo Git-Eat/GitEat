@@ -36,7 +36,7 @@ public class GitLabWebHookController {
             webHookService.mergeRequestEvent(body);
         } else if (eventType.equals("note")) {
             System.out.println("들어있는 데이터 " + body);
-            webHookService.noteEvent(body);
+//            webHookService.noteEvent(body);
         }
         return ResponseEntity.ok().build();
     }
