@@ -4,12 +4,11 @@ import lombok.*;
 
 @Getter
 @Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-public class MergeRequestTempDto {
-    private int repoId;
+public class CommentTempDto {
     private int prId;
-    private int userId;
+    private int repoId;
     private int tempStatus;
 }

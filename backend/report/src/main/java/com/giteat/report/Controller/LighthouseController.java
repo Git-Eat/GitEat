@@ -1,5 +1,6 @@
 package com.giteat.report.Controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.giteat.report.Dto.LighthouseResult;
 import com.giteat.report.Entity.LighthouseEntity;
 import com.giteat.report.Service.LighthouseService;
@@ -137,8 +138,9 @@ public class LighthouseController {
 
             if (jenkinsResponse.getStatusCode() == HttpStatus.OK || jenkinsResponse.getStatusCode() == HttpStatus.CREATED) {
                 log.info("✅ Lighthouse Pipeline 실행 성공");
-                return ResponseEntity.ok("Pipeline started successfully");
-
+//                return ResponseEntity.ok("Pipeline started successfully");
+                String responseJson = new ObjectMapper().writeValueAsString(Map.of("message", "Pipeline started successfully"));
+                return ResponseEntity.ok(responseJson);
             } else {
                 log.error("❌ Jenkins에서 에러 발생: {}", jenkinsResponse.getStatusCode());
                 return ResponseEntity.status(jenkinsResponse.getStatusCode()).body("jenkins error");
@@ -226,11 +228,11 @@ public class LighthouseController {
                     .accessibility(lighthouseResult.getAccessibility() * 100)
                     .bestPractices(lighthouseResult.getBestPractices() * 100)
                     .seo(lighthouseResult.getSeo() * 100)
-                    .fcp((fcp != 0) ? Math.round((lighthouseResult.getFcp() * 1000.0) / 1.0) : 0.0)  // 소수 둘째 자리 반올림
-                    .lcp((lcp != 0) ? Math.round(lighthouseResult.getLcp() * 1000.0) / 1.0 : 0.0)  // 소수 둘째 자리 반올림
+                    .fcp((fcp != 0) ? Math.round(fcp * 100) / 100.0 : 0.0)  // ✅ 이미 변환된 fcp 사용
+                    .lcp((lcp != 0) ? Math.round(lcp * 100) / 100.0 : 0.0)  // ✅ 이미 변환된 lcp 사용
                     .tbt(tbt)  // TBT는 그대로 유지
                     .cls(cls)  // CLS는 그대로 유지
-                    .si((si != 0) ? Math.round(lighthouseResult.getSi() * 1000.0) / 1.0 : 0.0)  // 소수 둘째 자리 반올림
+                    .si((si != 0) ? Math.round(si * 100) / 100.0 : 0.0)  // ✅ 이미 변환된 si 사용
                     .build();
 
             // DB 저장

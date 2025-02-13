@@ -1,6 +1,7 @@
 package com.giteat.webHook.gitLab.mapper;
 
 import com.giteat.pr.dto.PrDto;
+import com.giteat.webHook.gitLab.dto.CommentTempDto;
 import com.giteat.webHook.gitLab.dto.MergeRequestTempDto;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -17,7 +18,11 @@ public interface GitLabWebHookMapper {
 
     int updateMergeRequestData(PrDto prDto);
 
-    int updateMergeRequestStatus(PrDto prDto);
+    int updateMergeRequestStatus(MergeRequestTempDto prTempDto);
 
     List<MergeRequestTempDto> getPrTemp(String accessToken);
+
+
+    //comment 댓글 관련 mapper
+    List<CommentTempDto> getCommentList(String accessToken);
 }
