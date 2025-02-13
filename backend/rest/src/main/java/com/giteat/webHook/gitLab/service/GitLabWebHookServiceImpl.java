@@ -199,9 +199,10 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         Map<String, Object> commentMap = (Map<String, Object>) body.get("object_attributes");
         Map<String, Object> mergeRequestMap = (Map<String, Object>) body.get("merge_request");
 
-        int userId = (Integer) userMap.get("id");
-        int prId = (Integer) mergeRequestMap.get("iid");
-        int repoId = (Integer) projectMap.get("id");
+        int userId = Integer.parseInt(String.valueOf(userMap.get("id")));
+        int prId = Integer.parseInt(String.valueOf(mergeRequestMap.get("iid")));
+        int repoId = Integer.parseInt(String.valueOf(projectMap.get("id")));
+
 
         CommentTempDto commentTempDto = new CommentTempDto();
         commentTempDto.setPrId(prId);
