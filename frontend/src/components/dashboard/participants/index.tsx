@@ -3,8 +3,8 @@ import { useGetParticipants } from "../../../api/queries/useGetParticipants";
 import HoverPopover from "../hoverPopover";
 
 export function Participants() {
-  const { baseRepoId } = useParams();
-  const { data } = useGetParticipants(baseRepoId as string);
+  const { repoId } = useParams();
+  const { data } = useGetParticipants(repoId as string);
   return (
     <section className="w-full flex-col justify-between px-10 py-5 bg-white rounded-lg">
       <div className="font-bold mb-2">

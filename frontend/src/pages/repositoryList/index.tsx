@@ -13,7 +13,7 @@ function Repositories() {
       {data?.map((repo) => (
         <RepositoryCard
           key={repo.repoId}
-          user={`${repo.userId}`}
+          ownerName={repo.ownerName}
           title={repo.name}
           repoId={repo.repoId}
           access={ACCESS_GRANT[repo.access - 1]}

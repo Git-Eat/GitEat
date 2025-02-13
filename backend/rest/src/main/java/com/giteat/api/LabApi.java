@@ -5,9 +5,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.giteat.common.util.GitLabTokenService;
 import com.giteat.pr.dto.FileCommentDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.*;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
@@ -22,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Component
+@Slf4j
 public class LabApi {
     private final RestTemplate restTemplate;
     private final String gitlabApiUrl = "https://lab.ssafy.com/api/v4";
@@ -106,25 +109,39 @@ public class LabApi {
      */
     public Map<String, String> uploadFile(String projectId, MultipartFile file , String accessToken) throws IOException {
         String url = gitlabApiUrl + "/projects/" +  projectId + "/uploads";
-        HttpHeaders headers = new HttpHeaders();
-        //String accessToken = gitLabTokenService.getAccessToken(jwtAccessToken);
-        headers.set("Private-Token", accessToken); // 필요하면 OAuth 토큰 사용
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
+        // 헤더 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        headers.set("Accept", "application/json");
+
+        // ✅ InputStreamResource → ByteArrayResource로 변경
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add("file", new ByteArrayResource(file.getBytes()) {
             @Override
             public String getFilename() {
-                return file.getOriginalFilename();
+                return file.getOriginalFilename() != null ? file.getOriginalFilename() : "upload.tmp";
             }
         });
 
+        // 요청 엔티티 생성
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+        // GitLab API 호출
         ResponseEntity<JsonNode> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, JsonNode.class);
 
+        // 응답 본문 확인
+        JsonNode responseBody = response.getBody();
+        if (responseBody == null || !responseBody.has("full_path") || !responseBody.has("markdown")) {
+            throw new IOException("GitLab API 응답이 올바르지 않습니다: " + response);
+        }
+
+        // 결과 매핑
         Map<String, String> fileData = new HashMap<>();
-        fileData.put("full_path", response.getBody().get("full_path").asText());
-        fileData.put("markdown", response.getBody().get("markdown").asText());
+        fileData.put("full_path", responseBody.get("full_path").asText());
+        fileData.put("markdown", responseBody.get("markdown").asText());
+
         return fileData;
     }
 
@@ -232,12 +249,11 @@ public class LabApi {
     }
 
     // 변경된 Raw 코드 가져오는 함수
-    public String getRawCode(String projectId, String filePath, String ref)  {
+    public String getRawCode(String projectId, String filePath, String ref, String accessToken)  {
         try {
             URI url = new URI(gitlabApiUrl + "/projects/" + projectId + "/repository/files/" + filePath + "/raw?ref=" + ref);
             HttpHeaders headers = new HttpHeaders();
-            //String accessToken = gitLabTokenService.getAccessToken(jwtAccessToken);
-            headers.set("Private-Token", "UATEgVcVTSsLn7PWao6c"); // 필요하면 OAuth 토큰 사용
+            headers.set("Authorization", "Bearer " + accessToken);
             HttpEntity<String> entity = new HttpEntity<>(headers);
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
             return response.getBody();
@@ -255,9 +271,10 @@ public class LabApi {
      * @return
      */
     private List<Map<String, Object>> callGetApi(String url , String accessToken) {
+        log.info("CALL URL : " + url);
+        log.info("ACCESS_TOKEN : " + accessToken);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
-        //headers.set("Private-Token", accessToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, entity, List.class);
@@ -272,6 +289,8 @@ public class LabApi {
      * @return
      */
     private Map<String, Object> callGetApiMap(String url , String accessToken) {
+        log.info("CALL URL : " + url);
+        log.info("ACCESS_TOKEN : " + accessToken);
         HttpHeaders headers = new HttpHeaders();
         //headers.set("PRIVATE-TOKEN", accessToken);
         System.out.println("callGetApiMap : " + accessToken);
@@ -291,6 +310,8 @@ public class LabApi {
      * @return
      */
     private List<Map<String, Object>> callGetApiList(String url , String accessToken) {
+        log.info("CALL URL : " + url);
+        log.info("ACCESS_TOKEN : " + accessToken);
         HttpHeaders headers = new HttpHeaders();
         System.out.println("getApiList : " + accessToken);
         headers.set("Authorization", "Bearer " + accessToken);
@@ -326,6 +347,7 @@ public class LabApi {
      * @return
      */
     private List<Map<String ,Object>> callGetApiUseId(String url , String id){
+
         HttpHeaders headers = new HttpHeaders();
         String accessToken = gitLabTokenService.getAccessTokenById(id);
         headers.set("Authorization", "Bearer" + accessToken);
@@ -343,8 +365,8 @@ public class LabApi {
      * @return API 응답 데이터 (등록된 댓글 정보)
      */
     private Map<String, Object> callPostApi(String url, String accessToken, Map<String, String> requestBody) {
-        System.out.println("ACCESS TOKEN : " + accessToken);
-        System.out.println("BODY : " +requestBody);
+        log.info("CALL URL : " + url);
+        log.info("ACCESS_TOKEN : " + accessToken);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -356,8 +378,8 @@ public class LabApi {
     }
 
     private Map<String, Object> callPostApiObject(String url, String accessToken, Map<String, Object> requestBody) {
-        System.out.println("ACCESS TOKEN : " + accessToken);
-        System.out.println("BODY : " +requestBody);
+        log.info("CALL URL : " + url);
+        log.info("ACCESS_TOKEN : " + accessToken);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -378,6 +400,8 @@ public class LabApi {
      * @return API 응답 데이터 (등록된 댓글 정보)
      */
     private Map<String, Object> callPutApi(String url, String accessToken, Map<String, String> requestBody) {
+        log.info("CALL URL : " + url);
+        log.info("ACCESS_TOKEN : " + accessToken);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -395,6 +419,8 @@ public class LabApi {
      * @return 성공 여부 (true: 성공, false: 실패)
      */
     private boolean callDeleteApi(String url, String accessToken) {
+        log.info("CALL URL : " + url);
+        log.info("ACCESS_TOKEN : " + accessToken);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);

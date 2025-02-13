@@ -5,6 +5,7 @@ import com.giteat.security.user.dto.OAuthTokenDto;
 import com.giteat.security.user.service.CustomOAuthService;
 import com.giteat.security.util.ApiUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -47,17 +48,26 @@ public class OAuthController {
         oauthService.createCookieAndToken(oAuthTokenDto.getAccessToken() ,oAuthTokenDto.getRefreshToken() , response);
         return ResponseEntity.ok(testResponse.getStatusCode());
     }
+
+
     /**
-     * GitLab OAuth 토큰 갱신 엔드포인트
-     *
-     * @param tokenRequest 갱신할 토큰 정보를 담은 DTO
-     * @return 갱신된 토큰 정보
+     *  refresh 재발급
+     * @param request
+     * @param response
+     * @return
      */
-    @PostMapping("/gitlab/refresh")
-    @Operation(summary = "access 재발급", description = "refresh토큰으로 access토큰을 재발급 받을때 사용")
-    public ResponseEntity<?> gitlabRefresh(@RequestBody OAuthTokenDto tokenRequest){
-       return apiUtil.postApi("/oauth/refresh", tokenRequest);
+    @GetMapping("/gitlab/refresh")
+    @Operation(summary = "토큰 재발급", description = "refresh토큰으로 모든 토큰 재발급")
+    public ResponseEntity<?> gitlabRefresh(HttpServletRequest request , HttpServletResponse response) {
+        log.info("refresh 재발급 도착");
+        int tokenResult = oauthService.createNewTokens(request, response);
+        if(tokenResult==0){
+            return ResponseEntity.ok("fail");
+        }else{
+            return ResponseEntity.ok("success");
+        }
     }
+
 
     /**
      * GitLab OAuth 일반 로그아웃 처리

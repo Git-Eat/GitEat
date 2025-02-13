@@ -2,9 +2,12 @@ package com.giteat.security.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
 import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +25,9 @@ public class ApiUtil {
 
     @Value("${api.base-url}")
     private String restURL;
+
+    @Value("${api.report-url}")
+    private String reportUrl;
 
     public ApiUtil() {
         this.restTemplate = new RestTemplate();
@@ -81,7 +87,6 @@ public class ApiUtil {
         return restTemplate.postForEntity(fullURL, requestEntity, Object.class);
 
     }
-
 
     public ResponseEntity<?> postApi(String url, Object requestBody , String accessToken) {
         String fullURL = restURL + url;
@@ -180,18 +185,46 @@ public class ApiUtil {
         String accessToken = TokenContext.getAccessToken();
         System.out.println("FILE ACCESSTOKEN : " + accessToken);
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         headers.set("Authorization", "Bearer " + accessToken);
 
         String fullURL = restURL + url;
 
-        // MultipartFile을 HttpEntity로 변환
-        MultipartBodyBuilder builder = new MultipartBodyBuilder();
-        builder.part("file", file.getResource());
+        // ✅ MultipartFile을 올바른 방식으로 변환
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("file", new ByteArrayResource(file.getBytes()) {
+            @Override
+            public String getFilename() {
+                return file.getOriginalFilename();
+            }
+        });
 
-        HttpEntity<?> entity = new HttpEntity<>(builder.build(), headers);
+        HttpEntity<?> entity = new HttpEntity<>(body, headers);
 
         // 외부 API 호출
         return restTemplate.exchange(fullURL, HttpMethod.POST, entity, Map.class);
+    }
+
+    /**
+     * report 관련
+     * restAPI 호출 POST
+     * @param url
+     * @param requestBody
+     * @return
+     */
+    public ResponseEntity<?> postReportApi(String url, Object requestBody) {
+        String fullURL = reportUrl + url;
+        log.info("POST 요청 URL: " + fullURL);
+
+        String accessToken = TokenContext.getAccessToken();
+        System.out.println("POST ACCESSTOKEN : " + accessToken);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " +accessToken);
+
+        HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
+
+        return restTemplate.postForEntity(fullURL, requestEntity, Object.class);
+
     }
 }

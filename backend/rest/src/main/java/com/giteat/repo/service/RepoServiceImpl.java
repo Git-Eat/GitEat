@@ -237,7 +237,7 @@ public class RepoServiceImpl implements RepoService{
                         if(position.get("new_line") !=null) comment.setNewLine((int) position.get("new_line"));
                         if(position.get("old_line") !=null) comment.setOldLine((int) position.get("old_line"));
 
-                        Optional<MergeRequestEntity> optionalMr = mergeRequestRepository.findById_PrId((Integer) mrResponse.get("iid"));
+                        Optional<MergeRequestEntity> optionalMr = mergeRequestRepository.findByRepoIdAndPrId(repoId,(Integer) mrResponse.get("iid"));
 
                         if (optionalMr.isPresent()) {
                             // MR 정보 업데이트

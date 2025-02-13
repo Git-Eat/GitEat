@@ -49,4 +49,7 @@ public class MergeRequestEntity {
 
     @Column(name = "start_sha")
     private String startSha;
+
+    @Column(name = "pr_type")
+    private int prType;
 }

@@ -14,7 +14,7 @@ public class CustomCommentDto {
     private String headSha;
     private String oldPath;
     private String newPath;
-    private int newOrOld; // 1: old 기준, 2: new 기준
+    private int newOrOld; // 1: old 기준, 2: new 기준, 3:none
     private int oldStartLine;
     private int oldEndLine;
     private int newStartLine;

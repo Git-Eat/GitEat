@@ -21,3 +21,25 @@ export type CommentStatistics = {
   totalComment: number;
   userList: (Participant & { commentCount: number })[];
 };
+
+export type Contributors = {
+  contributors: [
+    {
+      userId: number;
+      name: string;
+      userName: string;
+      avatarUrl: string;
+      totalCommit: number;
+      totalMergeRequest: number;
+      totalComment: number;
+      weeklyInfo: [
+        {
+          week: number;
+          mergeRequestCount: number;
+          commitCount: number;
+          commentCount: number;
+        },
+      ];
+    },
+  ];
+};

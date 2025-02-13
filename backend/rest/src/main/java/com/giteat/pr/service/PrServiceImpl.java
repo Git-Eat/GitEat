@@ -36,22 +36,30 @@ public class PrServiceImpl implements PrService{
 
         // pr정보 조회 후 sha값 있는지 확인
         PrDto prInfo = prMapper.getPrById(params);
-        if(prInfo.getBaseSha()== null || prInfo.getHeadSha() == null){
-            Map<String, Object> reponse = gitLabApi.getMergeRequestsById(String.valueOf(repoId), String.valueOf(prId), "");
-            Map<String, Object> diff_refs = (Map<String, Object>) reponse.get("diff_refs");
-            String base_sha = (String) diff_refs.get("base_sha");
-            String head_sha = (String) diff_refs.get("head_sha");
-            String start_sha = (String) diff_refs.get("start_sha");
-            prInfo.setBaseSha(base_sha);
-            prInfo.setHeadSha(head_sha);
-            prInfo.setStartSha(start_sha);
 
-            // DB에도 업데이트
-            params.put("baseSha", base_sha);
-            params.put("headSha", head_sha);
-            params.put("startSha", start_sha);
-            prMapper.updateShaInfo(params);
-        }
+        Map<String, Object> reponse = gitLabApi.getMergeRequestsById(String.valueOf(repoId), String.valueOf(prId), accessToken);
+        Map<String, Object> diff_refs = (Map<String, Object>) reponse.get("diff_refs");
+        String base_sha = (String) diff_refs.get("base_sha");
+        String head_sha = (String) diff_refs.get("head_sha");
+        String start_sha = (String) diff_refs.get("start_sha");
+        prInfo.setBaseSha(base_sha);
+        prInfo.setHeadSha(head_sha);
+        prInfo.setStartSha(start_sha);
+
+        System.out.println("base 출력" + base_sha);
+        System.out.println("head 출력" + head_sha);
+        System.out.println("start 출력" + start_sha);
+
+        // DB에도 업데이트
+        Map<String, Object> params2 = new HashMap<>();
+        params2.put("repoId", repoId);
+        params2.put("prId", prId);
+        params2.put("baseSha", base_sha);
+        params2.put("headSha", head_sha);
+        params2.put("startSha", start_sha);
+        int result = prMapper.updateShaInfo(params2);
+        if(result == 1) System.out.println("업데이트 완료");
+
         return prInfo;
     }
 
@@ -219,7 +227,7 @@ public class PrServiceImpl implements PrService{
         String oldRawFile = null;
 
         // 2. PR에서 sha값 있는지 확인 후 , 없으면 요청 후 DB에 저장
-        Optional<MergeRequestEntity> optionalMr = mergeRequestRepository.findById_PrId(fileDto.getPrId());
+        Optional<MergeRequestEntity> optionalMr = mergeRequestRepository.findByRepoIdAndPrId(Integer.parseInt(repoId), Integer.parseInt(prId));
 
         String base_sha = null;
         String head_sha= null;
@@ -236,27 +244,35 @@ public class PrServiceImpl implements PrService{
 
                 base_sha = (String) shaInfo.get("base_sha");
                 head_sha = (String) shaInfo.get("head_sha");
+                System.out.println("값이 없어용");
+                System.out.println(head_sha);
+                System.out.println(base_sha);
             } else {
                 base_sha = existingMr.getBaseSha();
                 head_sha = existingMr.getHeadSha();
+                System.out.println("값이 있어용");
+                System.out.println(head_sha);
+                System.out.println(base_sha);
             }
             mergeRequestRepository.save(existingMr); // 업데이트
 
 
             if(status == 1){
                 // 파일이 추가 된 경우, fileStatus = 1
-                newRawFile = gitLabApi.getRawCode(repoId,encodedNewPath,head_sha);
+                newRawFile = gitLabApi.getRawCode(repoId,encodedNewPath,head_sha, accessToken);
             } else if(status ==2) {
                 // 파일 내용이 수정된 경우, fileStatus = 2
-                oldRawFile = gitLabApi.getRawCode(repoId, encodedOldPath, base_sha);
-                newRawFile = gitLabApi.getRawCode(repoId,encodedNewPath,head_sha);
+                oldRawFile = gitLabApi.getRawCode(repoId, encodedOldPath, base_sha, accessToken);
+                newRawFile = gitLabApi.getRawCode(repoId,encodedNewPath,head_sha, accessToken);
             } else if(status==3){
                 // 파일이 삭제 된 경우,  fileStatus = 3
-                oldRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, base_sha);
+                System.out.println("파일이 삭제");
+                oldRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, base_sha, accessToken);
+                System.out.println(oldRawFile);
             } else if(!oldPath.equals(newPath)){
                 // 파일 경로가 수정된 경우
-                oldRawFile = gitLabApi.getRawCode(repoId, encodedOldPath, base_sha);
-                newRawFile = gitLabApi.getRawCode(repoId,encodedNewPath,head_sha);
+                oldRawFile = gitLabApi.getRawCode(repoId, encodedOldPath, base_sha,accessToken);
+                newRawFile = gitLabApi.getRawCode(repoId,encodedNewPath,head_sha, accessToken);
             }
         }
 
