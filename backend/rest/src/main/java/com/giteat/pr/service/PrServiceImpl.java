@@ -100,6 +100,9 @@ public class PrServiceImpl implements PrService{
         // GitLab API에 댓글 등록 요청
         Map<String,Object> response = gitLabApi.insertComment(repoId, prId, commentDto.getContent(), accessToken);
         if(response != null) {
+            commentDto.setCommentId((int) response.get("id"));
+            commentDto.setRepoId(Integer.parseInt(repoId));
+            commentDto.setPrId(Integer.parseInt(prId));
             commentDto.setContent((String) response.get("body"));
             commentDto.setCreateAt((String) response.get("created_at"));
             Map<String, Object> author = (Map<String, Object>) response.get("author");
@@ -112,12 +115,16 @@ public class PrServiceImpl implements PrService{
     }
 
     @Override
-    public int updateComment(int repoId, int prId, CommentDto commentDto , String accessToken) {
+    public CommentDto updateComment(String repoId, String prId, CommentDto commentDto , String accessToken) {
         // GitLab API에 댓글 수정 요청
-        Map<String,Object> response = gitLabApi.updateComment(String.valueOf(repoId), String.valueOf(prId),  String.valueOf(commentDto.getCommentId()) ,commentDto.getContent(),accessToken
+        Map<String,Object> response = gitLabApi.updateComment(repoId, prId,  String.valueOf(commentDto.getCommentId()) ,commentDto.getContent(),accessToken
         );
-        if(response != null) return 200;
-        return 404;
+        if(response != null) {
+            commentDto.setContent((String) response.get("body"));
+            commentDto.setCreateAt((String) response.get("updated_at"));
+            return commentDto;
+        }
+        return null;
     }
 
     @Override
@@ -166,17 +173,44 @@ public class PrServiceImpl implements PrService{
     }
 
     @Override
-    public int insertReply(String repoId, String prId, String discussionId, ReplyDto replyDto , String accessToken) {
+    public ReplyReturnDto insertReply(String repoId, String prId, String discussionId, ReplyDto replyDto , String accessToken) {
         Map<String,Object> response = gitLabApi.insertReply(repoId, prId, discussionId, replyDto.getContent(), accessToken);
-        if(response != null) return 200;
-        return 404;
+        if(response != null) {
+            ReplyReturnDto reply = new ReplyReturnDto();
+            Map<String, Object> author = (Map<String, Object>) response.get("author");
+            reply.setReCommentId((int) response.get("id"));
+            reply.setUserId((int) author.get("id"));
+            reply.setRepoId(Integer.parseInt(repoId));
+            reply.setPrId(Integer.parseInt(prId));
+            reply.setDiscussionId(discussionId);
+            reply.setUserName((String) author.get("name"));
+            reply.setAvatarUrl((String) author.get("avatar_url"));
+            reply.setReCommentType(0);
+            reply.setContent((String) response.get("body"));
+            reply.setCreateAt((String) response.get("created_at"));
+            return reply;
+        }
+        return null;
     }
 
     @Override
-    public int updateReply(String repoId, String prId, String reCommentId, ReplyDto replyDto , String accessToken) {
+    public ReplyReturnDto updateReply(String repoId, String prId, String reCommentId, ReplyDto replyDto , String accessToken) {
         Map<String,Object> response = gitLabApi.updateReply(repoId, prId, reCommentId, replyDto.getContent(), accessToken);
-        if(response != null) return 200;
-        return 404;
+        if(response != null) {
+            ReplyReturnDto reply = new ReplyReturnDto();
+            Map<String, Object> author = (Map<String, Object>) response.get("author");
+            reply.setReCommentId((int) response.get("id"));
+            reply.setUserId((int) author.get("id"));
+            reply.setRepoId(Integer.parseInt(repoId));
+            reply.setPrId(Integer.parseInt(prId));
+            reply.setUserName((String) author.get("name"));
+            reply.setAvatarUrl((String) author.get("avatar_url"));
+            reply.setReCommentType(0);
+            reply.setContent((String) response.get("body"));
+            reply.setCreateAt((String) response.get("updated_at"));
+            return reply;
+        }
+        return null;
     }
 
     @Override
