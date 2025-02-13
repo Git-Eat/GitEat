@@ -183,24 +183,25 @@ public class LighthouseController {
             log.info("SI: {}", lighthouseResult.getSi());
             // 변환 적용 후 반올림
             double fcp = (lighthouseResult.getFcp() != 0)
-                    ? Math.round((lighthouseResult.getFcp() * 1000) * 100) / 100.0
+                    ? Math.round(lighthouseResult.getFcp() * 1000.0) / 1.0  // ms 변환 후 바로 반올림
                     : 0.0;
 
             double lcp = (lighthouseResult.getLcp() != 0)
-                    ? Math.round((lighthouseResult.getLcp() * 1000) * 100) / 100.0
+                    ? Math.round(lighthouseResult.getLcp() * 1000.0) / 1.0  // ms 변환 후 바로 반올림
                     : 0.0;
 
             double tbt = (lighthouseResult.getTbt() != 0)
-                    ? Math.round(lighthouseResult.getTbt() * 100) / 100.0
+                    ? Math.round(lighthouseResult.getTbt() * 100) / 100.0  // ms 값은 그대로 유지
                     : 0.0;
 
             double cls = (lighthouseResult.getCls() != 0)
-                    ? Math.round(lighthouseResult.getCls() * 100) / 100.0
+                    ? Math.round(lighthouseResult.getCls() * 100) / 100.0  // CLS 원래 소수 값
                     : 0.0;
 
             double si = (lighthouseResult.getSi() != 0)
-                    ? Math.round((lighthouseResult.getSi() * 1000) * 100) / 100.0
+                    ? Math.round(lighthouseResult.getSi() * 1000.0) / 1.0  // ms 변환 후 바로 반올림
                     : 0.0;
+
 
 
 //            // 변환 적용
