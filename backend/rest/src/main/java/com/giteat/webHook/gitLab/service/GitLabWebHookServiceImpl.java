@@ -142,7 +142,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
                     for (Map<String, Object> fileChange : fileChangeList) {
                         FileChangeEntity fileChangeEntity = new FileChangeEntity();
                         FileChangeId fileChangeId = new FileChangeId(SHA1Util.encryptSHA1((String) fileChange.get("new_path")),
-                                Integer.parseInt(projectId), Integer.parseInt(iid));
+                                Integer.parseInt(projectId), Integer.parseInt(prId));
 
                         fileChangeEntity.setId(fileChangeId);
                         String fileName = (String) fileChange.get("new_path");
