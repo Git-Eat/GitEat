@@ -34,18 +34,23 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
      * @param body
      */
     @Override
-//    @Transactional
+    @Transactional
     public void mergeRequestEvent(Map<String, Object> body) {
-
-        System.out.println("service BODYO  :" + body);
 
         Map<String, Object> projectMap = (Map<String, Object>) body.get("project");
         Map<String, Object> userMap = (Map<String, Object>) body.get("user");
         Map<String, Object> mergeRequestMap = (Map<String, Object>) body.get("object_attributes");
 
-        int repoId = (Integer)projectMap.get("id");
-        int prId = (Integer)mergeRequestMap.get("iid");
-        int userId = (Integer)userMap.get("id");
+        System.out.println("projectMap : " + projectMap);
+        System.out.println(" ");
+        System.out.println("userMap: " + userMap);
+        System.out.println(" ");
+        System.out.println("prMap : " + mergeRequestMap);
+        System.out.println(" ");
+
+        int repoId = Integer.valueOf((String)projectMap.get("id"));
+        int prId = Integer.valueOf((String)projectMap.get("iid"));
+        int userId = Integer.valueOf((String)projectMap.get("id"));
 
         System.out.println("MR repoId:" + repoId);
         System.out.println("PR prId : " + prId);
