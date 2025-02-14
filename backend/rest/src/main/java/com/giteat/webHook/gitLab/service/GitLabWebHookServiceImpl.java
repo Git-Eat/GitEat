@@ -127,17 +127,19 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
             // sha 관련 데이터 넣기
             PrDto prDto = new PrDto();
 
-            Map<String, Object> diffMap = gitLabApi.getDiffRefs(projectId, prId, accessToken);
-            Map<String, Object> diffRefsMap = (Map<String, Object>) diffMap.get("diff_refs");
+            Map<String, Object> reponse = gitLabApi.getMergeRequestsById(projectId, prId, accessToken);
+            Map<String, Object> diff_refs = (Map<String, Object>) reponse.get("diff_refs");
+            System.out.println("mergeRequest Aop diffss : " + diff_refs);
 
-            String baseSha = String.valueOf(diffRefsMap.get("base_sha"));
-            String headSha = String.valueOf(diffRefsMap.get("head_sha"));
-            String startSha = String.valueOf(diffRefsMap.get("start_sha"));
+            String base_sha = (String) diff_refs.get("base_sha");
+            String head_sha = (String) diff_refs.get("head_sha");
+            String start_sha = (String) diff_refs.get("start_sha");
+
             prDto.setRepoId(Integer.parseInt(projectId));
             prDto.setPrId(Integer.parseInt(prId));
-            prDto.setBaseSha(baseSha);
-            prDto.setHeadSha(headSha);
-            prDto.setStartSha(startSha);
+            prDto.setBaseSha(base_sha);
+            prDto.setHeadSha(head_sha);
+            prDto.setStartSha(start_sha);
             prDto.setPrType(1);
 
             // pr의 값을 update하는 구문 작성
@@ -202,6 +204,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
             // pr의 status를 update하는 구문
             System.out.println("prId : " + prTempDto.getPrId());
             System.out.println("repoId : " + prTempDto.getRepoId());
+            System.out.println("status update!!!!");
             gitLabWebHookMapper.updateMergeRequestStatus(prTempDto);
         }
     }
@@ -225,9 +228,6 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         int userId = Integer.parseInt(String.valueOf(userMap.get("id")));
         int prId = Integer.parseInt(String.valueOf(mergeRequestMap.get("iid")));
 
-        System.out.println("note repoId : " + repoId);
-        System.out.println("note userId : " + userId);
-        System.out.println("note prId : " + prId);
 
         CommentTempDto commentTempDto = new CommentTempDto();
         commentTempDto.setPrId(prId);
@@ -242,6 +242,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         System.out.println("addNoteData 실행 !!!!");
         List<CommentTempDto> commentTempList = gitLabWebHookMapper.getCommentList(accessToken);
         System.out.println("list 사이즈 : " + commentTempList.size());
+
         for (CommentTempDto comments : commentTempList) {
             int repoId = comments.getRepoId();
             int prId = comments.getPrId();
@@ -296,9 +297,28 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
                     }
                 }
                 commentRepository.save(comment);
+
+                // ---------- Reply 가져오기 ---------- //
+                // 2번째 note부터는 ReplyEntity로 저장
+                for (int i = 1; i < notes.size(); i++) {
+                    Map<String, Object> note = notes.get(i);
+                    if((boolean) notes.get(i).get("system")) continue;;
+                    Map<String, Object> replyAuthor = (Map<String, Object>) notes.get(i).get("author");
+                    ReplyEntity reply = new ReplyEntity();
+                    ReplyId replyId = new ReplyId((int) note.get("id"), (int) firstNote.get("id"),prId, repoId);
+                    reply.setId(replyId);
+                    reply.setUserId((int) replyAuthor.get("id"));
+                    reply.setDisId((String) commentResponse.get("id"));
+                    reply.setContent((String) note.get("body"));
+                    reply.setReCommentType(1);
+                    reply.setReplyValue(0);
+                    reply.setCreateAt((String) note.get("updated_at"));
+                    replyRepository.save(reply);
+                }
             }
-
-
+            //update 하는 코드 작성
+            comments.setTempStatus(1);
+            gitLabWebHookMapper.updateCommentTempStatus(comments);
         }
     }
 }
