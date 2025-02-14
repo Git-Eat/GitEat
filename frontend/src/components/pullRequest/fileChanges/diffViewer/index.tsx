@@ -7,7 +7,6 @@ import { CommentThread } from "../commentThread";
 import { ChangedFile } from "../../../../api/types/ChangedFile";
 import { Comment } from "../../../../api/types/Comment";
 import { getFileType } from "../../../../utils/getFileType";
-import { comment } from "@uiw/react-md-editor";
 
 interface DiffViewerProps {
   oldCode: string;
@@ -110,12 +109,12 @@ export function DiffViewer({
             },
           };
         }
+        console.log("comment-------------------------------------");
+        console.log(comment);
       }
     });
     console.log("file-------------------------------------");
     console.log(file);
-    console.log("comment-------------------------------------");
-    console.log(comment);
     console.log("data-------------------------------------");
     console.log(extendData);
     return extendData;
