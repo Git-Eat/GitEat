@@ -151,7 +151,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
                 CommitEntity commitEntity = new CommitEntity();
                 CommitId commitId = new CommitId((String) commit.get("id"), Integer.valueOf(projectId), Integer.valueOf(prId));
                 commitEntity.setId(commitId);
-                commitEntity.setContent((String) commit.get("message"));
+                commitEntity.setContent((String) commit.get("title"));
                 commitEntity.setCommitedAt((String) commit.get("committed_date"));
                 commitRepository.save(commitEntity);
 
@@ -221,26 +221,12 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         Map<String, Object> userMap = (Map<String, Object>) body.get("user");
         Map<String, Object> mergeRequestMap = (Map<String, Object>) body.get("merge_request");
 
-        System.out.println("projectMap : " + projectMap);
-        System.out.println(projectMap.get("id"));
-        int rrepoId = Integer.parseInt(String.valueOf(projectMap.get("id")));
-        System.out.println("");
+        int repoId = Integer.parseInt(String.valueOf(projectMap.get("id")));
+        int userId = Integer.parseInt(String.valueOf(userMap.get("id")));
+        int prId = Integer.parseInt(String.valueOf(mergeRequestMap.get("iid")));
 
-        System.out.println("userMap : " + userMap);
-        System.out.println(userMap.get("id"));
-        int uuserId = Integer.parseInt(String.valueOf(userMap.get("id")));
-        System.out.println("uuserId : "+ uuserId);
-
-        System.out.println("mergeRequest :" + mergeRequestMap);
-        System.out.println(mergeRequestMap.get("iid"));
-        int pprId = Integer.parseInt(String.valueOf(mergeRequestMap.get("iid")));
-        System.out.println("pprId : " + pprId);
-
-        int repoId = (Integer) projectMap.get("id");
         System.out.println("note repoId : " + repoId);
-        int userId = (Integer) userMap.get("id");
         System.out.println("note userId : " + userId);
-        int prId = (Integer) mergeRequestMap.get("iid");
         System.out.println("note prId : " + prId);
 
         CommentTempDto commentTempDto = new CommentTempDto();
