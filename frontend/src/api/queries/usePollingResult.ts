@@ -36,7 +36,7 @@ export const usePollingResult = (repoId: string, pollingInterval: number) => {
       return false;
     }
 
-    if (lastCreateAt !== latestCreateAt) {
+    if (lastCreateAt && latestCreateAt !== lastCreateAt) {
       setLastCreateAt(latestCreateAt);
       return true;
     }
