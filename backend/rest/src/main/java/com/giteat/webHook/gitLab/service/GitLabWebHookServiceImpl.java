@@ -28,69 +28,72 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
     private final GitLabWebHookMapper gitLabWebHookMapper;
-
     /**
      * pr 에 대한 event 처리하는 함수
      *
      * @param body
      */
     @Override
-    @Transactional
+//    @Transactional
     public void mergeRequestEvent(Map<String, Object> body) {
+
         System.out.println("service BODYO  :" + body);
 
         Map<String, Object> projectMap = (Map<String, Object>) body.get("project");
         Map<String, Object> userMap = (Map<String, Object>) body.get("user");
         Map<String, Object> mergeRequestMap = (Map<String, Object>) body.get("object_attributes");
 
-        int repoId = Integer.parseInt(String.valueOf(projectMap.get("id")));
-        int prId = Integer.parseInt(String.valueOf(mergeRequestMap.get("iid")));
+        int repoId = (int)projectMap.get("id");
+        int prId = (int)mergeRequestMap.get("iid");
+        int userId = (int)userMap.get("id");
 
-        int prTableCheck = gitLabWebHookMapper.prTableCheck(repoId, prId);
+        System.out.println("MR repoId:" + repoId);
+        System.out.println("PR prId : " + prId);
+        System.out.println("USER ID : " + userId);
+        System.out.println("==================================================");
+        int prTableCheck = gitLabWebHookMapper.prTableCheck(repoId , prId);
 
-        if (prTableCheck == 1) {        // 데이터 있음
+        if(prTableCheck==1){        //데이터 있음
             MergeRequestTempDto mrTempDto = new MergeRequestTempDto();
             mrTempDto.setRepoId((int) projectMap.get("id"));
             mrTempDto.setPrId((int) mergeRequestMap.get("iid"));
             mrTempDto.setUserId((int) userMap.get("id"));
             mrTempDto.setTempStatus(0);
             gitLabWebHookMapper.updateMergeRequestStatus(mrTempDto);
-        } else {
+        }else{
             MergeRequestEntity mergeRequestEntity = new MergeRequestEntity();
-            MergeRequestId mrId = new MergeRequestId((int) mergeRequestMap.get("iid"), (int) projectMap.get("id"));
+            MergeRequestId mrId = new MergeRequestId(prId, repoId);
 
             mergeRequestEntity.setId(mrId);
-            mergeRequestEntity.setTitle(String.valueOf(mergeRequestMap.get("title")));
-            mergeRequestEntity.setDescription(String.valueOf(mergeRequestMap.get("description")));
+            mergeRequestEntity.setTitle((String) mergeRequestMap.get("title"));
+            mergeRequestEntity.setDescription((String) mergeRequestMap.get("description"));
             mergeRequestEntity.setUserId((int) userMap.get("id"));
-            mergeRequestEntity.setCreateAt(String.valueOf(mergeRequestMap.get("created_at")));
-
-            String isOpend = String.valueOf(mergeRequestMap.get("state"));
+            mergeRequestEntity.setCreateAt((String) mergeRequestMap.get("created_at"));
+            String isOpend = (String)mergeRequestMap.get("state");
             int isOpen = 0;
-            if (isOpend.equals("opened")) {
+            if(isOpend.equals("opened")){
                 isOpen = 1;
-            } else if (isOpend.equals("closed")) {
+            }else if(isOpend.equals("closed")){
                 isOpen = 2;
-            } else if (isOpend.equals("merged")) {
+            }else if(isOpend.equals("merged")){
                 isOpen = 3;
             }
             mergeRequestEntity.setIsOpened(isOpen);
-
-            mergeRequestEntity.setTargetBranch(String.valueOf(mergeRequestMap.get("target_branch")));
-            mergeRequestEntity.setSourceBranch(String.valueOf(mergeRequestMap.get("source_branch")));
+            mergeRequestEntity.setTargetBranch((String) mergeRequestMap.get("target_branch"));
+            mergeRequestEntity.setSourceBranch((String) mergeRequestMap.get("source_branch"));
             mergeRequestEntity.setIsOpened("opened".equals(mergeRequestMap.get("state")) ? 1 : 0);
             mergeRequestEntity.setPrType(1);
-            mergeRequestEntity.setUserName(String.valueOf(userMap.get("name")));
-            mergeRequestEntity.setUserProfile(String.valueOf(userMap.get("avatar_url")));
+            mergeRequestEntity.setUserName((String)userMap.get("name"));
+            mergeRequestEntity.setUserProfile((String)userMap.get("avatar_url"));
 
             mergeRequestRepository.save(mergeRequestEntity);
             System.out.println("entity : " + mergeRequestEntity);
 
-            // pr temp 테이블에 데이터 넣기
+            //pr temp 테이블에 데이터 넣기
             MergeRequestTempDto mrTempDto = new MergeRequestTempDto();
-            mrTempDto.setRepoId((int) projectMap.get("id"));
-            mrTempDto.setPrId((int) mergeRequestMap.get("iid"));
-            mrTempDto.setUserId((int) userMap.get("id"));
+            mrTempDto.setRepoId(repoId);
+            mrTempDto.setPrId(prId);
+            mrTempDto.setUserId(userId);
             mrTempDto.setTempStatus(0);
             System.out.println("tempDto : " + mrTempDto);
             gitLabWebHookMapper.insertMergeRequestTemp(mrTempDto);
@@ -100,7 +103,6 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
 
     /**
      * webHook 이 후 사용자 요청마다 데이터를 추가하거나 검사하는 함수
-     *
      * @param accessToken
      */
     @Override
@@ -145,6 +147,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
                 commitEntity.setContent((String) commit.get("message"));
                 commitEntity.setCommitedAt((String) commit.get("committed_date"));
                 commitRepository.save(commitEntity);
+
 
 
                 // id값으로 accessToken 가져오는 로직이 필요하다.
@@ -195,6 +198,8 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
             gitLabWebHookMapper.updateMergeRequestStatus(prTempDto);
         }
     }
+
+
 
 
     /**
