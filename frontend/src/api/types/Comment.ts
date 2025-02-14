@@ -29,6 +29,7 @@ export type Comment = {
   createAt: string;
   position: Position | null;
   reCommentList: Reply[];
+  fileId: string;
 };
 
 export type FileCommentRequest = {
