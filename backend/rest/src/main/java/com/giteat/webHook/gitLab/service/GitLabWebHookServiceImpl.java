@@ -222,6 +222,16 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         Map<String, Object> commentMap = (Map<String, Object>) body.get("object_attributes");
         Map<String, Object> mergeRequestMap = (Map<String, Object>) body.get("merge_request");
 
+
+        System.out.println(projectMap);
+        System.out.println("");
+        System.out.println(userMap);
+        System.out.println("");
+        System.out.println(commentMap);
+        System.out.println("");
+        System.out.println(mergeRequestMap);
+        System.out.println("");
+
         int userId = (int)userMap.get("id");
         int prId = (int)mergeRequestMap.get("iid");
         int repoId = (int)projectMap.get("id");
