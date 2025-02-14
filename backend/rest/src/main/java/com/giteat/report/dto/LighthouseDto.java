@@ -20,11 +20,11 @@ public class LighthouseDto {
     private double accessibility;  // 접근성 점수
     private double bestPractices;  // Best Practices 점수
     private double seo;  // SEO 점수
-    private String fcp;  // First Contentful Paint
-    private String lcp;  // Largest Contentful Paint
-    private String tbt;  // Total Blocking Time
-    private String cls;  // Cumulative Layout Shift
-    private String si;  // Speed Index
+    private double fcp;  // First Contentful Paint
+    private double lcp;  // Largest Contentful Paint
+    private double tbt;  // Total Blocking Time
+    private double cls;  // Cumulative Layout Shift
+    private double si;  // Speed Index
 
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")

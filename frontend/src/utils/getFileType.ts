@@ -1,3 +1,4 @@
 export const getFileType = (path: string) => {
-  return path.split("/")[-1];
+  const tmp = path.split(".");
+  return tmp[tmp.length - 1];
 };

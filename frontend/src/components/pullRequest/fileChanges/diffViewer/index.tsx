@@ -83,32 +83,39 @@ export function DiffViewer({
       newFile: {},
     };
     comments.forEach((comment) => {
-      if (
-        comment.position?.newLine !== undefined &&
-        comment.position.newLine !== null
-      ) {
-        const currentComments =
-          extendData.newFile[comment.position.newLine]?.data ?? [];
-        extendData.newFile = {
-          ...extendData.newFile,
-          [comment.position.newLine]: {
-            data: [...currentComments, comment],
-          },
-        };
-      } else if (
-        comment.position?.oldLine !== undefined &&
-        comment.position.oldLine !== null
-      ) {
-        const currentComments =
-          extendData.oldFile[comment.position.oldLine]?.data ?? [];
-        extendData.oldFile = {
-          ...extendData.oldFile,
-          [comment.position.oldLine]: {
-            data: [...currentComments, comment],
-          },
-        };
+      if (comment.fileId === file.fileId) {
+        if (
+          comment.position?.newLine !== undefined &&
+          comment.position.newLine !== null
+        ) {
+          const currentComments =
+            extendData.newFile[comment.position.newLine]?.data ?? [];
+          extendData.newFile = {
+            ...extendData.newFile,
+            [comment.position.newLine]: {
+              data: [...currentComments, comment],
+            },
+          };
+        } else if (
+          comment.position?.oldLine !== undefined &&
+          comment.position.oldLine !== null
+        ) {
+          const currentComments =
+            extendData.oldFile[comment.position.oldLine]?.data ?? [];
+          extendData.oldFile = {
+            ...extendData.oldFile,
+            [comment.position.oldLine]: {
+              data: [...currentComments, comment],
+            },
+          };
+        }
+        console.log("comment-------------------------------------");
+        console.log(comment);
       }
     });
+    console.log("file-------------------------------------");
+    console.log(file);
+    console.log("data-------------------------------------");
     console.log(extendData);
     return extendData;
   };

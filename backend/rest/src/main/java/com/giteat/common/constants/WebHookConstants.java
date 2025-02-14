@@ -120,6 +120,7 @@ public final class WebHookConstants {
             "  },\n" +
             "  \"object_attributes\": {\n" +
             "    \"id\": \"{{object_attributes.id}}\",\n" +
+            "    \"iid\": \"{{object_attributes.iid}}\",\n" +
             "    \"note\": \"{{object_attributes.note}}\",\n" +
             "    \"noteable_type\": \"{{object_attributes.noteable_type}}\",\n" +
             "    \"author_id\": \"{{object_attributes.author_id}}\",\n" +

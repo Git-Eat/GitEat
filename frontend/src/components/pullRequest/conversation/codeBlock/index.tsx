@@ -51,18 +51,26 @@ export const CodeBlock: React.FC<PartialDiffViewerProps> = ({
       instance.init();
       instance.buildSplitDiffLines();
       instance.buildUnifiedDiffLines();
+      console.log(getFileType(code.fileName));
       return instance;
     }
   };
 
   const diff = useMemo(() => getDiffFile(), [code?.newCode, code?.oldCode]);
-
-  const dynamicStyle = `
-    .diff-line:nth-child(-n+${minLine > 1 ? minLine - 1 : 1}),
-    .diff-line:nth-child(n+${maxLine + 1}) {
+  console.log(minLine, maxLine);
+  const dynamicStyle =
+    minLine === 0 && maxLine === 0
+      ? `
+    .diff-line:nth-child(n+5) {
       display: none !important;
     }
-  `;
+  ` // 두 값 모두 0이면 스타일 적용 안 함
+      : `
+      .diff-line:nth-child(-n+${minLine + 1}),
+      .diff-line:nth-child(n+${maxLine + 1}) {
+        display: none !important;
+      }
+    `;
 
   return (
     <div className="w-full border">

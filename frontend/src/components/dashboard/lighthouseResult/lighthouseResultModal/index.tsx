@@ -86,6 +86,15 @@ function LighthouseResultModal({
   };
 
   useEffect(() => {
+    if (isUpdated) {
+      console.log("test 정보 업데이트 완료");
+      setSnackbarMessage("성능 측정 완료");
+      setSnackbarSeverity("info");
+      setSnackbarOpen(true);
+      stopPolling();
+      refetch();
+      closeModal();
+    }
     if (isLoading) {
       setSnackbarMessage("저장 중...");
       setSnackbarSeverity("info");
@@ -95,13 +104,6 @@ function LighthouseResultModal({
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
       stopPolling();
-    } else if (isUpdated) {
-      setSnackbarMessage("성능 측정 완료");
-      setSnackbarSeverity("info");
-      setSnackbarOpen(true);
-      stopPolling();
-      refetch();
-      closeModal();
     }
   }, [isLoading, isError, isUpdated]);
 
