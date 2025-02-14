@@ -18,7 +18,7 @@ export const useCreateReply = (repoId: number, prId: number) => {
     onSuccess: (newReply) => {
       setComments(
         comments.map((comment) =>
-          comment.commentId === newReply.commentId
+          comment.disId === newReply.discussionId
             ? {
                 ...comment,
                 reCommentList: [...comment.reCommentList, newReply],
