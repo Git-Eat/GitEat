@@ -299,7 +299,7 @@ public class RepoServiceImpl implements RepoService{
     public void createWebHook(String accessToken, String repoId) {
         Map<String, Object> test = gitLabApi.createCommentWebHook(repoId , accessToken);
         System.out.println("결과 mr: " + test);
-        Map<String, Object> test2 = gitLabApi.createCommentWebHook(repoId , accessToken);
+        Map<String , Object> test2 = gitLabApi.createMergeRequestWebHook(repoId , accessToken);
         System.out.println("결과 comment : " + test2);
     }
 }
