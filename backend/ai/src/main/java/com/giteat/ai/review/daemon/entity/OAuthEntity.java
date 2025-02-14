@@ -1,4 +1,4 @@
-package com.giteat.user.entity;
+package com.giteat.ai.review.daemon.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

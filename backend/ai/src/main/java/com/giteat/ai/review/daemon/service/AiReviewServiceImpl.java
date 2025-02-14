@@ -29,6 +29,7 @@ public class AiReviewServiceImpl implements AiReviewService {
     private final MergeRequestRepository mergeRequestRepository;
     private final GitLabApi gitLabApi;
     private final AiReviewApi aiReviewApi;
+    private final TokenValidationService tokenValidationService;
 
     @Override
     public List<AiReviewStatusEntity> findByStatus(int status) {
@@ -62,9 +63,12 @@ public class AiReviewServiceImpl implements AiReviewService {
         String base_sha = null;
         String head_sha = null;
 
-        // 토큰 조회 로직 추가
-        Optional<AiReviewStatusEntity> statusEntity = aiReviewRepository.findByRepoIdAndPrId(Integer.parseInt(repoId), prId);
-        String accessToken = statusEntity.map(entity -> entity.getAccessToken()).orElse(null);
+       List<String> validTokens = tokenValidationService.findValidAccessTokens(Integer.parseInt(repoId));
+        if (validTokens.isEmpty()) {
+            log.error("유효한 토큰을 찾을 수 없습니다. Repo ID: {}", repoId);
+            return null;
+        }
+        String accessToken = validTokens.get(0);
 
         if (optionalMr.isPresent()) {
             MergeRequestEntity existingMr = optionalMr.get();

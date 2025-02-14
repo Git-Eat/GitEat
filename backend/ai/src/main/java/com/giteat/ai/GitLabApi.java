@@ -3,6 +3,7 @@ package com.giteat.ai;
 import com.giteat.ai.dto.FileDto;
 import com.giteat.ai.review.daemon.entity.MergeRequestEntity;
 import com.giteat.ai.review.daemon.repository.MergeRequestRepository;
+import com.giteat.ai.review.daemon.service.TokenValidationService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -20,10 +21,21 @@ import java.util.*;
 @Component
 public class GitLabApi {
     private final RestTemplate restTemplate;
+    private final TokenValidationService tokenValidationService;
     private final String gitlabApiUrl = "https://lab.ssafy.com/api/v4";
 
-    public GitLabApi(RestTemplate restTemplate) {
+    public GitLabApi(RestTemplate restTemplate, TokenValidationService tokenValidationService) {
         this.restTemplate = restTemplate;
+        this.tokenValidationService = tokenValidationService;
+    }
+
+    // 토큰 유효성 검증을 위한 헬퍼 메서드
+    private String getValidToken(int repoId) {
+        List<String> validTokens = tokenValidationService.findValidAccessTokens(repoId);
+        if (validTokens.isEmpty()) {
+            throw new RuntimeException("No valid access token found for repository: " + repoId);
+        }
+        return validTokens.get(0); // 첫 번째 유효한 토큰 사용
     }
 
     /**
