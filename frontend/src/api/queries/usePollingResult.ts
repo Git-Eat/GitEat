@@ -29,7 +29,7 @@ export const usePollingResult = (repoId: string, pollingInterval: number) => {
 
   async function checkIfDataIsUpdated(repoId: string): Promise<boolean> {
     const data = await getLighthouseResult(parseInt(repoId));
-    const latestCreateAt = data.create_at;
+    const latestCreateAt = data.createAt;
     console.log(
       `latestCreateAt: ${latestCreateAt}, lastCreateAt: ${lastCreateAt}`
     );
