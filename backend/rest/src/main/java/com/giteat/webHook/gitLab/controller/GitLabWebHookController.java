@@ -32,10 +32,8 @@ public class GitLabWebHookController {
         System.out.println("body : " + body);
         System.out.println("eventType : " + eventType);
         if (eventType.equals("merge_request")) {
-            System.out.println("도착함");
             webHookService.mergeRequestEvent(body);
         } else if (eventType.equals("note")) {
-            System.out.println("들어있는 데이터 " + body);
             webHookService.noteEvent(body);
         }
         return ResponseEntity.ok().build();
