@@ -4,7 +4,7 @@ import { getLighthouseResult } from "../statistics";
 export const usePollingResult = (repoId: string, pollingInterval: number) => {
   const [isPolling, setIsPolling] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
-  const [lastCreateAt, setLastCreateAt] = useState<string | null>(null);
+  const lastCreateAtRef = useRef<string | null>(null);
   const pollingIntervalRef = useRef<number | null>(null);
 
   async function startPolling() {
@@ -31,17 +31,20 @@ export const usePollingResult = (repoId: string, pollingInterval: number) => {
     const data = await getLighthouseResult(parseInt(repoId));
     const latestCreateAt = data.createAt;
     console.log(
-      `latestCreateAt: ${latestCreateAt}, lastCreateAt: ${lastCreateAt}`
+      `latestCreateAt: ${latestCreateAt}, lastCreateAt: ${lastCreateAtRef.current}`
     );
 
-    if (lastCreateAt === null) {
-      setLastCreateAt(latestCreateAt);
+    if (lastCreateAtRef.current === null) {
+      lastCreateAtRef.current = latestCreateAt;
+      console.log(
+        `변경된 latestCreateAt: ${latestCreateAt}, 변경된 lastCreateAtRef: ${lastCreateAtRef.current}`
+      );
       return false;
     }
 
-    if (lastCreateAt && latestCreateAt !== lastCreateAt) {
+    if (lastCreateAtRef.current && latestCreateAt !== lastCreateAtRef.current) {
       console.log("latestCreateAt와 lastCreateAt 불일치");
-      setLastCreateAt(latestCreateAt);
+      lastCreateAtRef.current = latestCreateAt;
       setIsUpdated(true);
       stopPolling();
       return true;
