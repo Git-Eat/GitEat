@@ -1,4 +1,5 @@
 import authClient from "./authClient";
+import { AiReivew } from "./types/AiReview";
 import { ChangedFile } from "./types/ChangedFile";
 import { FileCommentRequest } from "./types/Comment";
 import { PullRequest } from "./types/PullRequest";
@@ -100,6 +101,19 @@ export const createFileComment = async <T>(
       `/pr/${repoId}/${prId}/file/comment`,
       comment
     );
+    return res.data;
+  } catch (e: unknown) {
+    if (e instanceof Error) throw new Error(e.message);
+    else throw new Error("unknown Error");
+  }
+};
+
+export const getAiReview = async (
+  repoId: number,
+  prId: number
+): Promise<AiReivew> => {
+  try {
+    const res = await authClient.get(`/ai/reivew/${repoId}/${prId}`);
     return res.data;
   } catch (e: unknown) {
     if (e instanceof Error) throw new Error(e.message);
