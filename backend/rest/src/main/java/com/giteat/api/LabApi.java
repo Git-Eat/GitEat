@@ -378,7 +378,7 @@ public class LabApi {
         body.put("name" , WebHookConstants.MERGE_REQUEST_NAME);
         body.put("description" , WebHookConstants.MERGE_REQUEST_DESCRIPTION);
         body.put("enable_ssl_verification" , "false");
-        body.put("merge_requests_events" , "false");
+        body.put("merge_requests_events" , "true");
         body.put("custom_webhook_template" , WebHookConstants.MERGE_REQUEST_CUSTOM_TEMPLATE);
         body.put("push_events" , "false");
 
