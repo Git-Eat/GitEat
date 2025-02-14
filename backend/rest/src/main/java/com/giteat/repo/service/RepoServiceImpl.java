@@ -232,6 +232,7 @@ public class RepoServiceImpl implements RepoService{
                     comment.setCreateAt((String) firstNote.get("updated_at"));
 
                     if(firstNote.get("position") != null){
+
                         Map<String, Object> position = (Map<String, Object>) firstNote.get("position");
                         if(position.get("new_line") !=null) comment.setNewLine((int) position.get("new_line"));
                         if(position.get("old_line") !=null) comment.setOldLine((int) position.get("old_line"));
@@ -251,6 +252,9 @@ public class RepoServiceImpl implements RepoService{
                         if(lineRange != null){
                             Map<String, Object> start = (Map<String, Object>) lineRange.get("start");
                             Map<String, Object> end = (Map<String, Object>) lineRange.get("end");
+                            String CommentFileId = (String) start.get("line_code");
+                            String extractedFileId = CommentFileId.split("_")[0];
+                            comment.setFileId(extractedFileId); // fileId 추출해서 저장
                             if(start.get("new_line") !=null)  comment.setNewStartLine((int) start.get("new_line"));
                             if(end.get("new_line") !=null) comment.setNewEndLine((int) end.get("new_line"));
                             if(start.get("old_line") !=null) comment.setOldStartLine((int) start.get("old_line"));
