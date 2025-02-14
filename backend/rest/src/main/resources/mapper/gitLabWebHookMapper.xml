@@ -91,9 +91,9 @@
 
 
     <select id="getCommentList" parameterType="string" resultMap="commentTempResultMap">
-        SELECT c.repo_id,
-               c.pr_id,
-               c.temp_status
+        SELECT DISTINCT c.repo_id,
+                        c.pr_id,
+                        c.temp_status
         FROM comment_temp AS c
                  JOIN repository_member AS re
                       ON c.repo_id = re.repo_id
@@ -112,4 +112,11 @@
                 #{prId},
                 #{tempStatus});
     </insert>
+
+    <select id="prTableCheck" resultType="int">
+        SELECT EXISTS (
+            SELECT 1 FROM pr
+            WHERE repo_id = #{repoId} AND pr_id = #{prId}
+        ) AS result;
+    </select>
 </mapper>
