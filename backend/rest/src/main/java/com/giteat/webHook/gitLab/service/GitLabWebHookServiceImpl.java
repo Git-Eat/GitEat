@@ -34,7 +34,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
      * @param body
      */
     @Override
-    @Transactional
+//    @Transactional
     public void mergeRequestEvent(Map<String, Object> body) {
 
         Map<String, Object> projectMap = (Map<String, Object>) body.get("project");
@@ -92,7 +92,8 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
             mergeRequestEntity.setUserProfile((String)userMap.get("avatar_url"));
 
             mergeRequestRepository.save(mergeRequestEntity);
-            System.out.println("entity : " + mergeRequestEntity);
+            System.out.println("저장한값 : " + mrId.getPrId() + " : " + mrId.getRepoId());
+
 
             //pr temp 테이블에 데이터 넣기
             MergeRequestTempDto mrTempDto = new MergeRequestTempDto();
