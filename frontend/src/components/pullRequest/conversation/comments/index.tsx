@@ -95,14 +95,16 @@ export function Comments({ repoId, prId }: CommentsProps) {
             {comment.position && (
               <CodeBlock
                 minLine={Number(
-                  comment.position.newStartLine
-                    ? comment.position.newStartLine
-                    : comment.position.oldStartLine
+                  Math.max(
+                    comment.position.newLine ? comment.position.newLine : 0,
+                    comment.position.oldLine ? comment.position.oldLine : 0
+                  )
                 )}
                 maxLine={Number(
-                  comment.position.newEndLine
-                    ? comment.position.newEndLine
-                    : comment.position.oldEndLine
+                  Math.max(
+                    comment.position.newLine ? comment.position.newLine : 0,
+                    comment.position.oldLine ? comment.position.oldLine : 0
+                  )
                 )}
                 newPath={comment.position.newPath}
                 oldPath={comment.position.oldPath}
