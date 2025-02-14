@@ -199,9 +199,9 @@ const repositoryHandler = [
         },
       ],
       oldCode:
-        "console.log('old version of example1');\nfunction foo() { return 'old'; }",
+        "add;\nnconsole.log('old version of example1');\nfunction foo() { return 'old'; }",
       newCode:
-        "console.log('new version of example1');\nfunction foo() { return 'new'; }",
+        "add;\nconsole.log('new version of example1');\nfunction foo() { return 'new'; }",
     });
   }),
 ];

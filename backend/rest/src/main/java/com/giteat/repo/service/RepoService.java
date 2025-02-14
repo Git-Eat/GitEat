@@ -10,4 +10,6 @@ public interface RepoService {
     RepositoryEntity insertRepo(int repoId , String accessToken);
     int deleteRepo(int repoId , String accessToken);
     RepositoryEntity saveRepositoryData(String accessToken , String repositoryId);
+
+    void createWebHook(String accessToken , String repoId);
 }
