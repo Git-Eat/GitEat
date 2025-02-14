@@ -38,19 +38,19 @@ public class LighthouseEntity {
     private double seo;
 
     @Column(name = "FCP", nullable = false, length = 50)
-    private String fcp;
+    private double fcp;
 
     @Column(name = "LCP", nullable = false, length = 50)
-    private String lcp;
+    private double lcp;
 
     @Column(name = "TBT", nullable = false, length = 50)
-    private String tbt;
+    private double tbt;
 
     @Column(name = "CLS", nullable = false, length = 50)
-    private String cls;
+    private double cls;
 
     @Column(name = "SI", nullable = false, length = 50)
-    private String si;
+    private double si;
 
     @Column(name = "create_at", nullable = false, updatable = false)
     private LocalDateTime createAt;
