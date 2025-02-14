@@ -113,7 +113,7 @@ export const getAiReview = async (
   prId: number
 ): Promise<AiReivew> => {
   try {
-    const res = await authClient.get(`/ai/reivew/${repoId}/${prId}`);
+    const res = await authClient.get(`/ai/review/${repoId}/${prId}`);
     return res.data;
   } catch (e: unknown) {
     if (e instanceof Error) throw new Error(e.message);
