@@ -43,9 +43,9 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         Map<String, Object> userMap = (Map<String, Object>) body.get("user");
         Map<String, Object> mergeRequestMap = (Map<String, Object>) body.get("object_attributes");
 
-        int repoId = (int)projectMap.get("id");
-        int prId = (int)mergeRequestMap.get("iid");
-        int userId = (int)userMap.get("id");
+        int repoId = (Integer)projectMap.get("id");
+        int prId = (Integer)mergeRequestMap.get("iid");
+        int userId = (Integer)userMap.get("id");
 
         System.out.println("MR repoId:" + repoId);
         System.out.println("PR prId : " + prId);
@@ -216,9 +216,9 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         Map<String, Object> commentMap = (Map<String, Object>) body.get("object_attributes");
         Map<String, Object> mergeRequestMap = (Map<String, Object>) body.get("merge_request");
 
-        int userId = (int)userMap.get("id");
-        int prId = (int)mergeRequestMap.get("iid");
-        int repoId = (int)projectMap.get("id");
+        int userId = (Integer)userMap.get("id");
+        int prId = (Integer)mergeRequestMap.get("iid");
+        int repoId = (Integer)projectMap.get("id");
         System.out.println("note userId : " + userId);
         System.out.println("note prId : " + prId);
         System.out.println("note repoId : " + repoId);
