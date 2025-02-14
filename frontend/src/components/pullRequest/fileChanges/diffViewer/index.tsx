@@ -84,9 +84,11 @@ export function DiffViewer({
     };
     comments.forEach((comment) => {
       if (comment.fileId === file.fileId) {
+        console.log(comment);
         if (
           comment.position?.newLine !== undefined &&
-          comment.position.newLine !== null
+          comment.position.newLine !== null &&
+          comment.position.oldLine === 0
         ) {
           const currentComments =
             extendData.newFile[comment.position.newLine]?.data ?? [];

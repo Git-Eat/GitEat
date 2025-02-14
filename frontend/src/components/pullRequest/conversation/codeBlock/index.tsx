@@ -23,19 +23,16 @@ export const CodeBlock: React.FC<PartialDiffViewerProps> = ({
   const { baseRepoId, prId } = useParams();
   const { files } = usePRStore();
   console.log(newPath);
-  console.log(
-    files,
-    files.filter((file) => file.newPath === newPath || file.oldPath === oldPath)
-  );
   const { mutate, data: code } = useGetRawFile(
     Number(baseRepoId),
-    Number(prId),
-    files.filter(
-      (file) => file.newPath === newPath || file.oldPath === oldPath
-    )[0]
+    Number(prId)
   );
   useEffect(() => {
-    mutate();
+    mutate(
+      files.filter(
+        (file) => file.newPath === newPath || file.oldPath === oldPath
+      )[0]
+    );
   }, []);
   const getDiffFile = () => {
     console.log(code);
@@ -51,26 +48,18 @@ export const CodeBlock: React.FC<PartialDiffViewerProps> = ({
       instance.init();
       instance.buildSplitDiffLines();
       instance.buildUnifiedDiffLines();
-      console.log(getFileType(code.fileName));
       return instance;
     }
   };
 
   const diff = useMemo(() => getDiffFile(), [code?.newCode, code?.oldCode]);
-  console.log(minLine, maxLine);
-  const dynamicStyle =
-    minLine === 0 && maxLine === 0
-      ? `
-    .diff-line:nth-child(n+5) {
+
+  const dynamicStyle = `
+    .diff-line:nth-child(-n+${minLine > 1 ? minLine - 1 : 0}),
+    .diff-line:nth-child(n+${maxLine < 1 ? maxLine + 1 : ""}) {
       display: none !important;
     }
-  ` // 두 값 모두 0이면 스타일 적용 안 함
-      : `
-      .diff-line:nth-child(-n+${minLine + 1}),
-      .diff-line:nth-child(n+${maxLine + 1}) {
-        display: none !important;
-      }
-    `;
+  `;
 
   return (
     <div className="w-full border">
