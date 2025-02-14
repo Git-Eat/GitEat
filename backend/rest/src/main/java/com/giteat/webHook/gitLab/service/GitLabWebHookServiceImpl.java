@@ -199,24 +199,95 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         Map<String, Object> commentMap = (Map<String, Object>) body.get("object_attributes");
         Map<String, Object> mergeRequestMap = (Map<String, Object>) body.get("merge_request");
 
-        int userId = (int) userMap.get("id");
-        int prId = (int) mergeRequestMap.get("iid");
-        int repoId = (int) projectMap.get("id");
+        int userId = Integer.parseInt(String.valueOf(userMap.get("id")));
+        int prId = Integer.parseInt(String.valueOf(mergeRequestMap.get("iid")));
+        int repoId = Integer.parseInt(String.valueOf(projectMap.get("id")));
+
 
         CommentTempDto commentTempDto = new CommentTempDto();
         commentTempDto.setPrId(prId);
         commentTempDto.setRepoId(repoId);
         commentTempDto.setTempStatus(0);
+        gitLabWebHookMapper.insertCommentTemp(commentTempDto);
     }
-
 
 
     @Override
     public void addNoteData(String accessToken) {
+        System.out.println("addNoteData 실행 !!!!");
         List<CommentTempDto> commentTempList = gitLabWebHookMapper.getCommentList(accessToken);
-        for(CommentTempDto comment : commentTempList){
+        System.out.println("list 사이즈 : " + commentTempList.size());
+        for (CommentTempDto comments : commentTempList) {
+            int repoId = comments.getRepoId();
+            int prId = comments.getPrId();
 
+            List<Map<String, Object>> CommentList = gitLabApi.getDiscussions(String.valueOf(repoId), prId, accessToken);
+            for (Map<String, Object> commentResponse : CommentList) {
+                List<Map<String, Object>> notes = (List<Map<String, Object>>) commentResponse.get("notes");
 
+                // 첫번째 note는 Comment로 저장
+                Map<String, Object> firstNote = notes.get(0);
+                if ((boolean) notes.get(0).get("system")) continue; // system이 쓴 댓글이면 continue
+                CommentEntity comment = new CommentEntity();
+                CommentId commentId = new CommentId((int) firstNote.get("id"), prId, repoId);
+                Map<String, Object> commentAuthor = (Map<String, Object>) notes.get(0).get("author");
+
+                comment.setId(commentId);
+                comment.setContent((String) firstNote.get("body"));
+                comment.setCommentType(0); // type 알아본 후 재설정하기
+                comment.setUserId((int) commentAuthor.get("id"));
+                comment.setDisId((String) commentResponse.get("id"));
+                comment.setCreateAt((String) firstNote.get("updated_at"));
+                comment.setCommentValue(1);
+
+                if (firstNote.get("position") != null) {
+                    Map<String, Object> position = (Map<String, Object>) firstNote.get("position");
+                    if (position.get("new_line") != null) comment.setNewLine((int) position.get("new_line"));
+                    if (position.get("old_line") != null) comment.setOldLine((int) position.get("old_line"));
+
+                    Optional<MergeRequestEntity> optionalMr = mergeRequestRepository.findByRepoIdAndPrId(repoId,prId);
+
+                    if (optionalMr.isPresent()) {
+                        // MR 정보 업데이트
+                        MergeRequestEntity existingMr = optionalMr.get();
+                        existingMr.setBaseSha((String) position.get("base_sha"));
+                        existingMr.setHeadSha((String) position.get("head_sha"));
+                        existingMr.setStartSha((String) position.get("start_sha"));
+                        mergeRequestRepository.save(existingMr); // 업데이트
+                    }
+
+                    Map<String, Object> lineRange = (Map<String, Object>) position.get("line_range");
+                    if (lineRange != null) {
+                        Map<String, Object> start = (Map<String, Object>) lineRange.get("start");
+                        Map<String, Object> end = (Map<String, Object>) lineRange.get("end");
+                        if (start.get("new_line") != null) comment.setNewStartLine((int) start.get("new_line"));
+                        if (end.get("new_line") != null) comment.setNewEndLine((int) end.get("new_line"));
+                        if (start.get("old_line") != null) comment.setOldStartLine((int) start.get("old_line"));
+                        if (end.get("old_line") != null) comment.setOldEndLine((int) end.get("old_line"));
+                    }
+                }
+                commentRepository.save(comment);
+
+                // ---------- Reply 가져오기 ---------- //
+                // 2번째 note부터는 ReplyEntity로 저장
+                for (int i = 1; i < notes.size(); i++) {
+                    Map<String, Object> note = notes.get(i);
+                    if ((boolean) notes.get(i).get("system")) continue;
+                    Map<String, Object> replyAuthor = (Map<String, Object>) notes.get(i).get("author");
+                    ReplyEntity reply = new ReplyEntity();
+                    ReplyId replyId = new ReplyId((int) note.get("id"), (int) firstNote.get("id"), prId, repoId);
+                    reply.setId(replyId);
+                    reply.setUserId((int) replyAuthor.get("id"));
+                    reply.setDisId((String) commentResponse.get("id"));
+                    reply.setContent((String) note.get("body"));
+                    reply.setReCommentType(1);
+                    reply.setReplyValue(1);
+                    reply.setCreateAt((String) note.get("updated_at"));
+                    replyRepository.save(reply);
+                }
+            }
         }
+
+
     }
 }

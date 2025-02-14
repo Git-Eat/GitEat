@@ -82,7 +82,7 @@
     <!-- prTemp 테이블 status 변경   -->
     <update id="updateMergeRequestStatus" parameterType="prTempDto">
         UPDATE pr_temp
-            SET temp_status = 1
+        SET temp_status = 1
         WHERE
             repo_id = #{repoId}
           AND
@@ -103,4 +103,13 @@
           AND c.temp_status = 0;
     </select>
 
+
+    <insert id="insertCommentTemp" parameterType="commentTempDto">
+        INSERT INTO comment_temp (repo_id,
+                                  pr_id,
+                                  temp_status)
+        VALUES (#{repoId},
+                #{prId},
+                #{tempStatus});
+    </insert>
 </mapper>
