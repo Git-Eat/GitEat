@@ -51,14 +51,15 @@ export const CodeBlock: React.FC<PartialDiffViewerProps> = ({
       instance.init();
       instance.buildSplitDiffLines();
       instance.buildUnifiedDiffLines();
+      console.log(getFileType(code.fileName));
       return instance;
     }
   };
 
   const diff = useMemo(() => getDiffFile(), [code?.newCode, code?.oldCode]);
-
+  console.log(minLine, maxLine);
   const dynamicStyle = `
-    .diff-line:nth-child(-n+${minLine - 1}),
+    .diff-line:nth-child(-n+${minLine > 10 ? minLine - 10 : 0}),
     .diff-line:nth-child(n+${maxLine + 1}) {
       display: none !important;
     }
