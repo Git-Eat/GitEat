@@ -57,7 +57,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         System.out.println("USER ID : " + userId);
         System.out.println("==================================================");
         int prTableCheck = gitLabWebHookMapper.prTableCheck(repoId , prId);
-
+        System.out.println("PR CHECK 값 : " + prTableCheck);
         if(prTableCheck==1){        //데이터 있음
             MergeRequestTempDto mrTempDto = new MergeRequestTempDto();
             mrTempDto.setRepoId((int) projectMap.get("id"));
@@ -112,9 +112,10 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
      * @param accessToken
      */
     @Override
-    @Transactional
+//    @Transactional
     public void addMergeRequestData(String accessToken) {
         List<MergeRequestTempDto> prTempList = gitLabWebHookMapper.getPrTemp(accessToken);
+        System.out.println("prTempList size : " + prTempList.size());
         for (MergeRequestTempDto prTempDto : prTempList) {
             System.out.println("@@@@@@@@@@@@@@@@@@@@@@가져온 데이터 : " + prTempDto);
 
@@ -213,7 +214,6 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
      *
      * @param body
      */
-    @Transactional
     @Override
     public void noteEvent(Map<String, Object> body) {
 
@@ -222,9 +222,9 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         Map<String, Object> commentMap = (Map<String, Object>) body.get("object_attributes");
         Map<String, Object> mergeRequestMap = (Map<String, Object>) body.get("merge_request");
 
-        int userId = (Integer)userMap.get("id");
-        int prId = (Integer)mergeRequestMap.get("iid");
-        int repoId = (Integer)projectMap.get("id");
+        int userId = (int)userMap.get("id");
+        int prId = (int)mergeRequestMap.get("iid");
+        int repoId = (int)projectMap.get("id");
         System.out.println("note userId : " + userId);
         System.out.println("note prId : " + prId);
         System.out.println("note repoId : " + repoId);
