@@ -219,25 +219,29 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
 
         Map<String, Object> projectMap = (Map<String, Object>) body.get("project");
         Map<String, Object> userMap = (Map<String, Object>) body.get("user");
-        Map<String, Object> commentMap = (Map<String, Object>) body.get("object_attributes");
         Map<String, Object> mergeRequestMap = (Map<String, Object>) body.get("merge_request");
 
-
-        System.out.println(projectMap);
-        System.out.println("");
-        System.out.println(userMap);
-        System.out.println("");
-        System.out.println(commentMap);
-        System.out.println("");
-        System.out.println(mergeRequestMap);
+        System.out.println("projectMap : " + projectMap);
+        System.out.println(projectMap.get("id"));
+        int rrepoId = Integer.parseInt(String.valueOf(projectMap.get("id")));
         System.out.println("");
 
-        int userId = (int)userMap.get("id");
-        int prId = (int)mergeRequestMap.get("iid");
-        int repoId = (int)projectMap.get("id");
-        System.out.println("note userId : " + userId);
-        System.out.println("note prId : " + prId);
+        System.out.println("userMap : " + userMap);
+        System.out.println(userMap.get("id"));
+        int uuserId = Integer.parseInt(String.valueOf(userMap.get("id")));
+        System.out.println("uuserId : "+ uuserId);
+
+        System.out.println("mergeRequest :" + mergeRequestMap);
+        System.out.println(mergeRequestMap.get("iid"));
+        int pprId = Integer.parseInt(String.valueOf(mergeRequestMap.get("iid")));
+        System.out.println("pprId : " + pprId);
+
+        int repoId = (Integer) projectMap.get("id");
         System.out.println("note repoId : " + repoId);
+        int userId = (Integer) userMap.get("id");
+        System.out.println("note userId : " + userId);
+        int prId = (Integer) mergeRequestMap.get("iid");
+        System.out.println("note prId : " + prId);
 
         CommentTempDto commentTempDto = new CommentTempDto();
         commentTempDto.setPrId(prId);
