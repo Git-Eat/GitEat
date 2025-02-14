@@ -56,6 +56,7 @@ public class RepoController {
         String repositoryId = repoBody.get("repoId");
         String accessToken = header.split(" ")[1]; // Authorization header에서 accessToken 추출
         RepositoryEntity repository = repoService.saveRepositoryData(accessToken, repositoryId);
+        repoService.createWebHook(accessToken , repositoryId);
         System.out.println("REPOSITORY : " + repository);
         System.out.println("@@@@@@@@@@@@@@@@@@" + repository);
         return ResponseEntity.ok().body(repository);

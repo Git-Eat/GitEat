@@ -29,4 +29,7 @@ public class ReplyEntity {
 
     @Column(name = "create_at")
     private String createAt;
+
+    @Column(name = "reply_value")
+    private int replyValue;
 }

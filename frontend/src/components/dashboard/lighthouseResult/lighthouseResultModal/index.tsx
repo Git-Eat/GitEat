@@ -18,6 +18,12 @@ import yarnLogo from "../../../../assets/images/yarn_logo.svg";
 import npmLogo from "../../../../assets/images/npm_logo.svg";
 import { usePollingResult } from "../../../../api/queries/usePollingResult";
 
+interface LighthouseResultModalProps {
+  isModalOpen: boolean;
+  closeModal: () => void;
+  refetch: () => void;
+}
+
 const style = {
   position: "absolute" as const,
   top: "50%",
@@ -37,10 +43,8 @@ const style = {
 function LighthouseResultModal({
   isModalOpen,
   closeModal,
-}: {
-  isModalOpen: boolean;
-  closeModal: () => void;
-}) {
+  refetch,
+}: LighthouseResultModalProps) {
   const { repoId } = useParams<{ repoId: string }>();
   const gitUrlRef = useRef<HTMLInputElement>(null);
   const frontendPathRef = useRef<HTMLInputElement>(null);
@@ -53,7 +57,7 @@ function LighthouseResultModal({
   } = useAddLighthouseResult();
   const { isUpdated, startPolling, stopPolling } = usePollingResult(
     repoId || "",
-    5000
+    20000
   );
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -96,6 +100,8 @@ function LighthouseResultModal({
       setSnackbarSeverity("info");
       setSnackbarOpen(true);
       stopPolling();
+      refetch();
+      closeModal();
     }
   }, [isLoading, isError, isUpdated]);
 

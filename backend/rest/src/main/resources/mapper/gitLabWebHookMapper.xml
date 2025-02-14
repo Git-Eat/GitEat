@@ -82,17 +82,18 @@
     <!-- prTemp 테이블 status 변경   -->
     <update id="updateMergeRequestStatus" parameterType="prTempDto">
         UPDATE pr_temp
-            SET temp_status = 1
+        SET temp_status = 1
         WHERE
             repo_id = #{repoId}
           AND
             pr_id = #{prId}
     </update>
-    commentTempDto
+
+
     <select id="getCommentList" parameterType="string" resultMap="commentTempResultMap">
-        SELECT c.repo_id,
-               c.pr_id,
-               c.temp_status
+        SELECT DISTINCT c.repo_id,
+                        c.pr_id,
+                        c.temp_status
         FROM comment_temp AS c
                  JOIN repository_member AS re
                       ON c.repo_id = re.repo_id
@@ -103,5 +104,19 @@
     </select>
 
 
+    <insert id="insertCommentTemp" parameterType="commentTempDto">
+        INSERT INTO comment_temp (repo_id,
+                                  pr_id,
+                                  temp_status)
+        VALUES (#{repoId},
+                #{prId},
+                #{tempStatus});
+    </insert>
 
+    <select id="prTableCheck" resultType="int">
+        SELECT EXISTS (
+            SELECT 1 FROM pr
+            WHERE repo_id = #{repoId} AND pr_id = #{prId}
+        ) AS result;
+    </select>
 </mapper>

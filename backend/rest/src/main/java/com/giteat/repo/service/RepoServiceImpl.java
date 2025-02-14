@@ -228,6 +228,7 @@ public class RepoServiceImpl implements RepoService{
                     comment.setContent((String) firstNote.get("body"));
                     comment.setCommentType(0); // type 알아본 후 재설정하기
                     comment.setUserId((int) commentAuthor.get("id"));
+                    comment.setCommentValue(0);
                     comment.setDisId((String) commentResponse.get("id"));
                     comment.setCreateAt((String) firstNote.get("updated_at"));
 
@@ -276,6 +277,7 @@ public class RepoServiceImpl implements RepoService{
                         reply.setDisId((String) commentResponse.get("id"));
                         reply.setContent((String) note.get("body"));
                         reply.setReCommentType(1);
+                        reply.setReplyValue(0);
                         reply.setCreateAt((String) note.get("updated_at"));
                         replyRepository.save(reply);
                     }
@@ -286,5 +288,18 @@ public class RepoServiceImpl implements RepoService{
 
         }
         return repository;
+    }
+
+    /**
+     * 신규 webHook을 등록하는 함수
+     * @param accessToken
+     * @param repoId
+     */
+    @Override
+    public void createWebHook(String accessToken, String repoId) {
+        Map<String, Object> test = gitLabApi.createCommentWebHook(repoId , accessToken);
+        System.out.println("결과 mr: " + test);
+        Map<String, Object> test2 = gitLabApi.createCommentWebHook(repoId , accessToken);
+        System.out.println("결과 comment : " + test2);
     }
 }

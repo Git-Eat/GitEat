@@ -4,8 +4,10 @@ import { LightHouseResult } from "../../components/dashboard/lighthouseResult";
 import { Header } from "../../components/pullRequest/header";
 import { Skeleton } from "@mui/material";
 import { useParams } from "react-router-dom";
+import { useLoginStore } from "../../store/loginStore";
 
 export function FrontendStatistics() {
+  const { user } = useLoginStore();
   const { repoId } = useParams();
   const numericRepoId = Number(repoId);
   return (
@@ -17,7 +19,7 @@ export function FrontendStatistics() {
           <span>DashBoard</span>
         </h1>
         <span className="block text-neutral-400 text-sm">
-          <span className="text-black">asdf</span> 의 프로젝트 현황을
+          <span className="text-black">{user.name}</span> 님의 프로젝트 현황을
           확인해보세요!
         </span>
         <section className="my-5">

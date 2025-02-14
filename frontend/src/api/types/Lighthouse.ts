@@ -1,15 +1,15 @@
 export type Lighthouse = {
-  lh_id: number;
-  repo_id: number;
+  lhId: number;
+  repositoryId: number;
   branch: string;
-  PF: number;
-  AB: number;
-  BP: number;
-  SEO: number;
-  FCP: number;
-  LCP: number;
-  TBT: number;
-  CLS: number;
-  SI: number;
+  performance: number;
+  accessibility: number;
+  bestPractices: number;
+  seo: number;
+  fcp: number;
+  lcp: number;
+  tbt: number;
+  cls: number;
+  si: number;
   create_at: string | null;
 };
