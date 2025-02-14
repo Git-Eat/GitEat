@@ -83,7 +83,7 @@ export function LightHouseResult({ repoId }: LightHouseResultProps) {
                       <span className="text-lg font-bold mr-1">FCP</span>
                       <span>(First Contentful Paint)</span>
                       <p className="mt-1 text-sm text-neutral-400">
-                        페이지가 로드되면서 첫 번째 콘텐츠가 표시되는 시간
+                        페이지가 로드될 때 첫 번째 콘텐츠가 표시되는 시간
                       </p>
                     </div>
                     <p
