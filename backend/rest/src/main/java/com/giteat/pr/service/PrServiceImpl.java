@@ -167,7 +167,7 @@ public class PrServiceImpl implements PrService{
         Map<String,Object> response = gitLabApi.insertFileComment(repoId, prId, gitLabRequest, accessToken);
         if(response != null) {
             CommentDto comment = new CommentDto();
-            Map<String, Object> notes = (Map<String, Object>) response.get("notes");
+            List<Map<String, Object>> notes = (List<Map<String, Object>>) response.get("notes");
             Map<String, Object> noteInfo = (Map<String, Object>) notes.get(0);
             Map<String, Object> author = (Map<String, Object>) noteInfo.get("author");
 
