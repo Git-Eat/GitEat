@@ -53,6 +53,9 @@ export function DiffViewer({
       const newline =
         diffFile.getBundle().splitLeftLines[idx].diff?.newLineNumber;
       const linetype = diffFile.getBundle().splitLeftLines[idx].diff?.type;
+      console.log(
+        "type:" + diffFile.getBundle().splitLeftLines[idx].diff?.type
+      );
       console.log(oldline, newline, linetype);
       return { oldline, newline, linetype };
     } else {
@@ -64,7 +67,9 @@ export function DiffViewer({
       const oldline =
         diffFile.getBundle().splitRightLines[idx].diff?.oldLineNumber;
       const linetype = diffFile.getBundle().splitRightLines[idx].diff?.type;
-
+      console.log(
+        "type:" + diffFile.getBundle().splitLeftLines[idx].diff?.type
+      );
       return { oldline, newline, linetype };
     }
   };
@@ -78,32 +83,39 @@ export function DiffViewer({
       newFile: {},
     };
     comments.forEach((comment) => {
-      if (
-        comment.position?.newLine !== undefined &&
-        comment.position.newLine !== null
-      ) {
-        const currentComments =
-          extendData.newFile[comment.position.newLine]?.data ?? [];
-        extendData.newFile = {
-          ...extendData.newFile,
-          [comment.position.newLine]: {
-            data: [...currentComments, comment],
-          },
-        };
-      } else if (
-        comment.position?.oldLine !== undefined &&
-        comment.position.oldLine !== null
-      ) {
-        const currentComments =
-          extendData.oldFile[comment.position.oldLine]?.data ?? [];
-        extendData.oldFile = {
-          ...extendData.oldFile,
-          [comment.position.oldLine]: {
-            data: [...currentComments, comment],
-          },
-        };
+      if (comment.fileId === file.fileId) {
+        if (
+          comment.position?.newLine !== undefined &&
+          comment.position.newLine !== null
+        ) {
+          const currentComments =
+            extendData.newFile[comment.position.newLine]?.data ?? [];
+          extendData.newFile = {
+            ...extendData.newFile,
+            [comment.position.newLine]: {
+              data: [...currentComments, comment],
+            },
+          };
+        } else if (
+          comment.position?.oldLine !== undefined &&
+          comment.position.oldLine !== null
+        ) {
+          const currentComments =
+            extendData.oldFile[comment.position.oldLine]?.data ?? [];
+          extendData.oldFile = {
+            ...extendData.oldFile,
+            [comment.position.oldLine]: {
+              data: [...currentComments, comment],
+            },
+          };
+        }
+        console.log("comment-------------------------------------");
+        console.log(comment);
       }
     });
+    console.log("file-------------------------------------");
+    console.log(file);
+    console.log("data-------------------------------------");
     console.log(extendData);
     return extendData;
   };

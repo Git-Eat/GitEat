@@ -11,6 +11,12 @@
         <result column="temp_status" property="tempStatus"/>
     </resultMap>
 
+    <resultMap id="commentTempResultMap" type="commentTempDto">
+        <id column="pr_id" property="prId" />
+        <id column="repo_id" property="repoId"/>
+        <result column="temp_status" property="tempStatus"/>
+    </resultMap>
+
 
     <select id="getCommentCnt" parameterType="String" resultType="int">
         SELECT count(comment_id)
@@ -41,9 +47,11 @@
             p.pr_id,
             p.user_id,
             p.temp_status
-        FROM pr_temp as p
-                JOIN oauth_token as o
-                USING(user_id)
+        FROM pr_temp AS p
+                 JOIN repository_member AS re
+                      ON p.repo_id = re.repo_id
+                 JOIN oauth_token AS o
+                      ON re.user_id = o.user_id
         WHERE o.access_token = #{accessToken}
           AND p.temp_status = 0;
     </select>
@@ -72,12 +80,43 @@
     </update>
 
     <!-- prTemp 테이블 status 변경   -->
-    <update id="updateMergeRequestStatus" parameterType="prDto">
+    <update id="updateMergeRequestStatus" parameterType="prTempDto">
         UPDATE pr_temp
-            SET temp_status = 1
+        SET temp_status = 1
         WHERE
             repo_id = #{repoId}
           AND
             pr_id = #{prId}
     </update>
+
+
+    <select id="getCommentList" parameterType="string" resultMap="commentTempResultMap">
+        SELECT DISTINCT c.repo_id,
+                        c.pr_id,
+                        c.temp_status
+        FROM comment_temp AS c
+                 JOIN repository_member AS re
+                      ON c.repo_id = re.repo_id
+                 JOIN oauth_token AS o
+                      ON re.user_id = o.user_id
+        WHERE o.access_token = #{accessToken}
+          AND c.temp_status = 0;
+    </select>
+
+
+    <insert id="insertCommentTemp" parameterType="commentTempDto">
+        INSERT INTO comment_temp (repo_id,
+                                  pr_id,
+                                  temp_status)
+        VALUES (#{repoId},
+                #{prId},
+                #{tempStatus});
+    </insert>
+
+    <select id="prTableCheck" resultType="int">
+        SELECT EXISTS (
+            SELECT 1 FROM pr
+            WHERE repo_id = #{repoId} AND pr_id = #{prId}
+        ) AS result;
+    </select>
 </mapper>

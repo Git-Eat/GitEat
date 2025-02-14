@@ -80,15 +80,15 @@ export function MixedChartByLine({ data, maxValue }: ChartProps) {
     series: [
       {
         name: "주간 커밋",
-        data: weeklyCommit,
+        data: weeklyCommit.reverse(),
       },
       {
         name: "주간 PR",
-        data: weeklyMR,
+        data: weeklyMR.reverse(),
       },
       {
         name: "주간 코멘트",
-        data: weeklyComment,
+        data: weeklyComment.reverse(),
       },
     ],
     options: {
@@ -110,7 +110,7 @@ export function MixedChartByLine({ data, maxValue }: ChartProps) {
         size: 4,
       },
       xaxis: {
-        categories: formattedWeekCategories,
+        categories: formattedWeekCategories.reverse(),
       },
       yaxis: {
         max: maxValue ? maxValue : undefined,

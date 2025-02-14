@@ -5,10 +5,12 @@ import com.giteat.pr.dto.*;
 import com.giteat.pr.mapper.PrMapper;
 import com.giteat.repo.entity.MergeRequestEntity;
 import com.giteat.repo.repository.MergeRequestRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -157,14 +159,62 @@ public class PrServiceImpl implements PrService{
     }
 
     @Override
-    public String insertFileComment(String repoId, String prId, CustomCommentDto customCommentDto , String accessToken) {
+    public CommentDto insertFileComment(String repoId, String prId, CustomCommentDto customCommentDto , String accessToken) {
         // RequestBody 데이터 변환
         Map<String, Object> gitLabRequest = commentConverter.converToGitLabFormat(customCommentDto);
 
         // 깃랩 API에 댓글 등록 요청
         Map<String,Object> response = gitLabApi.insertFileComment(repoId, prId, gitLabRequest, accessToken);
-        if(response != null) return "ok";
-        return "fail";
+        if(response != null) {
+            CommentDto comment = new CommentDto();
+            List<Map<String, Object>> notes = (List<Map<String, Object>>) response.get("notes");
+            Map<String, Object> noteInfo = (Map<String, Object>) notes.get(0);
+            Map<String, Object> author = (Map<String, Object>) noteInfo.get("author");
+
+            comment.setCommentId((int) noteInfo.get("id"));
+            comment.setPrId(Integer.parseInt(prId));
+            comment.setRepoId(Integer.parseInt(repoId));
+            comment.setUserId((int) author.get("id"));
+            comment.setFileId(customCommentDto.getFileId());
+            comment.setUserName((String) author.get("name"));
+            comment.setAvatarUrl((String) author.get("avatar_url"));
+            comment.setDisId((String) response.get("id"));
+            comment.setContent((String) noteInfo.get("body"));
+            comment.setCommentType(0);
+            comment.setCreateAt((String) noteInfo.get("created_at"));
+            // 여기에 Position 값 넣어야 하나 ? >> 넣어서 주기
+
+            FileCommentDto.Position position = new FileCommentDto.Position();
+            Map<String, Object> positionResponse = (Map<String, Object>) noteInfo.get("position");
+            position.setBaseSha((String) positionResponse.get("base_sha"));
+            position.setHeadSha((String) positionResponse.get("head_sha"));
+            position.setStartSha((String) positionResponse.get("start_sha"));
+            position.setOldPath((String) positionResponse.get("old_path"));
+            position.setNewPath((String) positionResponse.get("new_path"));
+            position.setPositionType("text");
+            if(positionResponse.get("new_line") == null) {
+                position.setNewLine(null);
+            } else {
+                position.setNewLine((int) positionResponse.get("new_line"));
+            }
+
+            if(positionResponse.get("old_line") == null) {
+                position.setOldLine(null);
+            } else {
+                position.setOldLine((int) positionResponse.get("old_line"));
+            }
+            position.setNewStartLine(customCommentDto.getNewStartLine());
+            position.setNewEndLine(customCommentDto.getNewEndLine());
+            position.setOldStartLine(customCommentDto.getOldStartLine());
+            position.setOldEndLine(customCommentDto.getOldEndLine());
+
+//            FileCommentDto.Position.LineRange lineRange = new FileCommentDto.Position.LineRange();
+//            FileCommentDto.Position.LineCode lineCode = new FileCommentDto.Position.LineCode();
+
+            comment.setPosition(position);
+            return comment;
+        }
+        return null;
     }
 
     @Override
@@ -179,6 +229,7 @@ public class PrServiceImpl implements PrService{
             ReplyReturnDto reply = new ReplyReturnDto();
             Map<String, Object> author = (Map<String, Object>) response.get("author");
             reply.setReCommentId((int) response.get("id"));
+            reply.setCommentId(replyDto.getCommentId());
             reply.setUserId((int) author.get("id"));
             reply.setRepoId(Integer.parseInt(repoId));
             reply.setPrId(Integer.parseInt(prId));

@@ -165,7 +165,7 @@ public class RepoServiceImpl implements RepoService{
                     CommitEntity commitEntity = new CommitEntity();
                     CommitId commitId = new CommitId((String) commitResponse.get("id"), (Integer) repositoryResponse.get("id"),(Integer) mrResponse.get("iid"));
                     commitEntity.setId(commitId);
-                    commitEntity.setContent((String) commitResponse.get("message"));
+                    commitEntity.setContent((String) commitResponse.get("title"));
                     commitEntity.setCommitedAt((String) commitResponse.get("committed_date"));
                     commitRepository.save(commitEntity);
                 }
@@ -228,10 +228,12 @@ public class RepoServiceImpl implements RepoService{
                     comment.setContent((String) firstNote.get("body"));
                     comment.setCommentType(0); // type 알아본 후 재설정하기
                     comment.setUserId((int) commentAuthor.get("id"));
+                    comment.setCommentValue(0);
                     comment.setDisId((String) commentResponse.get("id"));
                     comment.setCreateAt((String) firstNote.get("updated_at"));
 
                     if(firstNote.get("position") != null){
+
                         Map<String, Object> position = (Map<String, Object>) firstNote.get("position");
                         if(position.get("new_line") !=null) comment.setNewLine((int) position.get("new_line"));
                         if(position.get("old_line") !=null) comment.setOldLine((int) position.get("old_line"));
@@ -251,6 +253,9 @@ public class RepoServiceImpl implements RepoService{
                         if(lineRange != null){
                             Map<String, Object> start = (Map<String, Object>) lineRange.get("start");
                             Map<String, Object> end = (Map<String, Object>) lineRange.get("end");
+                            String CommentFileId = (String) start.get("line_code");
+                            String extractedFileId = CommentFileId.split("_")[0];
+                            comment.setFileId(extractedFileId); // fileId 추출해서 저장
                             if(start.get("new_line") !=null)  comment.setNewStartLine((int) start.get("new_line"));
                             if(end.get("new_line") !=null) comment.setNewEndLine((int) end.get("new_line"));
                             if(start.get("old_line") !=null) comment.setOldStartLine((int) start.get("old_line"));
@@ -272,6 +277,7 @@ public class RepoServiceImpl implements RepoService{
                         reply.setDisId((String) commentResponse.get("id"));
                         reply.setContent((String) note.get("body"));
                         reply.setReCommentType(1);
+                        reply.setReplyValue(0);
                         reply.setCreateAt((String) note.get("updated_at"));
                         replyRepository.save(reply);
                     }
@@ -282,5 +288,18 @@ public class RepoServiceImpl implements RepoService{
 
         }
         return repository;
+    }
+
+    /**
+     * 신규 webHook을 등록하는 함수
+     * @param accessToken
+     * @param repoId
+     */
+    @Override
+    public void createWebHook(String accessToken, String repoId) {
+        Map<String, Object> test = gitLabApi.createCommentWebHook(repoId , accessToken);
+        System.out.println("결과 mr: " + test);
+        Map<String , Object> test2 = gitLabApi.createMergeRequestWebHook(repoId , accessToken);
+        System.out.println("결과 comment : " + test2);
     }
 }

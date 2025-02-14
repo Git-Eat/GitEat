@@ -3,7 +3,7 @@ package com.giteat.api;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.giteat.common.util.GitLabTokenService;
+import com.giteat.common.constants.WebHookConstants;
 import com.giteat.pr.dto.FileCommentDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +28,10 @@ import java.util.*;
 public class LabApi {
     private final RestTemplate restTemplate;
     private final String gitlabApiUrl = "https://lab.ssafy.com/api/v4";
-    private final GitLabTokenService gitLabTokenService;
+
     private final ObjectMapper objectMapper;
-    public LabApi(RestTemplate restTemplate , GitLabTokenService gitLabTokenService , ObjectMapper objectMapper) {
+    public LabApi(RestTemplate restTemplate , ObjectMapper objectMapper) {
         this.restTemplate = restTemplate;
-        this.gitLabTokenService = gitLabTokenService;
         this.objectMapper = objectMapper;
     }
     /**
@@ -191,11 +190,6 @@ public class LabApi {
         return callGetApiList(url, accessToken);
     }
 
-    //  프로젝트의 Issues 가져오기
-    public List<Map<String, Object>> getIssues(String projectId , String accessToken) {
-        String url = gitlabApiUrl + "/projects/" + projectId + "/issues";
-        return callGetApi(url , accessToken);
-    }
 
     //  프로젝트의 Discussions(토론) 가져오기
     public List<Map<String, Object>> getDiscussions(String projectId , int prId, String accessToken) {
@@ -203,11 +197,7 @@ public class LabApi {
         return callGetApiList(url, accessToken);
     }
 
-    //  프로젝트의 Comments(노트) 가져오기
-    public List<Map<String, Object>> getComments(String projectId , String accessToken) {
-        String url = gitlabApiUrl + "/projects/" + projectId + "/notes";
-        return callGetApi(url , accessToken);
-    }
+
 
     // PR내 변경된 파일 목록 가져오기 > 이걸 쓸거임
     public List<Map<String, Object>> getFilesByPr(String projectId, int prId, int prPageNation, String accessToken){
@@ -216,27 +206,6 @@ public class LabApi {
     }
 
     // Commit 내 변경된 파일 목록 가져오기
-    public List<Map<String, Object>> getFilesByCommit(String projectId, String commitId, String accessToken){
-        String url = gitlabApiUrl + "/projects/" + projectId +  "/repository/commits/" + commitId + "/diff";
-        return callGetApiList(url, accessToken);
-    }
-
-    // webHook에서 commit 데이터 읽어오는 함수
-    public List<Map<String, Object>> getWebHookCommit(String projectId, String prIid, String accessToken) {
-        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + prIid +"/commits";
-//        String url = "http://192.168.31.42:81/api/v4" + "/projects/" + projectId + "/merge_requests/" + prId + "/commits";
-        return callGetApiList(url , accessToken);
-    }
-
-
-
-    // webHook에서 changeFIle 읽어오는 함수
-    public List<Map<String , Object>> getChangeFiles(String projectId , String commitId , String id){
-//        String url = gitlabApiUrl + "/projects/" + projectId + "/commits/" + commitId + "/diff";
-        String url = "http://192.168.31.42:81/api/v4"+"/projects/" + projectId + "/repository/commits/" + commitId + "/diff";
-        String accessToken = "glpat-4y8h33DZ2EvCjxfNk65Y";
-        return callGetApiList(url , accessToken);
-    }
 
     public Map<String , Object> getDiffRefs(String projectId , String iid ,String accessToken){
 //        String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + iid + "/diff";
@@ -278,17 +247,6 @@ public class LabApi {
     }
 
 
-    public boolean createWebHook(String projectId , String webHookType , String accessToken){
-        try{
-
-
-            return true;
-        }catch(Exception e){
-            e.printStackTrace();
-            return false;
-        }
-    }
-
     /**
      * Map Type으로 get
      * @param url
@@ -329,40 +287,7 @@ public class LabApi {
         return response.getBody();
     }
 
-    /**
-     * restTemplate를 사용해서 데이터를 요청하는 코드
-     * @param url
-     * @param jwtAccessToken
-     * @return
-     */
-    private String testCallGetApi(String url , String jwtAccessToken) {
-        System.out.println(url);
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("PRIVATE-TOKEN", "Bearer " + jwtAccessToken);
-        HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-        return response.getBody();
-
-    }
-
-
-    /**
-     * ID값으로 accessToken을 검사해서 요청을 보내는 함수
-     * @param url
-     * @param id
-     * @return
-     */
-//    private List<Map<String ,Object>> callGetApiUseId(String url , String id){
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        String accessToken = gitLabTokenService.getAccessTokenById();
-//        headers.set("Authorization", "Bearer" + accessToken);
-//        HttpEntity<String> entity = new HttpEntity<>(headers);
-//
-//        ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, entity, List.class);
-//        return response.getBody();
-//    }
 
     /**
      * restTemplate으로 POST 요청하는 함수
@@ -441,36 +366,44 @@ public class LabApi {
 
 
     /**
-     * API 요청 이 후 response 한 결과 string 을 List 타입으로 변경
-     * @param response
+     * merge request 용 webhook 등록
+     * @param repoId
+     * @param accessToken
      * @return
      */
-    private List<Map<String , Object>> changeTypeList(String response){
-        List<Map<String, Object>> resultList = null;
-        try {
-            resultList = objectMapper.readValue(
-                    response,
-                    new TypeReference<List<Map<String, Object>>>() {
-                    }
-            );
-        } catch (IOException e) {
-            e.printStackTrace();  // 디버깅을 위해 예외 출력
-        }
-        return resultList;
+    public Map<String,  Object> createMergeRequestWebHook(String repoId , String accessToken) {
+        String url = gitlabApiUrl + "/projects/" + repoId + "/hooks";
+        Map<String , String> body = new HashMap<>();
+        body.put("url" , WebHookConstants.WEBHOOK_URL);
+        body.put("name" , WebHookConstants.MERGE_REQUEST_NAME);
+        body.put("description" , WebHookConstants.MERGE_REQUEST_DESCRIPTION);
+        body.put("enable_ssl_verification" , "false");
+        body.put("merge_requests_events" , "true");
+        body.put("custom_webhook_template" , WebHookConstants.MERGE_REQUEST_CUSTOM_TEMPLATE);
+        body.put("push_events" , "false");
 
+        return callPostApi(url , accessToken , body);
     }
 
-    private Map<String , Object> chaneTypeMap(String response){
-        Map<String , Object> resultMap = null;
-        try{
-            resultMap = objectMapper.readValue(
-                    response,
-                    new TypeReference<Map<String, Object>>() {
-                    }
-            );
-        }catch(IOException e){
-            e.printStackTrace();
-        }
-        return resultMap;
+
+    /**
+     * comment 용 webhook 등록 함수
+     * @param repoId
+     * @param accessToken
+     * @return
+     */
+    public Map<String,  Object> createCommentWebHook(String repoId , String accessToken) {
+        String url = gitlabApiUrl + "/projects/" + repoId + "/hooks";
+        Map<String , String> body = new HashMap<>();
+        body.put("url" , WebHookConstants.WEBHOOK_URL);
+        body.put("name" , WebHookConstants.COMMENT_NAME);
+        body.put("description" , WebHookConstants.COMMENT_DESCRIPTION);
+        body.put("enable_ssl_verification" , "false");
+        body.put("note_events" , "true");
+        body.put("custom_webhook_template" , WebHookConstants.COMMENT_CUSTOM_TEMPLATE);
+        body.put("push_events" , "false");
+
+        return callPostApi(url , accessToken , body);
     }
+
 }

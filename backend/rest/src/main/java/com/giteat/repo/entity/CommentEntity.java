@@ -30,6 +30,9 @@ public class CommentEntity {
     @Column(name = "create_at")
     private String createAt;
 
+    @Column(name="file_id")
+    private String fileId;
+
     @Column(name = "new_line")
     private int newLine;
 
@@ -47,4 +50,7 @@ public class CommentEntity {
 
     @Column(name = "old_end_line")
     private int oldEndLine;
+
+    @Column(name ="comment_value")
+    private int commentValue;
 }
