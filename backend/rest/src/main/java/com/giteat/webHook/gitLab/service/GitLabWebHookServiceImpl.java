@@ -57,7 +57,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         System.out.println("USER ID : " + userId);
         System.out.println("==================================================");
         int prTableCheck = gitLabWebHookMapper.prTableCheck(repoId , prId);
-
+        System.out.println("PR CHECK 값 : " + prTableCheck);
         if(prTableCheck==1){        //데이터 있음
             MergeRequestTempDto mrTempDto = new MergeRequestTempDto();
             mrTempDto.setRepoId((int) projectMap.get("id"));
@@ -112,9 +112,10 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
      * @param accessToken
      */
     @Override
-    @Transactional
+//    @Transactional
     public void addMergeRequestData(String accessToken) {
         List<MergeRequestTempDto> prTempList = gitLabWebHookMapper.getPrTemp(accessToken);
+        System.out.println("prTempList size : " + prTempList.size());
         for (MergeRequestTempDto prTempDto : prTempList) {
             System.out.println("@@@@@@@@@@@@@@@@@@@@@@가져온 데이터 : " + prTempDto);
 
@@ -213,21 +214,34 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
      *
      * @param body
      */
-    @Transactional
     @Override
     public void noteEvent(Map<String, Object> body) {
 
         Map<String, Object> projectMap = (Map<String, Object>) body.get("project");
         Map<String, Object> userMap = (Map<String, Object>) body.get("user");
-        Map<String, Object> commentMap = (Map<String, Object>) body.get("object_attributes");
         Map<String, Object> mergeRequestMap = (Map<String, Object>) body.get("merge_request");
 
-        int userId = (Integer)userMap.get("id");
-        int prId = (Integer)mergeRequestMap.get("iid");
-        int repoId = (Integer)projectMap.get("id");
-        System.out.println("note userId : " + userId);
-        System.out.println("note prId : " + prId);
+        System.out.println("projectMap : " + projectMap);
+        System.out.println(projectMap.get("id"));
+        int rrepoId = Integer.parseInt(String.valueOf(projectMap.get("id")));
+        System.out.println("");
+
+        System.out.println("userMap : " + userMap);
+        System.out.println(userMap.get("id"));
+        int uuserId = Integer.parseInt(String.valueOf(userMap.get("id")));
+        System.out.println("uuserId : "+ uuserId);
+
+        System.out.println("mergeRequest :" + mergeRequestMap);
+        System.out.println(mergeRequestMap.get("iid"));
+        int pprId = Integer.parseInt(String.valueOf(mergeRequestMap.get("iid")));
+        System.out.println("pprId : " + pprId);
+
+        int repoId = (Integer) projectMap.get("id");
         System.out.println("note repoId : " + repoId);
+        int userId = (Integer) userMap.get("id");
+        System.out.println("note userId : " + userId);
+        int prId = (Integer) mergeRequestMap.get("iid");
+        System.out.println("note prId : " + prId);
 
         CommentTempDto commentTempDto = new CommentTempDto();
         commentTempDto.setPrId(prId);

@@ -105,7 +105,7 @@ function LighthouseResultModal({
       setSnackbarOpen(true);
       stopPolling();
     }
-  }, [isLoading, isError, isUpdated]);
+  }, [isUpdated, isLoading, isError]);
 
   const handleSnackbarClose = (
     _event?: React.SyntheticEvent | Event,
