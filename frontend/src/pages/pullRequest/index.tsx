@@ -37,6 +37,7 @@ function DataProvider() {
       setComments(commentList);
     }
   }, [isCommentLoading]);
+
   return (
     <div>
       <Header title={pullRequest?.title} owner={pullRequest?.userName} />

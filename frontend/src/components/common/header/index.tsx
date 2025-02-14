@@ -46,6 +46,7 @@ function LinkIcon({ to, src, alt }: { to: string; src: string; alt: string }) {
 
 export function Header() {
   const { user } = useLoginStore();
+
   return (
     <header className="h-[100vh] bg-black w-[115px] flex flex-col justify-between items-center box-border py-[36px] fixed">
       <img
