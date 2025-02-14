@@ -58,7 +58,7 @@ export const CodeBlock: React.FC<PartialDiffViewerProps> = ({
   const diff = useMemo(() => getDiffFile(), [code?.newCode, code?.oldCode]);
 
   const dynamicStyle = `
-    .diff-line:nth-child(-n+${minLine > 1 ? minLine - 1 : 1}),
+    .diff-line:nth-child(-n+${minLine - 1}),
     .diff-line:nth-child(n+${maxLine + 1}) {
       display: none !important;
     }
