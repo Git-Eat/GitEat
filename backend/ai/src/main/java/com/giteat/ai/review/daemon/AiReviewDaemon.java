@@ -5,6 +5,7 @@ import com.giteat.ai.dto.FileDto;
 import com.giteat.ai.review.daemon.entity.AiReviewStatusEntity;
 import com.giteat.ai.review.daemon.service.AiReviewService;
 import com.giteat.ai.review.daemon.service.AiReviewServiceImpl;
+import com.giteat.ai.review.daemon.service.TokenValidationService;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -20,6 +21,7 @@ public class AiReviewDaemon {
 
     private final AiReviewServiceImpl aiReviewService;
     private final GitLabApi gitLabApi;
+    private final TokenValidationService tokenValidationService;
 
     @Scheduled(fixedRate = 180000) // 3분마다 실행
     public void aiReviewDaemon() {
@@ -43,11 +45,19 @@ public class AiReviewDaemon {
                     System.out.println("PR ID: " + status.getPrId());
                     System.out.println("Repo ID: " + status.getRepoId());
 
+                    // 유효한 토큰 가져오기
+                    List<String> validTokens = tokenValidationService.findValidAccessTokens(status.getRepoId());
+                    if(validTokens == null || validTokens.isEmpty()) {
+                        System.out.println("[AiReviewDaemon] 유효한 토큰이 없습니다.");
+                        continue;
+                    }
+                    String accessToken = validTokens.get(0);
+
                     // 변경된 파일 목록을 가져옵니다
                     List<Map<String, Object>> diffs = gitLabApi.getMergeRequestDiffs(
                             String.valueOf(status.getRepoId()),
                             String.valueOf(status.getPrId()),
-                            status.getAccessToken() // 저장된 토큰 사용
+                            accessToken // 저장된 토큰 사용
                     );
 
                     if (diffs == null || diffs.isEmpty()) {
