@@ -10,6 +10,7 @@
         <id property="commentId" column="comment_id"/>
         <result property="prId" column="pr_id"/>
         <result property="repoId" column="repo_id"/>
+        <result property="fileId" column="file_id"/>
         <result property="userId" column="comment_user_id"/>
         <result property="userName" column="comment_user_name"/>
         <result property="avatarUrl" column="comment_avatar_url"/>
