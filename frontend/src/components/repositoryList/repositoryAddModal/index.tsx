@@ -41,12 +41,7 @@ function RepositoryAddModal({
 }) {
   const [selectedOption, setSelectedOption] = useState("gitlab");
   const repoId = useRef<HTMLInputElement>(null);
-  const {
-    mutate: addRepository,
-    data,
-    isLoading,
-    isError,
-  } = useAddRepository();
+  const { mutate: addRepository, isLoading, isError } = useAddRepository();
 
   // Snackbar 관련 상태
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -73,7 +68,6 @@ function RepositoryAddModal({
       setSnackbarOpen(true);
     } else {
       setSnackbarOpen(false);
-      console.log(data);
     }
   }, [isLoading, isError]);
 

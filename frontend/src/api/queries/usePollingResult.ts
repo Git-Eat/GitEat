@@ -30,20 +30,13 @@ export const usePollingResult = (repoId: string, pollingInterval: number) => {
   async function checkIfDataIsUpdated(repoId: string): Promise<boolean> {
     const data = await getLighthouseResult(parseInt(repoId));
     const latestCreateAt = data.createAt;
-    console.log(
-      `latestCreateAt: ${latestCreateAt}, lastCreateAt: ${lastCreateAtRef.current}`
-    );
 
     if (lastCreateAtRef.current === null) {
       lastCreateAtRef.current = latestCreateAt;
-      console.log(
-        `변경된 latestCreateAt: ${latestCreateAt}, 변경된 lastCreateAtRef: ${lastCreateAtRef.current}`
-      );
       return false;
     }
 
     if (lastCreateAtRef.current && latestCreateAt !== lastCreateAtRef.current) {
-      console.log("latestCreateAt와 lastCreateAt 불일치");
       lastCreateAtRef.current = latestCreateAt;
       setIsUpdated(true);
       stopPolling();

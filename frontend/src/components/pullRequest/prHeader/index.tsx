@@ -18,7 +18,6 @@ const LINKS = {
 };
 function LinkIcon({ to }: { to: LinkKey }) {
   const location = useLocation();
-  console.log(location.pathname);
   const isSelected = useMemo(
     () => location.pathname === `/pull/${LINKS[to].url}`,
     [location.pathname, to]

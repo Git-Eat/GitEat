@@ -17,7 +17,6 @@ interface FileProps {
 export function FileDiff({ repoId, prId, file }: FileProps) {
   const { mutate: getFile, data: rawFile } = useGetRawFile(repoId, prId);
   const { comments } = usePRStore();
-  console.log(comments);
   const [isExpand, , , setReverse] = useBooleanState(false);
   useEffect(() => {
     if (isExpand) {

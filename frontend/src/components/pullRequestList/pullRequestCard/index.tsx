@@ -22,8 +22,6 @@ export function PullRequestCard({
   userName,
 }: PullRequestCardProps) {
   const { repoId } = useParams();
-
-  console.log(repoId + " = > repoid");
   return (
     <Link to={`/repos/${repoId}/${prId}`}>
       <div className=" bg-white rounded-xl p-7 flex justify-between hover:bg-gray-200 cursor-pointer">

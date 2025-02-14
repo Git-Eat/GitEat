@@ -43,7 +43,6 @@ const renderTree = (
     // 클릭 시, leaf 노드라면 fileId에 해당하는 요소로 스크롤
     const handleClick = (e: React.MouseEvent) => {
       e.preventDefault();
-      console.log(e.currentTarget);
       if (!isFolder) {
         const fileId = fileIdMap.get(currentPath);
         if (fileId) {
