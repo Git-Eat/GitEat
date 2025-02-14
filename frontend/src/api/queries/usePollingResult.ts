@@ -35,6 +35,7 @@ export const usePollingResult = (repoId: string, pollingInterval: number) => {
     );
 
     if (lastCreateAt === null) {
+      setLastCreateAt(latestCreateAt);
       return false;
     }
 
