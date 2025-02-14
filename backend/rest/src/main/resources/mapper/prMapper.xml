@@ -10,6 +10,7 @@
         <id property="commentId" column="comment_id"/>
         <result property="prId" column="pr_id"/>
         <result property="repoId" column="repo_id"/>
+        <result property="fileId" column="file_id"/>
         <result property="userId" column="comment_user_id"/>
         <result property="userName" column="comment_user_name"/>
         <result property="avatarUrl" column="comment_avatar_url"/>
@@ -45,7 +46,7 @@
             <result property="avatarUrl" column="reply_avatar_url"/>
             <result property="disId" column="reply_dis_id"/>
             <result property="content" column="reply_content"/>
-            <result property="reCommentType" column="reply_type"/>
+            <result property="reCommentType" column="recomment_type"/>
             <result property="createAt" column="reply_create_at"/>
         </collection>
     </resultMap>
@@ -121,8 +122,10 @@
 
     <!-- 댓글 및 대댓글 조회-->
     <select id="getCommentList" resultMap="commentReplyResultMap">
-        SELECT * FROM comment_view
+        SELECT *
+        FROM comment_view
         WHERE repo_id = #{repoId} AND pr_id = #{prId}
+        ORDER BY comment_create_at ASC
     </select>
 
     <!-- 댓글 및 대댓글 조회 (파일에서) -->

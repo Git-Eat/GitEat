@@ -19,7 +19,6 @@ public class ReportController {
 
     @GetMapping("/{repoId}")
     public ResponseEntity<?> getLatestLighthouseData(@PathVariable int repoId) {
-        System.out.println("ReportController:::::::::::::" + repoId);
         Optional<LighthouseDto> latestData = reportService.getLatestLighthouseData(repoId);
 
         return latestData.map(ResponseEntity::ok)

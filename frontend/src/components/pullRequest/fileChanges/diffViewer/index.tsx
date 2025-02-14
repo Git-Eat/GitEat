@@ -7,6 +7,7 @@ import { CommentThread } from "../commentThread";
 import { ChangedFile } from "../../../../api/types/ChangedFile";
 import { Comment } from "../../../../api/types/Comment";
 import { getFileType } from "../../../../utils/getFileType";
+import { comment } from "@uiw/react-md-editor";
 
 interface DiffViewerProps {
   oldCode: string;
@@ -83,32 +84,39 @@ export function DiffViewer({
       newFile: {},
     };
     comments.forEach((comment) => {
-      if (
-        comment.position?.newLine !== undefined &&
-        comment.position.newLine !== null
-      ) {
-        const currentComments =
-          extendData.newFile[comment.position.newLine]?.data ?? [];
-        extendData.newFile = {
-          ...extendData.newFile,
-          [comment.position.newLine]: {
-            data: [...currentComments, comment],
-          },
-        };
-      } else if (
-        comment.position?.oldLine !== undefined &&
-        comment.position.oldLine !== null
-      ) {
-        const currentComments =
-          extendData.oldFile[comment.position.oldLine]?.data ?? [];
-        extendData.oldFile = {
-          ...extendData.oldFile,
-          [comment.position.oldLine]: {
-            data: [...currentComments, comment],
-          },
-        };
+      if (comment.fileId === file.fileId) {
+        if (
+          comment.position?.newLine !== undefined &&
+          comment.position.newLine !== null
+        ) {
+          const currentComments =
+            extendData.newFile[comment.position.newLine]?.data ?? [];
+          extendData.newFile = {
+            ...extendData.newFile,
+            [comment.position.newLine]: {
+              data: [...currentComments, comment],
+            },
+          };
+        } else if (
+          comment.position?.oldLine !== undefined &&
+          comment.position.oldLine !== null
+        ) {
+          const currentComments =
+            extendData.oldFile[comment.position.oldLine]?.data ?? [];
+          extendData.oldFile = {
+            ...extendData.oldFile,
+            [comment.position.oldLine]: {
+              data: [...currentComments, comment],
+            },
+          };
+        }
       }
     });
+    console.log("file-------------------------------------");
+    console.log(file);
+    console.log("comment-------------------------------------");
+    console.log(comment);
+    console.log("data-------------------------------------");
     console.log(extendData);
     return extendData;
   };
