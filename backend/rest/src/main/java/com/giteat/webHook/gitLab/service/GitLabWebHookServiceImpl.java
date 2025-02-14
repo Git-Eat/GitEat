@@ -48,9 +48,9 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         System.out.println("prMap : " + mergeRequestMap);
         System.out.println(" ");
 
-        int repoId = Integer.valueOf((String)projectMap.get("id"));
-        int prId = Integer.valueOf((String)projectMap.get("iid"));
-        int userId = Integer.valueOf((String)projectMap.get("id"));
+        int repoId = (int)projectMap.get("id");
+        int prId = (int) mergeRequestMap.get("iid");
+        int userId = (int) userMap.get("id");
 
         System.out.println("MR repoId:" + repoId);
         System.out.println("PR prId : " + prId);
