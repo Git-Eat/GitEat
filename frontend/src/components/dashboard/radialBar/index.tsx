@@ -41,6 +41,9 @@ export function RadialBar({ series, labels }: RadialBarProps) {
             fontSize: "24px",
             fontWeight: "bold",
             show: true,
+            formatter: function (val) {
+              return val.toString();
+            },
           },
         },
       },

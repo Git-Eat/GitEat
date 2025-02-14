@@ -22,6 +22,7 @@ export const usePollingResult = (repoId: string, pollingInterval: number) => {
   const stopPolling = () => {
     if (pollingIntervalRef.current) {
       clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
     }
     setIsPolling(false);
   };
@@ -31,6 +32,7 @@ export const usePollingResult = (repoId: string, pollingInterval: number) => {
     const latestCreateAt = data.create_at;
 
     if (lastCreateAt === null) {
+      setLastCreateAt(latestCreateAt);
       return false;
     }
 
@@ -42,11 +44,7 @@ export const usePollingResult = (repoId: string, pollingInterval: number) => {
   }
 
   useEffect(() => {
-    return () => {
-      if (pollingIntervalRef.current) {
-        clearInterval(pollingIntervalRef.current);
-      }
-    };
+    return () => stopPolling();
   }, []);
 
   return {
