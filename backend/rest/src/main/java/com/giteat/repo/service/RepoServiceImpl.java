@@ -165,7 +165,7 @@ public class RepoServiceImpl implements RepoService{
                     CommitEntity commitEntity = new CommitEntity();
                     CommitId commitId = new CommitId((String) commitResponse.get("id"), (Integer) repositoryResponse.get("id"),(Integer) mrResponse.get("iid"));
                     commitEntity.setId(commitId);
-                    commitEntity.setContent((String) commitResponse.get("message"));
+                    commitEntity.setContent((String) commitResponse.get("title"));
                     commitEntity.setCommitedAt((String) commitResponse.get("committed_date"));
                     commitRepository.save(commitEntity);
                 }
