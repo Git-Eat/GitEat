@@ -12,36 +12,34 @@ import { useUpdateReply } from "../../../../api/queries/useUpdateReply";
 import { useLoginStore } from "../../../../store/loginStore";
 
 interface ReCommentProps extends Reply {
-  replyCreateAt: string;
   repoId: number;
   prId: number;
+  replyCreateAt: string;
 }
 
 export function Replies({
+  repoId,
+  prId,
   reCommentId,
   userId,
   userName,
   avatarUrl,
-  commentId,
+  disId,
   content,
   reCommentType,
+  imageName,
   createAt,
   replyCreateAt,
-  repoId,
-  prId,
-  discussionId,
 }: ReCommentProps) {
-  const reply: Reply = {
+  const reply = {
     reCommentId,
     userId,
     userName,
-    repoId,
-    prId,
-    discussionId,
     avatarUrl,
-    commentId,
+    disId,
     content,
     reCommentType,
+    imageName,
     createAt,
   };
   const replyTypeImages = {

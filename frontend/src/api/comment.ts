@@ -85,13 +85,13 @@ export async function deleteComment(
 export async function createReply(
   repoId: number,
   prId: number,
-  discussionId: string,
+  disId: string,
   content: string
 ): Promise<Reply> {
   try {
     const response = await authClient.post(
-      `/pr/${repoId}/${prId}/reply/${discussionId}`,
-      { content, discussionId }
+      `/pr/${repoId}/${prId}/reply/${disId}`,
+      { content, disId }
     );
     return response.data as Reply;
   } catch (e: unknown) {
