@@ -7,7 +7,7 @@ export const addAlarm = async (
   url: string
 ): Promise<Alarm> => {
   try {
-    const res = await authClient.post("/addurl", {
+    const res = await authClient.post("/noti/addurl", {
       repoId: repoId,
       userId: userId,
       notiToken: url,
@@ -24,7 +24,7 @@ export const getAlarm = async (
   userId: number
 ): Promise<Alarm> => {
   try {
-    const res = await authClient.get(`/geturl/${repoId}/${userId}`);
+    const res = await authClient.get(`/noti/geturl/${repoId}/${userId}`);
     return res.data;
   } catch (e: unknown) {
     if (e instanceof Error) throw new Error(e.message);
@@ -37,7 +37,7 @@ export const deleteAlarm = async (
   userId: number
 ): Promise<Alarm> => {
   try {
-    const res = await authClient.delete(`/deleteurl/${repoId}/${userId}`);
+    const res = await authClient.delete(`/noti/deleteurl/${repoId}/${userId}`);
     return res.data;
   } catch (e: unknown) {
     if (e instanceof Error) throw new Error(e.message);
@@ -51,7 +51,7 @@ export const updateAlarm = async (
   url: string
 ): Promise<Alarm> => {
   try {
-    const res = await authClient.put(`/updateurl`, {
+    const res = await authClient.put(`/noti/updateurl`, {
       repoId: repoId,
       userId: userId,
       notiToken: url,
