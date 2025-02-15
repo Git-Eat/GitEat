@@ -65,7 +65,7 @@ public class NotiController {
     public ResponseEntity<?> deleteUrl(@PathVariable int repoId,
                                        @PathVariable int userId
                                        ) {
-        ResponseEntity<?> response = apiUtil.deleteApi("/noti/deleteurl" + "/" + repoId + "/" , null);
+        ResponseEntity<?> response = apiUtil.deleteApi("/noti/deleteurl" + "/" + repoId + "/" + userId , null);
         return ResponseEntity.ok(response.getBody());
     }
 
