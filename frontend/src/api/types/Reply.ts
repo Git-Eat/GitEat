@@ -3,7 +3,7 @@ export type Reply = {
   userId: number;
   userName: string;
   avatarUrl: string;
-  disId: string;
+  discussionId: string;
   content: string;
   reCommentType: number;
   imageName: string;
