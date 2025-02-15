@@ -23,9 +23,9 @@ public class NotificationDaemon {
         List<NotificationDto> notiStatusList = new ArrayList<>();
         for (NotificationDto noti : notiList) {
             String message = noti.getNotiMessage();
-            String url = noti.getNotiUrl();
-            if(url !=null){ // 경로에 문제가 없을 경우
-                boolean notiCheck = mmApi.sendNotification(message , url);
+            String notiToken = noti.getNotiUrl();
+            if(notiToken !=null){ // 경로에 문제가 없을 경우
+                boolean notiCheck = mmApi.sendNotification(message , notiToken);
                 if(notiCheck){
                     noti.setMsgStatus(1);
                     notiStatusList.add(noti);

@@ -27,7 +27,7 @@
             n.send_type ,
             n.noti_type ,
             n.send_time ,
-            nt.noti_url,
+            nt.noti_token,
             n.msg_status
         from notification as n
         left join noti_token as nt
