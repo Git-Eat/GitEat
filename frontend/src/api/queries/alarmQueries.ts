@@ -16,6 +16,9 @@ export const useGetAlarm = (repoId: number, userId: number) => {
     ({ queryKey }) => {
       const [, repoId, userId] = queryKey;
       return getAlarm(repoId as number, userId as number);
+    },
+    {
+      enabled: false,
     }
   );
 };

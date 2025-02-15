@@ -45,7 +45,7 @@ export function AlarmAddModal({
   const { repoId: selectedId } = useRepoStore();
   const mmurl = useRef<HTMLInputElement>(null);
   const { mutate: addAlarm, isLoading, isError } = useAddAlarm(Number(user.id));
-  const { data } = useGetAlarm(selectedId, Number(user.id));
+  const { data, refetch } = useGetAlarm(selectedId, Number(user.id));
   const { mutate: deleteAlarm } = useDeletelarm(Number(user.id));
   // Snackbar 관련 상태
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -78,6 +78,12 @@ export function AlarmAddModal({
       setSnackbarOpen(false);
     }
   }, [isLoading, isError]);
+
+  useEffect(() => {
+    if (isModalOpen) {
+      refetch();
+    }
+  }, [isModalOpen]);
 
   const handleSnackbarClose = (
     _event?: React.SyntheticEvent | Event,
