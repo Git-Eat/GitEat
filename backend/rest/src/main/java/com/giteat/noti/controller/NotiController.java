@@ -30,5 +30,38 @@ public class NotiController {
 
         return ResponseEntity.ok(result);
     }
+
+    // URL 추가
+    @PostMapping("/addurl")
+    public ResponseEntity<?> addUrl(@RequestHeader(value = "Authorization") String header,
+                                    @RequestBody NotiDto notiDto) {
+        int result = notiService.addUrl(notiDto);
+        return ResponseEntity.ok(result);
+    }
+
+    // URL 조회
+    @GetMapping("/geturl/{repoId}/{userId}")
+    public ResponseEntity<?> getUrl(@RequestHeader(value = "Authorization") String header,
+                                    @PathVariable int repoId,
+                                    @PathVariable int userId) {
+        NotiDto result = notiService.getUrl(new NotiDto(repoId, userId, null));
+        return ResponseEntity.ok(result);
+    }
+
+    // URL 삭제
+    @DeleteMapping("/deleteurl")
+    public ResponseEntity<?> deleteUrl(@RequestHeader(value = "Authorization") String header,
+                                       @RequestBody NotiDto notiDto) {
+        int result = notiService.deleteUrl(notiDto);
+        return ResponseEntity.ok(result);
+    }
+
+    // URL 업데이트
+    @PutMapping("/updateurl")
+    public ResponseEntity<?> updateUrl(@RequestHeader(value = "Authorization") String header,
+                                       @RequestBody NotiDto notiDto) {
+        int result = notiService.updateUrl(notiDto);
+        return ResponseEntity.ok(result);
+    }
 }
 

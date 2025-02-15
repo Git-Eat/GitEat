@@ -10,6 +10,31 @@
         VALUES (#{repoId}, #{userId}, #{notiToken})
     </insert>
 
+    <!-- URL 추가 -->
+    <insert id="addUrl" parameterType="notiDto">
+        INSERT INTO noti_token (repo_id, user_id, noti_token)
+        VALUES (#{repoId}, #{userId}, #{notiToken})
+    </insert>
+
+    <!-- URL 조회 -->
+    <select id="getUrl" parameterType="notiDto" resultType="notiDto">
+        SELECT repo_id, user_id, noti_token
+        FROM noti_token
+        WHERE repo_id = #{repoId} AND user_id = #{userId}
+    </select>
+
+    <!-- URL 삭제 -->
+    <delete id="deleteUrl" parameterType="notiDto">
+        DELETE FROM noti_token
+        WHERE repo_id = #{repoId} AND user_id = #{userId}
+    </delete>
+
+    <!-- URL 업데이트 -->
+    <update id="updateUrl" parameterType="notiDto">
+        UPDATE noti_token
+        SET noti_token = #{notiToken}
+        WHERE repo_id = #{repoId} AND user_id = #{userId}
+    </update>
 
 
 </mapper>
