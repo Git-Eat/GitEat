@@ -31,7 +31,7 @@ public class OauthInterceptor implements HandlerInterceptor {
         String requestURI = request.getRequestURI();
         log.info("REQUEST URI : " + requestURI);
 
-        if (requestURI.startsWith("/api/oauth/gitlab/login") || requestURI.startsWith("/api/oauth/gitlab/refresh")) {
+        if (requestURI.startsWith("/api/oauth/gitlab/login") || requestURI.startsWith("/api/oauth/gitlab/refresh") || requestURI.contains("/api/swagger")) {
             return true;
         }
 
