@@ -16,5 +16,5 @@ public interface RepositoryMemberRepository extends JpaRepository<RepositoryMemb
 //    @Query("select o from RepositoryMemberEntity rm join OAuthEntity o on rm.id.userId = o.userId " +
 //    "where rm.id.repoId = :repoId")
 //    List<OAuthEntity> findAllOauthTokensByRepoId(@Param("repoId") Integer repoId);
-    Optional<RepositoryMemberEntity> findByRepoId(int repoId);
+
 }
