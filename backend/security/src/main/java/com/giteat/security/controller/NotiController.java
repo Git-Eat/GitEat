@@ -34,7 +34,7 @@ public class NotiController {
     public ResponseEntity<?> addUrl(
             @RequestBody NotiDto body) {
         log.info("call addurl Method");
-        ResponseEntity<?> response = apiUtil.postApi("/noti/repo", body);
+        ResponseEntity<?> response = apiUtil.postApi("/noti/addurl", body);
         return ResponseEntity.ok(response.getBody());
     }
 
@@ -51,7 +51,7 @@ public class NotiController {
             @PathVariable int repoId,
             @PathVariable int userId) {
 
-        ResponseEntity<?> response = apiUtil.getApi("/noti/repo" + "/" + repoId + "/" + userId);
+        ResponseEntity<?> response = apiUtil.getApi("/noti/geturl" + "/" + repoId + "/" + userId);
         return ResponseEntity.ok(response.getBody());
     }
 
@@ -65,7 +65,7 @@ public class NotiController {
     public ResponseEntity<?> deleteUrl(@PathVariable int repoId,
                                        @PathVariable int userId
                                        ) {
-        ResponseEntity<?> response = apiUtil.deleteApi("/noti/repo" + "/" + repoId + "/" , null);
+        ResponseEntity<?> response = apiUtil.deleteApi("/noti/deleteurl" + "/" + repoId + "/" , null);
         return ResponseEntity.ok(response.getBody());
     }
 
