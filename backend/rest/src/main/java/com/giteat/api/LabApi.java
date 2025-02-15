@@ -214,7 +214,7 @@ public class LabApi {
     }
 
     public List<Map<String , Object>> getWebHooks(String repoId ,String accessToken){
-        String url = gitlabApiUrl + "/projectes" + repoId + "/hooks";
+        String url = gitlabApiUrl + "/projectes" + "/" + repoId + "/hooks";
         return this.callGetApiList(url ,accessToken);
     }
 
