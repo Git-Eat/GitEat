@@ -161,6 +161,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
 
 
 
+
                 // id값으로 accessToken 가져오는 로직이 필요하다.
                 // userId 를 사용해서 사용
 
@@ -302,8 +303,10 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
 
                 // ---------- Reply 가져오기 ---------- //
                 // 2번째 note부터는 ReplyEntity로 저장
+                System.out.println("reply 관련 : " + notes.size());
                 for (int i = 1; i < notes.size(); i++) {
                     Map<String, Object> note = notes.get(i);
+                    System.out.println("@@@@@reply NOTE : " + note);
                     if((boolean) notes.get(i).get("system")) continue;;
                     Map<String, Object> replyAuthor = (Map<String, Object>) notes.get(i).get("author");
                     ReplyEntity reply = new ReplyEntity();
