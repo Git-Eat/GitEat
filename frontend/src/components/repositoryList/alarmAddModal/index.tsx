@@ -149,7 +149,8 @@ export function AlarmAddModal({
               label={"MatterMost 웹훅 주소를 입력해주세요"}
               variant="outlined"
               inputRef={mmurl}
-              value={data?.mmUrl}
+              value={data?.notiToken}
+              focused={data?.notiToken ? true : false}
               sx={{
                 "& .MuiOutlinedInput-root": {
                   "& fieldset": {

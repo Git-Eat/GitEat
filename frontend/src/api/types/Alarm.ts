@@ -1,3 +1,5 @@
 export type Alarm = {
-  mmUrl: string;
+  repoId: number;
+  userId: number;
+  notiToken: string;
 };
