@@ -35,6 +35,7 @@ public class NotificationDaemon {
             String message = makeMessage(noti);
             String notiToken = noti.getNotiToken();
             System.out.println("notiToken : " + notiToken);
+            System.out.println("전송 관련 message : " + message);
             if (notiToken != null) { // 경로에 문제가 없을 경우
                 boolean notiCheck = mmApi.sendNotification(message, notiToken);
                 if (notiCheck) {
