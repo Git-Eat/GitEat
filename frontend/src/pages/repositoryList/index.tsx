@@ -5,8 +5,12 @@ import RepositoryAddModal from "../../components/repositoryList/repositoryAddMod
 import { useGetRepositories } from "../../api/queries/useGetRepositories";
 import { Suspense } from "react";
 import { ErrorBoundary } from "../../components/common/errorBoundery";
+import { AlarmAddModal } from "../../components/repositoryList/\balarmAddModal";
 const ACCESS_GRANT = ["private", "public", "internal"];
-function Repositories() {
+interface RepositoriesProps {
+  openModal: () => void;
+}
+function Repositories({ openModal }: RepositoriesProps) {
   const { data } = useGetRepositories();
   return (
     <>
@@ -18,6 +22,7 @@ function Repositories() {
           repoId={repo.repoId}
           access={ACCESS_GRANT[repo.access - 1]}
           description={repo.description}
+          openModal={openModal}
         />
       ))}
     </>
@@ -25,7 +30,8 @@ function Repositories() {
 }
 export function RepositoryList() {
   const [isModalOpen, openModal, closeModal] = useBooleanState(false);
-
+  const [isAlarmModallOpen, openAlarmModal, closeAlarmModal] =
+    useBooleanState(false);
   return (
     <>
       <header className="w-full p-4">
@@ -50,13 +56,17 @@ export function RepositoryList() {
             }
           >
             <Suspense fallback={<p>Loading...</p>}>
-              <Repositories />
+              <Repositories openModal={openAlarmModal} />
             </Suspense>
           </ErrorBoundary>
         </div>
       </main>
 
       <RepositoryAddModal closeModal={closeModal} isModalOpen={isModalOpen} />
+      <AlarmAddModal
+        closeModal={closeAlarmModal}
+        isModalOpen={isAlarmModallOpen}
+      />
     </>
   );
 }
