@@ -157,7 +157,7 @@
 
     <!-- 대댓글 삭제 -->
     <delete id="deleteReply" parameterType="map">
-        DELETE FROM comment
+        DELETE FROM reply
         WHERE repo_id = #{repoId} AND pr_id = #{prId} AND re_comment_id = #{reCommentId}
     </delete>
 
