@@ -36,7 +36,10 @@ public class NotiServiceImpl implements NotiService {
      * 등록된 mm url 삭제
      */
     @Override
-    public int deleteUrl(NotiDto notiDto) {
+    public int deleteUrl(int repoId , int userId) {
+        NotiDto notiDto = new NotiDto();
+        notiDto.setRepoId(repoId);
+        notiDto.setUserId(userId);
         return notiMapper.deleteUrl(notiDto);
     }
 

@@ -56,15 +56,16 @@ public class NotiController {
     }
 
     /**
-     * mm url 삭제
-     *
-     * @param body
+     *  mm url 삭제
+     * @param repoId
+     * @param userId
      * @return
      */
-    @DeleteMapping("/deleteurl")
-    public ResponseEntity<?> deleteUrl(
-            @RequestBody NotiDto body) {
-        ResponseEntity<?> response = apiUtil.deleteApi("/noti/deleteurl", body);
+    @DeleteMapping("/deleteurl/{repoId}/{userId}")
+    public ResponseEntity<?> deleteUrl(@PathVariable int repoId,
+                                       @PathVariable int userId
+                                       ) {
+        ResponseEntity<?> response = apiUtil.deleteApi("/noti/repo" + "/" + repoId + "/" , null);
         return ResponseEntity.ok(response.getBody());
     }
 

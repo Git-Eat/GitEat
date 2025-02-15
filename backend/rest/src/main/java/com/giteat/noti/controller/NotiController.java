@@ -49,10 +49,11 @@ public class NotiController {
     }
 
     // URL 삭제
-    @DeleteMapping("/deleteurl")
+    @DeleteMapping("/deleteurl/{repoId}/{userId}")
     public ResponseEntity<?> deleteUrl(@RequestHeader(value = "Authorization") String header,
-                                       @RequestBody NotiDto notiDto) {
-        int result = notiService.deleteUrl(notiDto);
+                                       @PathVariable int repoId,
+                                       @PathVariable int userId) {
+        int result = notiService.deleteUrl(repoId , userId);
         return ResponseEntity.ok(result);
     }
 

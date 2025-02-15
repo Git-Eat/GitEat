@@ -9,7 +9,7 @@ public interface NotiService {
 
     NotiDto getUrl(NotiDto notiDto);
 
-    int deleteUrl(NotiDto notiDto);
+    int deleteUrl(int repoId , int userId);
 
     int updateUrl(NotiDto notiDto);
 
