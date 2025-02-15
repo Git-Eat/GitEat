@@ -5,6 +5,7 @@ import com.giteat.notification.constants.NotiConstatns;
 import com.giteat.notification.daemon.dto.NotificationDto;
 import com.giteat.notification.daemon.service.NotificationService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,7 @@ import java.util.*;
 @Component
 @AllArgsConstructor
 @EnableScheduling
+@Slf4j
 public class NotificationDaemon {
 
     private final NotificationService notiService;
@@ -23,12 +25,15 @@ public class NotificationDaemon {
 
     @Scheduled(fixedRate = 180000) // 1초 : 1000  , 세팅값은 3분
     public void notiDaemon() {
+        log.info("noti daemon start");
+
         List<NotificationDto> notiList = notiService.selectNotiList();
         List<NotificationDto> notiStatusList = new ArrayList<>();
+        log.info("notiList size : " + notiList.size());
         for (NotificationDto noti : notiList) {
 
             String message = makeMessage(noti);
-            String notiToken = noti.getNotiUrl();
+            String notiToken = noti.getNotiToken();
             if (notiToken != null) { // 경로에 문제가 없을 경우
                 boolean notiCheck = mmApi.sendNotification(message, notiToken);
                 if (notiCheck) {
