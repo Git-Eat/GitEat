@@ -115,7 +115,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
 //    @Transactional
     public void addMergeRequestData(String accessToken) {
         List<MergeRequestTempDto> prTempList = gitLabWebHookMapper.getPrTemp(accessToken);
-        System.out.println("prTempList size : " + prTempList.size());
+        System.out.println("@@@@@@@prTempList size : " + prTempList.size());
         for (MergeRequestTempDto prTempDto : prTempList) {
             System.out.println("@@@@@@@@@@@@@@@@@@@@@@가져온 데이터 : " + prTempDto);
 
@@ -147,7 +147,9 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
 
 
             // ------------ commit 저장하는 함수 -----------------
+            System.out.println("@@@@@@@@@@@commit 관련 projectId : " + projectId + " prId : " + Integer.parseInt(prId));
             List<Map<String, Object>> gitCommitList = gitLabApi.getCommits(projectId, Integer.parseInt(prId), accessToken);
+            System.out.println("pr 검사 commitList : " + gitCommitList.size());
             for (Map<String, Object> commit : gitCommitList) {
                 System.out.println("COMMIT DATA : " + commit);
                 CommitEntity commitEntity = new CommitEntity();
