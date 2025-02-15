@@ -65,9 +65,9 @@ export function CommentThread({ comment }: CommentThreadProps) {
     }));
   }
 
-  function handleAddReply(content: string, discussionId: string) {
+  function handleAddReply(content: string, disId: string) {
     if (!content.trim()) return;
-    createReply({ content, discussionId });
+    createReply({ content, disId });
   }
 
   function handleEditComment(comment: Comment) {
@@ -165,6 +165,8 @@ export function CommentThread({ comment }: CommentThreadProps) {
               {comment.reCommentList?.map((reply) => (
                 <Replies
                   key={reply.reCommentId}
+                  repoId={Number(baseRepoId)}
+                  prId={Number(prId)}
                   {...reply}
                   replyCreateAt={displayDate(reply.createAt)}
                 />
