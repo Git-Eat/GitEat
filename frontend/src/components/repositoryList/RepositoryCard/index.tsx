@@ -11,12 +11,14 @@ import { useBooleanState } from "../../../hooks/useBooleanState";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDeleteRepository } from "../../../api/queries/useDeleteRepository";
+import { useRepoStore } from "../../../store/repoStore";
 interface RepositoryCardProps {
   title: string;
   description: string;
   access: string;
   ownerName: string;
   repoId: number;
+  openModal: () => void;
 }
 
 function Private() {
@@ -40,10 +42,12 @@ export function RepositoryCard({
   description,
   access,
   ownerName,
+  openModal,
   repoId,
 }: RepositoryCardProps) {
   const [isToggle, onToggle, offToggle] = useBooleanState(false);
   const { mutate } = useDeleteRepository(repoId);
+  const { setRepo } = useRepoStore();
   const navigation = useNavigate();
   const anchorRef = React.useRef<HTMLButtonElement>(null);
   const onHandler = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -108,6 +112,18 @@ export function RepositoryCard({
                       }}
                     >
                       레포지토리 등록 해제
+                    </MenuItem>
+
+                    <MenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        setRepo(repoId);
+                        openModal();
+                        offToggle();
+                      }}
+                    >
+                      알림 등록
                     </MenuItem>
                     <MenuItem
                       onClick={(e) => {
