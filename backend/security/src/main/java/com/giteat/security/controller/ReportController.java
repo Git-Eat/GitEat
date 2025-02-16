@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 @Slf4j
 public class ReportController {
-    private final ApiUtil apiUtl;
+    private final ApiUtil apiUtil;
 
 
     /**
@@ -33,7 +33,7 @@ public class ReportController {
         log.info("▶ frontendPath: {}", lighthouseDto.getFrontendPath());
 
 
-        ResponseEntity<?> response = apiUtl.postReportApi("/lighthouse-pipeline" , lighthouseDto);
+        ResponseEntity<?> response = apiUtil.postReportApi("/lighthouse-pipeline" , lighthouseDto);
 
         return ResponseEntity.ok(response.getBody());
     }
@@ -47,7 +47,21 @@ public class ReportController {
             @PathVariable int repoId) {
         log.info("🔹 Get /api/rest/report 요청 받음!");
 
-        ResponseEntity<?> response = apiUtl.getApi("/report/" + repoId);
+        ResponseEntity<?> response = apiUtil.getApi("/report/" + repoId);
+
+        return ResponseEntity.ok(response.getBody());
+    }
+
+    /**
+     * Lighthouse Delete 메서드
+     */
+    @DeleteMapping("/rest/report/{repoId}")
+    @Operation(summary = "Lighthouse DB 삭제하기", description = "Lighthouse DB 삭제하기")
+    public ResponseEntity<?> LighthouseDel(
+            @PathVariable int repoId) {
+        log.info("🔹 Delete /api/rest/report 요청 받음!");
+
+        ResponseEntity<?> response = apiUtil.deleteApi("/repo/" + repoId, null);
 
         return ResponseEntity.ok(response.getBody());
     }
