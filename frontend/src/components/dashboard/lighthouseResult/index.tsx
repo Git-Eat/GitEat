@@ -38,30 +38,23 @@ export function LightHouseResult({ repoId }: LightHouseResultProps) {
     <>
       <section className="p-5 bg-white rounded-xl">
         <header className="mb-5">
-          <h1 className="text-[18px] font-semibold flex gap-2 text-center pb-1">
-            Performance
-          </h1>
+          <div className="flex justify-between">
+            <h2 className="text-[18px] font-semibold pb-1">FE 성능 측정</h2>
+            <button
+              className="bg-black text-white font-semibold px-3 py-1 rounded-xl"
+              onClick={openModal}
+            >
+              성능 측정
+            </button>
+          </div>
           <p className="text-neutral-400 text-sm">
-            프로젝트의 성능을 확인해 보세요!
+            본 성능 측정은 LightHouse 기준으로 측정되었습니다.
           </p>
         </header>
         <hr />
 
         <article className="m-5">
-          <header>
-            <div className="flex justify-between">
-              <h2 className="text-[18px] font-semibold pb-1">FE 성능 측정</h2>
-              <button
-                className="bg-black text-white font-semibold px-3 py-1 rounded-xl"
-                onClick={openModal}
-              >
-                성능 측정
-              </button>
-            </div>
-            <p className="text-neutral-400 text-sm">
-              본 성능 측정은 LightHouse 기준으로 측정되었습니다.
-            </p>
-          </header>
+          <header></header>
           {data ? (
             isResultZero ? (
               <div className="m-40 flex justify-center">
@@ -109,7 +102,7 @@ export function LightHouseResult({ repoId }: LightHouseResultProps) {
                   </header>
 
                   <section className="px-10 grid grid-cols-2 gap-10">
-                    <article className="bg-gray-100 px-5 py-8 rounded-xl flex items-center justify-between col-span-1">
+                    <article className="bg-stone-100 px-5 py-8 rounded-xl flex items-center justify-between col-span-1">
                       <div>
                         <span className="text-lg font-bold mr-1">FCP</span>
                         <span>(First Contentful Paint)</span>

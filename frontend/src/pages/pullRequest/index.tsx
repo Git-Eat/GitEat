@@ -9,7 +9,7 @@ import { useGetComments } from "../../api/queries/useGetComments";
 import { usePRStore } from "../../store/pullRequestStore";
 
 function DataProvider() {
-  const { baseRepoId, prId } = useParams();
+  const { baseRepoId, prId, title, owner } = useParams();
   const { setComments, setFiles, setPR } = usePRStore();
   const { data: pullRequest } = useGetPullRequest(
     Number(baseRepoId),
@@ -40,7 +40,7 @@ function DataProvider() {
 
   return (
     <div>
-      <Header title={pullRequest?.title} owner={pullRequest?.userName} />
+      <Header title={title} owner={owner} />
 
       <main className="w-[98%] bg-stone-50 m-auto px-8 py-4 rounded-2xl min-h-[calc(100vh-100px)]">
         <PrHeader
