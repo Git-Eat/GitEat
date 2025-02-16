@@ -59,7 +59,7 @@ export function Conversation() {
           repoId={numericRepoId}
         />
       </main>
-      <aside className="w-1/4">
+      <aside className="w-1/6">
         <ErrorBoundary>
           <Suspense fallback={<img src={spinner} alt="Loading..." />}>
             <Reviewers repoId={numericRepoId} prId={numericPrId} />

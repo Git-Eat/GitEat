@@ -45,7 +45,7 @@ function LinkIcon({ to, src, alt }: { to: string; src: string; alt: string }) {
 
 export function Header() {
   return (
-    <header className="h-[100vh] bg- w-[115px] flex flex-col justify-between items-center box-border py-[36px] fixed">
+    <header className="h-[100vh] bg-[#e5f9c1] w-[115px] flex flex-col justify-between items-center box-border py-[36px] fixed">
       <img src={logo} className="w-[48px]" alt="logout" />
       <div className="flex flex-col gap-[50px] items-center">
         <LinkIcon to="/repos" src="home" alt="repository_page" />
