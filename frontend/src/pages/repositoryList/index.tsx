@@ -42,7 +42,7 @@ export function RepositoryList() {
         </div>
       </header>
 
-      <main className="w-[98%] m-auto px-8 py-4 bg-gray-100 rounded-2xl min-h-[calc(100vh-100px)]">
+      <main className="w-[98%] m-auto px-8 py-4 bg-stone-50 rounded-2xl min-h-[calc(100vh-100px)]">
         <div className="flex flex-col gap-5 m-auto w-[80%] pt-10">
           <button className="flex gap-2 justify-end" onClick={openModal}>
             <span className="hover:cursor-pointer">프로젝트 추가하기 </span>
