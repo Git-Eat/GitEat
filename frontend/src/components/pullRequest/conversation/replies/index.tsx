@@ -76,7 +76,7 @@ export function Replies({
   }
 
   return (
-    <section className="bg-gray-100 my-3 p-5 rounded-xl">
+    <section className="bg-stone-50 my-3 p-5 rounded-xl">
       <header className="flex justify-between items-center">
         <div className="flex items-center gap-2">
           <img
@@ -111,11 +111,9 @@ export function Replies({
                 }}
                 className="mr-2"
               >
-                {isEditing ? "수정 취소" : "답글 수정"}
+                {isEditing ? "취소" : "수정"}
               </button>
-              <button onClick={() => deleteReComment(reCommentId)}>
-                답글 삭제
-              </button>
+              <button onClick={() => deleteReComment(reCommentId)}>삭제</button>
             </>
           )}
         </div>

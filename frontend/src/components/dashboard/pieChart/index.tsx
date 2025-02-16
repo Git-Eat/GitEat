@@ -36,6 +36,7 @@ export function PieChart() {
         width: "100%",
         height: "100%",
         type: "pie" as const,
+        fontFamily: "'Pretendard-Regular', sans-serif",
       },
       labels: commentUsers,
       theme: {

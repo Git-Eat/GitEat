@@ -127,7 +127,7 @@ export function MixedChartByLine({ data, maxValue }: ChartProps) {
   });
 
   return (
-    <div className="w-full justify-between px-10 py-5 bg-white rounded-lg h-full items-center">
+    <div className="w-full justify-between px-10 py-5 bg-white rounded-lg h-full items-center border ">
       <h2 className="text-xl font-bold mb-5">{data.name}의 주간 기록</h2>
       <ReactApexChart
         options={chartData.options}

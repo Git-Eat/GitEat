@@ -147,10 +147,10 @@ export function Comments({ repoId, prId }: CommentsProps) {
                           }
                         }}
                       >
-                        {isEditing ? "수정 취소" : "댓글 수정"}
+                        {isEditing ? "취소" : "수정"}
                       </button>
                       <button onClick={() => deleteComment(comment.commentId)}>
-                        댓글 삭제
+                        삭제
                       </button>
                     </>
                   )}
