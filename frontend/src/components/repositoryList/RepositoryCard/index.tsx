@@ -56,7 +56,7 @@ export function RepositoryCard({
     onToggle();
   };
   return (
-    <Link to={`/repos/${repoId}`}>
+    <Link to={`/repos/${repoId}/${ownerName}/${title}`}>
       <div className=" bg-white rounded-xl p-7 flex justify-between hover:bg-gray-200 cursor-pointer items-top">
         <div>
           <div className="flex gap-[10px] items-center mb-[10px]">

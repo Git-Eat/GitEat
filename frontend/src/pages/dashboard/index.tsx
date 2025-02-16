@@ -52,9 +52,10 @@ function Contributors() {
 }
 
 export function DashBoard() {
+  const { title, owner } = useParams();
   return (
     <div>
-      <Header title={"asdf"} owner={"asdfasdf"} />
+      <Header title={title} owner={owner} />
 
       <main className="w-[98%] m-auto px-8 py-4 bg-stone-50 rounded-2xl min-h-[calc(100vh-100px)]">
         <div className="w-[72%] m-auto my-10">

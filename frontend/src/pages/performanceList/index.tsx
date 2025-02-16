@@ -35,7 +35,7 @@ function RepositoryCard({
   repoId,
 }: RepositoryCardProps) {
   return (
-    <Link to={`/repos/${repoId}/performance`}>
+    <Link to={`/repos/${repoId}/performance/${ownerName}/${title}`}>
       <div className=" bg-white rounded-xl p-7 flex justify-between hover:bg-gray-200 cursor-pointer items-top">
         <div>
           <div className="flex gap-[10px] items-center mb-[10px]">

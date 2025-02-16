@@ -28,13 +28,22 @@ function App() {
               <Route path="/repos" element={<RepositoryList />} />
               <Route path="/dashboard" element={<DashBoardList />} />
               <Route path="/report" element={<PerformanceList />} />
-              <Route path="/repos/:repoId/dashboard" element={<DashBoard />} />
               <Route
-                path="/repos/:repoId/performance"
+                path="/repos/:repoId/dashboard/:owner/:title/"
+                element={<DashBoard />}
+              />
+              <Route
+                path="/repos/:repoId/performance/:owner/:title"
                 element={<FrontendStatistics />}
               />
-              <Route path="/repos/:repoId" element={<PullRequestList />} />
-              <Route path="/repos/:baseRepoId/:prId" element={<PullRequest />}>
+              <Route
+                path="/repos/:repoId/:owner/:title"
+                element={<PullRequestList />}
+              />
+              <Route
+                path="/repos/:baseRepoId/:prId/:owner/:title"
+                element={<PullRequest />}
+              >
                 <Route path="conversation" element={<Conversation />} />
                 <Route path="commits" element={<>commits</>} />
                 <Route path="file-changes" element={<FileChanges />} />
