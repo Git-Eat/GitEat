@@ -11,5 +11,5 @@ export type Lighthouse = {
   tbt: number;
   cls: number;
   si: number;
-  createAt: string | null;
+  createAt: string;
 };
