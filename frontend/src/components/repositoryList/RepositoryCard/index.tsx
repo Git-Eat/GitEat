@@ -129,7 +129,7 @@ export function RepositoryCard({
                       onClick={(e) => {
                         e.stopPropagation();
                         e.preventDefault();
-                        navigation(`${repoId}/dashboard`);
+                        navigation(`${repoId}/dashboard/${ownerName}/${title}`);
                       }}
                     >
                       대시보드
@@ -138,7 +138,9 @@ export function RepositoryCard({
                       onClick={(e) => {
                         e.stopPropagation();
                         e.preventDefault();
-                        navigation(`${repoId}/performance`);
+                        navigation(
+                          `${repoId}/performace/${ownerName}/${title}`
+                        );
                       }}
                     >
                       성능측정
