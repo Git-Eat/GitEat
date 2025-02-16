@@ -1,5 +1,6 @@
 import { useGetPullRequest } from "../../../../api/queries/useGetPullRequest";
 import ReactMarkdown from "react-markdown";
+import sadCat from "../../../../assets/images/sad_cat.svg";
 import remarkGfm from "remark-gfm";
 
 interface PullRequestInfoProps {
@@ -9,11 +10,25 @@ interface PullRequestInfoProps {
 
 export function PullRequestInfo({ repoId, prId }: PullRequestInfoProps) {
   const { data } = useGetPullRequest(repoId, prId);
+  console.log(data?.description);
   return (
-    <section className="prose mb-8 bg-white my-5 p-5 rounded-xl">
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>
-        {data?.description}
-      </ReactMarkdown>
+    <section className=" mb-8 bg-white my-5 p-5 rounded-xl flex flex-col justify-center items-center">
+      {data?.description !== "" && (
+        <>
+          ㅁㄴㅇㄹ
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            {data?.description}
+          </ReactMarkdown>
+        </>
+      )}
+      {data?.description === "" && (
+        <>
+          <div className="py-20 opacity-50 m-auto flex flex-col justify-center items-center gap-5">
+            <img src={sadCat} alt="noData" />
+            <span>MR 설명이 없어요! 적극적인 설명이 필요해요....</span>
+          </div>
+        </>
+      )}
     </section>
   );
 }
