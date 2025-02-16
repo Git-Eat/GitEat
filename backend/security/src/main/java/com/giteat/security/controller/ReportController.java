@@ -61,7 +61,7 @@ public class ReportController {
             @PathVariable int repoId) {
         log.info("🔹 Delete /api/rest/report 요청 받음!");
 
-        ResponseEntity<?> response = apiUtil.deleteApi("/repo/" + repoId, null);
+        ResponseEntity<?> response = apiUtil.deleteApi("/report/" + repoId, null);
 
         return ResponseEntity.ok(response.getBody());
     }
