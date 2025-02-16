@@ -213,6 +213,11 @@ public class LabApi {
         return this.callGetApiMap(url , accessToken);
     }
 
+    public List<Map<String , Object>> getWebHooks(String repoId ,String accessToken){
+        String url = gitlabApiUrl + "/projects" + "/" + repoId + "/hooks";
+        return this.callGetApiList(url ,accessToken);
+    }
+
     // 변경된 Raw 코드 가져오는 함수
     public String getRawCode(String projectId, String filePath, String ref, String accessToken)  {
         try {
