@@ -54,7 +54,6 @@ export function LightHouseResult({ repoId }: LightHouseResultProps) {
         <hr />
 
         <article className="m-5">
-          <header></header>
           {data ? (
             isResultZero ? (
               <div className="m-40 flex justify-center">
@@ -62,7 +61,7 @@ export function LightHouseResult({ repoId }: LightHouseResultProps) {
               </div>
             ) : (
               <>
-                <section className="my-10 flex justify-center">
+                <section className="my-10 flex flex-wrap justify-center">
                   <RadialBar series={[data.performance]} labels={["성능"]} />
                   <RadialBar
                     series={[data.accessibility]}
@@ -95,13 +94,13 @@ export function LightHouseResult({ repoId }: LightHouseResultProps) {
                   </article>
                 </section>
 
-                <section className="m-10">
-                  <hr className="mb-5" />
+                <section className="my-10">
+                  <hr className="mx-5 mb-5" />
                   <header className="m-10">
                     <span className="text-[19px] font-semibold">측정 항목</span>
                   </header>
 
-                  <section className="px-10 grid grid-cols-2 gap-10">
+                  <section className="px-10 grid lg:grid-cols-2 gap-10">
                     <article className="bg-stone-100 px-5 py-8 rounded-xl flex items-center justify-between col-span-1">
                       <div>
                         <span className="text-lg font-bold mr-1">FCP</span>
@@ -122,7 +121,7 @@ export function LightHouseResult({ repoId }: LightHouseResultProps) {
                         {data.fcp}s
                       </p>
                     </article>
-                    <article className="bg-gray-100 px-5 py-8 rounded-xl flex items-center justify-between col-span-1">
+                    <article className="bg-stone-100 px-5 py-8 rounded-xl flex items-center justify-between col-span-1">
                       <div>
                         <span className="text-lg font-bold mr-1">LCP</span>
                         <span>(Largest Contentful Paint)</span>
@@ -142,7 +141,7 @@ export function LightHouseResult({ repoId }: LightHouseResultProps) {
                         {data.lcp}s
                       </p>
                     </article>
-                    <article className="bg-gray-100 px-5 py-8 rounded-xl flex items-center justify-between col-span-1">
+                    <article className="bg-stone-100 px-5 py-8 rounded-xl flex items-center justify-between col-span-1">
                       <div>
                         <span className="text-lg font-bold mr-1">TBT</span>
                         <span>(Total Blocking Time)</span>
@@ -162,7 +161,7 @@ export function LightHouseResult({ repoId }: LightHouseResultProps) {
                         {data.tbt}ms
                       </p>
                     </article>
-                    <article className="bg-gray-100 px-5 py-8 rounded-xl flex items-center justify-between col-span-1">
+                    <article className="bg-stone-100 px-5 py-8 rounded-xl flex items-center justify-between col-span-1">
                       <div>
                         <span className="text-lg font-bold mr-1">CLS</span>
                         <span>(Cumulative Layout Shift)</span>
@@ -182,7 +181,7 @@ export function LightHouseResult({ repoId }: LightHouseResultProps) {
                         {data.cls}s
                       </p>
                     </article>
-                    <article className="bg-gray-100 px-5 py-8 rounded-xl flex items-center justify-between col-span-1">
+                    <article className="bg-stone-100 px-5 py-8 rounded-xl flex items-center justify-between col-span-1">
                       <div>
                         <span className="text-lg font-bold mr-1">SI</span>
                         <span>(Speed Index)</span>

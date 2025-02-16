@@ -29,6 +29,9 @@ export function RadialBar({ series, labels }: RadialBarProps) {
         hollow: {
           size: "55%",
         },
+        track: {
+          background: "#F5F5F4",
+        },
         dataLabels: {
           name: {
             offsetY: -12,
