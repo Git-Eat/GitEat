@@ -31,7 +31,7 @@ export function RadialBar({ series, labels }: RadialBarProps) {
         },
         dataLabels: {
           name: {
-            offsetY: 12,
+            offsetY: -12,
             color: "#888",
             fontSize: "12px",
           },
