@@ -157,7 +157,7 @@
 
     <!-- 대댓글 삭제 -->
     <delete id="deleteReply" parameterType="map">
-        DELETE FROM comment
+        DELETE FROM reply
         WHERE repo_id = #{repoId} AND pr_id = #{prId} AND re_comment_id = #{reCommentId}
     </delete>
 
@@ -244,9 +244,9 @@
     <update id="updateShaInfo" parameterType="map">
         UPDATE pr
         SET
-        start_sha = #{startSha},
-        head_sha = #{headSha},
-        base_sha = #{baseSha}
+            start_sha = #{startSha},
+            head_sha = #{headSha},
+            base_sha = #{baseSha}
         WHERE repo_id = #{repoId} AND pr_id = #{prId};
     </update>
 

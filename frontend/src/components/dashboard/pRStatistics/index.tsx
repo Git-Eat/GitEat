@@ -20,7 +20,7 @@ export function BarChartExample() {
   const [chartData] = React.useState({
     series: [
       {
-        name: "commits",
+        name: "MR 등록",
         data: prCount,
       },
     ],
@@ -35,8 +35,8 @@ export function BarChartExample() {
       colors: ["skyblue"],
       plotOptions: {
         bar: {
-          columnWidth: "50px",
-          distributed: true,
+          columnWidth: `${statistic ? statistic.userList.length * 2.5 : 30}px`,
+          distributed: false,
         },
       },
       dataLabels: {
@@ -61,7 +61,7 @@ export function BarChartExample() {
     <div className="w-full justify-between px-10 py-5 bg-white rounded-lg h-full items-center">
       <div className="mb-10">
         <h2 className="text-xl font-bold flex justify-between">
-          <span>총 PR 개수</span>
+          <span>총 MR 개수</span>
           <span>{statistic?.totalMergeRequest}개</span>
         </h2>
       </div>

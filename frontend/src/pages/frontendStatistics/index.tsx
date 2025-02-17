@@ -10,17 +10,18 @@ export function FrontendStatistics() {
   const { user } = useLoginStore();
   const { repoId } = useParams();
   const numericRepoId = Number(repoId);
+  const { title, owner } = useParams();
   return (
     <>
-      <Header title={"asdf"} owner={"asdfasdf"} />
+      <Header title={title} owner={owner} />
 
-      <main className="w-[98%] m-auto px-8 py-4 bg-gray-100 rounded-2xl min-h-[calc(100vh-100px)]">
+      <main className="w-[98%] m-auto px-8 py-4 bg-stone-100 rounded-2xl min-h-[calc(100vh-100px)]">
         <h1 className=" text-2xl font-semibold flex gap-4 text-center pb-1">
-          <span>DashBoard</span>
+          <span>Performance</span>
         </h1>
         <span className="block text-neutral-400 text-sm">
-          <span className="text-black">{user.name}</span> 님의 프로젝트 현황을
-          확인해보세요!
+          <span className="text-black">{user.name}</span> 님의 프로젝트 성능을
+          측정해보세요!
         </span>
         <section className="my-5">
           <ErrorBoundary fallbackComponent={<>error occured</>}>

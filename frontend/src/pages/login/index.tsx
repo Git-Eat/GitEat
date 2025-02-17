@@ -1,5 +1,5 @@
 import logo from "../../assets/images/logo.svg";
-import githubLogo from "../../assets/images/github_logo.svg";
+// import githubLogo from "../../assets/images/github_logo.svg";
 import gitlabLogo from "../../assets/images/gitlab_logo.svg";
 import side from "../../assets/images/main_side.png";
 import { useGetMe } from "../../api/queries/useGetMe";
@@ -15,8 +15,13 @@ export function Login() {
     window.location.href = gitLabAuthUrl;
   };
   const { setUser } = useLoginStore();
-  const { data, isLoading } = useGetMe();
+  const { data, isLoading, refetch } = useGetMe();
   const navigation = useNavigate();
+  useEffect(() => {
+    if (localStorage.getItem("access_token")) {
+      refetch();
+    }
+  }, []);
   useEffect(() => {
     if (!isLoading && data) {
       navigation("/repos");
@@ -46,19 +51,19 @@ export function Login() {
             <span>효율적인 코드리뷰를 진행해보세요 ! Let’s Git-Eat!</span>
           </article>
           <div className="w-[370px] flex flex-col gap-[18px]">
-            <a
+            {/* <a
               href="/loading"
               className="h-[71px] flex gap-[9px] bg-black text-white items-center justify-center font-[20px] font-semibold rounded-[30px]"
             >
               <img className="w-[55px]" src={githubLogo} alt="github_logo" />
               GitHub로 시작하기
-            </a>
+            </a> */}
             <button
               onClick={gitLabLogin}
               className="h-[71px] flex gap-[9px] bg-[#364CCA] text-white items-center justify-center font-[20px] font-semibold rounded-[30px]"
             >
               <img src={gitlabLogo} alt="gitlab_logo" />
-              GitLab으로 시작하기
+              SSAFY Git으로 시작하기
             </button>
           </div>
         </div>

@@ -31,4 +31,6 @@ public interface GitLabWebHookMapper {
     List<CommentTempDto> getCommentList(String accessToken);
 
     int prTableCheck(@Param("repoId") int repoId , @Param("prId") int prId);
+
+    int updateCommentTempStatus(CommentTempDto commentTempDto);
 }

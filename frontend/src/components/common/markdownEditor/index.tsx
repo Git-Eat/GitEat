@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import MDEditor from "@uiw/react-md-editor";
 import { useState } from "react";
 import { useFileUpload } from "../../../hooks/useFileUpload";
@@ -20,14 +20,14 @@ export function MarkdownEditor({
   isEditing = false,
   repoId,
 }: MarkdownEditorProps) {
-  const [category, setCategory] = useState<number>(initialCategory);
+  const [category] = useState<number>(initialCategory);
   const [value, setValue] = useState<string>(initialValue);
   const editorRef = useRef<HTMLDivElement>(null);
   const { handleFileDrop, handleDragOver } = useFileUpload(repoId, setValue);
 
-  function handleCategory(event: React.ChangeEvent<HTMLSelectElement>) {
-    setCategory(Number(event.target.value) as number);
-  }
+  // function handleCategory(event: React.ChangeEvent<HTMLSelectElement>) {
+  //   setCategory(Number(event.target.value) as number);
+  // }
 
   function handleReset() {
     setValue("");
@@ -56,7 +56,7 @@ export function MarkdownEditor({
       onDrop={handleFileDrop}
       onDrag={handleDragOver}
     >
-      <select
+      {/* <select
         onChange={handleCategory}
         value={category}
         className="border border-gray-300 mb-3 p-1 rounded-md"
@@ -64,7 +64,7 @@ export function MarkdownEditor({
         <option value={0}>suggest</option>
         <option value={1}>comment</option>
         <option value={2}>review</option>
-      </select>
+      </select> */}
       <MDEditor
         value={value}
         onChange={(val) => setValue(val ?? "")}
@@ -73,24 +73,24 @@ export function MarkdownEditor({
       <div className="mt-3 text-right">
         <button
           onClick={handleReset}
-          className="px-2 border mr-2 border-gray-300 p-1 rounded-md"
+          className="px-8 border mr-2 border-gray-300 p-1 rounded-2xl hover:bg-stone-100 font-extrabold"
         >
-          Reset
+          초기화
         </button>
         {isEditing ? (
           <button
             onClick={handleUpdateComment}
-            className="px-2 text-white border border-sky-400 bg-sky-400 p-1 rounded-md"
+            className="px-8 text-blue-600 border rounded-2xl  bg-black p-1 hover:bg-stone-100 font-extrabold"
           >
-            Save
+            작성
           </button>
         ) : (
           <>
             <button
               onClick={handleAddSingleComment}
-              className="px-2 text-white border border-sky-400 bg-sky-400 p-1 rounded-md"
+              className="px-8 text-blue-600 border rounded-2xl bg-white p-1 hover:bg-stone-100 font-extrabold"
             >
-              Save
+              작성
             </button>
           </>
         )}

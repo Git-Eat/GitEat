@@ -59,9 +59,9 @@ export function Comments({ repoId, prId }: CommentsProps) {
     }));
   }
 
-  function handleAddReply(content: string, discussionId: string) {
+  function handleAddReply(content: string, disId: string) {
     if (!content.trim()) return;
-    createReply({ content, discussionId });
+    createReply({ content, disId });
   }
 
   function handleEditComment(comment: Comment) {
@@ -95,14 +95,16 @@ export function Comments({ repoId, prId }: CommentsProps) {
             {comment.position && (
               <CodeBlock
                 minLine={Number(
-                  comment.position.newStartLine
-                    ? comment.position.newStartLine
-                    : comment.position.oldStartLine
+                  Math.max(
+                    comment.position.newLine ? comment.position.newLine : 0,
+                    comment.position.oldLine ? comment.position.oldLine : 0
+                  )
                 )}
                 maxLine={Number(
-                  comment.position.newEndLine
-                    ? comment.position.newEndLine
-                    : comment.position.oldEndLine
+                  Math.max(
+                    comment.position.newLine ? comment.position.newLine : 0,
+                    comment.position.oldLine ? comment.position.oldLine : 0
+                  )
                 )}
                 newPath={comment.position.newPath}
                 oldPath={comment.position.oldPath}
@@ -145,10 +147,10 @@ export function Comments({ repoId, prId }: CommentsProps) {
                           }
                         }}
                       >
-                        {isEditing ? "수정 취소" : "댓글 수정"}
+                        {isEditing ? "취소" : "수정"}
                       </button>
                       <button onClick={() => deleteComment(comment.commentId)}>
-                        댓글 삭제
+                        삭제
                       </button>
                     </>
                   )}
@@ -184,6 +186,8 @@ export function Comments({ repoId, prId }: CommentsProps) {
                   {comment.reCommentList?.map((reply) => (
                     <Replies
                       key={reply.reCommentId}
+                      repoId={repoId}
+                      prId={prId}
                       {...reply}
                       replyCreateAt={displayDate(reply.createAt)}
                     />

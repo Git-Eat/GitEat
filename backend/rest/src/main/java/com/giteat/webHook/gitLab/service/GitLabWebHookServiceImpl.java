@@ -244,7 +244,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
                 comment.setUserId((int) commentAuthor.get("id"));
                 comment.setDisId((String) commentResponse.get("id"));
                 comment.setCreateAt((String) firstNote.get("updated_at"));
-
+                comment.setCommentValue(1);
                 if (firstNote.get("position") != null) {
 
                     Map<String, Object> position = (Map<String, Object>) firstNote.get("position");

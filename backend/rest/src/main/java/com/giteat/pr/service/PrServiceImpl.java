@@ -312,34 +312,38 @@ public class PrServiceImpl implements PrService{
         String oldRawFile = null;
 
         // 2. PR에서 sha값 있는지 확인 후 , 없으면 요청 후 DB에 저장
-        Optional<MergeRequestEntity> optionalMr = mergeRequestRepository.findByRepoIdAndPrId(Integer.parseInt(repoId), Integer.parseInt(prId));
+        Map<String, Object> params2 = new HashMap<>();
+        params2.put("repoId", repoId);
+        params2.put("prId", prId);
+        PrDto pr = prMapper.getPrById(params2);
 
-        String base_sha = null;
-        String head_sha= null;
+        String base_sha = pr.getBaseSha();
+        String head_sha = pr.getHeadSha();
 
-        if (optionalMr.isPresent()) {
-            MergeRequestEntity existingMr = optionalMr.get();
-            // 값이 없는 경우
-            if(existingMr.getBaseSha()==null || existingMr.getHeadSha()==null){
-                Map<String, Object> mrResponse = gitLabApi.getMergeRequestsById(repoId, String.valueOf(fileDto.getPrId()), accessToken);
-                Map<String, Object> shaInfo = (Map<String, Object>) mrResponse.get("diff_refs");
-                existingMr.setBaseSha((String) shaInfo.get("base_sha"));
-                existingMr.setHeadSha((String) shaInfo.get("head_sha"));
-                existingMr.setStartSha((String) shaInfo.get("start_sha"));// sha값이 없다면 개별 조회 호출해서 sha값 업데이트
-
-                base_sha = (String) shaInfo.get("base_sha");
-                head_sha = (String) shaInfo.get("head_sha");
-                System.out.println("값이 없어용");
-                System.out.println(head_sha);
-                System.out.println(base_sha);
-            } else {
-                base_sha = existingMr.getBaseSha();
-                head_sha = existingMr.getHeadSha();
-                System.out.println("값이 있어용");
-                System.out.println(head_sha);
-                System.out.println(base_sha);
-            }
-            mergeRequestRepository.save(existingMr); // 업데이트
+//        if (optionalMr.isPresent()) {
+//            MergeRequestEntity existingMr = optionalMr.get();
+//            // 값이 없는 경우
+//            if(existingMr.getBaseSha()==null || existingMr.getHeadSha()==null){
+//                Map<String, Object> mrResponse = gitLabApi.getMergeRequestsById(repoId, String.valueOf(fileDto.getPrId()), accessToken);
+//                Map<String, Object> shaInfo = (Map<String, Object>) mrResponse.get("diff_refs");
+//                existingMr.setBaseSha((String) shaInfo.get("base_sha"));
+//                existingMr.setHeadSha((String) shaInfo.get("head_sha"));
+//                existingMr.setStartSha((String) shaInfo.get("start_sha"));// sha값이 없다면 개별 조회 호출해서 sha값 업데이트
+//
+//                base_sha = (String) shaInfo.get("base_sha");
+//                head_sha = (String) shaInfo.get("head_sha");
+//                System.out.println("값이 없어용");
+//                System.out.println(head_sha);
+//                System.out.println(base_sha);
+//            } else {
+//                base_sha = existingMr.getBaseSha();
+//                head_sha = existingMr.getHeadSha();
+//                System.out.println("값이 있어용");
+//                System.out.println(head_sha);
+//                System.out.println(base_sha);
+//            }
+//            mergeRequestRepository.save(existingMr); // 업데이트
+//    }
 
 
             if(status == 1){
@@ -351,7 +355,6 @@ public class PrServiceImpl implements PrService{
                 newRawFile = gitLabApi.getRawCode(repoId,encodedNewPath,head_sha, accessToken);
             } else if(status==3){
                 // 파일이 삭제 된 경우,  fileStatus = 3
-                System.out.println("파일이 삭제");
                 oldRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, base_sha, accessToken);
                 System.out.println(oldRawFile);
             } else if(!oldPath.equals(newPath)){
@@ -359,7 +362,7 @@ public class PrServiceImpl implements PrService{
                 oldRawFile = gitLabApi.getRawCode(repoId, encodedOldPath, base_sha,accessToken);
                 newRawFile = gitLabApi.getRawCode(repoId,encodedNewPath,head_sha, accessToken);
             }
-        }
+
 
 
         // 3. 해당 파일에 달린 댓글 가져오기 > 얘는 Mapper 호출

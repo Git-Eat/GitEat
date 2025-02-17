@@ -98,11 +98,9 @@ public class RepoServiceImpl implements RepoService{
         if(repositoryInfo != null){
             // repo_member에 저장
             RepositoryMemberId repositoryMemberId = new RepositoryMemberId(repoId, userId);
-            System.out.println("repo log");
             repositoryMemberEntity.setId(repositoryMemberId);
             repositoryMemberRepository.save(repositoryMemberEntity);
             System.out.println("이미 정보가 있는 repo입니다." + repositoryInfo);
-            System.out.println("레포 아이디: " + repositoryInfo.getName());
             return repositoryInfo;
         }
 
@@ -297,9 +295,13 @@ public class RepoServiceImpl implements RepoService{
      */
     @Override
     public void createWebHook(String accessToken, String repoId) {
-        Map<String, Object> test = gitLabApi.createCommentWebHook(repoId , accessToken);
-        System.out.println("결과 mr: " + test);
-        Map<String , Object> test2 = gitLabApi.createMergeRequestWebHook(repoId , accessToken);
-        System.out.println("결과 comment : " + test2);
+        List<Map<String , Object>> webHookList = gitLabApi.getWebHooks(repoId , accessToken);
+
+        if(webHookList.size()==0){
+            Map<String, Object> test = gitLabApi.createCommentWebHook(repoId , accessToken);
+            System.out.println("결과 mr: " + test);
+            Map<String , Object> test2 = gitLabApi.createMergeRequestWebHook(repoId , accessToken);
+            System.out.println("결과 comment : " + test2);
+        }
     }
 }

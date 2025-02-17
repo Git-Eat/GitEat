@@ -7,7 +7,6 @@ export const useLogin = () => {
   return useMutation(login, {
     mutationKey: "login",
     onSuccess: (accessToken: string) => {
-      console.log(accessToken);
       localStorage.setItem("access_token", accessToken);
       navigation("/repos", { replace: true });
     },
