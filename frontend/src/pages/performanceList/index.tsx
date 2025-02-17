@@ -2,6 +2,7 @@ import { useGetRepositories } from "../../api/queries/useGetRepositories";
 import { Suspense } from "react";
 import { ErrorBoundary } from "../../components/common/errorBoundery";
 import { Link } from "react-router-dom";
+import { Skeleton } from "@mui/material";
 
 const ACCESS_GRANT = ["private", "public", "internal"];
 function Private() {
@@ -87,7 +88,7 @@ export function PerformanceList() {
               </p>
             }
           >
-            <Suspense fallback={<p>Loading...</p>}>
+            <Suspense fallback={<Skeleton width="100%" height="100%" />}>
               <Repositories />
             </Suspense>
           </ErrorBoundary>

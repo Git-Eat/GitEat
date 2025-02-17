@@ -49,10 +49,13 @@ function RepositoryAddModal({
   const [snackbarSeverity, setSnackbarSeverity] = useState<"info" | "error">(
     "info"
   );
+  const [inputEror, setError] = useState(false);
 
   const handleSave = () => {
-    if (repoId.current) {
+    if (repoId.current?.value.trim()) {
       addRepository(Number(repoId.current.value));
+    } else {
+      setError(true);
     }
   };
 
@@ -68,6 +71,7 @@ function RepositoryAddModal({
       setSnackbarOpen(true);
     } else {
       setSnackbarOpen(false);
+      closeModal();
     }
   }, [isLoading, isError]);
 
@@ -80,7 +84,7 @@ function RepositoryAddModal({
   };
 
   return (
-    <>
+    <div className="Pretendard-Regular">
       <Modal
         open={isModalOpen}
         onClose={closeModal}
@@ -89,10 +93,12 @@ function RepositoryAddModal({
       >
         {/* 모달 Box에 pointerEvents를 적용하여 로딩 혹은 에러 시 내부 클릭을 막습니다. */}
         <Box
+          className="font-pretendard"
           sx={{
             ...style,
             pointerEvents: isLoading ? "none" : "auto",
             position: "relative",
+            fontFamily: "Pretendard-Regular",
           }}
         >
           {/* isLoading일 때 로딩 인디케이터 표시 */}
@@ -159,6 +165,7 @@ function RepositoryAddModal({
             {/* 입력 필드 */}
             <TextField
               fullWidth
+              error={inputEror}
               margin="normal"
               label={
                 selectedOption === "github"
@@ -223,7 +230,7 @@ function RepositoryAddModal({
           {snackbarMessage}
         </Alert>
       </Snackbar>
-    </>
+    </div>
   );
 }
 
