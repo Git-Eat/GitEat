@@ -5,20 +5,19 @@ type LinkKey = "fileChanges" | "commits" | "conversation";
 const LINKS = {
   fileChanges: {
     url: "file-changes",
-    text: "File Changes",
+    text: "변경내역",
   },
   commits: {
     url: "commits",
-    text: "Commits",
+    text: "커밋",
   },
   conversation: {
     url: "conversation",
-    text: "Conversation",
+    text: "리뷰",
   },
 };
 function LinkIcon({ to }: { to: LinkKey }) {
   const location = useLocation();
-  console.log(location.pathname);
   const isSelected = useMemo(
     () => location.pathname === `/pull/${LINKS[to].url}`,
     [location.pathname, to]
@@ -54,15 +53,16 @@ export function PrHeader({
         <span className="text-neutral-500">#{prId}</span>
         <span>{title}</span>
       </h1>
-      <span className="block text-neutral-400 text-sm ps-11">
-        <span className="text-black">{userName}</span> wants to merge into
-        <span className="px-2 border text-black rounded-full inline-block align-center">
-          {targetBranch}
-        </span>{" "}
-        from{" "}
-        <span className="px-2 border text-black rounded-full inline-block align-center">
+      <span className="block text-neutral-400 text-sm ">
+        <span className="text-black">{userName}</span> 님이
+        <span className="px-2 border bg-sky-50 text-black rounded-full inline-block align-center">
           {sourceBranch}
+        </span>{" "}
+        에서{" "}
+        <span className="px-2 border bg-sky-50 text-black rounded-full inline-block align-center">
+          {targetBranch}
         </span>
+        로 병합을 요청하셨습니다
       </span>
       <nav className="flex gap-4 w-full mt-4 bg-white rounded-md">
         <LinkIcon to="conversation" />

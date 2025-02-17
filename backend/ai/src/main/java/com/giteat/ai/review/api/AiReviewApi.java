@@ -1,6 +1,5 @@
 package com.giteat.ai.review.api;
 
-import com.giteat.ai.review.daemon.entity.MergeRequestEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;

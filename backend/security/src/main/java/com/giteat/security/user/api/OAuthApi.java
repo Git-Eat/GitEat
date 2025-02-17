@@ -72,7 +72,6 @@ public class OAuthApi {
             // 요청 객체 생성
             HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
 
-            // 요청 전 디버깅
             // 토큰 요청
             ResponseEntity<String> response = restTemplate.exchange(tokenUri, HttpMethod.POST, entity, String.class);
             // JSON 파싱
@@ -91,9 +90,7 @@ public class OAuthApi {
             return map;
 
         } catch (Exception e) {
-            System.out.println("\n=== getAccessToken 에러 발생 ===");
-            System.out.println("에러 타입: " + e.getClass().getName());
-            System.out.println("에러 메시지: " + e.getMessage());
+            System.out.println("에러 타입: " + e.getClass().getName() + e.getMessage());
             if (e.getCause() != null) {
                 System.out.println("에러 원인: " + e.getCause().getMessage());
             }
@@ -101,8 +98,6 @@ public class OAuthApi {
             return new HashMap<>();
         }
     }
-
-
 
     /**
      * GitLab API를 통해 사용자 정보를 조회
@@ -122,11 +117,12 @@ public class OAuthApi {
             // 2. HTTP 요청 객체 생성 (헤더만 포함)
             HttpEntity<?> request = new HttpEntity<>(headers);
 
-            // 3. GitLab API 호출
-            // - USER_INFO_URI: "https://lab.ssafy.com/api/v4/user"
-            // - GET: HTTP 메소드
-            // - request: 위에서 만든 요청 객체
-
+            /**
+             * 3. GitLab API 호출
+             * - USER_INFO_URI: "https://lab.ssafy.com/api/v4/user"
+             *  - GET: HTTP 메소드
+             *  - request: 위에서 만든 요청 객체
+             * */
             ResponseEntity<String> response = restTemplate.exchange(
                     userInfoUri,
                     HttpMethod.GET,
@@ -139,12 +135,6 @@ public class OAuthApi {
             JsonNode jsonNode = mapper.readTree(response.getBody());
 
             // 4. API 응답에서 사용자 정보만 추출해서 반환
-            // 반환되는 Map에는 이런 정보들이 포함됨:
-            // - "id": "oauth 고유 아이디값"
-            // - "username": "사용자아이디"
-            // - "email": "이메일주소"
-            // - "name": "사용자이름"
-            // - "avatar_url": "프로필이미지URL"
             Map<String, String> map = new HashMap<>();
             map.put("id", jsonNode.get("id").asText());
             map.put("username", jsonNode.get("username").asText());
@@ -157,18 +147,13 @@ public class OAuthApi {
         } catch(Exception e) {
             return new HashMap<>();
         }
-
-
-
     }
 
     /**
-     *
      * @param refreshToken
      * @return
      */
     public Map<String, String> getNewToken(String refreshToken) {
-        System.out.println("들어온 값 : " + refreshToken);
         try {
             // OAuth 토큰 갱신을 위한 파라미터 설정
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -191,7 +176,6 @@ public class OAuthApi {
                     String.class);
 
             // JSON 파싱 및 토큰 갱신에 대한 응답
-            System.out.println("refresh로 재발급 받은 데이터 : " + response.getBody());
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonNode = mapper.readTree(response.getBody());
 

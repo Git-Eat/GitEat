@@ -27,11 +27,7 @@ public class UserController {
      */
     @PostMapping("/gitlab")
     public ResponseEntity<?> saveToken(@RequestBody OAuthTokenDto oAuthTokenDto) {
-//        oAuthService.saveToken(oAuthTokenDto);
-//        System.out.println("rest controller 토큰정보: "+ oAuthTokenDto);
-//        return ResponseEntity.ok(oAuthTokenDto);
         try {
-            System.out.println("gitLab 도착함");
             oAuthService.saveToken(oAuthTokenDto);
             return ResponseEntity.ok().body(oAuthTokenDto);
         } catch (Exception e) {

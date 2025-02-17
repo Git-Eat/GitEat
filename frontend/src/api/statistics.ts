@@ -32,3 +32,13 @@ export async function addLighthouseResult(
     else throw new Error("unknown Error");
   }
 }
+
+export async function deleteLighthouseResult(repoId: number) {
+  try {
+    const res = await authClient.delete(`/rest/report/${repoId}`);
+    return res.data;
+  } catch (e: unknown) {
+    if (e instanceof Error) throw new Error(e.message);
+    else throw new Error("unknown Error");
+  }
+}

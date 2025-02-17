@@ -102,6 +102,9 @@ public class AiReviewServiceImpl implements AiReviewService {
             // 파일 내용이 수정된 경우, fileStatus = 2
             oldRawFile = gitLabApi.getRawCode(repoId, encodedOldPath, base_sha, accessToken);
             newRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, head_sha, accessToken);
+            oldRawFile = gitLabApi.getRawCode(repoId, encodedOldPath, base_sha, accessToken);
+            newRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, head_sha, accessToken);
+
         } else if (status == 3) {
             // 파일이 삭제 된 경우,  fileStatus = 3
             oldRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, base_sha, accessToken);
@@ -216,6 +219,15 @@ public class AiReviewServiceImpl implements AiReviewService {
                             baseSha = changedCode.get("baseSha");
                             headSha = changedCode.get("headSha");
                         }
+
+                        // 파일별 코드 내용 합치기
+//                    combinedBeforeCode.append("\n=== ").append(fileDto.getFileName()).append(" (변경 전) ===\n")
+//                            .append(changedCode.get("beforeCode") != null ? changedCode.get("beforeCode") : "")
+//                            .append("\n");
+//
+//                    combinedAfterCode.append("\n=== ").append(fileDto.getFileName()).append(" (변경 후) ===\n")
+//                            .append(changedCode.get("afterCode") != null ? changedCode.get("afterCode") : "")
+//                            .append("\n");
 
                         // 변경된 코드 수집
                         beforeCode.append("\n=== ").append(fileDto.getFileName()).append(" ===\n")

@@ -242,7 +242,7 @@ public class LighthouseController {
             );
             return ResponseEntity.ok(responseJson);
         } catch (Exception e) {
-            log.error("❌ Failed to process Lighthouse results", e);
+            log.error("❌ Failed to process Lighthouse results.", e);
             try {
                 responseJson = new ObjectMapper().writeValueAsString(
                         Map.of("error", "❌ Failed to process Lighthouse results: " + e.getMessage()));

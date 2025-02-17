@@ -30,20 +30,17 @@ const repositoryHandler = [
   }),
   http.post(`${API_BASE}/repo`, async () => {
     // 3초(3000ms) 지연
-    console.log("add");
     await new Promise((resolve) => setTimeout(resolve, 3000));
     return HttpResponse.json(MOCK_RESPONSE);
   }),
 
   http.delete(`${API_BASE}/repo/1`, async () => {
     // 3초(3000ms) 지연
-    console.log("delete");
     await new Promise((resolve) => setTimeout(resolve, 3000));
     return HttpResponse.json(MOCK_RESPONSE);
   }),
 
   http.get(`${API_BASE}/pr/:repoId/:prId`, () => {
-    console.log("pr get");
     return HttpResponse.json({
       baseSha: "46edebc6b129916f4e0f2b485add074ccb8f385a",
       createAt: "2025-02-10T15:30:00Z",

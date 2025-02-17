@@ -47,8 +47,7 @@ public class WebHookAspect {
             // noti_table 검사
             webHookService.addNoteData(accessToken);
         }catch(Exception e){
-            log.info("AOP ERROR");
-            e.printStackTrace();
+            log.error("AOP ERROR" , e);
         }
 
     }
