@@ -97,18 +97,18 @@ public class AiReviewServiceImpl implements AiReviewService {
         // 파일 상태에 따라 코드 가져오기
         if (status == 1) {
             // 파일이 추가 된 경우, fileStatus = 1
-            newRawFile = gitLabApi.getRawCode(String.valueOf(repoId), encodedNewPath, head_sha, accessToken);
+            newRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, head_sha, accessToken);
         } else if (status == 2) {
             // 파일 내용이 수정된 경우, fileStatus = 2
-            oldRawFile = gitLabApi.getRawCode(String.valueOf(repoId), encodedOldPath, base_sha, accessToken);
-            newRawFile = gitLabApi.getRawCode(String.valueOf(repoId), encodedNewPath, head_sha, accessToken);
+            oldRawFile = gitLabApi.getRawCode(repoId, encodedOldPath, base_sha, accessToken);
+            newRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, head_sha, accessToken);
         } else if (status == 3) {
             // 파일이 삭제 된 경우,  fileStatus = 3
-            oldRawFile = gitLabApi.getRawCode(String.valueOf(repoId), encodedNewPath, base_sha, accessToken);
+            oldRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, base_sha, accessToken);
         } else if (!oldPath.equals(newPath)) {
             // 파일 경로가 수정된 경우
-            oldRawFile = gitLabApi.getRawCode(String.valueOf(repoId), encodedOldPath, base_sha, accessToken);
-            newRawFile = gitLabApi.getRawCode(String.valueOf(repoId), encodedNewPath, head_sha, accessToken);
+            oldRawFile = gitLabApi.getRawCode(repoId, encodedOldPath, base_sha, accessToken);
+            newRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, head_sha, accessToken);
         }
 
         Map<String, String> result = new HashMap<>();
@@ -145,12 +145,10 @@ public class AiReviewServiceImpl implements AiReviewService {
                 System.out.println("[createAiReview] 오류: statusEntity가 null입니다");
                 return false;
             }
-            if (diffs == null) {
-                System.out.println("[createAiReview] 오류: diffs 가 null입니다");
-                return false;
-            }
-            if (diffs.isEmpty()) {
-                System.out.println("[createAiReview] 오류: diffs 가 비어있습니다");
+            if (diffs == null || diffs.isEmpty()) {
+                System.out.println("[createAiReview] 오류: diffs가 비어있습니다");
+                // 변경된 파일이 없는 경우 status=2로 설정
+                statusEntity.setStatus(2);
                 return false;
             }
             // PR 설정 가져오기
@@ -260,13 +258,18 @@ public class AiReviewServiceImpl implements AiReviewService {
                 System.out.println("serviceImpl reviewEntity" + reviewEntity);
                 aiReviewEntityRepository.save(reviewEntity);
 
-                // 리뷰 후 상태 업데이트
+                // 리뷰 성공 후 status=1로 설정
                 statusEntity.setStatus(1);
+                statusEntity.setSendAt(LocalDateTime.now());
                 aiReviewRepository.save(statusEntity);
                 return true;
             }
+            else {
+                // 리뷰 생성 실패 시 status=3으로 설정
+                statusEntity.setStatus(3);
+                return false;
+            }
 
-            return false;
 
         } catch (Exception e) {
             System.out.println("[createAiReview] 심각한 오류 발생 ===========================");

@@ -78,7 +78,7 @@ public class GitLabApi {
 
             // 4. API 요청
             HttpEntity<String> entity = new HttpEntity<>(headers);
-            System.out.println("gitlabApi 4. API 요청" + entity);
+            System.out.println("gitlabApi 4. API 요청: " + entity);
 
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
             System.out.println("gitlabApi 4-1. API 요청 response 성공");
