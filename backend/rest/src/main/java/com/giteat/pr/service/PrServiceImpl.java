@@ -60,27 +60,36 @@ public class PrServiceImpl implements PrService{
         System.out.println("start 출력" + start_sha);
 
         // DB에도 업데이트
-//        Map<String, Object> params2 = new HashMap<>();
-//        params2.put("repoId", repoId);
-//        params2.put("prId", prId);
-//        params2.put("baseSha", base_sha);
-//        params2.put("headSha", head_sha);
-//        params2.put("startSha", start_sha);
-//        int result = prMapper.updateShaInfo(params2);
-//        if(result == 1) System.out.println("업데이트 완료");
+        Map<String, Object> params2 = new HashMap<>();
+        params2.put("repoId", repoId);
+        params2.put("prId", prId);
+        params2.put("baseSha", base_sha);
+        params2.put("headSha", head_sha);
+        params2.put("startSha", start_sha);
+        int result = prMapper.updateShaInfo(params2);
+        if(result == 1) System.out.println("업데이트 완료");
+
+        int updatedRows = mergeRequestRepository.updatePrSha(repoId, prId, base_sha, head_sha, start_sha);
+        if (updatedRows == 1) {
+            System.out.println("JPQL 업데이트 완료");
+        } else {
+            System.out.println("JPQL 업데이트 실패: 업데이트 행 수 " + updatedRows);
+        }
+
 
         // JPA를 이용해 해당 PR 엔티티 조회 후, refresh 처리
-        Optional<MergeRequestEntity> optionalEntity = mergeRequestRepository.findByRepoIdAndPrId(repoId, prId);
-        if (optionalEntity.isPresent()) {
-            MergeRequestEntity existingMr = optionalEntity.get();
-            existingMr.setHeadSha(head_sha);
-            existingMr.setBaseSha(base_sha);
-            existingMr.setStartSha(start_sha);
-            System.out.println("Entity 업데이트 완료");
-            mergeRequestRepository.save(existingMr);
-            entityManager.flush();
-        }
-        
+//        Optional<MergeRequestEntity> optionalEntity = mergeRequestRepository.findByRepoIdAndPrId(repoId, prId);
+//        if (optionalEntity.isPresent()) {
+//            MergeRequestEntity existingMr = optionalEntity.get();
+//            existingMr.setHeadSha(head_sha);
+//            existingMr.setBaseSha(base_sha);
+//            existingMr.setStartSha(start_sha);
+//            System.out.println("Entity 업데이트 완료");
+//            mergeRequestRepository.save(existingMr);
+//            entityManager.flush();
+//        }
+
+
         return prInfo;
     }
 

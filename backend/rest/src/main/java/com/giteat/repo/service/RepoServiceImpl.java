@@ -5,6 +5,7 @@ import com.giteat.common.util.SHA1Util;
 import com.giteat.repo.entity.*;
 import com.giteat.repo.mapper.AiReviewStatusMapper;
 import com.giteat.repo.repository.*;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,10 +25,12 @@ public class RepoServiceImpl implements RepoService{
     private final UsersRepository usersRepository;
     private final RepositoryMemberRepository repositoryMemberRepository;
     private final AiReviewStatusMapper aiReviewStatusMapper;
+    private final EntityManager entityManager;
     private final LabApi gitLabApi;
 
     @Override
     public List<RepositoryEntity> getRepoList(String accessToken) {
+        entityManager.clear();
         Map<String, Object> userResponse = gitLabApi.getUser(accessToken); // user 정보 불러오는 Endpoint 호출
         int userId = (int) userResponse.get("id");
         return repoRepository.getRepoList(userId);
@@ -35,6 +38,7 @@ public class RepoServiceImpl implements RepoService{
 
     @Override
     public RepositoryEntity findByRepoId(int repoId , String accessToken) {
+        entityManager.clear();
         return repoRepository.findByRepoId(repoId);
     }
 
