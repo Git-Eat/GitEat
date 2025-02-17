@@ -26,7 +26,7 @@ const renderTree = (
     // 아이콘 결정: 폴더면 폴더 아이콘, 파일이면 fileStatus 값에 따라 아이콘 결정
     let iconComponent = null;
     if (isFolder) {
-      iconComponent = <img src={folder} alt="folder" />;
+      iconComponent = <img src={folder} alt="folder" className="w-[20px]" />;
     } else {
       const status = fileStatusMap.get(currentPath);
       if (status === 1) {
@@ -36,7 +36,7 @@ const renderTree = (
       } else if (status === 3) {
         iconComponent = <img src={none} alt="deleted" />;
       } else {
-        iconComponent = <img src={file} alt="file" />;
+        iconComponent = <img src={file} alt="file" className="w-[20px]" />;
       }
     }
 
