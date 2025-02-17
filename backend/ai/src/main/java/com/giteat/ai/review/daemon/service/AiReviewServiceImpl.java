@@ -102,6 +102,8 @@ public class AiReviewServiceImpl implements AiReviewService {
             // 파일 내용이 수정된 경우, fileStatus = 2
             oldRawFile = gitLabApi.getRawCode(repoId, encodedOldPath, base_sha, accessToken);
             newRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, head_sha, accessToken);
+            oldRawFile = gitLabApi.getRawCode(repoId, encodedOldPath, base_sha, accessToken);
+            newRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, head_sha, accessToken);
 
         } else if (status == 3) {
             // 파일이 삭제 된 경우,  fileStatus = 3
@@ -123,6 +125,20 @@ public class AiReviewServiceImpl implements AiReviewService {
         return result;
     }
 
+    /**
+     * AI 리뷰 생성 메인 메서드
+     *
+     * 처리 과정:
+     * 1. 입력값 유효성 검사
+     * 2. PR 설명 가져오기 및 처리
+     * 3. 파일들을 그룹으로 나누어 처리
+     * 4. 각 그룹별 코드 리뷰 생성
+     * 5. 최종 리뷰 결과 저장
+     *
+     * @param statusEntity AI 리뷰 상태 정보
+     * @param diffs 변경된 파일들의 정보
+     * @return 리뷰 생성 성공 여부
+     */
     @Override
     public boolean createAiReview(AiReviewStatusEntity statusEntity, List<Map<String, Object>> diffs) {
         System.out.println("\n[createAiReview] AI 리뷰 생성 시작 ===========================");
@@ -132,14 +148,14 @@ public class AiReviewServiceImpl implements AiReviewService {
                 System.out.println("[createAiReview] 오류: statusEntity가 null입니다");
                 return false;
             }
-            if (diffs == null) {
-                System.out.println("[createAiReview] 오류: diffs 가 null입니다");
+            if (diffs == null || diffs.isEmpty()) {
+                System.out.println("[createAiReview] 오류: diffs가 비어있습니다");
+                // 변경된 파일이 없는 경우 status=2로 설정
+                statusEntity.setStatus(2);
                 return false;
             }
-            if (diffs.isEmpty()) {
-                System.out.println("[createAiReview] 오류: diffs 가 비어있습니다");
-                return false;
-            }
+            // PR 설정 가져오기
+            String prDescription = getPrDescription(statusEntity);
 
             System.out.println("[createAiReview] 입력 파라미터:");
             System.out.println("- PR ID: " + statusEntity.getPrId());
@@ -204,6 +220,16 @@ public class AiReviewServiceImpl implements AiReviewService {
                             headSha = changedCode.get("headSha");
                         }
 
+                        // 파일별 코드 내용 합치기
+//                    combinedBeforeCode.append("\n=== ").append(fileDto.getFileName()).append(" (변경 전) ===\n")
+//                            .append(changedCode.get("beforeCode") != null ? changedCode.get("beforeCode") : "")
+//                            .append("\n");
+//
+//                    combinedAfterCode.append("\n=== ").append(fileDto.getFileName()).append(" (변경 후) ===\n")
+//                            .append(changedCode.get("afterCode") != null ? changedCode.get("afterCode") : "")
+//                            .append("\n");
+
+
                         // 변경된 코드 수집
                         beforeCode.append("\n=== ").append(fileDto.getFileName()).append(" ===\n")
                                 .append(changedCode.get("beforeCode") != null ? changedCode.get("beforeCode") : "")
@@ -219,7 +245,8 @@ public class AiReviewServiceImpl implements AiReviewService {
                 String groupReview = aiReviewApi.generateReview(
                         beforeCode.toString(),
                         afterCode.toString(),
-                        previousReviews
+                        previousReviews,
+                        prDescription
                 );
 
                 // 리뷰 결과가 유효한 경우에만 추가
@@ -244,13 +271,18 @@ public class AiReviewServiceImpl implements AiReviewService {
                 System.out.println("serviceImpl reviewEntity" + reviewEntity);
                 aiReviewEntityRepository.save(reviewEntity);
 
-                // 리뷰 후 상태 업데이트
+                // 리뷰 성공 후 status=1로 설정
                 statusEntity.setStatus(1);
+                statusEntity.setSendAt(LocalDateTime.now());
                 aiReviewRepository.save(statusEntity);
                 return true;
             }
+            else {
+                // 리뷰 생성 실패 시 status=3으로 설정
+                statusEntity.setStatus(3);
+                return false;
+            }
 
-            return false;
 
         } catch (Exception e) {
             System.out.println("[createAiReview] 심각한 오류 발생 ===========================");
@@ -258,5 +290,31 @@ public class AiReviewServiceImpl implements AiReviewService {
             System.out.println("오류 위치: " + e.getCause());
             return false;
         }
+    }
+
+    /**
+     * PR의 설명을 가져오는 메서드
+     * 1. PR을 찾고
+     * 2. description이 있는지 확인하고
+     * 3. 결과를 반환
+     */
+    public String getPrDescription(AiReviewStatusEntity statusEntity) {
+        // 1. PR 찾기
+        Optional<MergeRequestEntity> optionalMr = mergeRequestRepository.findById_RepoIdAndId_PrId(
+                String.valueOf(statusEntity.getRepoId()), statusEntity.getPrId()
+        );
+
+        // 2. PR이 존재하면 description 가져오기
+        if(optionalMr.isPresent()) {
+            MergeRequestEntity existingMr = optionalMr.get();
+            String description = existingMr.getDescription();
+
+            // 3. description이 비어있지 않은지 확인
+            if(description != null && !description.trim().isEmpty()) {
+                return description;
+            }
+        }
+        return "PR 설명이 없습니다.";
+
     }
 }

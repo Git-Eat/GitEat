@@ -67,34 +67,6 @@ public class AiReviewDaemon {
 
                     System.out.println("[AiReviewDaemon] 변경된 파일 수: " + diffs.size());
 
-
-                    // 각 파일의 변경사항을 수집
-                    // 비즈니스 로직 서비스에 위임
-//                    for (Map<String, Object> diff : diffs) {
-//                        String oldPath = (String) diff.get("old_path");
-//                        String newPath = (String) diff.get("new_path");
-//
-//                        // 파일 상태 확인
-//                        int fileStatus;
-//                        if (Boolean.TRUE.equals(diff.get("new_file"))) {
-//                            fileStatus = 1;  // 추가
-//                        } else if (Boolean.TRUE.equals(diff.get("deleted_file"))) {
-//                            fileStatus = 3;  // 삭제
-//                        } else if (Boolean.TRUE.equals(diff.get("renamed_file"))) {
-//                            fileStatus = 4;  // 이름 변경
-//                        } else {
-//                            fileStatus = 2;  // 수정
-//                        }
-//
-//                        FileDto fileDto = FileDto.builder()
-//                                .repoId(status.getRepoId())
-//                                .prId(status.getPrId())
-//                                .oldPath(oldPath)
-//                                .newPath(newPath)
-//                                .fileName(newPath.substring(newPath.lastIndexOf('/') + 1))
-//                                .fileStatus(fileStatus)
-//                                .build();
-
                         boolean isSuccess = aiReviewService.createAiReview(status, diffs);
                         System.out.println("[AiReviewDaemon] 리뷰 생성 " +
                                 (isSuccess ? "성공" : "실패") + ": " + status.getPrId());
