@@ -21,10 +21,7 @@ export function DiffViewer({
   comments,
   file,
 }: DiffViewerProps) {
-  console.log("oldCode: " + oldCode);
-  console.log("newCode: " + newCode);
   const getDiffFile = () => {
-    console.log("code start");
     const instance = generateDiffFile(
       "oldFileName",
       oldCode === null ? "" : oldCode,
@@ -33,7 +30,6 @@ export function DiffViewer({
       getFileType(file.oldPath),
       getFileType(file.newPath)
     );
-    console.log(instance.getBundle());
     instance.init();
     instance.buildSplitDiffLines();
     instance.buildUnifiedDiffLines();
@@ -53,10 +49,6 @@ export function DiffViewer({
       const newline =
         diffFile.getBundle().splitLeftLines[idx].diff?.newLineNumber;
       const linetype = diffFile.getBundle().splitLeftLines[idx].diff?.type;
-      console.log(
-        "type:" + diffFile.getBundle().splitLeftLines[idx].diff?.type
-      );
-      console.log(oldline, newline, linetype);
       return { oldline, newline, linetype };
     } else {
       // Code 선택한 경우
@@ -67,9 +59,6 @@ export function DiffViewer({
       const oldline =
         diffFile.getBundle().splitRightLines[idx].diff?.oldLineNumber;
       const linetype = diffFile.getBundle().splitRightLines[idx].diff?.type;
-      console.log(
-        "type:" + diffFile.getBundle().splitLeftLines[idx].diff?.type
-      );
       return { oldline, newline, linetype };
     }
   };
@@ -83,33 +72,35 @@ export function DiffViewer({
       newFile: {},
     };
     comments.forEach((comment) => {
-      if (
-        comment.position?.newLine !== undefined &&
-        comment.position.newLine !== null
-      ) {
-        const currentComments =
-          extendData.newFile[comment.position.newLine]?.data ?? [];
-        extendData.newFile = {
-          ...extendData.newFile,
-          [comment.position.newLine]: {
-            data: [...currentComments, comment],
-          },
-        };
-      } else if (
-        comment.position?.oldLine !== undefined &&
-        comment.position.oldLine !== null
-      ) {
-        const currentComments =
-          extendData.oldFile[comment.position.oldLine]?.data ?? [];
-        extendData.oldFile = {
-          ...extendData.oldFile,
-          [comment.position.oldLine]: {
-            data: [...currentComments, comment],
-          },
-        };
+      if (comment.fileId === file.fileId) {
+        if (
+          comment.position?.newLine !== undefined &&
+          comment.position.newLine !== null &&
+          comment.position.oldLine === 0
+        ) {
+          const currentComments =
+            extendData.newFile[comment.position.newLine]?.data ?? [];
+          extendData.newFile = {
+            ...extendData.newFile,
+            [comment.position.newLine]: {
+              data: [...currentComments, comment],
+            },
+          };
+        } else if (
+          comment.position?.oldLine !== undefined &&
+          comment.position.oldLine !== null
+        ) {
+          const currentComments =
+            extendData.oldFile[comment.position.oldLine]?.data ?? [];
+          extendData.oldFile = {
+            ...extendData.oldFile,
+            [comment.position.oldLine]: {
+              data: [...currentComments, comment],
+            },
+          };
+        }
       }
     });
-    console.log(extendData);
     return extendData;
   };
 
@@ -122,9 +113,8 @@ export function DiffViewer({
         extendData={parseComments(comments)}
         diffViewAddWidget
         renderExtendLine={({ data }) => {
-          console.log(data);
           return (
-            <div className="border p-2" onClick={() => console.log(data)}>
+            <div className="border p-2">
               {data.map((comment: Comment) => (
                 <CommentThread key={comment.commentId} comment={comment} />
               ))}
@@ -132,7 +122,6 @@ export function DiffViewer({
           );
         }}
         renderWidgetLine={({ diffFile, side, lineNumber, onClose }) => {
-          console.log("side:", side, lineNumber);
           // 0 그대로 , 1 추가, 2 제거
           const { oldline, newline, linetype } = getLinesAndType(
             side,

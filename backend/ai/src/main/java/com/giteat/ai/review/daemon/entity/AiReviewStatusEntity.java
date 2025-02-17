@@ -22,8 +22,8 @@ public class AiReviewStatusEntity {
     private LocalDateTime sendAt;
     private int status;
 
-    @Column(name = "access_token")
-    private String accessToken;
+//    @Column(name = "access_token")
+//    private String accessToken;
 
     @OneToOne
     @JoinColumn(name = "ar_status_id")

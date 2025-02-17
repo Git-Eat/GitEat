@@ -15,6 +15,7 @@ public class CommentDto {
     private int prId;
     private int repoId;
     private int userId;
+    private String fileId;
     private String userName;
     private String avatarUrl;
     private String disId;

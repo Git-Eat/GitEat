@@ -41,32 +41,23 @@ public class CustomOAuthService {
      * 실패 시 null 반환
      */
     public OAuthTokenDto gitlabLogin(String code, HttpServletResponse response) {
-        // CSRF 공격 방지를 위한 상태 토큰 생성
-        // String state = UUID.randomUUID().toString();
         try {
             Map<String, String> token = oauthApi.getAccessToken(code);
-            System.out.println("받아온 토큰 정보: " + token);
 
             // 토큰이 비어있는지 확인
             if (token.isEmpty()) {
-                System.out.println("토큰이 비어있습니다");
                 return null;
             }
 
             OAuthTokenDto dto = new OAuthTokenDto();
             dto.setAccessToken(token.get("access_token"));
-            System.out.println("access_token 설정: " + dto.getAccessToken());
-
             dto.setTokenType(token.get("token_type"));
             dto.setRefreshToken(token.get("refresh_token"));
             dto.setExpiresIn(Integer.valueOf(token.get("expires_in")));
             dto.setScope(token.get("scope"));
-//            dto.setCreatedAt(LocalDateTime.now());
 
             Map<String, String> userInfo = oauthApi.getUserInfo(dto.getAccessToken());
-            System.out.println("받아온 사용자 정보: " + userInfo);
             if (userInfo.isEmpty()) {
-                System.out.println("사용자 정보가 비어있습니다");
                 return null;
             }
 
@@ -75,8 +66,6 @@ public class CustomOAuthService {
             dto.setEmail(userInfo.get("email"));
             dto.setName(userInfo.get("name"));
             dto.setAvatarUrl(userInfo.get("avatar_url"));
-
-            System.out.println("service: " + dto);
             return dto;
         } catch (Exception e) {
             e.printStackTrace();

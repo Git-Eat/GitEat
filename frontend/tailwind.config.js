@@ -10,6 +10,9 @@ export default {
           green: "#00CC66",
         },
       },
+      fontFamily: {
+        pretendard: ['"Pretendard-Regular"', "sans-serif"],
+      },
     },
   },
   plugins: [require("@tailwindcss/typography")],

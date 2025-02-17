@@ -8,18 +8,21 @@ import { useGetMe } from "../../api/queries/useGetMe";
 export function AuthLayout() {
   const { isLogin } = useLoginStore();
   const { setUser } = useLoginStore();
-  const { data, isLoading } = useGetMe();
+
+  const { data, isLoading, refetch } = useGetMe();
+  useEffect(() => {
+    refetch();
+  }, []);
   useEffect(() => {
     if (!isLoading && data) {
       setUser(data);
     }
   }, [data, isLoading]);
-  if (isLoading) return <>loading</>;
   return isLogin ? (
     <div>
       <Header />
       <div className="flex justify-end">
-        <main className="w-[calc(100vw-130px)]">
+        <main className="w-[calc(100vw-250px)]">
           <ErrorBoundary fallbackComponent={<>error!!</>}>
             <Suspense fallback={<>loading...</>}>
               <Outlet />

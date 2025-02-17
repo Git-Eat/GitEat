@@ -3,6 +3,7 @@ package com.giteat.ai;
 import com.giteat.ai.dto.FileDto;
 import com.giteat.ai.review.daemon.entity.MergeRequestEntity;
 import com.giteat.ai.review.daemon.repository.MergeRequestRepository;
+import com.giteat.ai.review.daemon.service.TokenValidationService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -20,10 +21,21 @@ import java.util.*;
 @Component
 public class GitLabApi {
     private final RestTemplate restTemplate;
+    private final TokenValidationService tokenValidationService;
     private final String gitlabApiUrl = "https://lab.ssafy.com/api/v4";
 
-    public GitLabApi(RestTemplate restTemplate) {
+    public GitLabApi(RestTemplate restTemplate, TokenValidationService tokenValidationService) {
         this.restTemplate = restTemplate;
+        this.tokenValidationService = tokenValidationService;
+    }
+
+    // 토큰 유효성 검증을 위한 헬퍼 메서드
+    private String getValidToken(int repoId) {
+        List<String> validTokens = tokenValidationService.findValidAccessTokens(repoId);
+        if (validTokens.isEmpty()) {
+            throw new RuntimeException("No valid access token found for repository: " + repoId);
+        }
+        return validTokens.get(0); // 첫 번째 유효한 토큰 사용
     }
 
     /**
@@ -47,14 +59,12 @@ public class GitLabApi {
             if(!filePath.contains("%2F")) {
                 encodedFilePath = URLEncoder.encode(filePath, StandardCharsets.UTF_8.toString())
                         .replace("+", "%20");  // 공백 처리
-//                        .replace("/", "%2F"); // GitLab API는 경로 구분자는 인코딩하지 않음
             }
 
             System.out.println("Encoded File Path: " + encodedFilePath);
 
             // 2. API URL 구성
             URI url = new URI(gitlabApiUrl + "/projects/" + projectId + "/repository/files/" + encodedFilePath + "/raw?ref=" + ref);
-//            String url = String.format("%s/projects/%s/files/%s/raw?ref=%s", gitlabApiUrl, projectId, encodedFilePath, ref);
 
             System.out.println("요청 URL: " + url);
 
@@ -66,7 +76,7 @@ public class GitLabApi {
 
             // 4. API 요청
             HttpEntity<String> entity = new HttpEntity<>(headers);
-            System.out.println("gitlabApi 4. API 요청" + entity);
+            System.out.println("gitlabApi 4. API 요청: " + entity);
 
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
             System.out.println("gitlabApi 4-1. API 요청 response 성공");

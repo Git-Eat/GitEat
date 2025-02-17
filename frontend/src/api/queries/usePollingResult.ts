@@ -4,7 +4,7 @@ import { getLighthouseResult } from "../statistics";
 export const usePollingResult = (repoId: string, pollingInterval: number) => {
   const [isPolling, setIsPolling] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
-  const [lastCreateAt, setLastCreateAt] = useState<string | null>(null);
+  const lastCreateAtRef = useRef<string | null>(null);
   const pollingIntervalRef = useRef<number | null>(null);
 
   async function startPolling() {
@@ -22,31 +22,31 @@ export const usePollingResult = (repoId: string, pollingInterval: number) => {
   const stopPolling = () => {
     if (pollingIntervalRef.current) {
       clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
     }
     setIsPolling(false);
   };
 
   async function checkIfDataIsUpdated(repoId: string): Promise<boolean> {
     const data = await getLighthouseResult(parseInt(repoId));
-    const latestCreateAt = data.create_at;
+    const latestCreateAt = data.createAt;
 
-    if (lastCreateAt === null) {
+    if (lastCreateAtRef.current === null) {
+      lastCreateAtRef.current = latestCreateAt;
       return false;
     }
 
-    if (lastCreateAt && latestCreateAt !== lastCreateAt) {
-      setLastCreateAt(latestCreateAt);
+    if (lastCreateAtRef.current && latestCreateAt !== lastCreateAtRef.current) {
+      lastCreateAtRef.current = latestCreateAt;
+      setIsUpdated(true);
+      stopPolling();
       return true;
     }
     return false;
   }
 
   useEffect(() => {
-    return () => {
-      if (pollingIntervalRef.current) {
-        clearInterval(pollingIntervalRef.current);
-      }
-    };
+    return () => stopPolling();
   }, []);
 
   return {

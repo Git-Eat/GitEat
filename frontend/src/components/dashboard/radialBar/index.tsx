@@ -29,6 +29,9 @@ export function RadialBar({ series, labels }: RadialBarProps) {
         hollow: {
           size: "55%",
         },
+        track: {
+          background: "#F5F5F4",
+        },
         dataLabels: {
           name: {
             offsetY: -12,
@@ -41,6 +44,9 @@ export function RadialBar({ series, labels }: RadialBarProps) {
             fontSize: "24px",
             fontWeight: "bold",
             show: true,
+            formatter: function (val) {
+              return val.toString();
+            },
           },
         },
       },

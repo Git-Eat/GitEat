@@ -22,19 +22,18 @@ export const CodeBlock: React.FC<PartialDiffViewerProps> = ({
 }) => {
   const { baseRepoId, prId } = useParams();
   const { files } = usePRStore();
-  console.log(newPath);
   const { mutate, data: code } = useGetRawFile(
     Number(baseRepoId),
-    Number(prId),
-    files.filter(
-      (file) => file.newPath === newPath || file.oldPath === oldPath
-    )[0]
+    Number(prId)
   );
   useEffect(() => {
-    mutate();
+    mutate(
+      files.filter(
+        (file) => file.newPath === newPath || file.oldPath === oldPath
+      )[0]
+    );
   }, []);
   const getDiffFile = () => {
-    console.log(code);
     if (code) {
       const instance = generateDiffFile(
         "oldFileName",
@@ -54,8 +53,8 @@ export const CodeBlock: React.FC<PartialDiffViewerProps> = ({
   const diff = useMemo(() => getDiffFile(), [code?.newCode, code?.oldCode]);
 
   const dynamicStyle = `
-    .diff-line:nth-child(-n+${minLine > 1 ? minLine - 1 : 1}),
-    .diff-line:nth-child(n+${maxLine + 1}) {
+    .diff-line:nth-child(-n+${minLine > 1 ? minLine - 1 : 0}),
+    .diff-line:nth-child(n+${maxLine < 1 ? maxLine + 1 : ""}) {
       display: none !important;
     }
   `;

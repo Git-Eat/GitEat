@@ -32,9 +32,7 @@ public class MergeRequestController {
     @GetMapping("/{repoId}")
     @Operation(summary = "PR 목록 확인", description = "외부 API를 호출하여 PR 목록을 가져옵니다.")
     public ResponseEntity<?> getPrList(@PathVariable int repoId) {
-        log.info("call PrList Method");
         ResponseEntity<?> response = apiUtil.getApi("/pr/" + repoId);
-
         return ResponseEntity.ok(response.getBody());
     }
 
@@ -42,7 +40,6 @@ public class MergeRequestController {
     @Operation(summary = "PR 상세 정보 확인", description = "외부 API를 호출하여 특정 PR 정보를 가져옵니다.")
     public ResponseEntity<?> getPrById(@PathVariable int repoId, @PathVariable int prId) {
         ResponseEntity<?> request = apiUtil.getApi("/pr/" + repoId + "/" + prId);
-
         return ResponseEntity.ok(request.getBody());
     }
 
@@ -120,13 +117,7 @@ public class MergeRequestController {
             @PathVariable String prId,
             @RequestBody CustomCommentDto customCommentDto) {
         ResponseEntity<?> request = apiUtil.postApi("/pr/" + repoId + "/" + prId + "/file/comment", customCommentDto);
-        System.out.println("CONTROLLER SUCCESS TO GET DATA");
         return ResponseEntity.ok(request.getBody());
-
-//        Object json = typeUtil.convertJsonToObject(request.getBody());
-//        return ResponseEntity.ok()
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .body(json); // Integer 반환
     }
 
 
@@ -214,17 +205,6 @@ public class MergeRequestController {
         return ResponseEntity.ok(request.getBody());
     }
 
-//    @GetMapping("/{repoId}/{prId}/file/{commitId}")
-//    @Operation(summary = "Commit별 변경된 파일 목록 조회", description = "외부 API를 호출하여 특정 Commit 내 변경된 파일 목록을 가져옵니다.")
-//    public ResponseEntity<?> showFileListByCommit(@PathVariable int repoId,
-//                                                  @PathVariable int prId,
-//                                                  @PathVariable String commitId) {
-//        ResponseEntity<String> request = (ResponseEntity<String>) apiUtil.getApi("/pr/" + repoId + "/" + prId + "/file/" + commitId);
-//        Object json = typeUtil.convertJsonToObject(request.getBody());
-//        return ResponseEntity.ok()
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .body(json);
-//    }
 
     @PostMapping("/{repoId}/{prId}/file/raw")
     @Operation(summary = "변경된 코드 확인", description = "외부 API를 호출하여 변경된 코드 내용을 가져옵니다.")

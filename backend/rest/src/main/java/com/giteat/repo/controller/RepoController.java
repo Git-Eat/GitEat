@@ -58,7 +58,6 @@ public class RepoController {
         RepositoryEntity repository = repoService.saveRepositoryData(accessToken, repositoryId);
         repoService.createWebHook(accessToken , repositoryId);
         System.out.println("REPOSITORY : " + repository);
-        System.out.println("@@@@@@@@@@@@@@@@@@" + repository);
         return ResponseEntity.ok().body(repository);
     }
 }

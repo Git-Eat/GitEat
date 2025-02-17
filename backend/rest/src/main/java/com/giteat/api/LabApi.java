@@ -47,7 +47,6 @@ public class LabApi {
      */
     public Map<String, Object> insertFileComment(String projectId, String prId, Map<String, Object> requestBody, String accessToken){
         String url = gitlabApiUrl + "/projects/" + projectId + "/merge_requests/" + prId + "/discussions";
-        System.out.println(requestBody);
         return callPostApiObject(url, accessToken, requestBody);
     }
 
@@ -213,6 +212,11 @@ public class LabApi {
         return this.callGetApiMap(url , accessToken);
     }
 
+    public List<Map<String , Object>> getWebHooks(String repoId ,String accessToken){
+        String url = gitlabApiUrl + "/projects" + "/" + repoId + "/hooks";
+        return this.callGetApiList(url ,accessToken);
+    }
+
     // 변경된 Raw 코드 가져오는 함수
     public String getRawCode(String projectId, String filePath, String ref, String accessToken)  {
         try {
@@ -263,7 +267,6 @@ public class LabApi {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
-        System.out.println("callGEtApi 호출 완료!!!!");
         return response.getBody();
     }
 
@@ -283,7 +286,6 @@ public class LabApi {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, entity, List.class);
-        System.out.println("callGetAPI 호출완료!!!");
         return response.getBody();
     }
 
@@ -378,7 +380,7 @@ public class LabApi {
         body.put("name" , WebHookConstants.MERGE_REQUEST_NAME);
         body.put("description" , WebHookConstants.MERGE_REQUEST_DESCRIPTION);
         body.put("enable_ssl_verification" , "false");
-        body.put("merge_requests_events" , "false");
+        body.put("merge_requests_events" , "true");
         body.put("custom_webhook_template" , WebHookConstants.MERGE_REQUEST_CUSTOM_TEMPLATE);
         body.put("push_events" , "false");
 

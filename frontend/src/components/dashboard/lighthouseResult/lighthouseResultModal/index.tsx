@@ -18,6 +18,12 @@ import yarnLogo from "../../../../assets/images/yarn_logo.svg";
 import npmLogo from "../../../../assets/images/npm_logo.svg";
 import { usePollingResult } from "../../../../api/queries/usePollingResult";
 
+interface LighthouseResultModalProps {
+  isModalOpen: boolean;
+  closeModal: () => void;
+  refetch: () => void;
+}
+
 const style = {
   position: "absolute" as const,
   top: "50%",
@@ -37,10 +43,8 @@ const style = {
 function LighthouseResultModal({
   isModalOpen,
   closeModal,
-}: {
-  isModalOpen: boolean;
-  closeModal: () => void;
-}) {
+  refetch,
+}: LighthouseResultModalProps) {
   const { repoId } = useParams<{ repoId: string }>();
   const gitUrlRef = useRef<HTMLInputElement>(null);
   const frontendPathRef = useRef<HTMLInputElement>(null);
@@ -53,7 +57,7 @@ function LighthouseResultModal({
   } = useAddLighthouseResult();
   const { isUpdated, startPolling, stopPolling } = usePollingResult(
     repoId || "",
-    5000
+    20000
   );
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -82,6 +86,15 @@ function LighthouseResultModal({
   };
 
   useEffect(() => {
+    if (isUpdated) {
+      console.log("test 정보 업데이트 완료");
+      setSnackbarMessage("성능 측정 완료");
+      setSnackbarSeverity("info");
+      setSnackbarOpen(true);
+      stopPolling();
+      refetch();
+      closeModal();
+    }
     if (isLoading) {
       setSnackbarMessage("저장 중...");
       setSnackbarSeverity("info");
@@ -91,13 +104,8 @@ function LighthouseResultModal({
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
       stopPolling();
-    } else if (isUpdated) {
-      setSnackbarMessage("성능 측정 완료");
-      setSnackbarSeverity("info");
-      setSnackbarOpen(true);
-      stopPolling();
     }
-  }, [isLoading, isError, isUpdated]);
+  }, [isUpdated, isLoading, isError]);
 
   const handleSnackbarClose = (
     _event?: React.SyntheticEvent | Event,

@@ -91,8 +91,11 @@ public class PrController {
                                                @PathVariable String repoId, @PathVariable String prId,
                                                @RequestBody CustomCommentDto customCommentDto) {
         String accessToken = header.split(" ")[1];
-        String result = prService.insertFileComment(repoId, prId, customCommentDto, accessToken);
-        return ResponseEntity.ok("success");
+        CommentDto response = prService.insertFileComment(repoId, prId, customCommentDto, accessToken);
+        if (response!= null) {
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{repoId}/{prId}/comment")
@@ -190,7 +193,7 @@ public class PrController {
                                                @PathVariable String repoId, @PathVariable String prId,
                                                @PathVariable String reCommentId) {
         String accessToken = header.split(" ")[1];
-        int result = prService.deleteComment(repoId, prId, reCommentId, accessToken);
+        int result = prService.deleteReply(repoId, prId, reCommentId, accessToken);
         if (result != 0) {
             return ResponseEntity.ok(200);
         }

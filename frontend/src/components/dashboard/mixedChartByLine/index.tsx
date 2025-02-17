@@ -80,15 +80,15 @@ export function MixedChartByLine({ data, maxValue }: ChartProps) {
     series: [
       {
         name: "주간 커밋",
-        data: weeklyCommit,
+        data: weeklyCommit.reverse(),
       },
       {
         name: "주간 PR",
-        data: weeklyMR,
+        data: weeklyMR.reverse(),
       },
       {
         name: "주간 코멘트",
-        data: weeklyComment,
+        data: weeklyComment.reverse(),
       },
     ],
     options: {
@@ -110,7 +110,7 @@ export function MixedChartByLine({ data, maxValue }: ChartProps) {
         size: 4,
       },
       xaxis: {
-        categories: formattedWeekCategories,
+        categories: formattedWeekCategories.reverse(),
       },
       yaxis: {
         max: maxValue ? maxValue : undefined,
@@ -127,7 +127,7 @@ export function MixedChartByLine({ data, maxValue }: ChartProps) {
   });
 
   return (
-    <div className="w-full justify-between px-10 py-5 bg-white rounded-lg h-full items-center">
+    <div className="w-full justify-between px-10 py-5 bg-white rounded-lg h-full items-center border ">
       <h2 className="text-xl font-bold mb-5">{data.name}의 주간 기록</h2>
       <ReactApexChart
         options={chartData.options}

@@ -65,9 +65,9 @@ export function CommentThread({ comment }: CommentThreadProps) {
     }));
   }
 
-  function handleAddReply(content: string, discussionId: string) {
+  function handleAddReply(content: string, disId: string) {
     if (!content.trim()) return;
-    createReply({ content, discussionId });
+    createReply({ content, disId });
   }
 
   function handleEditComment(comment: Comment) {
@@ -92,7 +92,10 @@ export function CommentThread({ comment }: CommentThreadProps) {
 
   return (
     <section>
-      <li key={comment.commentId} className="mb-8 bg-white my-5 p-5 rounded-xl">
+      <div
+        key={comment.commentId}
+        className="mb-8 bg-white my-5 p-5 rounded-xl font-pretendard"
+      >
         <header>
           <section className="flex justify-between items-center">
             <div className="flex items-center gap-2">
@@ -128,10 +131,10 @@ export function CommentThread({ comment }: CommentThreadProps) {
                       }
                     }}
                   >
-                    {isEditing ? "수정 취소" : "댓글 수정"}
+                    {isEditing ? "취소" : "수정"}
                   </button>
                   <button onClick={() => deleteComment(comment.commentId)}>
-                    댓글 삭제
+                    삭제
                   </button>
                 </>
               )}
@@ -141,7 +144,7 @@ export function CommentThread({ comment }: CommentThreadProps) {
         </header>
         <article>
           <hr className="my-4" />
-          <div className="px-3 prose prose-lg max-w-none">
+          <div className="px-3 max-w-none">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {comment.content}
             </ReactMarkdown>
@@ -165,6 +168,8 @@ export function CommentThread({ comment }: CommentThreadProps) {
               {comment.reCommentList?.map((reply) => (
                 <Replies
                   key={reply.reCommentId}
+                  repoId={Number(baseRepoId)}
+                  prId={Number(prId)}
                   {...reply}
                   replyCreateAt={displayDate(reply.createAt)}
                 />
@@ -186,7 +191,7 @@ export function CommentThread({ comment }: CommentThreadProps) {
             repoId={Number(baseRepoId)}
           />
         )}
-      </li>
+      </div>
     </section>
   );
 }

@@ -16,10 +16,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor // 모든 필드를 파라미터로 받는 생성자 자동 생성
 public class OAuthEntity {
 
-//    @Id
-//    @Column(name = "Id")
-//    private Integer Id;
-
     @Version
     private Integer version;
 

@@ -6,19 +6,13 @@ export const useCreateReply = (repoId: number, prId: number) => {
   const { comments, setComments } = usePRStore();
 
   return useMutation({
-    mutationFn: ({
-      content,
-      discussionId,
-    }: {
-      content: string;
-      discussionId: string;
-    }) => {
-      return createReply(repoId, prId, discussionId, content);
+    mutationFn: ({ content, disId }: { content: string; disId: string }) => {
+      return createReply(repoId, prId, disId, content);
     },
     onSuccess: (newReply) => {
       setComments(
         comments.map((comment) =>
-          comment.commentId === newReply.commentId
+          comment.disId === newReply.discussionId
             ? {
                 ...comment,
                 reCommentList: [...comment.reCommentList, newReply],
