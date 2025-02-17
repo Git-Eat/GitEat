@@ -30,24 +30,25 @@ function PullRequests() {
   }, [data]);
   return (
     <>
+      <h1 className="text-xl font-semibold">Merge Request 목록</h1>
       <div className=" bg-white rounded-xl p-7 flex gap-2 hover:bg-gray-200 cursor-pointer">
         <div className="flex items-center gap-2">
           <img src={BRANCH_STATE_IMAGE[0]} alt="open" />
-          <div className="flex gap-1">
+          <div className="flex gap-1 font-semibold">
             <span>{totalOpen}</span>
             <span>Open</span>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <img src={BRANCH_STATE_IMAGE[1]} alt="merge" />
-          <div className="flex gap-1">
+          <div className="flex gap-1 font-semibold">
             <span>{totalMerged}</span>
             <span>Merge</span>
           </div>
         </div>
         <div className="flex items-center gap-1">
           <img src={BRANCH_STATE_IMAGE[2]} alt="close" />
-          <div className="flex gap-1">
+          <div className="flex gap-1 font-semibold">
             <span>{totalClosed}</span>
             <span>Close</span>
           </div>
@@ -69,20 +70,21 @@ function PullRequests() {
 }
 
 export function PullRequestList() {
+  const { owner, title } = useParams();
   return (
     <>
       <header className="w-full p-4">
         <div className="flex items-center gap-2 align-center">
           <img src={book} alt="pull request page" className="w-[18px]" />
           <h1 className="text-[18px] font-semibold flex gap-2 text-center pb-1">
-            <span>TakeGitEasy</span>
+            <span>{owner}</span>
             <span>/</span>
-            <span>Git-Eat</span>
+            <span>{title}</span>
           </h1>
         </div>
         <div></div>
       </header>
-      <main className=" w-[98%] m-auto px-8 py-4 bg-gray-100 rounded-2xl min-h-[calc(100vh-100px)]">
+      <main className=" w-[98%] m-auto px-8 py-4 bg-stone-50 rounded-2xl min-h-[calc(100vh-100px)]">
         <div className="flex flex-col gap-5 m-auto w-[80%] pt-10">
           <ErrorBoundary
             fallbackComponent={

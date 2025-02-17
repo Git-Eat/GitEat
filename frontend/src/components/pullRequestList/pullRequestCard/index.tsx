@@ -21,11 +21,11 @@ export function PullRequestCard({
   isOpened,
   userName,
 }: PullRequestCardProps) {
-  const { repoId } = useParams();
+  const { repoId, owner, title: repoTitle } = useParams();
   return (
-    <Link to={`/repos/${repoId}/${prId}`}>
-      <div className=" bg-white rounded-xl p-7 flex justify-between hover:bg-gray-200 cursor-pointer">
-        <div>
+    <Link to={`/repos/${repoId}/${prId}/${owner}/${repoTitle}/conversation`}>
+      <div className="  bg-white rounded-xl p-7 flex justify-between hover:bg-gray-200 cursor-pointer">
+        <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
             <img src={BRANCH_STATE_IMAGE[isOpened]} alt="" />
             <span className="font-light">
@@ -34,7 +34,9 @@ export function PullRequestCard({
           </div>
           <div className="flex gap-[10px] items-center mb-[10px]">
             <span className="text-xl font-semibold">
-              {userName}/{title}
+              {userName}
+              {"님의 "}
+              {title}
             </span>
           </div>
         </div>

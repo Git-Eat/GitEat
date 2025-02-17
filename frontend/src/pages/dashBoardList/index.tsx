@@ -1,16 +1,56 @@
-import add from "../../assets/images/add.svg";
-import { RepositoryCard } from "../../components/repositoryList/RepositoryCard";
-import { useBooleanState } from "../../hooks/useBooleanState";
-import RepositoryAddModal from "../../components/repositoryList/repositoryAddModal";
 import { useGetRepositories } from "../../api/queries/useGetRepositories";
 import { Suspense } from "react";
 import { ErrorBoundary } from "../../components/common/errorBoundery";
-import { AlarmAddModal } from "../../components/repositoryList/alarmAddModal";
+import { Link } from "react-router-dom";
+
 const ACCESS_GRANT = ["private", "public", "internal"];
-interface RepositoriesProps {
-  openModal: () => void;
+function Private() {
+  return (
+    <span className="px-5 border-yellow-500 border rounded-full text-xs text-yellow-500 flex items-center h-[24px]">
+      private
+    </span>
+  );
 }
-function Repositories({ openModal }: RepositoriesProps) {
+
+function Public() {
+  return (
+    <span className="px-5 border-emerald-500 border rounded-full text-xs text-emerald-500 flex items-center h-[24px]">
+      public
+    </span>
+  );
+}
+interface RepositoryCardProps {
+  title: string;
+  description: string;
+  access: string;
+  ownerName: string;
+  repoId: number;
+}
+
+function RepositoryCard({
+  title,
+  description,
+  access,
+  ownerName,
+  repoId,
+}: RepositoryCardProps) {
+  return (
+    <Link to={`/repos/${repoId}/dashboard/${ownerName}/${title}`}>
+      <div className=" bg-white rounded-xl p-7 flex justify-between hover:bg-gray-200 cursor-pointer items-top">
+        <div>
+          <div className="flex gap-[10px] items-center mb-[10px]">
+            <span className="text-xl font-semibold">
+              {ownerName} / {title}
+            </span>
+            {access === "public" ? <Public /> : <Private />}
+          </div>
+          <span>{description}</span>
+        </div>
+      </div>
+    </Link>
+  );
+}
+function Repositories() {
   const { data } = useGetRepositories();
   return (
     <>
@@ -22,32 +62,24 @@ function Repositories({ openModal }: RepositoriesProps) {
           repoId={repo.repoId}
           access={ACCESS_GRANT[repo.access - 1]}
           description={repo.description}
-          openModal={openModal}
         />
       ))}
     </>
   );
 }
-export function RepositoryList() {
-  const [isModalOpen, openModal, closeModal] = useBooleanState(false);
-  const [isAlarmModallOpen, openAlarmModal, closeAlarmModal] =
-    useBooleanState(false);
+export function DashBoardList() {
   return (
     <>
       <header className="w-full p-4">
         <div className="flex items-center align-center">
           <h1 className="text-[18px] font-semibold flex text-center pb-1">
-            프로젝트 목록
+            프로젝트 현황 목록
           </h1>
         </div>
       </header>
 
       <main className="w-[98%] m-auto px-8 py-4 bg-stone-50 rounded-2xl min-h-[calc(100vh-100px)]">
         <div className="flex flex-col gap-5 m-auto w-[80%] pt-10">
-          <button className="flex gap-2 justify-end" onClick={openModal}>
-            <span className="hover:cursor-pointer">프로젝트 추가하기 </span>
-            <img src={add} alt="add" />
-          </button>
           <ErrorBoundary
             fallbackComponent={
               <p className="text-red-500">
@@ -56,17 +88,11 @@ export function RepositoryList() {
             }
           >
             <Suspense fallback={<p>Loading...</p>}>
-              <Repositories openModal={openAlarmModal} />
+              <Repositories />
             </Suspense>
           </ErrorBoundary>
         </div>
       </main>
-
-      <RepositoryAddModal closeModal={closeModal} isModalOpen={isModalOpen} />
-      <AlarmAddModal
-        closeModal={closeAlarmModal}
-        isModalOpen={isAlarmModallOpen}
-      />
     </>
   );
 }

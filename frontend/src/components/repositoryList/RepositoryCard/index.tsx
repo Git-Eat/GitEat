@@ -56,7 +56,7 @@ export function RepositoryCard({
     onToggle();
   };
   return (
-    <Link to={`/repos/${repoId}`}>
+    <Link to={`/repos/${repoId}/${ownerName}/${title}`}>
       <div className=" bg-white rounded-xl p-7 flex justify-between hover:bg-gray-200 cursor-pointer items-top">
         <div>
           <div className="flex gap-[10px] items-center mb-[10px]">
@@ -129,7 +129,7 @@ export function RepositoryCard({
                       onClick={(e) => {
                         e.stopPropagation();
                         e.preventDefault();
-                        navigation(`${repoId}/dashboard`);
+                        navigation(`${repoId}/dashboard/${ownerName}/${title}`);
                       }}
                     >
                       대시보드
@@ -138,7 +138,9 @@ export function RepositoryCard({
                       onClick={(e) => {
                         e.stopPropagation();
                         e.preventDefault();
-                        navigation(`${repoId}/performance`);
+                        navigation(
+                          `${repoId}/performace/${ownerName}/${title}`
+                        );
                       }}
                     >
                       성능측정
