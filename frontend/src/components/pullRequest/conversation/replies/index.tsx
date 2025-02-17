@@ -118,7 +118,7 @@ export function Replies({
           )}
         </div>
       </header>
-      <section className="prose px-10 py-3">
+      <section className="px-10 py-3">
         <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
       </section>
       {editReplyId === reCommentId && (
