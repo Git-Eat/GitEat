@@ -9,6 +9,7 @@ import com.giteat.webHook.gitLab.dto.CommentTempDto;
 import com.giteat.webHook.gitLab.dto.MergeRequestTempDto;
 import com.giteat.webHook.gitLab.mapper.GitLabWebHookMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class GitLabWebHookServiceImpl implements GitLabWebHookService {
@@ -41,23 +42,12 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         Map<String, Object> userMap = (Map<String, Object>) body.get("user");
         Map<String, Object> mergeRequestMap = (Map<String, Object>) body.get("object_attributes");
 
-        System.out.println("projectMap : " + projectMap);
-        System.out.println(" ");
-        System.out.println("userMap: " + userMap);
-        System.out.println(" ");
-        System.out.println("prMap : " + mergeRequestMap);
-        System.out.println(" ");
-
         int repoId = (int)projectMap.get("id");
         int prId = (int) mergeRequestMap.get("iid");
         int userId = (int) userMap.get("id");
 
-        System.out.println("MR repoId:" + repoId);
-        System.out.println("PR prId : " + prId);
-        System.out.println("USER ID : " + userId);
-        System.out.println("==================================================");
+
         int prTableCheck = gitLabWebHookMapper.prTableCheck(repoId , prId);
-        System.out.println("PR CHECK 값 : " + prTableCheck);
         if(prTableCheck==1){        //데이터 있음
             MergeRequestTempDto mrTempDto = new MergeRequestTempDto();
             mrTempDto.setRepoId((int) projectMap.get("id"));
@@ -92,8 +82,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
             mergeRequestEntity.setUserProfile((String)userMap.get("avatar_url"));
 
             mergeRequestRepository.save(mergeRequestEntity);
-            System.out.println("저장한값 : " + mrId.getPrId() + " : " + mrId.getRepoId());
-
+            log.info("merge Request save : " + mrId.getPrId() + " : " + mrId.getRepoId());
 
             //pr temp 테이블에 데이터 넣기
             MergeRequestTempDto mrTempDto = new MergeRequestTempDto();
@@ -101,7 +90,6 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
             mrTempDto.setPrId(prId);
             mrTempDto.setUserId(userId);
             mrTempDto.setTempStatus(0);
-            System.out.println("tempDto : " + mrTempDto);
             gitLabWebHookMapper.insertMergeRequestTemp(mrTempDto);
         }
     }
@@ -115,7 +103,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
 //    @Transactional
     public void addMergeRequestData(String accessToken) {
         List<MergeRequestTempDto> prTempList = gitLabWebHookMapper.getPrTemp(accessToken);
-        System.out.println("prTempList size : " + prTempList.size());
+        log.info("webHook mr temp list size : " + prTempList.size());
         for (MergeRequestTempDto prTempDto : prTempList) {
             System.out.println("@@@@@@@@@@@@@@@@@@@@@@가져온 데이터 : " + prTempDto);
 
@@ -147,7 +135,6 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
             // ------------ commit 저장하는 함수 -----------------
             List<Map<String, Object>> gitCommitList = gitLabApi.getCommits(projectId, Integer.parseInt(prId), accessToken);
             for (Map<String, Object> commit : gitCommitList) {
-                System.out.println("COMMIT DATA : " + commit);
                 CommitEntity commitEntity = new CommitEntity();
                 CommitId commitId = new CommitId((String) commit.get("id"), Integer.valueOf(projectId), Integer.valueOf(prId));
                 commitEntity.setId(commitId);
@@ -200,8 +187,6 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
                 }
             }
             // pr의 status를 update하는 구문
-            System.out.println("prId : " + prTempDto.getPrId());
-            System.out.println("repoId : " + prTempDto.getRepoId());
             gitLabWebHookMapper.updateMergeRequestStatus(prTempDto);
         }
     }
@@ -225,10 +210,6 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         int userId = Integer.parseInt(String.valueOf(userMap.get("id")));
         int prId = Integer.parseInt(String.valueOf(mergeRequestMap.get("iid")));
 
-        System.out.println("note repoId : " + repoId);
-        System.out.println("note userId : " + userId);
-        System.out.println("note prId : " + prId);
-
         CommentTempDto commentTempDto = new CommentTempDto();
         commentTempDto.setPrId(prId);
         commentTempDto.setRepoId(repoId);
@@ -239,9 +220,8 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
 
     @Override
     public void addNoteData(String accessToken) {
-        System.out.println("addNoteData 실행 !!!!");
         List<CommentTempDto> commentTempList = gitLabWebHookMapper.getCommentList(accessToken);
-        System.out.println("list 사이즈 : " + commentTempList.size());
+        log.info("commentTempList size : " + commentTempList.size());
         for (CommentTempDto comments : commentTempList) {
             int repoId = comments.getRepoId();
             int prId = comments.getPrId();

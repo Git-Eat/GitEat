@@ -3,6 +3,7 @@ package com.giteat.webHook.gitLab.controller;
 
 import com.giteat.webHook.gitLab.service.GitLabWebHookService;
 import com.giteat.webHook.gitLab.service.GitLabWebHookServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/gitlab")
+@Slf4j
 public class GitLabWebHookController {
     private GitLabWebHookService webHookService;
 
@@ -29,8 +31,7 @@ public class GitLabWebHookController {
     @PostMapping("/event")
     public ResponseEntity<?> webHookEvent(@RequestBody Map<String, Object> body) {
         String eventType = (String) body.get("object_kind");
-        System.out.println("body : " + body);
-        System.out.println("eventType : " + eventType);
+        log.info("webHookEvent : " + eventType);
         if (eventType.equals("merge_request")) {
             webHookService.mergeRequestEvent(body);
         } else if (eventType.equals("note")) {
