@@ -229,6 +229,7 @@ public class AiReviewServiceImpl implements AiReviewService {
 //                            .append(changedCode.get("afterCode") != null ? changedCode.get("afterCode") : "")
 //                            .append("\n");
 
+
                         // 변경된 코드 수집
                         beforeCode.append("\n=== ").append(fileDto.getFileName()).append(" ===\n")
                                 .append(changedCode.get("beforeCode") != null ? changedCode.get("beforeCode") : "")
