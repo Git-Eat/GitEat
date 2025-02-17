@@ -46,7 +46,6 @@ function Contributors() {
           <MixedChartByLine data={contributor} maxValue={maxValue} />
         </div>
       ))}
-      ;
     </>
   );
 }

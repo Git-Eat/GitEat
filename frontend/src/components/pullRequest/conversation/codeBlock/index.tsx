@@ -1,75 +1,35 @@
-import React, { useEffect, useMemo } from "react";
-import { DiffView, DiffModeEnum } from "@git-diff-view/react";
-import { generateDiffFile } from "@git-diff-view/file";
+import React, { useMemo } from "react";
 import "@git-diff-view/react/styles/diff-view.css";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { usePRStore } from "../../../../store/pullRequestStore";
-import { useGetRawFile } from "../../../../api/queries/useGetRawFile";
-import { getFileType } from "../../../../utils/getFileType";
 
 interface PartialDiffViewerProps {
   minLine: number; // 예: 4
   maxLine: number; // 예: 10
   newPath: string;
   oldPath: string;
+  fileId: string;
 }
 
 export const CodeBlock: React.FC<PartialDiffViewerProps> = ({
+  fileId,
   minLine,
   maxLine,
-  newPath,
-  oldPath,
 }) => {
-  const { baseRepoId, prId } = useParams();
+  const { baseRepoId, prId, owner, title } = useParams();
   const { files } = usePRStore();
-  const { mutate, data: code } = useGetRawFile(
-    Number(baseRepoId),
-    Number(prId)
-  );
-  useEffect(() => {
-    mutate(
-      files.filter(
-        (file) => file.newPath === newPath || file.oldPath === oldPath
-      )[0]
-    );
-  }, []);
-  const getDiffFile = () => {
-    if (code) {
-      const instance = generateDiffFile(
-        "oldFileName",
-        code.oldCode === null ? "" : code.oldCode,
-        "newFileName",
-        code.newCode === null ? "" : code.newCode,
-        getFileType(code.fileName),
-        getFileType(code.fileName)
-      );
-      instance.init();
-      instance.buildSplitDiffLines();
-      instance.buildUnifiedDiffLines();
-      return instance;
-    }
-  };
-
-  const diff = useMemo(() => getDiffFile(), [code?.newCode, code?.oldCode]);
-
-  const dynamicStyle = `
-    .diff-line:nth-child(-n+${minLine > 1 ? minLine - 1 : 0}),
-    .diff-line:nth-child(n+${maxLine < 1 ? maxLine + 1 : ""}) {
-      display: none !important;
-    }
-  `;
+  const file = useMemo(() => {
+    return files.filter((file) => file.fileId === fileId)[0];
+  }, [fileId]);
+  console.log(file);
 
   return (
-    <div className="w-full border">
-      {/* 동적 CSS 삽입 */}
-      <style>{dynamicStyle}</style>
-      <DiffView
-        diffFile={diff}
-        diffViewTheme="light"
-        diffViewHighlight={true}
-        diffViewMode={DiffModeEnum.SplitGitLab}
-        diffViewWrap={true}
-      />
-    </div>
+    file && (
+      <Link to={`/repos/${baseRepoId}/${prId}/${owner}/${title}/file-changes`}>
+        <div className="w-full hover:bg-gray-100 py-5 rounded-xl px-2 mb-5">
+          {file.fileName} {Math.max(minLine, maxLine)}번째 줄 바로가기
+        </div>
+      </Link>
+    )
   );
 };

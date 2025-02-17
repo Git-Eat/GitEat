@@ -19,7 +19,7 @@ const LINKS = {
 function LinkIcon({ to }: { to: LinkKey }) {
   const location = useLocation();
   const isSelected = useMemo(
-    () => location.pathname === `/pull/${LINKS[to].url}`,
+    () => location.pathname.endsWith(LINKS[to].url),
     [location.pathname, to]
   );
   return (
