@@ -97,18 +97,19 @@ public class AiReviewServiceImpl implements AiReviewService {
         // 파일 상태에 따라 코드 가져오기
         if (status == 1) {
             // 파일이 추가 된 경우, fileStatus = 1
-            newRawFile = gitLabApi.getRawCode(String.valueOf(repoId), encodedNewPath, head_sha, accessToken);
+            newRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, head_sha, accessToken);
         } else if (status == 2) {
             // 파일 내용이 수정된 경우, fileStatus = 2
-            oldRawFile = gitLabApi.getRawCode(String.valueOf(repoId), encodedOldPath, base_sha, accessToken);
-            newRawFile = gitLabApi.getRawCode(String.valueOf(repoId), encodedNewPath, head_sha, accessToken);
+            oldRawFile = gitLabApi.getRawCode(repoId, encodedOldPath, base_sha, accessToken);
+            newRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, head_sha, accessToken);
+
         } else if (status == 3) {
             // 파일이 삭제 된 경우,  fileStatus = 3
-            oldRawFile = gitLabApi.getRawCode(String.valueOf(repoId), encodedNewPath, base_sha, accessToken);
+            oldRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, base_sha, accessToken);
         } else if (!oldPath.equals(newPath)) {
             // 파일 경로가 수정된 경우
-            oldRawFile = gitLabApi.getRawCode(String.valueOf(repoId), encodedOldPath, base_sha, accessToken);
-            newRawFile = gitLabApi.getRawCode(String.valueOf(repoId), encodedNewPath, head_sha, accessToken);
+            oldRawFile = gitLabApi.getRawCode(repoId, encodedOldPath, base_sha, accessToken);
+            newRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, head_sha, accessToken);
         }
 
         Map<String, String> result = new HashMap<>();
@@ -121,7 +122,6 @@ public class AiReviewServiceImpl implements AiReviewService {
         System.out.println("AireviewServiceImpl result" + result);
         return result;
     }
-
 
     @Override
     public boolean createAiReview(AiReviewStatusEntity statusEntity, List<Map<String, Object>> diffs) {
@@ -154,10 +154,6 @@ public class AiReviewServiceImpl implements AiReviewService {
                 fileGroups.add(diffs.subList(i, Math.min(i + groupSize, diffs.size())));
             }
 
-//         모든 파일의 변경사항을 한번에 수집
-//         StringBuilder combinedBeforeCode  = new StringBuilder();
-//         StringBuilder combinedAfterCode = new StringBuilder();
-
             StringBuilder finalReview = new StringBuilder();
             List<String> previousReviews = new ArrayList<>();
             String baseSha = null;
@@ -170,7 +166,6 @@ public class AiReviewServiceImpl implements AiReviewService {
 
                 for (Map<String, Object> diff : group) {
                     // 각 파일의 변경사항을 수집
-//              for (Map<String, Object> diff : diffs) {
                     String oldPath = (String) diff.get("old_path");
                     String newPath = (String) diff.get("new_path");
 
@@ -209,15 +204,6 @@ public class AiReviewServiceImpl implements AiReviewService {
                             headSha = changedCode.get("headSha");
                         }
 
-                        // 파일별 코드 내용 합치기
-//                    combinedBeforeCode.append("\n=== ").append(fileDto.getFileName()).append(" (변경 전) ===\n")
-//                            .append(changedCode.get("beforeCode") != null ? changedCode.get("beforeCode") : "")
-//                            .append("\n");
-//
-//                    combinedAfterCode.append("\n=== ").append(fileDto.getFileName()).append(" (변경 후) ===\n")
-//                            .append(changedCode.get("afterCode") != null ? changedCode.get("afterCode") : "")
-//                            .append("\n");
-
                         // 변경된 코드 수집
                         beforeCode.append("\n=== ").append(fileDto.getFileName()).append(" ===\n")
                                 .append(changedCode.get("beforeCode") != null ? changedCode.get("beforeCode") : "")
@@ -240,21 +226,6 @@ public class AiReviewServiceImpl implements AiReviewService {
                 if (groupReview != null && !groupReview.startsWith("GPT call failed")) {
                     finalReview.append(groupReview).append("\n\n");
                 }
-
-//            if (changedCode == null || changedCode.isEmpty()) {
-//                System.out.println("[createAiReview] 오류: GitLab에서 코드를 가져오지 못했습니다");
-//                return false;
-//            }
-
-                // AI 리뷰 생성
-//            String reviewContent = aiReviewApi.generateReview(
-//                    combinedBeforeCode.toString(),
-//                    combinedAfterCode.toString()
-//            );
-//
-//            System.out.println("변경된 코드 확인:");
-//            System.out.println("beforeCode: " + combinedBeforeCode);
-//            System.out.println("afterCode: " + combinedAfterCode);
             }
 
             // 최종 리뷰가 있는 경우에만 저장
