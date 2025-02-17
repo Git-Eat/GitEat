@@ -39,24 +39,23 @@ public class TokenValidationService {
             if (isValidToken(token)) {
                 System.out.println("유효한 토큰 발견 - 사용자 ID: " + token.getUserId());
                 validTokens.add(token.getAccessToken());
-                // AI Review Status 업데이트 로직
-                AiReviewStatusEntity status = aiReviewStatusRepository.findFirstByRepoIdOrderBySendAtDesc(repoId)
-                        .orElseGet(() -> {
-                            AiReviewStatusEntity newStatus = new AiReviewStatusEntity();
-                            newStatus.setRepoId(repoId);
-                            return newStatus;
-                        });
-
-                status.setStatus(1);
-                status.setSendAt(LocalDateTime.now());
-
-                aiReviewStatusRepository.save(status);
-                System.out.println("AI Review Status DB 업데이트 완료 - Repo ID: " + repoId);
+//                // AI Review Status 업데이트 로직
+//                AiReviewStatusEntity status = aiReviewStatusRepository.findFirstByRepoIdOrderBySendAtDesc(repoId)
+//                        .orElseGet(() -> {
+//                            AiReviewStatusEntity newStatus = new AiReviewStatusEntity();
+//                            newStatus.setRepoId(repoId);
+//                            return newStatus;
+//                        });
+//
+//                status.setStatus(1);
+//                status.setSendAt(LocalDateTime.now());
+//
+//                aiReviewStatusRepository.save(status);
+//                System.out.println("AI Review Status DB 업데이트 완료 - Repo ID: " + repoId);
             } else {
                 System.out.println("유효하지 않은 토큰 - 사용자 ID: " + token.getUserId());
             }
         }
-
         return validTokens;
     }
 
@@ -71,7 +70,7 @@ public class TokenValidationService {
         LocalDateTime timeWithBuffer = LocalDateTime.now().plusMinutes(3);
         boolean isValid = timeWithBuffer.isBefore(expirationTime);
         System.out.println("토큰 만료 예정 시간: " + expirationTime);
-        System.out.println("현재 시간 + 2분: " + timeWithBuffer);
+        System.out.println("현재 시간 + 3분: " + timeWithBuffer);
         System.out.println("토큰 유효 여부: " + isValid);
 
         return isValid;

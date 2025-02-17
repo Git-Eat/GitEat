@@ -1,9 +1,11 @@
 package com.giteat.repo.entity;
 
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDateTime;
 
@@ -11,6 +13,8 @@ import java.time.LocalDateTime;
 @Table(name = "PR")
 @Getter
 @Setter
+@DynamicUpdate
+@Transactional
 public class MergeRequestEntity {
 
     @EmbeddedId

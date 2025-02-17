@@ -92,7 +92,10 @@ export function CommentThread({ comment }: CommentThreadProps) {
 
   return (
     <section>
-      <li key={comment.commentId} className="mb-8 bg-white my-5 p-5 rounded-xl">
+      <div
+        key={comment.commentId}
+        className="mb-8 bg-white my-5 p-5 rounded-xl font-pretendard"
+      >
         <header>
           <section className="flex justify-between items-center">
             <div className="flex items-center gap-2">
@@ -141,7 +144,7 @@ export function CommentThread({ comment }: CommentThreadProps) {
         </header>
         <article>
           <hr className="my-4" />
-          <div className="px-3 prose prose-lg max-w-none">
+          <div className="px-3 max-w-none">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {comment.content}
             </ReactMarkdown>
@@ -188,7 +191,7 @@ export function CommentThread({ comment }: CommentThreadProps) {
             repoId={Number(baseRepoId)}
           />
         )}
-      </li>
+      </div>
     </section>
   );
 }

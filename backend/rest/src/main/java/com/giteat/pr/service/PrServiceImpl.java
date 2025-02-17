@@ -5,7 +5,10 @@ import com.giteat.pr.dto.*;
 import com.giteat.pr.mapper.PrMapper;
 import com.giteat.repo.entity.MergeRequestEntity;
 import com.giteat.repo.repository.MergeRequestRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,12 +27,16 @@ public class PrServiceImpl implements PrService{
     private final MergeRequestRepository mergeRequestRepository;
     private final LabApi gitLabApi;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
 
     @Override
     public List<PrDto> getPrList (int repoId , String accessToken) {
         return prMapper.getPrList(repoId);
     }
 
+    @Transactional
     @Override
     public PrDto getPrById(int repoId, int prId , String accessToken) {
         Map<String, Object> params = new HashMap<>();
@@ -61,6 +68,27 @@ public class PrServiceImpl implements PrService{
         params2.put("startSha", start_sha);
         int result = prMapper.updateShaInfo(params2);
         if(result == 1) System.out.println("업데이트 완료");
+
+        int updatedRows = mergeRequestRepository.updatePrSha(repoId, prId, base_sha, head_sha, start_sha);
+        if (updatedRows == 1) {
+            System.out.println("JPQL 업데이트 완료");
+        } else {
+            System.out.println("JPQL 업데이트 실패: 업데이트 행 수 " + updatedRows);
+        }
+
+
+        // JPA를 이용해 해당 PR 엔티티 조회 후, refresh 처리
+//        Optional<MergeRequestEntity> optionalEntity = mergeRequestRepository.findByRepoIdAndPrId(repoId, prId);
+//        if (optionalEntity.isPresent()) {
+//            MergeRequestEntity existingMr = optionalEntity.get();
+//            existingMr.setHeadSha(head_sha);
+//            existingMr.setBaseSha(base_sha);
+//            existingMr.setStartSha(start_sha);
+//            System.out.println("Entity 업데이트 완료");
+//            mergeRequestRepository.save(existingMr);
+//            entityManager.flush();
+//        }
+
 
         return prInfo;
     }
