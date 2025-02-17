@@ -1,5 +1,6 @@
 package com.giteat.ai.review.api;
 
+import com.giteat.ai.review.daemon.entity.MergeRequestEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -55,13 +56,18 @@ public class AiReviewApi {
 private String buildUserPrompt(String beforeCode, String afterCode, List<String> previousReviews, String prDescription) {
     StringBuilder prompt = new StringBuilder();
 
-    // PR 설명 상태 추가
-    if(prDescription == null || prDescription.trim().isEmpty()) {
-        prompt.append("⚠️ Pull Request 설명이 작성되지 않았습니다. 코드 변경사항만으로 리뷰를 진행합니다.\n\n");
-    } else {
-        prompt.append("📝 Pull Request 설명:\n")
-                .append(prDescription)
-                .append("\n\n");
+//    // PR 설명 상태 추가
+//    if(prDescription == null || prDescription.trim().isEmpty()) {
+//        prompt.append("⚠️ Pull Request 설명이 작성되지 않았습니다. 코드 변경사항만으로 리뷰를 진행합니다.\n\n");
+//    } else {
+//        prompt.append("📝 Pull Request 설명:\n")
+//                .append(prDescription)
+//                .append("\n\n");
+//    }
+
+    // PR 설명 전달
+    if(prDescription != null && !prDescription.trim().isEmpty()) {
+        prompt.append("Context: ").append(prDescription).append("\n\n");
     }
 
     // 기본 지침
@@ -116,11 +122,15 @@ private String buildUserPrompt(String beforeCode, String afterCode, List<String>
 
     private Map<String, Object> buildRequestBody(String userPrompt) {
         return Map.of(
-                "model", "gpt-4",
+                "model", "gpt-3.5",
                 "messages", Arrays.asList(
                         Map.of("role", "system", "content",
                                 "당신은 10년 이상의 현업 경험을 가진 시니어 개발자입니다. " +
                                         "주니어 개발자의 성장을 위해 기술적인 조언과 함께 실용적인 팁을 제공합니다.\n\n" +
+                                        "PR 설명이 제공되면 다음과 같이 활용하세요:\n" +
+                                        "- PR 설명에서 언급된 목적과 의도를 고려하여 코드를 리뷰\n" +
+                                        "- PR 설명에서 언급된 특정 기능이나 버그 수정 사항에 집중\n" +
+                                        "- PR 설명과 실제 코드 변경사항이 일치하는지 확인\n\n" +
 
                                         "🔍 변경사항 분석:\n" +
                                         "- 주요 변경 내용과 의도\n" +

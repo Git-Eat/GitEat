@@ -59,14 +59,12 @@ public class GitLabApi {
             if(!filePath.contains("%2F")) {
                 encodedFilePath = URLEncoder.encode(filePath, StandardCharsets.UTF_8.toString())
                         .replace("+", "%20");  // 공백 처리
-//                        .replace("/", "%2F"); // GitLab API는 경로 구분자는 인코딩하지 않음
             }
 
             System.out.println("Encoded File Path: " + encodedFilePath);
 
             // 2. API URL 구성
             URI url = new URI(gitlabApiUrl + "/projects/" + projectId + "/repository/files/" + encodedFilePath + "/raw?ref=" + ref);
-//            String url = String.format("%s/projects/%s/files/%s/raw?ref=%s", gitlabApiUrl, projectId, encodedFilePath, ref);
 
             System.out.println("요청 URL: " + url);
 
