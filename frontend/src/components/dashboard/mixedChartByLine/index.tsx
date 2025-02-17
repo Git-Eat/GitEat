@@ -128,7 +128,20 @@ export function MixedChartByLine({ data, maxValue }: ChartProps) {
 
   return (
     <div className="w-full justify-between px-10 py-5 bg-white rounded-lg h-full items-center border ">
-      <h2 className="text-xl font-bold mb-5">{data.name}의 주간 기록</h2>
+      <div className="flex items-center gap-2">
+        <img
+          src={data.avatarUrl}
+          alt="user"
+          className="rounded-full w-[40px]"
+        />
+        <div>
+          <h2 className="text-xl font-bold ">@{data.userName}</h2>
+          <span className="text-gray-400">
+            {data.totalCommit}개의 커밋, {data.totalMergeRequest}개의 MR,{" "}
+            {data.totalComment}개의 댓글
+          </span>
+        </div>
+      </div>
       <ReactApexChart
         options={chartData.options}
         series={chartData.series}

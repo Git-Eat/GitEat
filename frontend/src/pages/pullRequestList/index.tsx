@@ -7,7 +7,7 @@ import book from "../../assets/images/image.png";
 import { PullRequestCard } from "../../components/pullRequestList/pullRequestCard";
 import { ErrorBoundary } from "../../components/common/errorBoundery";
 import { useParams } from "react-router-dom";
-import { Box, Skeleton } from "@mui/material";
+import { Skeleton } from "@mui/material";
 
 const BRANCH_STATE_IMAGE = [branchOpen, branchMerge, branchClose];
 
@@ -94,20 +94,18 @@ export function PullRequestList() {
               </p>
             }
           >
-            <Box sx={{ height: "70vh" }}>
-              <Suspense
-                fallback={
-                  <Skeleton
-                    variant="rectangular"
-                    width="100%"
-                    height="25%"
-                    animation="wave"
-                  />
-                }
-              >
-                <PullRequests />
-              </Suspense>
-            </Box>
+            <Suspense
+              fallback={
+                <Skeleton
+                  variant="rectangular"
+                  width="100%"
+                  height="25%"
+                  animation="wave"
+                />
+              }
+            >
+              <PullRequests />
+            </Suspense>
           </ErrorBoundary>
         </div>
       </main>
