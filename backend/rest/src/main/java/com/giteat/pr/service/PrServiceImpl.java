@@ -5,6 +5,8 @@ import com.giteat.pr.dto.*;
 import com.giteat.pr.mapper.PrMapper;
 import com.giteat.repo.entity.MergeRequestEntity;
 import com.giteat.repo.repository.MergeRequestRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,9 @@ public class PrServiceImpl implements PrService{
     private final CommentConverter commentConverter;
     private final MergeRequestRepository mergeRequestRepository;
     private final LabApi gitLabApi;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
 
     @Override
@@ -61,6 +66,9 @@ public class PrServiceImpl implements PrService{
         params2.put("startSha", start_sha);
         int result = prMapper.updateShaInfo(params2);
         if(result == 1) System.out.println("업데이트 완료");
+
+        Optional<MergeRequestEntity> mergeRequestEntity = mergeRequestRepository.findByRepoIdAndPrId(repoId, prId);
+        entityManager.refresh(mergeRequestEntity);
 
         return prInfo;
     }
