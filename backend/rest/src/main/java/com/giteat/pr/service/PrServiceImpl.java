@@ -69,8 +69,10 @@ public class PrServiceImpl implements PrService{
         int result = prMapper.updateShaInfo(params2);
         if(result == 1) System.out.println("업데이트 완료");
 
-        Optional<MergeRequestEntity> mergeRequestEntity = mergeRequestRepository.findByRepoIdAndPrId(repoId, prId);
-        entityManager.refresh(mergeRequestEntity);
+        // JPA를 이용해 해당 PR 엔티티 조회 후, refresh 처리
+        Optional<MergeRequestEntity> optionalEntity = mergeRequestRepository.findByRepoIdAndPrId(repoId, prId);
+        MergeRequestEntity prEntity = optionalEntity.orElseThrow(() -> new RuntimeException("PR not found"));
+        entityManager.refresh(prEntity);
 
         return prInfo;
     }
