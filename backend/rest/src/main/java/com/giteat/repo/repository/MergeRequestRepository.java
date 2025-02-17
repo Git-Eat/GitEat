@@ -21,7 +21,7 @@ public interface MergeRequestRepository  extends JpaRepository<MergeRequestEntit
     @Transactional
     @Modifying
     @Query("UPDATE MergeRequestEntity p SET p.baseSha = :baseSha, p.headSha = :headSha, p.startSha = :startSha " +
-            "WHERE p.repoId = :repoId AND p.prId = :prId")
+            "WHERE p.id.repoId = :repoId AND p.id.prId = :prId")
     int updatePrSha(@Param("repoId") int repoId,
                     @Param("prId") int prId,
                     @Param("baseSha") String baseSha,
