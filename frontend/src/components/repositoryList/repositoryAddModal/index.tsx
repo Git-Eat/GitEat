@@ -49,10 +49,13 @@ function RepositoryAddModal({
   const [snackbarSeverity, setSnackbarSeverity] = useState<"info" | "error">(
     "info"
   );
+  const [inputEror, setError] = useState(false);
 
   const handleSave = () => {
-    if (repoId.current) {
+    if (repoId.current?.value.trim()) {
       addRepository(Number(repoId.current.value));
+    } else {
+      setError(true);
     }
   };
 
@@ -68,6 +71,7 @@ function RepositoryAddModal({
       setSnackbarOpen(true);
     } else {
       setSnackbarOpen(false);
+      closeModal();
     }
   }, [isLoading, isError]);
 
@@ -159,6 +163,7 @@ function RepositoryAddModal({
             {/* 입력 필드 */}
             <TextField
               fullWidth
+              error={inputEror}
               margin="normal"
               label={
                 selectedOption === "github"
