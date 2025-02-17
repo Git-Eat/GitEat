@@ -15,7 +15,7 @@ export function FrontendStatistics() {
     <>
       <Header title={title} owner={owner} />
 
-      <main className="w-[98%] m-auto px-8 py-4 bg-gray-100 rounded-2xl min-h-[calc(100vh-100px)]">
+      <main className="w-[98%] m-auto px-8 py-4 bg-stone-100 rounded-2xl min-h-[calc(100vh-100px)]">
         <h1 className=" text-2xl font-semibold flex gap-4 text-center pb-1">
           <span>Performance</span>
         </h1>

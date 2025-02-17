@@ -14,11 +14,11 @@ export function PullRequestInfo({ repoId, prId }: PullRequestInfoProps) {
   return (
     <section className=" mb-8 bg-white my-5 p-5 rounded-xl ">
       {data?.description !== "" && (
-        <>
+        <div className="prose">
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
             {data?.description}
           </ReactMarkdown>
-        </>
+        </div>
       )}
       {data?.description === "" && (
         <>
