@@ -59,6 +59,16 @@ public class PrServiceImpl implements PrService{
         System.out.println("head 출력" + head_sha);
         System.out.println("start 출력" + start_sha);
 
+        // DB에도 업데이트
+        Map<String, Object> params2 = new HashMap<>();
+        params2.put("repoId", repoId);
+        params2.put("prId", prId);
+        params2.put("baseSha", base_sha);
+        params2.put("headSha", head_sha);
+        params2.put("startSha", start_sha);
+        int result = prMapper.updateShaInfo(params2);
+        if(result == 1) System.out.println("업데이트 완료");
+
 
 
         // JPA를 이용해 해당 PR 엔티티 조회 후, refresh 처리
@@ -73,15 +83,7 @@ public class PrServiceImpl implements PrService{
             entityManager.flush();
         }
 
-        // DB에도 업데이트
-//        Map<String, Object> params2 = new HashMap<>();
-//        params2.put("repoId", repoId);
-//        params2.put("prId", prId);
-//        params2.put("baseSha", base_sha);
-//        params2.put("headSha", head_sha);
-//        params2.put("startSha", start_sha);
-//        int result = prMapper.updateShaInfo(params2);
-//        if(result == 1) System.out.println("업데이트 완료");
+
         
         return prInfo;
     }
