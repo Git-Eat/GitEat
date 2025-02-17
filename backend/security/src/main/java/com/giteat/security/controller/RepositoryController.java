@@ -25,37 +25,6 @@ public class RepositoryController {
     @Operation(summary = "Repo 목록 조회", description = "외부 API를 호출하여 Repo 목록을 가져옵니다.")
     public ResponseEntity<?> getRepoList() {
         ResponseEntity<?> response = apiUtil.getApi("/repo");
-
-        return ResponseEntity.ok(response.getBody());
-    }
-
-//    @PostMapping("/{repoId}")
-//    @Operation(summary = "Repo 등록", description = "외부 API를 호출하여 Repo를 등록합니다.")
-//    public ResponseEntity<?> insertRepo(@RequestBody Map<String, Integer> repoBody) {
-//        log.info("call insertRepo Method");
-//        Integer repoId = repoBody.get("repoId");
-//        ResponseEntity<String> response = (ResponseEntity<String>) apiUtil.postApi("/repo/" + repoId, repoBody);
-//        Object json = typeUtil.convertJsonToObject(response.getBody());
-//        return ResponseEntity.ok()
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .body(json);
-//    }
-
-    @DeleteMapping("/{repoId}")
-    @Operation(summary = "Repo 삭제", description = "외부 API를 호출하여 Repo를 삭제합니다.")
-    public ResponseEntity<?> deleteRepo(@PathVariable int repoId) {
-        log.info("call deleteRepo Method");
-        ResponseEntity<?> response = apiUtil.deleteApi("/repo/" + repoId, String.valueOf(repoId));
-        return ResponseEntity.ok(response.getBody());
-    }
-
-    @GetMapping("/{repoId}")
-    @Operation(summary = "Repo 상세 조회", description = "외부 API를 호출하여 Repo 상세정보를 가져옵니다.")
-    public ResponseEntity<?> findRepoById(@PathVariable int repoId) {
-        log.info("call findRepoById Method");
-
-        ResponseEntity<?> response = apiUtil.getApi("/repo");
-
         return ResponseEntity.ok(response.getBody());
     }
 
@@ -63,9 +32,25 @@ public class RepositoryController {
     @Operation(summary = "Repo 등록", description = "외부 API를 호출하여 Repo를 등록합니다.")
     public ResponseEntity<?> saveRepositoryData(@RequestBody Map<String, String> repoBody
     ) {
-        log.info("call insertRepo Method");
         ResponseEntity<?> response = apiUtil.postApi("/repo", repoBody);
         return ResponseEntity.ok(response.getBody());
     }
+
+
+    @DeleteMapping("/{repoId}")
+    @Operation(summary = "Repo 삭제", description = "외부 API를 호출하여 Repo를 삭제합니다.")
+    public ResponseEntity<?> deleteRepo(@PathVariable int repoId) {
+        ResponseEntity<?> response = apiUtil.deleteApi("/repo/" + repoId, String.valueOf(repoId));
+        return ResponseEntity.ok(response.getBody());
+    }
+
+    @GetMapping("/{repoId}")
+    @Operation(summary = "Repo 상세 조회", description = "외부 API를 호출하여 Repo 상세정보를 가져옵니다.")
+    public ResponseEntity<?> findRepoById(@PathVariable int repoId) {
+        ResponseEntity<?> response = apiUtil.getApi("/repo");
+        return ResponseEntity.ok(response.getBody());
+    }
+
+
 
 }

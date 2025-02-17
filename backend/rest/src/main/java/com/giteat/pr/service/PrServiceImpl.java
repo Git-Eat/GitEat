@@ -268,11 +268,9 @@ public class PrServiceImpl implements PrService{
     public int deleteReply(String repoId, String prId, String reCommentId , String accessToken) {
         // GitLab API에 댓글 삭제 요청
         boolean response = gitLabApi.deleteComment(repoId, prId, reCommentId,accessToken);
-        System.out.println("대댓글 삭제 response 출력 " + response);
 
         // 우리 DB에서도 삭제
         if(response){
-            System.out.println("대댓글 삭제 response 출력 :" + response);
             Map<String, Object> params = new HashMap<>();
             params.put("repoId", repoId);
             params.put("prId", prId);
@@ -357,7 +355,6 @@ public class PrServiceImpl implements PrService{
                 newRawFile = gitLabApi.getRawCode(repoId,encodedNewPath,head_sha, accessToken);
             } else if(status==3){
                 // 파일이 삭제 된 경우,  fileStatus = 3
-                System.out.println("파일이 삭제");
                 oldRawFile = gitLabApi.getRawCode(repoId, encodedNewPath, base_sha, accessToken);
                 System.out.println(oldRawFile);
             } else if(!oldPath.equals(newPath)){

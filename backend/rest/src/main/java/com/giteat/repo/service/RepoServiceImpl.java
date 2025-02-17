@@ -98,11 +98,9 @@ public class RepoServiceImpl implements RepoService{
         if(repositoryInfo != null){
             // repo_member에 저장
             RepositoryMemberId repositoryMemberId = new RepositoryMemberId(repoId, userId);
-            System.out.println("repo log");
             repositoryMemberEntity.setId(repositoryMemberId);
             repositoryMemberRepository.save(repositoryMemberEntity);
             System.out.println("이미 정보가 있는 repo입니다." + repositoryInfo);
-            System.out.println("레포 아이디: " + repositoryInfo.getName());
             return repositoryInfo;
         }
 
