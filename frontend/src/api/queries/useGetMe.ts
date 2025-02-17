@@ -10,5 +10,6 @@ export const useGetMe = () => {
       setUser(data);
       setLogin();
     },
+    staleTime: 1000 * 60 * 10,
   });
 };

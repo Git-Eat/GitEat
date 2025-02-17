@@ -3,7 +3,7 @@ import { useLoginStore } from "../../../store/loginStore";
 export function User() {
   const { user } = useLoginStore();
   return (
-    <div className="flex justify-center items-center gap-2 px-5 py-2 bg-stone-50 rounded-xl">
+    <div className="flex justify-center items-center gap-2 px-5 py-2 bg-stone-50 rounded-xl h-[40px]">
       <img
         src={user.avatar_url}
         alt="userProfile"
