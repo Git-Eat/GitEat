@@ -122,7 +122,20 @@ public class AiReviewServiceImpl implements AiReviewService {
         return result;
     }
 
-
+    /**
+     * AI 리뷰 생성 메인 메서드
+     *
+     * 처리 과정:
+     * 1. 입력값 유효성 검사
+     * 2. PR 설명 가져오기 및 처리
+     * 3. 파일들을 그룹으로 나누어 처리
+     * 4. 각 그룹별 코드 리뷰 생성
+     * 5. 최종 리뷰 결과 저장
+     *
+     * @param statusEntity AI 리뷰 상태 정보
+     * @param diffs 변경된 파일들의 정보
+     * @return 리뷰 생성 성공 여부
+     */
     @Override
     public boolean createAiReview(AiReviewStatusEntity statusEntity, List<Map<String, Object>> diffs) {
         System.out.println("\n[createAiReview] AI 리뷰 생성 시작 ===========================");
@@ -140,6 +153,8 @@ public class AiReviewServiceImpl implements AiReviewService {
                 System.out.println("[createAiReview] 오류: diffs 가 비어있습니다");
                 return false;
             }
+            // PR 설정 가져오기
+            String prDescription = getPrDescription(statusEntity);
 
             System.out.println("[createAiReview] 입력 파라미터:");
             System.out.println("- PR ID: " + statusEntity.getPrId());
@@ -154,10 +169,6 @@ public class AiReviewServiceImpl implements AiReviewService {
                 fileGroups.add(diffs.subList(i, Math.min(i + groupSize, diffs.size())));
             }
 
-//         모든 파일의 변경사항을 한번에 수집
-//         StringBuilder combinedBeforeCode  = new StringBuilder();
-//         StringBuilder combinedAfterCode = new StringBuilder();
-
             StringBuilder finalReview = new StringBuilder();
             List<String> previousReviews = new ArrayList<>();
             String baseSha = null;
@@ -170,7 +181,6 @@ public class AiReviewServiceImpl implements AiReviewService {
 
                 for (Map<String, Object> diff : group) {
                     // 각 파일의 변경사항을 수집
-//              for (Map<String, Object> diff : diffs) {
                     String oldPath = (String) diff.get("old_path");
                     String newPath = (String) diff.get("new_path");
 
@@ -209,15 +219,6 @@ public class AiReviewServiceImpl implements AiReviewService {
                             headSha = changedCode.get("headSha");
                         }
 
-                        // 파일별 코드 내용 합치기
-//                    combinedBeforeCode.append("\n=== ").append(fileDto.getFileName()).append(" (변경 전) ===\n")
-//                            .append(changedCode.get("beforeCode") != null ? changedCode.get("beforeCode") : "")
-//                            .append("\n");
-//
-//                    combinedAfterCode.append("\n=== ").append(fileDto.getFileName()).append(" (변경 후) ===\n")
-//                            .append(changedCode.get("afterCode") != null ? changedCode.get("afterCode") : "")
-//                            .append("\n");
-
                         // 변경된 코드 수집
                         beforeCode.append("\n=== ").append(fileDto.getFileName()).append(" ===\n")
                                 .append(changedCode.get("beforeCode") != null ? changedCode.get("beforeCode") : "")
@@ -233,28 +234,14 @@ public class AiReviewServiceImpl implements AiReviewService {
                 String groupReview = aiReviewApi.generateReview(
                         beforeCode.toString(),
                         afterCode.toString(),
-                        previousReviews
+                        previousReviews,
+                        prDescription
                 );
 
                 // 리뷰 결과가 유효한 경우에만 추가
                 if (groupReview != null && !groupReview.startsWith("GPT call failed")) {
                     finalReview.append(groupReview).append("\n\n");
                 }
-
-//            if (changedCode == null || changedCode.isEmpty()) {
-//                System.out.println("[createAiReview] 오류: GitLab에서 코드를 가져오지 못했습니다");
-//                return false;
-//            }
-
-                // AI 리뷰 생성
-//            String reviewContent = aiReviewApi.generateReview(
-//                    combinedBeforeCode.toString(),
-//                    combinedAfterCode.toString()
-//            );
-//
-//            System.out.println("변경된 코드 확인:");
-//            System.out.println("beforeCode: " + combinedBeforeCode);
-//            System.out.println("afterCode: " + combinedAfterCode);
             }
 
             // 최종 리뷰가 있는 경우에만 저장
@@ -287,5 +274,31 @@ public class AiReviewServiceImpl implements AiReviewService {
             System.out.println("오류 위치: " + e.getCause());
             return false;
         }
+    }
+
+    /**
+     * PR의 설명을 가져오는 메서드
+     * 1. PR을 찾고
+     * 2. description이 있는지 확인하고
+     * 3. 결과를 반환
+     */
+    public String getPrDescription(AiReviewStatusEntity statusEntity) {
+        // 1. PR 찾기
+        Optional<MergeRequestEntity> optionalMr = mergeRequestRepository.findById_RepoIdAndId_PrId(
+                String.valueOf(statusEntity.getRepoId()), statusEntity.getPrId()
+        );
+
+        // 2. PR이 존재하면 description 가져오기
+        if(optionalMr.isPresent()) {
+            MergeRequestEntity existingMr = optionalMr.get();
+            String description = existingMr.getDescription();
+
+            // 3. description이 비어있지 않은지 확인
+            if(description != null && !description.trim().isEmpty()) {
+                return description;
+            }
+        }
+        return "PR 설명이 없습니다.";
+
     }
 }

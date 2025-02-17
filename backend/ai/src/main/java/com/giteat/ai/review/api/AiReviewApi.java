@@ -25,12 +25,12 @@ public class AiReviewApi {
         this.restTemplate = restTemplate;
     }
 
-    public String generateReview(String beforeCode, String afterCode, List<String> previousReviews) {
+    public String generateReview(String beforeCode, String afterCode, List<String> previousReviews, String prDescription) {
         try {
             log.info("Generating AI review");
             HttpHeaders headers = createHeaders();
 
-            String userPrompt = buildUserPrompt(beforeCode, afterCode, previousReviews);
+            String userPrompt = buildUserPrompt(beforeCode, afterCode, previousReviews, prDescription);
             Map<String, Object> requestBody = buildRequestBody(userPrompt);
 
             ResponseEntity<Map> response = restTemplate.exchange(gptApiUrl, HttpMethod.POST, new HttpEntity<>(requestBody, headers), Map.class);
@@ -52,41 +52,17 @@ public class AiReviewApi {
         return headers;
     }
 
-//    private String buildUserPrompt(String beforeCode, String afterCode) {
-//        return String.format(
-//                "다음은 Pull Request의 코드 변경사항입니다. 핵심적인 변경사항만 중점적으로 리뷰해주세요.\n\n" +
-//                        "리뷰 시 다음 사항을 지켜주세요:\n" +
-//                        "1. 500줄 이상의 파일은 변경된 부분만 검토\n" +
-//                        "2. 다음은 제외하고 검토:\n" +
-//                        "   - 주석 변경\n" +
-//                        "   - 공백이나 포맷팅 변경\n" +
-//                        "   - import/include/using/require 등 외부 모듈 참조 변경\n" +
-//                        "   - 설정 파일 변경 (*.xml, *.properties, *.yml, *.yaml, *.json, *.conf, *.config, *.ini)\n" +
-//                        "   - 문서 파일 변경 (*.md, *.txt, *.rst, *.doc, *.pdf)\n" +
-//                        "   - 로그 파일 변경 (*.log)\n" +
-//                        "   - 환경 설정 파일 변경 (.env, .gitignore)\n" +
-//                        "   - 패키지 관리 파일 변경 (package.json, requirements.txt, build.gradle, pom.xml)\n" +
-//                        "   - 정적 자원 파일 변경 (*.css, *.scss, *.less, *.svg, *.png, *.jpg, *.gif)\n" +
-//                        "   - 컴파일된 파일 변경 (*.class, *.pyc, *.o, *.exe)\n" +
-//                        "   - 테스트 파일 변경 (*test.*, *Test.*, *Spec.*)\n" +
-//                        "   - 임시 파일 변경 (*.tmp, *.temp, *.swp)\n" +
-//                        "   - 디펜던시 디렉토리 (node_modules/, vendor/, dist/, build/)\n" +
-//                        "3. 중요도 순으로 리뷰:\n" +
-//                        "   - 비즈니스 로직 변경\n" +
-//                        "   - API 엔드포인트 수정\n" +
-//                        "   - 데이터베이스 관련 변경\n" +
-//                        "   - 보안 관련 코드\n\n" +
-//                        "[이전 코드]\n%s\n\n[변경된 코드]\n%s\n\n" +
-//                        "다음 기준으로 중요한 변경사항만 간단히 리뷰해주세요:\n" +
-//                        "1. 주요 로직 변경 영향\n" +
-//                        "2. 잠재적 버그\n" +
-//                        "3. 심각한 보안 문제\n" +
-//                        "4. 중요한 성능 문제\n",
-//                beforeCode, afterCode
-//        );
-//    }
-private String buildUserPrompt(String beforeCode, String afterCode, List<String> previousReviews) {
+private String buildUserPrompt(String beforeCode, String afterCode, List<String> previousReviews, String prDescription) {
     StringBuilder prompt = new StringBuilder();
+
+    // PR 설명 상태 추가
+    if(prDescription == null || prDescription.trim().isEmpty()) {
+        prompt.append("⚠️ Pull Request 설명이 작성되지 않았습니다. 코드 변경사항만으로 리뷰를 진행합니다.\n\n");
+    } else {
+        prompt.append("📝 Pull Request 설명:\n")
+                .append(prDescription)
+                .append("\n\n");
+    }
 
     // 기본 지침
     prompt.append("다음은 Pull Request의 코드 변경사항입니다. 핵심적인 변경사항만 중점적으로 리뷰해주세요.\n\n");
