@@ -6,6 +6,7 @@ import { useGetRepositories } from "../../api/queries/useGetRepositories";
 import { Suspense } from "react";
 import { ErrorBoundary } from "../../components/common/errorBoundery";
 import { AlarmAddModal } from "../../components/repositoryList/alarmAddModal";
+import { Box, Skeleton } from "@mui/material";
 const ACCESS_GRANT = ["private", "public", "internal"];
 interface RepositoriesProps {
   openModal: () => void;
@@ -55,9 +56,15 @@ export function RepositoryList() {
               </p>
             }
           >
-            <Suspense fallback={<p>Loading...</p>}>
-              <Repositories openModal={openAlarmModal} />
-            </Suspense>
+            <Box sx={{ height: "70vh" }}>
+              <Suspense
+                fallback={
+                  <Skeleton variant="rectangular" width="100%" height="100%" />
+                }
+              >
+                <Repositories openModal={openAlarmModal} />
+              </Suspense>
+            </Box>
           </ErrorBoundary>
         </div>
       </main>

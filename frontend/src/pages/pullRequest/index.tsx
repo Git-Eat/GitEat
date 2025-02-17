@@ -7,6 +7,7 @@ import { useGetPullRequest } from "../../api/queries/useGetPullRequest";
 import { useGetFileChanges } from "../../api/queries/useGetFileChanges";
 import { useGetComments } from "../../api/queries/useGetComments";
 import { usePRStore } from "../../store/pullRequestStore";
+import { Skeleton } from "@mui/material";
 
 function DataProvider() {
   const { baseRepoId, prId, title, owner } = useParams();
@@ -61,7 +62,7 @@ export function PullRequest() {
   const location = useLocation();
   return (
     <ErrorBoundary key={location.key} fallbackComponent={<>에러 발생!!</>}>
-      <Suspense fallback={<>loading...</>}>
+      <Suspense fallback={<Skeleton width="100%" height="100vh" />}>
         <DataProvider />
       </Suspense>
     </ErrorBoundary>

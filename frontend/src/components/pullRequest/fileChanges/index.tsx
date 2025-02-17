@@ -4,6 +4,7 @@ import { ErrorBoundary } from "../../common/errorBoundery";
 import { FileDiff } from "./fileDiff";
 import { FileTree } from "./fileTree";
 import { useParams } from "react-router-dom";
+import { Box, Skeleton } from "@mui/material";
 /**
  * DONE
  * - 트리 렌더링
@@ -32,13 +33,23 @@ export function FileChanges() {
           <div className="border border-gray-200 p-4 my-4 rounded-md w-full">
             {files.map((file) => (
               <ErrorBoundary key={file.fileId} fallbackComponent={<>ERROR!!</>}>
-                <Suspense fallback={<>loading...</>}>
-                  <FileDiff
-                    file={file}
-                    repoId={Number(baseRepoId)}
-                    prId={Number(prId)}
-                  />
-                </Suspense>
+                <Box sx={{ height: "70vh" }}>
+                  <Suspense
+                    fallback={
+                      <Skeleton
+                        variant="rectangular"
+                        width="100%"
+                        height="100%"
+                      />
+                    }
+                  >
+                    <FileDiff
+                      file={file}
+                      repoId={Number(baseRepoId)}
+                      prId={Number(prId)}
+                    />
+                  </Suspense>
+                </Box>
               </ErrorBoundary>
             ))}
           </div>
