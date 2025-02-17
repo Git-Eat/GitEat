@@ -71,9 +71,15 @@ public class PrServiceImpl implements PrService{
 
         // JPA를 이용해 해당 PR 엔티티 조회 후, refresh 처리
         Optional<MergeRequestEntity> optionalEntity = mergeRequestRepository.findByRepoIdAndPrId(repoId, prId);
-        MergeRequestEntity prEntity = optionalEntity.orElseThrow(() -> new RuntimeException("PR not found"));
-        entityManager.refresh(prEntity);
-
+        if (optionalEntity.isPresent()) {
+            MergeRequestEntity existingMr = optionalEntity.get();
+            existingMr.setHeadSha(head_sha);
+            existingMr.setBaseSha(base_sha);
+            existingMr.setHeadSha(start_sha);
+            System.out.println("Entity 업데이트 완료");
+            mergeRequestRepository.save(existingMr);
+        }
+        
         return prInfo;
     }
 
