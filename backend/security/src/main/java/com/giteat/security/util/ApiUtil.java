@@ -43,7 +43,6 @@ public class ApiUtil {
         log.info("FULL URL : " + fullURL);
 
         String accessToken = TokenContext.getAccessToken();
-        System.out.println("GET ACCESSTOKEN : " + accessToken);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -77,7 +76,6 @@ public class ApiUtil {
         log.info("POST 요청 URL: " + fullURL);
 
         String accessToken = TokenContext.getAccessToken();
-        System.out.println("POST ACCESSTOKEN : " + accessToken);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " +accessToken);
@@ -117,7 +115,6 @@ public class ApiUtil {
         log.info("PUT 요청 URL: " + fullURL);
 
         String accessToken = TokenContext.getAccessToken();
-        System.out.println("PUT ACCESSTOKEN : " + accessToken);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + accessToken);
@@ -151,7 +148,6 @@ public class ApiUtil {
         log.info("DELETE 요청 URL: " + fullURL);
 
         String accessToken = TokenContext.getAccessToken();
-        System.out.println("DELETE ACCESSTOKEN : " + accessToken);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + accessToken);
@@ -183,7 +179,6 @@ public class ApiUtil {
     public ResponseEntity<?> postApiWithFile(String url, MultipartFile file) throws IOException {
         // 파일을 전달할 HttpEntity 생성
         String accessToken = TokenContext.getAccessToken();
-        System.out.println("FILE ACCESSTOKEN : " + accessToken);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         headers.set("Authorization", "Bearer " + accessToken);
@@ -217,7 +212,6 @@ public class ApiUtil {
         log.info("POST 요청 URL: " + fullURL);
 
         String accessToken = TokenContext.getAccessToken();
-        System.out.println("POST ACCESSTOKEN : " + accessToken);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " +accessToken);
