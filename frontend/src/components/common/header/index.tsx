@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../../../assets/images/logo.svg";
 import darkHome from "../../../assets/images/home_dark.svg";
 import darkFile from "../../../assets/images/file_dark.svg";
@@ -7,6 +7,13 @@ import darkReport from "../../../assets/images/reports_dark.svg";
 import logout from "../../../assets/images/logout.svg";
 
 export function Header() {
+  const navigation = useNavigate();
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    document.cookie =
+      "refreshToken" + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    navigation("/");
+  };
   return (
     <header className="h-[100vh]  w-[230px] flex flex-col justify-between items-center box-border py-[36px] fixed border-r">
       <img src={logo} className="w-[48px]" alt="logout" />
@@ -51,7 +58,10 @@ export function Header() {
         <LinkIcon to="/wiki" src="wiki" alt="dashboard_page" />
         <LinkIcon to="/dashboard" src="report" alt="dashboard_page" /> */}
       </div>
-      <div className="rounded-[12px] p-[5px] hover:bg-[#e5f9c1] transition ease-in-out delay-50 cursor-pointer">
+      <div
+        className="rounded-[12px] p-[5px] hover:bg-[#e5f9c1] transition ease-in-out delay-50 cursor-pointer"
+        onClick={handleLogout}
+      >
         <div className="flex items-center gap-2">
           <img src={logout} alt="logout" className="w-[30px]" />
           로그아웃
