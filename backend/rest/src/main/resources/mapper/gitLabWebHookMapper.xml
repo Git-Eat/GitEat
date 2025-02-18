@@ -124,7 +124,7 @@
     </select>
 
     <update id="updateCommentTempStatus" parameterType="commentTempDto">
-        UPDATE pr_temp
+        UPDATE comment_temp
         SET temp_status = 1
         WHERE
             repo_id = #{repoId}
