@@ -7,7 +7,7 @@ import { Suspense } from "react";
 import { ErrorBoundary } from "../../components/common/errorBoundery";
 import { AlarmAddModal } from "../../components/repositoryList/alarmAddModal";
 import { Skeleton } from "@mui/material";
-import { useLoginStore } from "../../store/loginStore";
+import { User } from "../../components/common/user";
 const ACCESS_GRANT = ["private", "public", "internal"];
 interface RepositoriesProps {
   openModal: () => void;
@@ -32,7 +32,7 @@ function Repositories({ openModal }: RepositoriesProps) {
 }
 export function RepositoryList() {
   const [isModalOpen, openModal, closeModal] = useBooleanState(false);
-  const { user } = useLoginStore();
+
   const [isAlarmModallOpen, openAlarmModal, closeAlarmModal] =
     useBooleanState(false);
   return (
@@ -42,16 +42,7 @@ export function RepositoryList() {
           <h1 className="text-[18px] font-semibold flex text-center pb-1">
             프로젝트 목록
           </h1>
-          <div className="flex justify-center items-center gap-2 px-5 py-2 bg-stone-50 rounded-xl">
-            <img
-              src={user.avatar_url}
-              alt="userProfile"
-              className="w-[28px] rounded-full "
-            />
-            <span className="box border-l border-stone-500 ps-2">
-              @{user.username}
-            </span>
-          </div>
+          <User />
         </div>
       </header>
 

@@ -18,14 +18,12 @@ public final class NotiConstatns {
 
     public static final String COMMENT_MESSAGE_TOP ="### 새로운 댓글이 등록되었습니다.  ";
 
-    public static final String REPLY_MESSAGE_TOP = "### 새로운 대댓글이 등록되었습니다.  ";
-
 
     public static final String MESSAGE_TOP = "등록되었습니다.";
 
     public static final String MESSAGE_WRITTER = "- **등록자:** ";
 
-    public static final String MESSAGE_TITLE = "**제목:** ";
+    public static final String MESSAGE_TITLE = "**MR 제목:** ";
 
     public static final String MESSAGE_URL = "- **URL:** [GitLab 이동하기]";
 
