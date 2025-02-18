@@ -39,7 +39,6 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
      */
     @Override
 //    @Transactional
-    @Transactional
     public void mergeRequestEvent(Map<String, Object> body) {
         Map<String, Object> projectMap = (Map<String, Object>) body.get("project");
         Map<String, Object> userMap = (Map<String, Object>) body.get("user");
@@ -212,6 +211,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         commentTempDto.setPrId(prId);
         commentTempDto.setRepoId(repoId);
         commentTempDto.setTempStatus(0);
+        commentTempDto.setUserId(userId);
         gitLabWebHookMapper.insertCommentTemp(commentTempDto);
     }
 
@@ -275,7 +275,8 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
                 }
                 commentRepository.save(comment);
             }
-
+            comments.setTempStatus(1);
+            gitLabWebHookMapper.updateCommentTempStatus(comments);
 
         }
     }

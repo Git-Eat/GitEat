@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import logo from "../../../assets/images/logo.svg";
 import projects from "../../../assets/images/projects.svg";
 import dashboard from "../../../assets/images/dashboard.svg";
@@ -8,12 +8,11 @@ import logout from "../../../assets/images/logout.svg";
 import { useState } from "react";
 
 export function Header() {
-  const navigation = useNavigate();
   const handleLogout = () => {
     localStorage.removeItem("access_token");
     document.cookie =
       "refreshToken" + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    navigation("/");
+    window.location.href = "/";
   };
   const [isSelected, setSelect] = useState("/repos");
   return (

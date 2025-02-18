@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { ErrorBoundary } from "../../components/common/errorBoundery";
 import { Link } from "react-router-dom";
 import { Skeleton } from "@mui/material";
+import { User } from "../../components/common/user";
 
 const ACCESS_GRANT = ["private", "public", "internal"];
 function Private() {
@@ -72,10 +73,11 @@ export function PerformanceList() {
   return (
     <>
       <header className="w-full p-4">
-        <div className="flex items-center align-center">
+        <div className="flex items-center align-center justify-between">
           <h1 className="text-[18px] font-semibold flex text-center pb-1">
             프로젝트 성능 측정 현황
           </h1>
+          <User />
         </div>
       </header>
 

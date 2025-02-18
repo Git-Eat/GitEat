@@ -23,7 +23,7 @@ public final class NotiConstatns {
 
     public static final String MESSAGE_WRITTER = "- **등록자:** ";
 
-    public static final String MESSAGE_TITLE = "**제목:** ";
+    public static final String MESSAGE_TITLE = "**MR 제목:** ";
 
     public static final String MESSAGE_URL = "- **URL:** [GitLab 이동하기]";
 

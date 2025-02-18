@@ -65,7 +65,7 @@ public class NotificationDaemon {
         } else if (type == 2 || type == 3) { // Comment
             sb.append(NotiConstatns.COMMENT_MESSAGE_TOP).append("\n");
         }
-
+        sb.append(NotiConstatns.MESSAGE_TITLE).append(notiDto.getNotiMessage()).append("\n");
         sb.append(NotiConstatns.MESSAGE_WRITTER).append(notiDto.getUserName()).append("\n");
         sb.append(NotiConstatns.MESSAGE_URL).append("(").append(notiDto.getNotiUrl()).append(")");
 
