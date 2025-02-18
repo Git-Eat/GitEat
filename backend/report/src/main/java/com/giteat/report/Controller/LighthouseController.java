@@ -193,6 +193,22 @@ public class LighthouseController {
             log.info("CLS: {}", lighthouseResult.getCls());
             log.info("SI: {}", lighthouseResult.getSi());
             // 변환 적용 후 반올림
+            double performance = (lighthouseResult.getPerformance() != 0)
+                    ? Math.round(lighthouseResult.getPerformance() * 1000) / 10.0  // 백분율 변환 후 소수점 1자리 반올림
+                    : 0.0;
+
+            double accessibility = (lighthouseResult.getAccessibility() != 0)
+                    ? Math.round(lighthouseResult.getAccessibility() * 1000) / 10.0
+                    : 0.0;
+
+            double bestPractices = (lighthouseResult.getBestPractices() != 0)
+                    ? Math.round(lighthouseResult.getBestPractices() * 1000) / 10.0
+                    : 0.0;
+
+            double seo = (lighthouseResult.getSeo() != 0)
+                    ? Math.round(lighthouseResult.getSeo() * 1000) / 10.0
+                    : 0.0;
+
             double fcp = (lighthouseResult.getFcp() != 0)
                     ? Math.round(lighthouseResult.getFcp() / 10.0) / 100.0  // ms → s 변환 후 소수점 1자리 반올림
                     : 0.0;
@@ -213,7 +229,12 @@ public class LighthouseController {
                     ? Math.round(lighthouseResult.getSi() / 10.0) / 100.0  // ms → s 변환 후 소수점 1자리 반올림
                     : 0.0;
 
+            // Performance Scores 로깅
             log.info("반올림 후");
+            log.info("Performance: {}%", performance);
+            log.info("Accessibility: {}%", accessibility);
+            log.info("Best Practices: {}%", bestPractices);
+            log.info("SEO: {}%", seo);
             log.info("FCP: {}", fcp);
             log.info("LCP: {}", lcp);
             log.info("TBT: {}", tbt);
@@ -224,10 +245,10 @@ public class LighthouseController {
             LighthouseEntity entity = LighthouseEntity.builder()
                     .repositoryId(repoId)
                     .branch(branch)
-                    .performance(lighthouseResult.getPerformance() * 100)
-                    .accessibility(lighthouseResult.getAccessibility() * 100)
-                    .bestPractices(lighthouseResult.getBestPractices() * 100)
-                    .seo(lighthouseResult.getSeo() * 100)
+                    .performance(performance)
+                    .accessibility(accessibility)
+                    .bestPractices(bestPractices)
+                    .seo(seo)
                     .fcp(fcp)
                     .lcp(lcp)
                     .tbt(tbt)
