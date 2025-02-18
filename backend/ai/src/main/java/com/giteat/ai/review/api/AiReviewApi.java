@@ -121,7 +121,7 @@ private String buildUserPrompt(String beforeCode, String afterCode, List<String>
 
     private Map<String, Object> buildRequestBody(String userPrompt) {
         return Map.of(
-                "model", "gpt-3.5",
+                "model", "gpt-3.5-turbo",
                 "messages", Arrays.asList(
                         Map.of("role", "system", "content",
                                 "당신은 10년 이상의 현업 경험을 가진 시니어 개발자입니다. " +
