@@ -61,7 +61,6 @@ public class NotificationDaemon {
 
         if (type == 1) { // PR
             sb.append(NotiConstatns.PR_MESSAGE_TOP).append("\n");
-            sb.append(NotiConstatns.MESSAGE_TITLE).append(notiDto.getNotiMessage()).append("\n");
         } else if (type == 2 || type == 3) { // Comment
             sb.append(NotiConstatns.COMMENT_MESSAGE_TOP).append("\n");
         }
