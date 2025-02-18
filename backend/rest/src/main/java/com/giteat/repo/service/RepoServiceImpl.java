@@ -313,11 +313,11 @@ public class RepoServiceImpl implements RepoService{
             }
         }
 
-        if(mergeRequestCheck){
+        if(!mergeRequestCheck){
             Map<String , Object> test2 = gitLabApi.createMergeRequestWebHook(repoId , accessToken);
             System.out.println("결과 comment : " + test2);
         }
-        if(commentCheck){
+        if(!commentCheck){
             Map<String, Object> test = gitLabApi.createCommentWebHook(repoId , accessToken);
             System.out.println("결과 mr: " + test);
         }
