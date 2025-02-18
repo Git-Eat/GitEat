@@ -16,7 +16,7 @@ public final class NotiConstatns {
 
     public static final String PR_MESSAGE_TOP = ":rocket: Merge Request 등록되었습니다.  ";
 
-    public static final String COMMENT_MESSAGE_TOP =":rocket 새로운 댓글이 등록되었습니다.  ";
+    public static final String COMMENT_MESSAGE_TOP =":rocket: 새로운 댓글이 등록되었습니다.  ";
 
 
     public static final String MESSAGE_TOP = "등록되었습니다.";
