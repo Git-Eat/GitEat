@@ -304,14 +304,16 @@ public class RepoServiceImpl implements RepoService{
         boolean commentCheck = false;
         boolean mergeRequestCheck = false;
 
-        for(Map<String , Object> webhook : webHookList){
-            String name = (String) webhook.get("name");
-            if(name.equals(WebHookConstants.MERGE_REQUEST_NAME)){
+        for(Map<String , Object> webhook : webHookList) {
+            String name = webhook.get("name") != null ? (String)webhook.get("name"): "";
+
+            if (WebHookConstants.MERGE_REQUEST_NAME.equals(name)) {
                 mergeRequestCheck = true;
-            }else if(name.equals(WebHookConstants.COMMENT_NAME)){
+            } else if (WebHookConstants.COMMENT_NAME.equals(name)) {
                 commentCheck = true;
             }
         }
+
 
         if(!mergeRequestCheck){
             Map<String , Object> test2 = gitLabApi.createMergeRequestWebHook(repoId , accessToken);
