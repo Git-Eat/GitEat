@@ -74,7 +74,8 @@
         UPDATE pr
         SET base_sha  = #{baseSha},
             head_sha  = #{headSha},
-            start_sha = #{startSha}
+            start_sha = #{startSha},
+            is_opend = #{isOpend}
         WHERE repo_id = #{repoId}
           AND pr_id = #{prId}
     </update>

@@ -54,6 +54,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         if (prTempExists) {  // 기존 데이터가 있음 → 상태 업데이트
             PrTempEntity prTempEntity = prTempRepository.findById(prTempId).orElseThrow();
             prTempEntity.setTempStatus(0); // ✅ JPA 변경 감지로 자동 `UPDATE`
+            System.out.println("pr_temp data 0으로 변경" + repoId  + " , " + prId);
         } else {  // 새로운 PR 데이터 저장
             MergeRequestEntity mergeRequestEntity = new MergeRequestEntity();
             MergeRequestId mrId = new MergeRequestId(prId, repoId);
@@ -125,13 +126,26 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
             prDto.setStartSha(startSha);
             prDto.setPrType(1);
 
+            // PR 상태 설정
+            String state = (String) diffMap.get("state");
+            int isOpen = switch (state) {
+                case "opened" -> 2;
+                case "closed" -> 3;
+                case "merged" -> 1;
+                default -> 0;
+            };
+            prDto.setIsOpened(isOpen);
             // pr의 값을 update하는 구문 작성
             gitLabWebHookMapper.updateMergeRequestData(prDto);
 
 
             // ------------ commit 저장하는 함수 -----------------
+            System.out.println("repo Id : " + projectId);
+            System.out.println("pr Id : " +  Integer.parseInt(prId));
+
             List<Map<String, Object>> gitCommitList = gitLabApi.getCommits(projectId, Integer.parseInt(prId), accessToken);
             for (Map<String, Object> commit : gitCommitList) {
+                System.out.println(" commit data : " + commit);
                 CommitEntity commitEntity = new CommitEntity();
                 CommitId commitId = new CommitId((String) commit.get("id"), Integer.valueOf(projectId), Integer.valueOf(prId));
                 commitEntity.setId(commitId);
