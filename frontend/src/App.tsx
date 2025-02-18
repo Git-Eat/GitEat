@@ -14,6 +14,7 @@ import { PullRequestList } from "./pages/pullRequestList";
 import { FrontendStatistics } from "./pages/frontendStatistics";
 import { DashBoardList } from "./pages/dashBoardList";
 import { PerformanceList } from "./pages/performanceList";
+import { Guide } from "./pages/guide";
 function App() {
   const queryClient = new QueryClient();
   return (
@@ -28,6 +29,7 @@ function App() {
               <Route path="/repos" element={<RepositoryList />} />
               <Route path="/dashboard" element={<DashBoardList />} />
               <Route path="/report" element={<PerformanceList />} />
+              <Route path="/guide" element={<Guide />} />
               <Route
                 path="/repos/:repoId/dashboard/:owner/:title/"
                 element={<DashBoard />}
