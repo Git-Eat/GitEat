@@ -11,4 +11,5 @@ public class CommentTempDto {
     private int prId;
     private int repoId;
     private int tempStatus;
+    private int userId;
 }

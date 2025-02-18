@@ -1,0 +1,122 @@
+import { motion } from "framer-motion";
+import sample1 from "../../assets/images/sample.png";
+import like from "../../assets/images/like.svg";
+import sample2 from "../../assets/images/sample2.png";
+import pie from "../../assets/images/pie.svg";
+
+const planets = [
+  { size: 80, x: "38vw", y: "70vh", color: "from-purple-500 to-blue-500" },
+  { size: 50, x: "30vw", y: "10vh", color: "from-pink-500 to-purple-500" },
+  { size: 360, x: "80vw", y: "80vh", color: "from-blue-500 to-cyan-500" },
+  { size: 100, x: "20vw", y: "30vh", color: "from-purple-900 to-blue-900" },
+  { size: 80, x: "40vw", y: "20vh", color: "from-purple-500 to-blue-500" },
+  { size: 190, x: "90vw", y: "-5vh", color: "from-pink-500 to-purple-500" },
+  { size: 120, x: "70vw", y: "40vh", color: "from-blue-500 to-cyan-500" },
+  { size: 40, x: "80vw", y: "50vh", color: "from-purple-900 to-blue-900" },
+];
+
+export function Landing() {
+  return (
+    <>
+      {/* SECTION 1 */}
+      <section className="relative w-full h-screen bg-gradient-to-b from-black to-gray-900 overflow-hidden flex items-center justify-start snap-always snap-center ">
+        {planets.map((planet, index) => (
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, scale: 0.5 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1, delay: index * 0.1 }}
+            viewport={{ once: true }}
+            className={`absolute bg-gradient-to-br ${planet.color} rounded-full`}
+            style={{
+              width: planet.size,
+              height: planet.size,
+              left: planet.x,
+              top: planet.y,
+            }}
+          />
+        ))}
+        {/* 텍스트 */}
+        <motion.div
+          className="text-white text-5xl font-semibold text-center px-4"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+          viewport={{ once: true }}
+        >
+          <div className="flex flex-col justify-start text-start gap-2 ms-40">
+            <span>코드리뷰의 모든 것,</span>
+            <span>깃잇에서 쉽고 간편하게</span>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* SECTION 2 */}
+      <section className="relative w-full h-screen from-black to-gray-900 overflow-hidden flex items-center justify-start p-[100px] snap-always snap-center scroll-smooth">
+        <motion.div
+          className="text-5xl font-semibold text-center px-4 flex justify-between items-center w-full"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+          viewport={{ once: true }}
+        >
+          <div className="flex flex-col justify-start text-start gap-2">
+            <span>이젠,</span>
+            <span>코드리뷰도</span>
+            <span>
+              똑똑하고 <span className="text-blue-500">효율적</span>으로
+            </span>
+          </div>
+          <motion.div
+            className="w-1/2 relative "
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.2 }}
+            viewport={{ once: true }}
+          >
+            <img
+              src={like}
+              alt=""
+              className="absolute right-[-30px] top-[-30px]"
+            />
+            <img src={sample1} alt="serviceImage" className="shadow-xl" />
+          </motion.div>
+        </motion.div>
+      </section>
+
+      {/* SECTION 3 */}
+      <section className="relative w-full h-screen from-black to-gray-900 overflow-hidden flex items-center justify-start p-[100px] snap-always snap-center scroll-smooth">
+        <motion.div
+          className="text-5xl font-semibold text-center px-4 flex justify-between items-center w-full"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+          viewport={{ once: true }}
+        >
+          <div className="flex flex-col justify-start text-start gap-2">
+            <span>한눈에 보는</span>
+            <span>팀 프로젝트의</span>
+            <span>
+              <span className="text-blue-500">성능</span>과{" "}
+              <span className="text-blue-500">현황</span>까지
+            </span>
+          </div>
+          <motion.div
+            className="w-1/2 relative "
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.2 }}
+            viewport={{ once: true }}
+          >
+            <img
+              src={pie}
+              alt="pie"
+              className="absolute right-[-30px] top-[-50px]"
+            />
+            <img src={sample2} alt="servieImage" />
+          </motion.div>
+        </motion.div>
+      </section>
+    </>
+  );
+}

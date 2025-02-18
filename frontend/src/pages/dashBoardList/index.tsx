@@ -2,7 +2,8 @@ import { useGetRepositories } from "../../api/queries/useGetRepositories";
 import { Suspense } from "react";
 import { ErrorBoundary } from "../../components/common/errorBoundery";
 import { Link } from "react-router-dom";
-import { Box, Skeleton } from "@mui/material";
+import { Skeleton } from "@mui/material";
+import { User } from "../../components/common/user";
 
 const ACCESS_GRANT = ["private", "public", "internal"];
 function Private() {
@@ -72,10 +73,11 @@ export function DashBoardList() {
   return (
     <>
       <header className="w-full p-4">
-        <div className="flex items-center align-center">
+        <div className="flex items-center align-center justify-between">
           <h1 className="text-[18px] font-semibold flex text-center pb-1">
             프로젝트 현황 목록
           </h1>
+          <User />
         </div>
       </header>
 
@@ -88,15 +90,13 @@ export function DashBoardList() {
               </p>
             }
           >
-            <Box sx={{ height: "70vh" }}>
-              <Suspense
-                fallback={
-                  <Skeleton variant="rectangular" width="100%" height="100%" />
-                }
-              >
-                <Repositories />
-              </Suspense>
-            </Box>
+            <Suspense
+              fallback={
+                <Skeleton variant="rectangular" width="100%" height="100%" />
+              }
+            >
+              <Repositories />
+            </Suspense>
           </ErrorBoundary>
         </div>
       </main>

@@ -39,7 +39,6 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
      */
     @Override
 //    @Transactional
-    @Transactional
     public void mergeRequestEvent(Map<String, Object> body) {
         Map<String, Object> projectMap = (Map<String, Object>) body.get("project");
         Map<String, Object> userMap = (Map<String, Object>) body.get("user");
@@ -79,7 +78,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
             mergeRequestEntity.setSourceBranch((String) mergeRequestMap.get("source_branch"));
             mergeRequestEntity.setUserName((String) userMap.get("name"));
             mergeRequestEntity.setUserProfile((String) userMap.get("avatar_url"));
-
+            mergeRequestEntity.setPrType(1);
             mergeRequestRepository.save(mergeRequestEntity); // ✅ PR 데이터 저장
 
             log.info("merge Request save : {} : {}", mrId.getPrId(), mrId.getRepoId());
@@ -212,6 +211,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         commentTempDto.setPrId(prId);
         commentTempDto.setRepoId(repoId);
         commentTempDto.setTempStatus(0);
+        commentTempDto.setUserId(userId);
         gitLabWebHookMapper.insertCommentTemp(commentTempDto);
     }
 
@@ -274,8 +274,27 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
                     }
                 }
                 commentRepository.save(comment);
-            }
 
+                // ---------- Reply 가져오기 ---------- //
+                // 2번째 note부터는 ReplyEntity로 저장
+                for (int i = 1; i < notes.size(); i++) {
+                    Map<String, Object> note = notes.get(i);
+                    if((boolean) notes.get(i).get("system")) continue;;
+                    Map<String, Object> replyAuthor = (Map<String, Object>) notes.get(i).get("author");
+                    ReplyEntity reply = new ReplyEntity();
+                    ReplyId replyId = new ReplyId((int) note.get("id"), (int) firstNote.get("id"), prId, repoId);
+                    reply.setId(replyId);
+                    reply.setUserId((int) replyAuthor.get("id"));
+                    reply.setDisId((String) commentResponse.get("id"));
+                    reply.setContent((String) note.get("body"));
+                    reply.setReCommentType(1);
+                    reply.setReplyValue(0);
+                    reply.setCreateAt((String) note.get("updated_at"));
+                    replyRepository.save(reply);
+                }
+            }
+            comments.setTempStatus(1);
+            gitLabWebHookMapper.updateCommentTempStatus(comments);
 
         }
     }
