@@ -52,6 +52,7 @@ public class StatisticsRepoServiceImpl implements StatisticsRepoService{
             if (!isFound) {
                 MergeRequestByUserDto newUserDto = new MergeRequestByUserDto();
                 newUserDto.setUserId(userId);
+                newUserDto.setName(participantsDto.getName());
                 newUserDto.setUserName(participantsDto.getUserName());
                 newUserDto.setAvatarUrl(participantsDto.getAvatarUrl());
                 newUserDto.setMergeRequestCount(0);  // PR 개수 0 설정
