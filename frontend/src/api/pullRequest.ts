@@ -119,3 +119,16 @@ export const getAiReview = async (
     else throw new Error("unknown Error");
   }
 };
+
+export const getCommits = async (
+  repoId: number,
+  prId: number
+): Promise<AiReivew> => {
+  try {
+    const res = await authClient.get(`/pr/${repoId}/${prId}`);
+    return res.data;
+  } catch (e: unknown) {
+    if (e instanceof Error) throw new Error(e.message);
+    else throw new Error("unknown Error");
+  }
+};
