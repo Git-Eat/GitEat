@@ -75,7 +75,7 @@
         SET base_sha  = #{baseSha},
             head_sha  = #{headSha},
             start_sha = #{startSha},
-            is_opend = #{isOpened}
+            is_opened = #{isOpened}
         WHERE repo_id = #{repoId}
           AND pr_id = #{prId}
     </update>
