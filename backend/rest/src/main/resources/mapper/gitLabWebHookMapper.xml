@@ -107,9 +107,11 @@
     <insert id="insertCommentTemp" parameterType="commentTempDto">
         INSERT INTO comment_temp (repo_id,
                                   pr_id,
+                                  user_id,
                                   temp_status)
         VALUES (#{repoId},
                 #{prId},
+                #{userId},
                 #{tempStatus});
     </insert>
 
