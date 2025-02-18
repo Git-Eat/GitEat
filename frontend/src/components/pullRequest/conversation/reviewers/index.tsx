@@ -4,6 +4,7 @@ import defaultprofile from "../../../../assets/images/user_profile.svg";
 import suggest from "../../../../assets/images/suggest.svg";
 import comment from "../../../../assets/images/comment.svg";
 import review from "../../../../assets/images/review.svg";
+import sadCat from "../../../../assets/images/sad_cat.svg";
 import { useMemo } from "react";
 
 interface ReviewersProps {
@@ -62,28 +63,34 @@ export function Reviewers({ repoId, prId }: ReviewersProps) {
   return (
     <section className="bg-white my-5 p-5 rounded-xl">
       <h1 className="text-[18px] font-semibold pb-5">리뷰 참여한 사람</h1>
-      <ul>
-        {filteredReviewers.map((reviewer) => (
-          <li key={reviewer.userId} className="mb-3">
-            <img
-              src={reviewer.avatarUrl || defaultprofile}
-              alt="profile Image"
-              className="inline-block mr-2 max-w-6 rounded-full"
-            />
-            <p className="inline mr-2 text-[12px] font-semibold">
-              {reviewer.name}
-            </p>
-            {reviewer.commentTypes.map((reviewType, index) => (
+      {filteredReviewers.length === 0 ? (
+        <div className="w-full flex justify-center items-center">
+          <img src={sadCat} alt="" className="opacity-50" />
+        </div>
+      ) : (
+        <ul>
+          {filteredReviewers.map((reviewer) => (
+            <li key={reviewer.userId} className="mb-3">
               <img
-                key={index}
-                src={commentTypeImages[reviewType].src}
-                alt={commentTypeImages[reviewType].alt}
-                className="inline-block max-w-12 mr-2"
+                src={reviewer.avatarUrl || defaultprofile}
+                alt="profile Image"
+                className="inline-block mr-2 max-w-6 rounded-full"
               />
-            ))}
-          </li>
-        ))}
-      </ul>
+              <p className="inline mr-2 text-[12px] font-semibold">
+                {reviewer.name}
+              </p>
+              {reviewer.commentTypes.map((reviewType, index) => (
+                <img
+                  key={index}
+                  src={commentTypeImages[reviewType].src}
+                  alt={commentTypeImages[reviewType].alt}
+                  className="inline-block max-w-12 mr-2"
+                />
+              ))}
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 }

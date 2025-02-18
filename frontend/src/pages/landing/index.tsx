@@ -3,6 +3,7 @@ import sample1 from "../../assets/images/sample.png";
 import like from "../../assets/images/like.svg";
 import sample2 from "../../assets/images/sample2.png";
 import pie from "../../assets/images/pie.svg";
+import robot from "../../assets/images/robot.png";
 
 const planets = [
   { size: 80, x: "38vw", y: "70vh", color: "from-purple-500 to-blue-500" },
@@ -116,6 +117,46 @@ export function Landing() {
             <img src={sample2} alt="servieImage" />
           </motion.div>
         </motion.div>
+      </section>
+      <section className="relative w-full h-screen from-black to-gray-900 overflow-hidden flex items-center justify-start p-[100px] snap-always snap-center scroll-smooth">
+        <div className="bg-[#EFF8FD] w-[70%] m-auto flex flex-col justify-center items-center py-40">
+          <div className="flex">
+            <div className="flex flex-col gap-2">
+              <img src={robot} alt="robot" className="w-[100px]" />
+              <span className="text-xl font-bold">스마트한 AI 코드리뷰</span>
+              <div className="flex flex-col text-lg">
+                <span>MR이 업로드 되면, AI가 먼저 리뷰를 진행해드려요.</span>
+                <span>코드리뷰가 어려울 땐, AI 리뷰를 먼저 읽어보세요.</span>
+              </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              <img src={robot} alt="robot" className="w-[100px]" />
+              <span className="text-xl font-bold">스마트한 AI 코드리뷰</span>
+              <div className="flex flex-col text-lg">
+                <span>MR이 업로드 되면, AI가 먼저 리뷰를 진행해드려요.</span>
+                <span>코드리뷰가 어려울 땐, AI 리뷰를 먼저 읽어보세요.</span>
+              </div>
+            </div>
+          </div>
+          <div className="flex">
+            <div className="flex flex-col gap-2">
+              <img src={robot} alt="robot" className="w-[100px]" />
+              <span className="text-xl font-bold">스마트한 AI 코드리뷰</span>
+              <div className="flex flex-col text-lg">
+                <span>MR이 업로드 되면, AI가 먼저 리뷰를 진행해드려요.</span>
+                <span>코드리뷰가 어려울 땐, AI 리뷰를 먼저 읽어보세요.</span>
+              </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              <img src={robot} alt="robot" className="w-[100px]" />
+              <span className="text-xl font-bold">스마트한 AI 코드리뷰</span>
+              <div className="flex flex-col text-lg">
+                <span>MR이 업로드 되면, AI가 먼저 리뷰를 진행해드려요.</span>
+                <span>코드리뷰가 어려울 땐, AI 리뷰를 먼저 읽어보세요.</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </>
   );
