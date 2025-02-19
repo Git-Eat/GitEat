@@ -24,7 +24,7 @@ export function PullRequestCard({
   const { repoId, owner, title: repoTitle } = useParams();
   return (
     <Link to={`/repos/${repoId}/${prId}/${owner}/${repoTitle}/conversation`}>
-      <div className="  bg-white rounded-xl p-7 flex justify-between hover:bg-gray-200 cursor-pointer">
+      <div className="  bg-white rounded-xl p-7 flex justify-between hover:bg-gray-200 cursor-pointer border">
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
             <img src={BRANCH_STATE_IMAGE[isOpened]} alt="" />
