@@ -2,6 +2,7 @@ import authClient from "./authClient";
 import { AiReivew } from "./types/AiReview";
 import { ChangedFile } from "./types/ChangedFile";
 import { FileCommentRequest } from "./types/Comment";
+import { Commit } from "./types/Commit";
 import { PullRequest } from "./types/PullRequest";
 import { RawFileResponse } from "./types/RawFile";
 import { Repository } from "./types/Repository";
@@ -123,9 +124,9 @@ export const getAiReview = async (
 export const getCommits = async (
   repoId: number,
   prId: number
-): Promise<AiReivew> => {
+): Promise<Commit[]> => {
   try {
-    const res = await authClient.get(`/pr/${repoId}/${prId}`);
+    const res = await authClient.get(`/pr/${repoId}/${prId}/commit`);
     return res.data;
   } catch (e: unknown) {
     if (e instanceof Error) throw new Error(e.message);
