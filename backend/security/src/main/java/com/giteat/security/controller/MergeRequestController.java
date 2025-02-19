@@ -46,7 +46,7 @@ public class MergeRequestController {
     @GetMapping("/{repoId}/{prId}/commit")
     @Operation(summary = "Commit 목록 확인", description = "외부 API를 호출하여 특정 PR의 Commit 목록을 가져옵니다.")
     public ResponseEntity<?> getCommitList(@PathVariable int repoId, @PathVariable int prId) {
-        ResponseEntity<?> request = apiUtil.getApi("/pr/" + repoId + "/" + prId);
+        ResponseEntity<?> request = apiUtil.getApi("/pr/" + repoId + "/" + prId + "/commit");
 
         return ResponseEntity.ok(request.getBody());
     }
