@@ -15,6 +15,7 @@ import { FrontendStatistics } from "./pages/frontendStatistics";
 import { DashBoardList } from "./pages/dashBoardList";
 import { PerformanceList } from "./pages/performanceList";
 import { Guide } from "./pages/guide";
+import { Commits } from "./components/pullRequest/commits";
 function App() {
   const queryClient = new QueryClient();
   return (
@@ -47,10 +48,9 @@ function App() {
                 element={<PullRequest />}
               >
                 <Route path="conversation" element={<Conversation />} />
-                <Route path="commits" element={<>commits</>} />
+                <Route path="commits" element={<Commits />} />
                 <Route path="file-changes" element={<FileChanges />} />
               </Route>
-              <Route path="wiki" element={<>wiki</>} />
             </Route>
           </Routes>
         </BrowserRouter>

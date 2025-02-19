@@ -32,7 +32,7 @@ export function Header() {
         <Link
           to="/dashboard"
           onClick={() => setSelect("/dashboard")}
-          className={`rounded-[12px]  px-[15px] hover:bg-[#dce9ff] transition ease-in-out delay-50 ${isSelected === "/dashboard" ? "bg-[#dce9ff]" : "bg-white"}`}
+          className={`rounded-[12px]  px-[15px] py-[5px] hover:bg-[#dce9ff] transition ease-in-out delay-50 ${isSelected === "/dashboard" ? "bg-[#dce9ff]" : "bg-white"}`}
         >
           <div className="flex items-center gap-2 ">
             <img className={`w-[27px]`} src={dashboard} />
@@ -42,7 +42,7 @@ export function Header() {
         <Link
           to="/report"
           onClick={() => setSelect("/report")}
-          className={`rounded-[12px]  px-[15px] hover:bg-[#dce9ff] transition ease-in-out delay-50 ${isSelected === "/report" ? "bg-[#dce9ff]" : "bg-white"}`}
+          className={`rounded-[12px]  px-[15px] py-[5px] hover:bg-[#dce9ff] transition ease-in-out delay-50 ${isSelected === "/report" ? "bg-[#dce9ff]" : "bg-white"}`}
         >
           <div className="flex items-center gap-2 ">
             <img className={`w-[27px]`} src={performance} />
