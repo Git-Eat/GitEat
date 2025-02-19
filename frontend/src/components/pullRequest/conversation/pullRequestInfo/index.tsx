@@ -10,7 +10,6 @@ interface PullRequestInfoProps {
 
 export function PullRequestInfo({ repoId, prId }: PullRequestInfoProps) {
   const { data } = useGetPullRequest(repoId, prId);
-  console.log(data?.description);
   return (
     <section className=" mb-8 bg-white my-5 p-5 rounded-xl ">
       {data?.description !== "" && (

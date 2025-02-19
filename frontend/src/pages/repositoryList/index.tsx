@@ -6,6 +6,8 @@ import { useGetRepositories } from "../../api/queries/useGetRepositories";
 import { Suspense } from "react";
 import { ErrorBoundary } from "../../components/common/errorBoundery";
 import { AlarmAddModal } from "../../components/repositoryList/alarmAddModal";
+import { Skeleton } from "@mui/material";
+import { User } from "../../components/common/user";
 const ACCESS_GRANT = ["private", "public", "internal"];
 interface RepositoriesProps {
   openModal: () => void;
@@ -30,15 +32,17 @@ function Repositories({ openModal }: RepositoriesProps) {
 }
 export function RepositoryList() {
   const [isModalOpen, openModal, closeModal] = useBooleanState(false);
+
   const [isAlarmModallOpen, openAlarmModal, closeAlarmModal] =
     useBooleanState(false);
   return (
     <>
       <header className="w-full p-4">
-        <div className="flex items-center align-center">
+        <div className="flex items-center align-center justify-between">
           <h1 className="text-[18px] font-semibold flex text-center pb-1">
             프로젝트 목록
           </h1>
+          <User />
         </div>
       </header>
 
@@ -55,7 +59,11 @@ export function RepositoryList() {
               </p>
             }
           >
-            <Suspense fallback={<p>Loading...</p>}>
+            <Suspense
+              fallback={
+                <Skeleton variant="rectangular" width="100%" height="100%" />
+              }
+            >
               <Repositories openModal={openAlarmModal} />
             </Suspense>
           </ErrorBoundary>

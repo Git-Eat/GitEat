@@ -1,6 +1,7 @@
 package com.giteat.repo.service;
 
 import com.giteat.api.LabApi;
+import com.giteat.common.constants.WebHookConstants;
 import com.giteat.common.util.SHA1Util;
 import com.giteat.repo.entity.*;
 import com.giteat.repo.mapper.AiReviewStatusMapper;
@@ -300,12 +301,27 @@ public class RepoServiceImpl implements RepoService{
     @Override
     public void createWebHook(String accessToken, String repoId) {
         List<Map<String , Object>> webHookList = gitLabApi.getWebHooks(repoId , accessToken);
+        boolean commentCheck = false;
+        boolean mergeRequestCheck = false;
 
-        if(webHookList.size()==0){
-            Map<String, Object> test = gitLabApi.createCommentWebHook(repoId , accessToken);
-            System.out.println("결과 mr: " + test);
+        for(Map<String , Object> webhook : webHookList) {
+            String name = webhook.get("name") != null ? (String)webhook.get("name"): "";
+
+            if (WebHookConstants.MERGE_REQUEST_NAME.equals(name)) {
+                mergeRequestCheck = true;
+            } else if (WebHookConstants.COMMENT_NAME.equals(name)) {
+                commentCheck = true;
+            }
+        }
+
+
+        if(!mergeRequestCheck){
             Map<String , Object> test2 = gitLabApi.createMergeRequestWebHook(repoId , accessToken);
             System.out.println("결과 comment : " + test2);
+        }
+        if(!commentCheck){
+            Map<String, Object> test = gitLabApi.createCommentWebHook(repoId , accessToken);
+            System.out.println("결과 mr: " + test);
         }
     }
 }

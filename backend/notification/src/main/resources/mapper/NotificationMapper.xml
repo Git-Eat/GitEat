@@ -36,7 +36,7 @@
                  LEFT JOIN noti_token AS nt
                            ON n.repo_id = nt.repo_id
                                AND n.user_id = nt.user_id
-                 LEFT JOIN users AS u -- ✅ LEFT JOIN으로 변경
+                 LEFT JOIN users AS u
                            ON u.user_id = n.user_id
                  LEFT JOIN repository AS r
                            ON r.repo_id = n.repo_id

@@ -19,7 +19,7 @@ const LINKS = {
 function LinkIcon({ to }: { to: LinkKey }) {
   const location = useLocation();
   const isSelected = useMemo(
-    () => location.pathname === `/pull/${LINKS[to].url}`,
+    () => location.pathname.endsWith(LINKS[to].url),
     [location.pathname, to]
   );
   return (
@@ -62,7 +62,7 @@ export function PrHeader({
         <span className="px-2 border bg-sky-50 text-black rounded-full inline-block align-center">
           {targetBranch}
         </span>
-        로 병합을 요청하셨습니다
+        로 병합을 요청하셨습니다🔥
       </span>
       <nav className="flex gap-4 w-full mt-4 bg-white rounded-md">
         <LinkIcon to="conversation" />
