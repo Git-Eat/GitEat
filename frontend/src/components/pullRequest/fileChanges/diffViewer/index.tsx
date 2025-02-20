@@ -76,7 +76,7 @@ export function DiffViewer({
         if (
           comment.position?.newLine !== undefined &&
           comment.position.newLine !== null &&
-          comment.position.oldLine === 0
+          (comment.position.oldLine === null || comment.position.oldLine === 0)
         ) {
           const currentComments =
             extendData.newFile[comment.position.newLine]?.data ?? [];
@@ -101,16 +101,20 @@ export function DiffViewer({
         }
       }
     });
+    console.log(extendData);
     return extendData;
   };
 
   const diff = useMemo(() => getDiffFile(), [oldCode, newCode]);
+  const parsedComments = useMemo(() => {
+    return parseComments(comments);
+  }, [comments]);
 
   return (
     <div className="w-full border">
       <DiffView
         diffFile={diff}
-        extendData={parseComments(comments)}
+        extendData={parsedComments}
         diffViewAddWidget
         renderExtendLine={({ data }) => {
           return (
