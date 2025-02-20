@@ -108,6 +108,7 @@ export function Comments({ repoId, prId }: CommentsProps) {
                 )}
                 newPath={comment.position.newPath}
                 oldPath={comment.position.oldPath}
+                fileId={comment.fileId}
               />
             )}
             <header>

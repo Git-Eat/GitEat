@@ -74,7 +74,8 @@
         UPDATE pr
         SET base_sha  = #{baseSha},
             head_sha  = #{headSha},
-            start_sha = #{startSha}
+            start_sha = #{startSha},
+            is_opened = #{isOpened}
         WHERE repo_id = #{repoId}
           AND pr_id = #{prId}
     </update>
@@ -107,9 +108,11 @@
     <insert id="insertCommentTemp" parameterType="commentTempDto">
         INSERT INTO comment_temp (repo_id,
                                   pr_id,
+                                  user_id,
                                   temp_status)
         VALUES (#{repoId},
                 #{prId},
+                #{userId},
                 #{tempStatus});
     </insert>
 
@@ -121,7 +124,7 @@
     </select>
 
     <update id="updateCommentTempStatus" parameterType="commentTempDto">
-        UPDATE pr_temp
+        UPDATE comment_temp
         SET temp_status = 1
         WHERE
             repo_id = #{repoId}

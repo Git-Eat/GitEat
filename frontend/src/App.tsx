@@ -14,6 +14,8 @@ import { PullRequestList } from "./pages/pullRequestList";
 import { FrontendStatistics } from "./pages/frontendStatistics";
 import { DashBoardList } from "./pages/dashBoardList";
 import { PerformanceList } from "./pages/performanceList";
+import { Guide } from "./pages/guide";
+import { Commits } from "./components/pullRequest/commits";
 function App() {
   const queryClient = new QueryClient();
   return (
@@ -28,6 +30,7 @@ function App() {
               <Route path="/repos" element={<RepositoryList />} />
               <Route path="/dashboard" element={<DashBoardList />} />
               <Route path="/report" element={<PerformanceList />} />
+              <Route path="/guide" element={<Guide />} />
               <Route
                 path="/repos/:repoId/dashboard/:owner/:title/"
                 element={<DashBoard />}
@@ -45,10 +48,9 @@ function App() {
                 element={<PullRequest />}
               >
                 <Route path="conversation" element={<Conversation />} />
-                <Route path="commits" element={<>commits</>} />
+                <Route path="commits" element={<Commits />} />
                 <Route path="file-changes" element={<FileChanges />} />
               </Route>
-              <Route path="wiki" element={<>wiki</>} />
             </Route>
           </Routes>
         </BrowserRouter>

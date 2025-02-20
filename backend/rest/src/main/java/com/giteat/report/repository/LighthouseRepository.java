@@ -19,8 +19,24 @@ public interface LighthouseRepository extends JpaRepository<LighthouseEntity, In
     @Query("SELECT l FROM LighthouseEntity l WHERE l.repositoryId = :repoId ORDER BY l.createAt DESC")
     Page<LighthouseEntity> findLatestByRepoId(int repoId, Pageable pageable);
 
-    // reoId에 해당하는 최신 데이터 1개를 객체로 가져오기
-    @Query("SELECT l FROM LighthouseEntity l WHERE l.repositoryId = :repoId ORDER BY l.createAt DESC")
+//    // reoId에 해당하는 최신 데이터 1개를 객체로 가져오기
+//    @Query("SELECT l FROM LighthouseEntity l WHERE l.repositoryId = :repoId ORDER BY l.createAt DESC")
+//    List<LighthouseEntity> getLatestByRepoId(@Param("repoId") int repoId, Pageable pageable);
+
+    @Query("""
+    SELECT l FROM LighthouseEntity l 
+    WHERE l.repositoryId = :repoId 
+      AND l.performance = 0 
+      AND l.accessibility = 0 
+      AND l.bestPractices = 0 
+      AND l.seo = 0 
+      AND l.fcp = 0 
+      AND l.lcp = 0 
+      AND l.tbt = 0 
+      AND l.cls = 0 
+      AND l.si = 0 
+    ORDER BY l.createAt DESC
+    """)
     List<LighthouseEntity> getLatestByRepoId(@Param("repoId") int repoId, Pageable pageable);
 
     // repoId에 해당하는 최신 데이터 1개 삭제하기

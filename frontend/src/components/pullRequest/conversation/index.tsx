@@ -20,7 +20,7 @@ function AiReviews() {
   return (
     <Accordion>
       <AccordionSummary expandIcon={<ArrowDropDownIcon />}>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 text-2xl">
           <img src={glassesLogo} alt="logo" className="w-[50px]" />
           Git-Eat의 리뷰
         </div>

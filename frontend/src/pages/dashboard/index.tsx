@@ -46,7 +46,6 @@ function Contributors() {
           <MixedChartByLine data={contributor} maxValue={maxValue} />
         </div>
       ))}
-      ;
     </>
   );
 }
@@ -63,7 +62,7 @@ export function DashBoard() {
             <span>DashBoard</span>
           </h1>
           <span className="block text-neutral-400 text-sm">
-            <span className="text-black">asdf</span> 의 프로젝트 현황을
+            <span className="text-black">{title}</span> 의 프로젝트 현황을
             확인해보세요🌟
           </span>
         </div>
@@ -102,7 +101,7 @@ export function DashBoard() {
           </div>
           <div className="flex flex-col w-[90%] m-auto justify-between bg-white border-lg p-12">
             <h2 className="text-xl font-bold">Contributors</h2>
-            <span className="ps-5 text-gray-400 mb-10">
+            <span className="text-gray-400 mb-10">
               Commit, MR, Comment 통계를 통해 기여도를 확인하세요!
             </span>
             <div className="w-full flex flex-wrap justify-between ">

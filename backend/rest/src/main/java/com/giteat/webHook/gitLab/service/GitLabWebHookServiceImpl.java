@@ -8,6 +8,7 @@ import com.giteat.repo.repository.*;
 import com.giteat.webHook.gitLab.dto.CommentTempDto;
 import com.giteat.webHook.gitLab.dto.MergeRequestTempDto;
 import com.giteat.webHook.gitLab.mapper.GitLabWebHookMapper;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,8 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
     private final CommentRepository commentRepository;
     private final ReplyRepository replyRepository;
     private final GitLabWebHookMapper gitLabWebHookMapper;
+    private final EntityManager entityManager; // JPA 영속성 컨텍스트 사용
+    private final PrTempRepository prTempRepository;
     /**
      * pr 에 대한 event 처리하는 함수
      *
@@ -37,63 +40,58 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
     @Override
 //    @Transactional
     public void mergeRequestEvent(Map<String, Object> body) {
-
         Map<String, Object> projectMap = (Map<String, Object>) body.get("project");
         Map<String, Object> userMap = (Map<String, Object>) body.get("user");
         Map<String, Object> mergeRequestMap = (Map<String, Object>) body.get("object_attributes");
 
-        int repoId = (int)projectMap.get("id");
+        int repoId = (int) projectMap.get("id");
         int prId = (int) mergeRequestMap.get("iid");
         int userId = (int) userMap.get("id");
 
+        PrTempId prTempId = new PrTempId(repoId, prId);
+        boolean prTempExists = prTempRepository.existsById(prTempId); // ✅ 기존 데이터 존재 여부 체크
 
-        int prTableCheck = gitLabWebHookMapper.prTableCheck(repoId , prId);
-        if(prTableCheck==1){        //데이터 있음
-            MergeRequestTempDto mrTempDto = new MergeRequestTempDto();
-            mrTempDto.setRepoId((int) projectMap.get("id"));
-            mrTempDto.setPrId((int) mergeRequestMap.get("iid"));
-            mrTempDto.setUserId((int) userMap.get("id"));
-            mrTempDto.setTempStatus(0);
-            gitLabWebHookMapper.updateMergeRequestStatus(mrTempDto);
-        }else{
+        if (prTempExists) {  // 기존 데이터가 있음 → 상태 업데이트
+            PrTempEntity prTempEntity = prTempRepository.findById(prTempId).orElseThrow();
+            prTempEntity.setTempStatus(0); // ✅ JPA 변경 감지로 자동 `UPDATE`
+        } else {  // 새로운 PR 데이터 저장
             MergeRequestEntity mergeRequestEntity = new MergeRequestEntity();
             MergeRequestId mrId = new MergeRequestId(prId, repoId);
 
             mergeRequestEntity.setId(mrId);
             mergeRequestEntity.setTitle((String) mergeRequestMap.get("title"));
             mergeRequestEntity.setDescription((String) mergeRequestMap.get("description"));
-            mergeRequestEntity.setUserId((int) userMap.get("id"));
+            mergeRequestEntity.setUserId(userId);
             mergeRequestEntity.setCreateAt((String) mergeRequestMap.get("created_at"));
-            String isOpend = (String)mergeRequestMap.get("state");
-            int isOpen = 0;
-            if(isOpend.equals("opened")){
-                isOpen = 1;
-            }else if(isOpend.equals("closed")){
-                isOpen = 2;
-            }else if(isOpend.equals("merged")){
-                isOpen = 3;
-            }
+
+            // PR 상태 설정
+            String state = (String) mergeRequestMap.get("state");
+            int isOpen = switch (state) {
+                case "opened" -> 2;
+                case "closed" -> 3;
+                case "merged" -> 1;
+                default -> 0;
+            };
+
             mergeRequestEntity.setIsOpened(isOpen);
             mergeRequestEntity.setTargetBranch((String) mergeRequestMap.get("target_branch"));
             mergeRequestEntity.setSourceBranch((String) mergeRequestMap.get("source_branch"));
-            mergeRequestEntity.setIsOpened("opened".equals(mergeRequestMap.get("state")) ? 1 : 0);
+            mergeRequestEntity.setUserName((String) userMap.get("name"));
+            mergeRequestEntity.setUserProfile((String) userMap.get("avatar_url"));
             mergeRequestEntity.setPrType(1);
-            mergeRequestEntity.setUserName((String)userMap.get("name"));
-            mergeRequestEntity.setUserProfile((String)userMap.get("avatar_url"));
+            mergeRequestRepository.save(mergeRequestEntity); // ✅ PR 데이터 저장
 
-            mergeRequestRepository.save(mergeRequestEntity);
-            log.info("merge Request save : " + mrId.getPrId() + " : " + mrId.getRepoId());
+            log.info("merge Request save : {} : {}", mrId.getPrId(), mrId.getRepoId());
 
-            //pr temp 테이블에 데이터 넣기
-            MergeRequestTempDto mrTempDto = new MergeRequestTempDto();
-            mrTempDto.setRepoId(repoId);
-            mrTempDto.setPrId(prId);
-            mrTempDto.setUserId(userId);
-            mrTempDto.setTempStatus(0);
-            gitLabWebHookMapper.insertMergeRequestTemp(mrTempDto);
+            // PR Temp 테이블에 데이터 저장
+            PrTempEntity prTempEntity = new PrTempEntity();
+            prTempEntity.setId(prTempId);
+            prTempEntity.setUserId(userId);
+            prTempEntity.setTempStatus(0);
+
+            prTempRepository.save(prTempEntity); // ✅ PR Temp 데이터 저장
         }
     }
-
 
     /**
      * webHook 이 후 사용자 요청마다 데이터를 추가하거나 검사하는 함수
@@ -105,7 +103,6 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         List<MergeRequestTempDto> prTempList = gitLabWebHookMapper.getPrTemp(accessToken);
         log.info("webHook mr temp list size : " + prTempList.size());
         for (MergeRequestTempDto prTempDto : prTempList) {
-            System.out.println("@@@@@@@@@@@@@@@@@@@@@@가져온 데이터 : " + prTempDto);
 
             String projectId = String.valueOf(prTempDto.getRepoId());
             String prId = String.valueOf(prTempDto.getPrId());
@@ -128,6 +125,15 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
             prDto.setStartSha(startSha);
             prDto.setPrType(1);
 
+            // PR 상태 설정
+            String state = (String) diffMap.get("state");
+            int isOpen = switch (state) {
+                case "opened" -> 2;
+                case "closed" -> 3;
+                case "merged" -> 1;
+                default -> 0;
+            };
+            prDto.setIsOpened(isOpen);
             // pr의 값을 update하는 구문 작성
             gitLabWebHookMapper.updateMergeRequestData(prDto);
 
@@ -214,6 +220,7 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
         commentTempDto.setPrId(prId);
         commentTempDto.setRepoId(repoId);
         commentTempDto.setTempStatus(0);
+        commentTempDto.setUserId(userId);
         gitLabWebHookMapper.insertCommentTemp(commentTempDto);
     }
 
@@ -276,8 +283,27 @@ public class GitLabWebHookServiceImpl implements GitLabWebHookService {
                     }
                 }
                 commentRepository.save(comment);
-            }
 
+                // ---------- Reply 가져오기 ---------- //
+                // 2번째 note부터는 ReplyEntity로 저장
+                for (int i = 1; i < notes.size(); i++) {
+                    Map<String, Object> note = notes.get(i);
+                    if((boolean) notes.get(i).get("system")) continue;;
+                    Map<String, Object> replyAuthor = (Map<String, Object>) notes.get(i).get("author");
+                    ReplyEntity reply = new ReplyEntity();
+                    ReplyId replyId = new ReplyId((int) note.get("id"), (int) firstNote.get("id"), prId, repoId);
+                    reply.setId(replyId);
+                    reply.setUserId((int) replyAuthor.get("id"));
+                    reply.setDisId((String) commentResponse.get("id"));
+                    reply.setContent((String) note.get("body"));
+                    reply.setReCommentType(1);
+                    reply.setReplyValue(0);
+                    reply.setCreateAt((String) note.get("updated_at"));
+                    replyRepository.save(reply);
+                }
+            }
+            comments.setTempStatus(1);
+            gitLabWebHookMapper.updateCommentTempStatus(comments);
 
         }
     }

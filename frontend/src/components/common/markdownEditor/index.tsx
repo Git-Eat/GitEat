@@ -68,7 +68,7 @@ export function MarkdownEditor({
       <MDEditor
         value={value}
         onChange={(val) => setValue(val ?? "")}
-        preview="live"
+        preview="edit"
       />
       <div className="mt-3 text-right">
         <button
