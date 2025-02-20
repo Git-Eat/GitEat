@@ -23,10 +23,10 @@ public class NotificationDaemon {
     private final MatterMostApi mmApi;
     private final StringBuffer sb = new StringBuffer();
 
-    @Scheduled(fixedRate = 180000) // 1초 : 1000  , 세팅값은 3분
+    @Scheduled(fixedRate = 2000) // 1초 : 1000  , 세팅값은 3분
     public void notiDaemon() {
         log.info("noti daemon start");
-        System.out.println("noti daemon start");
+
         List<NotificationDto> notiList = notiService.selectNotiList();
         List<NotificationDto> notiStatusList = new ArrayList<>();
         log.info("notiList size : " + notiList.size());
@@ -34,8 +34,6 @@ public class NotificationDaemon {
 
             String message = makeMessage(noti);
             String notiToken = noti.getNotiToken();
-            System.out.println("notiToken : " + notiToken);
-            System.out.println("전송 관련 message : " + message);
             if (notiToken != null) { // 경로에 문제가 없을 경우
                 boolean notiCheck = mmApi.sendNotification(message, notiToken);
                 if (notiCheck) {
