@@ -24,6 +24,7 @@ public class AiReviewDaemon {
     private final TokenValidationService tokenValidationService;
 
 //    @Scheduled(fixedRate = 180000) // 3분마다 실행
+    @Scheduled(fixedRate = 3000) // 3분마다 실행
     public void aiReviewDaemon() {
         System.out.println("\n[AiReviewDaemon] 데몬 실행 시작 ===========================");
 
