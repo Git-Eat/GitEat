@@ -3,8 +3,8 @@ import branchClose from "../../../assets/images/branch_close.svg";
 import branchMerge from "../../../assets/images/branch_merge.svg";
 import { Link, useParams } from "react-router-dom";
 import { getParsedDate } from "../../../utils/getParsedDate";
-const BRANCH_STATE_IMAGE = [branchOpen, branchMerge, "", branchClose];
-const STATEMENT = ["Opened", "Merged", "Closed"];
+const BRANCH_STATE_IMAGE = [branchMerge, branchOpen, branchClose];
+const STATEMENT = ["Merged", "Opened", "Closed"];
 interface PullRequestCardProps {
   prId: number;
   title: string;
@@ -27,9 +27,9 @@ export function PullRequestCard({
       <div className="  bg-white rounded-xl p-7 flex justify-between hover:bg-gray-200 cursor-pointer border">
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
-            <img src={BRANCH_STATE_IMAGE[isOpened]} alt="" />
+            <img src={BRANCH_STATE_IMAGE[isOpened - 1]} alt="" />
             <span className="font-light">
-              {STATEMENT[isOpened]} {getParsedDate(createAt)}
+              {STATEMENT[isOpened - 1]} {getParsedDate(createAt)}
             </span>
           </div>
           <div className="flex gap-[10px] items-center mb-[10px]">
