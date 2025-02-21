@@ -21,7 +21,6 @@ export const CodeBlock: React.FC<PartialDiffViewerProps> = ({
   const file = useMemo(() => {
     return files.filter((file) => file.fileId === fileId)[0];
   }, [fileId]);
-  console.log(file);
 
   return (
     file && (
