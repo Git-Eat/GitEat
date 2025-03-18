@@ -64,44 +64,9 @@
 
 ![Image](https://github.com/user-attachments/assets/e89df3a1-1b69-4369-8463-d1d51793d530)
 
-## 4. FrontEnd 개발 환경
-- TypeScript
-- React, TailwindCSS
-- React-Query
-- Zustand
-- Vite
-- [프로젝트 컨벤션](https://youthful-moose-bb3.notion.site/ca54d5c747d74dfb8566e997a2a24f0a?pvs=4)
-- [버전 관리 컨벤션](https://youthful-moose-bb3.notion.site/Git-a935e98c4452423ca34bf45852aae782?pvs=4)
+## FrontEnd / BackEnd 상세
 
-## 5. 프로젝트 구조
-```
-frontend
- ┣ public
- ┃ ┣ mockServiceWorker.js
- ┣ src
- ┃ ┣ api
- ┃ ┃ ┣ mocks
- ┃ ┃ ┃ ┣ dummies
- ┃ ┃ ┃ ┣ handlers
- ┃ ┃ ┣ queries
- ┃ ┃ ┣ types
- ┃ ┣ assets
- ┃ ┃ ┗ images
- ┃ ┣ components
- ┃ ┃ ┣ common
- ┃ ┣ hooks
- ┃ ┣ pages
- ```
- ## 역할분담
- **이해루**
- - GitLab OAuth
- - Project 등록 / 웹훅 등록
- - MergeRequest 코드 변경내역
- - ErrorBoundary 및 비동기 상태 관리
- - 프로젝트 대시보드
-
-  **최이화**
- - MergeRequest 상세보기
- - MergeRequest 댓글 및 대댓글 기능
- - 서비스 가이드
- - 프로젝트 성능 측정
+| 분야     | README                                                               |
+| -------- | -------------------------------------------------------------------- |
+| FrontEnd | [README.md](https://github.com/Git-Eat/GitEat/tree/develop/frontend) |
+| BackEnd  | [README.md](https://github.com/Git-Eat/GitEat/tree/develop/backend)  |
