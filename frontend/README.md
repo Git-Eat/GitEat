@@ -1,50 +1,113 @@
-# React + TypeScript + Vite
+![Image](https://github.com/user-attachments/assets/1543de70-eb8d-4231-8b61-5a260d4d3da3)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# 💻 AI코드리뷰 서비스 GIT-EAT
 
-Currently, two official plugins are available:
+## 1. 프로젝트 개요
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+📅 **개발 기간**
+| 개발기간 | 2025. 01. 06 - 2025. 02. 21 |
+| --- | --- |
 
-## Expanding the ESLint configuration
+😎 **팀원 소개**
+| 팀원 | 역할 |
+| --- | --- |
+| 이해루 | 팀장, FE |
+| 신지혜 | BE, 디자인 |
+| 송용인 | Infra(CI/CD), BE |
+| 이다영 | BE |
+| 조창훈 | BE, DB |
+| 최이화 | FE, 디자인 |
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+**기획 의도**
 
-- Configure the top-level `parserOptions` property like this:
+코드리뷰에 소모되는 시간을 단축시키기 위한 AI 코드리뷰 서비스
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## 2. 기능 소개
+
+**GitLab Outh**
+![Image](https://github.com/user-attachments/assets/ff723936-ac64-47e6-adb5-593de2ffe9b1)
+
+- SSAFY GIT(GitLab)을 기반으로 한 Oauth 로그인
+
+**프로젝트 연동**
+![Image](https://github.com/user-attachments/assets/28d2ec28-4105-4def-8746-8444fc21fe46)
+![Image](https://github.com/user-attachments/assets/945e5fc4-bbb9-4ee7-803e-7cfa30a6c260)
+
+- 프로젝트 ID 등록후, 관련 데이터 연동
+  - MergeRequest 이벤트 관련 웹훅 연동
+  - 프로젝트 관련 커밋 및 MergeRequest 데이터 연동
+  - MergeRequest 이벤트 발생 시, 데이터 동기화
+
+**MergeRequest 상세보기 및 코드리뷰**
+![Image](https://github.com/user-attachments/assets/4652c220-36dd-41b2-953f-32ab44b0dba0)
+
+- MergeRequest 관련 데이터 상세보기
+  - 코드 변경점
+  - MergeRequest 상세
+  - 댓글 내역
+- MergeRequest 이벤트 발생 시, 변경점 기반 AI 코드 리뷰 등록
+- 코드리뷰 시, GitLab 연동
+  - GitLab api와 연동하여 댓글 작성 시, GitLab에 자동 등록
+
+**프로젝트 대시보드**
+![Image](https://github.com/user-attachments/assets/e0d6bcd4-0552-418e-93d9-77c7467cade4)
+
+- 개인별 커밋 내역, MR 횟수 등 통계 데이터 제공
+
+**성능측정**
+![Image](https://github.com/user-attachments/assets/d348219b-d371-4098-b05e-8405397ced18)
+![Image](https://github.com/user-attachments/assets/256875cb-cc09-483c-9882-a2010425b578)
+
+- FE 프로젝트 Lighthouse 기반 성능 측정 데이터 제공
+
+## 3. 아키텍처
+
+![Image](https://github.com/user-attachments/assets/e89df3a1-1b69-4369-8463-d1d51793d530)
+
+## 4. FrontEnd 개발 환경
+- TypeScript
+- React, TailwindCSS
+- React-Query
+- Zustand
+- Vite
+- [프로젝트 컨벤션](https://youthful-moose-bb3.notion.site/ca54d5c747d74dfb8566e997a2a24f0a?pvs=4)
+- [버전 관리 컨벤션](https://youthful-moose-bb3.notion.site/Git-a935e98c4452423ca34bf45852aae782?pvs=4)
+
+## 5. 프로젝트 구조
 ```
+frontend
+ ┣ public
+ ┃ ┣ mockServiceWorker.js
+ ┣ src
+ ┃ ┣ api
+ ┃ ┃ ┣ mocks
+ ┃ ┃ ┃ ┣ dummies
+ ┃ ┃ ┃ ┣ handlers
+ ┃ ┃ ┣ queries
+ ┃ ┃ ┣ types
+ ┃ ┣ assets
+ ┃ ┃ ┗ images
+ ┃ ┣ components
+ ┃ ┃ ┣ common
+ ┃ ┣ hooks
+ ┃ ┣ pages
+ ```
+ ## 역할분담
+ **이해루**
+ - GitLab OAuth
+ - Project 등록 / 웹훅 등록
+ - MergeRequest 코드 변경내역
+ - ErrorBoundary 및 비동기 상태 관리
+ - 프로젝트 대시보드
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+  **최이화**
+ - MergeRequest 상세보기
+ - MergeRequest 댓글 및 대댓글 기능
+ - 서비스 가이드
+ - 프로젝트 성능 측정
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+ ## install
+ ```
+ yarn
+ yarn dev
+ ```
